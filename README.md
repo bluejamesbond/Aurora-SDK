@@ -17,7 +17,7 @@
 Aurora SDK
 =======
 
-Aurora SDK is the hardware accelerated library that serves as the backbone for all Muzzler applications. The Aurora documentation can be found [here](http://muzzler.github.io/Muzzler.Windows/).
+Aurora SDK is the hardware accelerated library that serves as the backbone for all Muzzler applications. The Aurora documentation can be found [here](http://muzzler.github.io/Aurora-SDK/).
 
 Conventions
 =======

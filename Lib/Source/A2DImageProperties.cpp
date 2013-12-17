@@ -2,10 +2,9 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DRootPane.h"
 
-
 A2DImageProperties::A2DImageProperties(A2DImageProperties * xImageProps)
 {
-	aOptRepeat = xImageProps->aOptRepeat;      // background-repeat (CSS)
+	aOptRepeat = xImageProps->aOptRepeat;     // background-repeat  (CSS)
 	aOptSizeX = xImageProps->aOptSizeX;       // background-size-x  (CSS)
 	aOptSizeY = xImageProps->aOptSizeY;       // background-size-x  (CSS)
 }
