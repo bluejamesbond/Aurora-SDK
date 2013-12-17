@@ -27,8 +27,3 @@ Conventions
 3. Client-side folders will be lowercased.
 4. `camelCase` for functions and variables.
 5. `A2DCamelCase` for classes.
-
-Screenshot
-=======
-
-![Screenshot](/MainApplication - x86/Assets/renders/muzzler windows quickWireframe [d] 2.png)
