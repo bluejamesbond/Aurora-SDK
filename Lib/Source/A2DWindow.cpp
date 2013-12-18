@@ -499,6 +499,7 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 
 				if (aWindow->isDragged)
 				{
+
 					POINT p;
 					GetCursorPos(&p);
 					ScreenToClient(xHwnd, &p);
@@ -508,28 +509,24 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 					int deltaY = aWindow->lastDraggedPoint.y - p.y;
 					int deltaX = aWindow->lastDraggedPoint.x - p.x;
 
-					if (hdwp)
-					{
-						int offset = aWindow->getPadding() + aWindow->getBorderWidth();
+					int offset = aWindow->getPadding() + aWindow->getBorderWidth();
 
-						A2DRect& aRect = aWindow->aRect;
+					// DEFER REGION //
 
-						aRect.aX = 500;
-						aRect.aY = 500;
-						aRect.aWidth += deltaX;
-						aRect.aHeight += deltaY;
+					A2DRect& aRect = aWindow->aRect;
 
-						hdwp = DeferWindowPos(hdwp, aWindow->aChildHandle, aWindow->aParentHandle, aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, SWP_NOZORDER | SWP_NOACTIVATE);
-						
-						aWindow->CreateResources();
-						aWindow->Update();
-						aWindow->DestroyResources();
-					}
+					aRect.aX = 500;
+					aRect.aY = 500;
+					aRect.aWidth += deltaX;
+					aRect.aHeight += deltaY;
 
-					if (hdwp)
-					{
-						EndDeferWindowPos(hdwp);
-					}
+					aWindow->CreateResources();
+					aWindow->Update();
+					aWindow->DestroyResources();
+
+					SetWindowPos(aWindow->aChildHandle, aWindow->aParentHandle, aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, SWP_NOZORDER | SWP_NOACTIVATE);						
+
+					// DEFER REGION //
 
 					aWindow->lastDraggedPoint = p;
 				}
