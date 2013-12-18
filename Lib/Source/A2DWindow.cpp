@@ -27,7 +27,7 @@ void A2DWindow::setUndecorated(bool xUndecoratedFlag)
     SetWindowLongPtr(aParentHandle, GWL_STYLE, lStyle);
     SetWindowLongPtr(aParentHandle, GWL_EXSTYLE, lExStyle);
 
-    //SetWindowPos(aParentWin->aHwnd, HWND_TOP, aWindowProps->aRealLeft, aWindowProps->aRealTop, aCachedRealWidth, aCachedRealHeight, SWP_FRAMECHANGED);
+    //SetWindowPos(aParentWin->aHwnd, HWND_TOP, aWindowProps->aRealLeft, aWindowProps->aRealTop, aGdiRealRealWidth, aGdiRealRealHeight, SWP_FRAMECHANGED);
     SetWindowPos(aParentHandle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
@@ -66,6 +66,11 @@ bool A2DWindow::isShadowed()
     return aShadowed;
 }
 
+bool A2DWindow::isUndecorated()
+{
+	return aUndecorated;
+}
+
 void A2DWindow::setShadowed(bool xShadowed)
 {
     if (!isUndecorated())
@@ -91,7 +96,7 @@ void A2DWindow::setBorderColor(Color xBorderColor)
 
 bool A2DWindow::isVisible()
 {
-    return isVisible;
+	return aVisible;
 }
 
 void A2DWindow::setName(LPCWSTR * xName)
@@ -129,6 +134,25 @@ int A2DWindow::getDefaultCloseOperation()
 void A2DWindow::setDefaultCloseOperation(int xOperation)
 {
     aDefaultCloseOperation = xOperation;
+}
+
+void A2DWindow::setLocationRelativeTo(A2DWindow * xWindow)
+{
+	if (xWindow == NULL)
+	{
+		aRect.aX = (GetSystemMetrics(SM_CXSCREEN) - aRect.aWidth) / 2;
+		aRect.aY = (GetSystemMetrics(SM_CYSCREEN) - aRect.aHeight) / 2;
+	}
+}
+
+void A2DWindow::setBorderWidth(float xBorderWidth)
+{
+	aBorderWidth = xBorderWidth;
+}
+
+float A2DWindow::getBorderWidth()
+{
+	return aBorderWidth;
 }
 
 /*
@@ -206,7 +230,7 @@ void A2DWindow::RunMessageLoop()
     }
 }
 
-HRESULT A2DWindow::CreateHandle(HWND * xHandle)
+HRESULT A2DWindow::CreateHandle(HWND& xHandle)
 {
     HRESULT         hr = S_OK;
     HWND            hWnd, hwndParent;
@@ -214,13 +238,13 @@ HRESULT A2DWindow::CreateHandle(HWND * xHandle)
     DWORD           lStyle, lExStyle;
     LPCWSTR         className, titleName;
     
-    left =          *xHandle == aParentHandle ? aRect.aX - aPadding : aRect.aX;
-    top =           *xHandle == aParentHandle ? aRect.aY - aPadding : aRect.aY;
-    width =         *xHandle == aParentHandle ? aRect.aWidth - aPadding * 2 : aRect.aWidth;
-    height =        *xHandle == aParentHandle ? aRect.aHeight - aPadding * 2 : aRect.aHeight;
-    lStyle =        *xHandle == aParentHandle ? WS_POPUP | WS_OVERLAPPED : WS_POPUP;
-    lExStyle =      *xHandle == aParentHandle ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0;
-    hwndParent =    *xHandle == aParentHandle ? HWND_DESKTOP : aParentHandle;
+	left =			(int)(xHandle == aParentHandle ? aRect.aX - aPadding : aRect.aX + aBorderWidth);
+	top =			(int)(xHandle == aParentHandle ? aRect.aY - aPadding : aRect.aY + aBorderWidth);
+	width =			(int)(xHandle == aParentHandle ? aRect.aWidth - aPadding * 2 : aRect.aWidth - aBorderWidth * 2);
+	height =		(int)(xHandle == aParentHandle ? aRect.aHeight - aPadding * 2 : aRect.aHeight - aBorderWidth * 2);
+	lStyle =		(int)(xHandle == aParentHandle ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
+	lExStyle =		(int)(xHandle == aParentHandle ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	hwndParent =	xHandle == aParentHandle ? HWND_DESKTOP : aParentHandle;
     className =     aName;
     titleName =     aName;
 
@@ -228,10 +252,10 @@ HRESULT A2DWindow::CreateHandle(HWND * xHandle)
     hr = hWnd ? S_OK : E_FAIL;
     if (FAILED(hr)) return hr;
 
-    xHandle = &hWnd;
+    xHandle = hWnd;
     aStyle = WS_EX_APPWINDOW;
     
-    if (aChildHandle && aParentHandle)
+	if (aChildHandle && aParentHandle)
     {
         // Force the child on top of parent!
         SetWindowPos(aChildHandle, aParentHandle, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -250,10 +274,10 @@ void A2DWindow::Update()
 {   
     Render();
 
-    aHDCSize = { aCachedRelativeWidth, aCachedRelativeHeight };
+	aHDCSize = { (long)aGdiRealRelativeWidth, (long) aGdiRealRelativeHeight };
 
     HDC screenDC = GetDC(NULL);
-    POINT ptDst = { aCachedRelativeX, aCachedRelativeY };
+	POINT ptDst = { (long)aGdiRealRelativeX, (long) aGdiRealRelativeY };
     POINT ptSrc = { 0, 0 };
 
     BLENDFUNCTION blendFunction;
@@ -275,22 +299,20 @@ HRESULT A2DWindow::CreateComponentResources()
     HRESULT hr = S_OK;
     HDC hdc, memDC;
 
-    // Cache variables
-    aCachedPadding = aPadding;
-    aCachedShadowPadding = aShadowPadding;
-    aCachedRealX = aRect.aX;
-    aCachedRealY = aRect.aY;
-    aCachedRealWidth = aRect.aWidth;
-    aCachedRealHeight = aRect.aHeight;
-    aCachedRelativeX = aCachedRealX - aCachedPadding;
-    aCachedRelativeY = aCachedRealY - aCachedPadding;
-    aCachedRelativeWidth = aCachedRealWidth + aCachedPadding * 2;
-    aCachedRelativeHeight = aCachedRealHeight + aCachedPadding * 2;
+    // Cache variables as Gdi Real
+    aGdiRealRealX = aRect.aX;
+    aGdiRealRealY = aRect.aY;
+    aGdiRealRealWidth = aRect.aWidth;
+    aGdiRealRealHeight = aRect.aHeight;
+    aGdiRealRelativeX = aGdiRealRealX - aPadding;
+    aGdiRealRelativeY = aGdiRealRealY - aPadding;
+    aGdiRealRelativeWidth = aGdiRealRealWidth + aPadding * 2;
+    aGdiRealRelativeHeight = aGdiRealRealHeight + aPadding * 2;
 
     hdc = GetDC(aParentHandle);
     memDC = CreateCompatibleDC(hdc);
 
-    HBITMAP memBitmap = CreateCompatibleBitmap(hdc, aCachedRelativeWidth, aCachedRelativeHeight);
+	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, (long)aGdiRealRelativeWidth, (long) aGdiRealRelativeHeight);
 
     SelectObject(memDC, memBitmap);
 
@@ -322,9 +344,9 @@ void A2DWindow::setVisible(bool xVisible)
 
 void A2DWindow::RenderComponentBorder()
 {
-    Pen borderPen(Color(202, 225, 255), 1);
+	Pen borderPen(aBorderColor, aBorderWidth);
     
-    aGraphics->DrawRectangle(&borderPen, aCachedPadding, aCachedPadding, aCachedRealWidth - aCachedPadding * 2 - 1, aCachedRealHeight - aCachedPadding * 2 - 1);
+	aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
     
     DeleteObject(&borderPen);
 }
@@ -349,24 +371,24 @@ void A2DWindow::RenderComponent()
     TextureBrush bottomShadowBrush(&bottomShadow);
     TextureBrush backgroundBrush(&background);
 
-    topShadowBrush.TranslateTransform(aCachedShadowPadding, aCachedZero);
-    aGraphics->FillRectangle(&topShadowBrush, aCachedShadowPadding, aCachedZero, aCachedRelativeWidth - aCachedShadowPadding * 2, aCachedPadding);
+    topShadowBrush.TranslateTransform(aShadowPadding, aGdiRealZero);
+    aGraphics->FillRectangle(&topShadowBrush, aShadowPadding, aGdiRealZero, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
-    leftShadowBrush.TranslateTransform(aCachedShadowPadding, aCachedPadding);
-    aGraphics->FillRectangle(&leftShadowBrush, aCachedZero, aCachedShadowPadding, aCachedPadding, aCachedRelativeHeight - aCachedShadowPadding * 2);
+    leftShadowBrush.TranslateTransform(aShadowPadding, aPadding);
+    aGraphics->FillRectangle(&leftShadowBrush, aGdiRealZero, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
 
-    rightShadowBrush.TranslateTransform(aCachedRelativeWidth - aCachedPadding, aCachedShadowPadding);
-    aGraphics->FillRectangle(&rightShadowBrush, aCachedRelativeWidth - aCachedPadding, aCachedShadowPadding, aCachedPadding, aCachedRelativeHeight - aCachedShadowPadding * 2);
+    rightShadowBrush.TranslateTransform(aGdiRealRelativeWidth - aPadding, aShadowPadding);
+    aGraphics->FillRectangle(&rightShadowBrush, aGdiRealRelativeWidth - aPadding, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
 
-    bottomShadowBrush.TranslateTransform(aCachedShadowPadding, aCachedRelativeHeight - aCachedPadding);
-    aGraphics->FillRectangle(&bottomShadowBrush, aCachedShadowPadding, aCachedRealHeight + aCachedPadding, aCachedRelativeWidth - aCachedShadowPadding * 2, aCachedPadding);
+    bottomShadowBrush.TranslateTransform(aShadowPadding, aGdiRealRelativeHeight - aPadding);
+    aGraphics->FillRectangle(&bottomShadowBrush, aShadowPadding, aGdiRealRealHeight + aPadding, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
-    aGraphics->DrawImage(&topLeftShadow, aCachedZero, aCachedZero, aCachedShadowPadding, aCachedShadowPadding);
-    aGraphics->DrawImage(&bottomLeftShadow, aCachedZero, aCachedRelativeHeight - aCachedShadowPadding, aCachedShadowPadding, aCachedShadowPadding);
-    aGraphics->DrawImage(&topRightShadow, aCachedRelativeWidth - aCachedShadowPadding, aCachedZero, aCachedShadowPadding, aCachedShadowPadding);
-    aGraphics->DrawImage(&bottomRightShadow, aCachedRelativeWidth - aCachedShadowPadding, aCachedRelativeHeight - aCachedShadowPadding, aCachedShadowPadding, aCachedShadowPadding);
+    aGraphics->DrawImage(&topLeftShadow, aGdiRealZero, aGdiRealZero, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(&bottomLeftShadow, aGdiRealZero, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(&topRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealZero, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(&bottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
 
-    aGraphics->FillRectangle(&backgroundBrush, aCachedPadding, aCachedPadding, aCachedRealWidth, aCachedRealHeight);
+    aGraphics->FillRectangle(&backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
 
     DeleteObject(&topShadowBrush);
     DeleteObject(&leftShadowBrush);
@@ -455,15 +477,30 @@ HRESULT A2DWindow::Initialize()
 
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     
+	/*****************************************************/
+	// TEMP SETUP
+	aRect.aX = 30;
+	aRect.aY = 30;
+	aRect.aHeight = 480;
+	aRect.aWidth = 640;
+	aPadding = 25;
+	aShadowPadding = 75;
+	aName = L"TESTING";
+	/*****************************************************/
+
+	setLocationRelativeTo(NULL);
+	setBorderColor(Color(202, 225, 255));
+	setBorderWidth(5);
+
     hr = RegisterClass();
 
     if (FAILED(hr)) return hr;
     
-    hr = CreateHandle(&aParentHandle);
+    hr = CreateHandle(aParentHandle);
 
     if (FAILED(hr)) return hr;
 
-    hr = CreateHandle(&aChildHandle);
+    hr = CreateHandle(aChildHandle);
 
     if (FAILED(hr)) return hr;
 

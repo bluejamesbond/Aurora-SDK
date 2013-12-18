@@ -22,32 +22,21 @@
 
 #include "A2DFrame.h"
 #include "A2DAbstract.h"
-#include "A2DWindowProperties.h"
+#include "A2DRect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
+class A2DFrame;
 class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
-struct A2DWindowProperties;
-class A2DWindow;
-class A2DImagePanel;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
         
-#define RES_BSW_DIR                                         L"libs\\Aurora SDK\\Lib\\Assets\\Images\\"
+#define RES_BSW_DIR                                         L"..\\..\\..\\Aurora-SDK\\Lib\\Assets\\Images\\"
 #define IDB_BSW_BOTTOM_LEFT_SHADOW_PNG                      RES_BSW_DIR L"muzzler windows-sync bottomLeftShadow [a] 1.png"
 #define IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG                     RES_BSW_DIR L"muzzler windows-sync bottomRightShadow [a] 1.png"
 #define IDB_BSW_BOTTOM_SHADOW_PNG                           RES_BSW_DIR L"muzzler windows-sync bottomShadow [a] 1.png"
@@ -56,7 +45,7 @@ class A2DImagePanel;
 #define IDB_BSW_TOP_SHADOW_PNG                              RES_BSW_DIR L"muzzler windows-sync topShadow [a] 1.png"
 #define IDB_BSW_LEFT_SHADOW_PNG                             RES_BSW_DIR L"muzzler windows-sync leftShadow [a] 1.png"
 #define IDB_BSW_RIGHT_SHADOW_PNG                            RES_BSW_DIR L"muzzler windows-sync rightShadow [a] 1.png"
-#define IDB_BSW_BACKGROUND_PNG                              RES_BSW_DIR L"muzzler windows-sync background [c] 1.png"
+#define IDB_BSW_BACKGROUND_PNG                              RES_BSW_DIR L"muzzler windows-sync background [a] 2.jpg"
 #define IDP_BSW_ACTIVE_BORDER_COLOR                         0x00929292
 #define DEF_PAD_VALUE                                       25
 #define DEF_SPAD_VALUE                                      75
@@ -91,10 +80,11 @@ private:
     bool                            aUndecorated;
 
     float                           aPadding;
-    float                           aShadowPadding;
+	float                           aShadowPadding;
+	float							aBorderWidth;
 
     HWND                            aParentHandle;
-    HWND                            aChildHandle;
+	HWND                            aChildHandle;
 
     LPCWSTR                         aName;
 
@@ -141,6 +131,9 @@ public:
 
     Color                           getBorderColor();
     void                            setBorderColor(Color xBorderColor);
+	
+	float		                    getBorderWidth();
+	void                            setBorderWidth(float xWidth);
 
     float                           getPadding();
     void                            setPadding(float xPadding);
@@ -175,19 +168,17 @@ public:
 
     // Variables - WINDOW ONLY - INTERNAL USE ONLY
 
-    REAL                            aCachedZero = 0;
-    REAL                            aCachedPadding = 0;
-    REAL                            aCachedShadowPadding = 0;
+	REAL                            aGdiRealZero = 0;
 
-    REAL                            aCachedRealX = 0;
-    REAL                            aCachedRealY = 0;
-    REAL                            aCachedRealWidth = 0;
-    REAL                            aCachedRealHeight = 0;
+    REAL                            aGdiRealRealX = 0;
+    REAL                            aGdiRealRealY = 0;
+    REAL                            aGdiRealRealWidth = 0;
+    REAL                            aGdiRealRealHeight = 0;
 
-    REAL                            aCachedRelativeX = 0;
-    REAL                            aCachedRelativeY = 0;
-    REAL                            aCachedRelativeWidth = 0;
-    REAL                            aCachedRelativeHeight = 0;
+    REAL                            aGdiRealRelativeX = 0;
+    REAL                            aGdiRealRelativeY = 0;
+    REAL                            aGdiRealRelativeWidth = 0;
+    REAL                            aGdiRealRelativeHeight = 0;
 
     int                             aStyle;
     SIZE                            aHDCSize;
@@ -225,7 +216,7 @@ private:
     static inline A2DWindow*        GetAppState(HWND xHwnd);
 
     HRESULT                         RegisterClass();
-    HRESULT                         CreateHandle(HWND * xHandle);
+	HRESULT                         CreateHandle(HWND& xHandle);
 
     /*********************************************************************/
     /*                      WINDOWS-SPECIFIC END                         */
