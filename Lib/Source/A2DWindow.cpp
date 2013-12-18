@@ -271,36 +271,7 @@ void A2DWindow::Render()
 }
 
 void A2DWindow::Update()
-{   
-    Render();
-
-	aHDCSize = { (long)aGdiRealRelativeWidth, (long) aGdiRealRelativeHeight };
-
-    HDC screenDC = GetDC(NULL);
-	POINT ptDst = { (long)aGdiRealRelativeX, (long) aGdiRealRelativeY };
-    POINT ptSrc = { 0, 0 };
-
-    BLENDFUNCTION blendFunction;
-    blendFunction.AlphaFormat = AC_SRC_ALPHA;
-    blendFunction.BlendFlags = 0;
-    blendFunction.BlendOp = AC_SRC_OVER;
-    blendFunction.SourceConstantAlpha = 255;
-
-    UpdateLayeredWindow(aParentHandle, screenDC, &ptDst, &aHDCSize, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
-}
-
-void A2DWindow::DestroyResources()
 {
-	if (aGraphics)
-	{
-		delete aGraphics;
-		aGraphics = 0;
-	}
-}
-
-HRESULT A2DWindow::CreateResources()
-{
-	HRESULT hr = S_OK;
 	HDC hdc, memDC;
 
 	// Cache variables as Gdi Real
@@ -310,17 +281,76 @@ HRESULT A2DWindow::CreateResources()
 	aGdiRealRealHeight = aRect.aHeight + aBorderWidth * 2;
 	aGdiRealRelativeX = aGdiRealRealX - aPadding - aBorderWidth;
 	aGdiRealRelativeY = aGdiRealRealY - aPadding - aBorderWidth;
-	aGdiRealRelativeWidth = aGdiRealRealWidth + aPadding * 2 ;
-	aGdiRealRelativeHeight = aGdiRealRealHeight + aPadding * 2 ;
+	aGdiRealRelativeWidth = aGdiRealRealWidth + aPadding * 2;
+	aGdiRealRelativeHeight = aGdiRealRealHeight + aPadding * 2;
 
 	hdc = GetDC(aParentHandle);
 	memDC = CreateCompatibleDC(hdc);
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, (long)aGdiRealRelativeWidth, (long)aGdiRealRelativeHeight);
+	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 
 	SelectObject(memDC, memBitmap);
 
 	aGraphics = new Graphics(memDC);
+
+	/***********************************************/
+
+    Render();
+
+	/***********************************************/
+
+	SIZE size = { (long)aGdiRealRelativeWidth, (long)aGdiRealRelativeHeight };
+
+	HDC screenDC = GetDC(NULL);
+	POINT ptDst = { (long)aGdiRealRelativeX, (long)aGdiRealRelativeY };
+	POINT ptSrc = { 0, 0 };
+
+	BLENDFUNCTION blendFunction;
+	blendFunction.AlphaFormat = AC_SRC_ALPHA;
+	blendFunction.BlendFlags = 0;
+	blendFunction.BlendOp = AC_SRC_OVER;
+	blendFunction.SourceConstantAlpha = 255;
+
+	UpdateLayeredWindow(aParentHandle, screenDC, &ptDst, &size, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
+	
+	/***********************************************/
+
+	aGraphics->ReleaseHDC(memDC);
+	delete aGraphics;
+	aGraphics = 0;
+
+	DeleteObject(memBitmap);
+	DeleteObject(hdc);
+	DeleteObject(memDC);
+}
+
+void A2DWindow::DestroyResources()
+{
+	
+	// Delete the ones in CreateResources();
+
+}
+
+HRESULT A2DWindow::CreateResources()
+{
+	HRESULT hr = S_OK;
+
+	topShadow = new Image(IDB_BSW_TOP_SHADOW_PNG);
+	leftShadow = new Image(IDB_BSW_LEFT_SHADOW_PNG);
+	rightShadow = new Image(IDB_BSW_RIGHT_SHADOW_PNG);
+	bottomShadow = new Image(IDB_BSW_BOTTOM_SHADOW_PNG);
+	topLeftShadow = new Image(IDB_BSW_TOP_LEFT_SHADOW_PNG);
+	bottomLeftShadow = new Image(IDB_BSW_BOTTOM_LEFT_SHADOW_PNG);
+	topRightShadow = new Image(IDB_BSW_TOP_RIGHT_SHADOW_PNG);
+	bottomRightShadow = new Image(IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG);
+	background = new Image(IDB_BSW_BACKGROUND_PNG);
+
+
+	topShadowBrush = new TextureBrush(topShadow);
+	leftShadowBrush = new TextureBrush(leftShadow);
+	rightShadowBrush = new TextureBrush(rightShadow);
+	bottomShadowBrush = new TextureBrush(bottomShadow);
+	backgroundBrush = new TextureBrush(background);
 
 	return hr;
 }
@@ -350,18 +380,16 @@ void A2DWindow::RenderComponentBorder()
 {
 	if (aBorderWidth > 0)
 	{
-	Pen borderPen(aBorderColor, aBorderWidth);
+		Pen borderPen(aBorderColor, aBorderWidth);
     
-	aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
+		aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
     
-	DeleteObject(&borderPen);
+		DeleteObject(&borderPen);
 	}
 }
 
 void A2DWindow::RenderComponent()
-{
-    RenderComponentClear();
-	
+{	
 	topShadowBrush->ResetTransform();
 	leftShadowBrush->ResetTransform();
 	rightShadowBrush->ResetTransform();
@@ -384,12 +412,7 @@ void A2DWindow::RenderComponent()
     aGraphics->DrawImage(topRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealZero, aShadowPadding, aShadowPadding);
     aGraphics->DrawImage(bottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
 
-    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
-}
-
-void A2DWindow::RenderComponentClear()
-{
-    aGraphics->Clear(Color::AlphaMask);
+    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);	
 }
 
 void A2DWindow::moveTo(int xPosX, int xPosY)
@@ -427,9 +450,7 @@ void A2DWindow::forceAlignment()
 		aRect.aWidth = width;
 		aRect.aHeight = height;
 
-		CreateResources();
 		Update();
-		DestroyResources();
 	}
 }
 
@@ -661,23 +682,6 @@ HRESULT A2DWindow::Initialize()
 	setBorderColor(Color(202, 225, 255));
 	setBorderWidth(2); //Force the border in DX window
 
-	topShadow = new Image(IDB_BSW_TOP_SHADOW_PNG);
-	leftShadow = new Image(IDB_BSW_LEFT_SHADOW_PNG);
-	rightShadow = new Image(IDB_BSW_RIGHT_SHADOW_PNG);
-	bottomShadow = new Image(IDB_BSW_BOTTOM_SHADOW_PNG);
-	topLeftShadow = new Image(IDB_BSW_TOP_LEFT_SHADOW_PNG);
-	bottomLeftShadow = new Image (IDB_BSW_BOTTOM_LEFT_SHADOW_PNG);
-	topRightShadow = new Image(IDB_BSW_TOP_RIGHT_SHADOW_PNG);
-	bottomRightShadow = new Image(IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG);
-	background = new Image(IDB_BSW_BACKGROUND_PNG);
-
-
-	topShadowBrush = new TextureBrush(topShadow);
-	leftShadowBrush = new TextureBrush(leftShadow);
-	rightShadowBrush = new TextureBrush(rightShadow);
-	bottomShadowBrush = new TextureBrush(bottomShadow);
-	backgroundBrush = new TextureBrush(background);
-
     hr = RegisterClass();
 
     if (FAILED(hr)) return hr;
@@ -695,9 +699,7 @@ HRESULT A2DWindow::Initialize()
     if (FAILED(hr)) return hr;
 
     Update();
-
-	DestroyResources();
-
+	
     return hr;
 }
 

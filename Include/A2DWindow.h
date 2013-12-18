@@ -145,7 +145,6 @@ public:
     void                            Update();
     void                            Render();
     void                            RenderComponent();
-    void                            RenderComponentClear();
     void                            RenderComponentBorder();
     HRESULT                         CreateResources();
 	void	                        DestroyResources();
@@ -198,7 +197,6 @@ public:
     REAL                            aGdiRealRelativeHeight = 0;
 
     int                             aStyle;
-    SIZE                            aHDCSize;
     Graphics                  *     aGraphics;
 
 	POINT							lastDraggedPoint;
