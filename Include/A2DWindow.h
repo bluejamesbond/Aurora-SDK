@@ -74,31 +74,81 @@ class A2DWindow : public A2DAbstract
 public:
 
     // Constructor
-	A2DWindow(HINSTANCE * xHInstance, A2DWindowProperties* xWinProps); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
+	A2DWindow(HINSTANCE * xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
 
     // Deconstructor
     ~A2DWindow();
   
+private:
 
     // Variables
 	HINSTANCE				  *		aHInstance;
 	A2DFrame                  *     aFrame;
-    A2DWindowProperties       *     aWindowProps;
+
     HWND                            aParentHwnd;
     HWND                            aChildHwnd;
+	
+	// Variables
+	int								aPadding;
+	int								aShadowPadding;
 
-private:
+	A2DRect					        aRealRect;
+	A2DRect					        aRelativeRect;
+	A2DDims					        aRealDims;
+	A2DDims					        aRelativeDims;
+	LPCWSTR                         aName;
 
-	int aCacheShadowPadding			= 0;
-	int aCachePadding				= 0;
-	int aCacheRelativeX				= 0;
-	int aCacheRelativeY				= 0;
-	int aCacheRealX					= 0;
-	int aCacheRealY					= 0;
-	int aCacheRelativeHeight		= 0;
-	int aCacheRelativeWidth			= 0;
-	int aCacheRealHeight			= 0;
-	int aCacheRealWidth				= 0;
+public:
+
+	// Accessors and mutators
+
+	// These don't need mutators because we are giving direct access to the structs
+	A2DRect                   *     getRealBounds();
+	A2DRect                   *     getRelativeBounds();
+	A2DDims					  *     getRealSize();
+	A2DDims					  *     getRelativeSize();
+		
+	// Accessing internal variables. Do not provide mutators for these.
+	HWND					  *		getChildHandle();
+	HWND					  *		getParentHandle();
+
+	LPCWSTR					  *		getName(); // Fix this, should we use pointer or not?
+	void					  		setName(LPCWSTR * xName); // Fix this, should we use pointer or not?
+	
+	A2DFrame				  *     getFrame(); // GET
+	void						    setFrame(A2DFrame * xFrame); // SET
+
+	bool						    isUndecorated(); // Get
+	void                            setUndecorated(bool xUndecoratedFlag); // SET
+
+	int								getDefaultCloseOperation();
+	void							setDefaultCloseOperation(int xCloseOperation);
+
+	A2DWindow				  *		getLocationRelativeTo();
+	void							setLocationRelativeTo(A2DWindow * xWindow);
+	
+	boolean							isVisible();
+	void                            setVisible(bool xVisibile);
+
+	boolean							isShadowed();
+	void                            setShadowed(bool xShadowFlag);
+
+	Color		                    getBorderColor();
+	void                            setBorderColor(Color xColor);
+
+	float							getPadding();
+	void							setPadding(float xPadding);
+	
+	float							getShadowPadding();
+	void							setShadowPadding(float xShadowPadding);
+
+	// Builders
+	// { NONE }
+
+	// Factory
+	// { NONE }
+
+	// Additional
 
 public:
 
@@ -106,17 +156,6 @@ public:
 	HWND					  *		GetChildHwnd();
 
     // Mutators
-	void                            SetFrame(A2DFrame * xFrame);
-    void                            SetUndecorated(bool xUndecoratedFlag);
-    void                            SetPadding(int xPad);
-    void                            SetShadow(bool xShadowFlag);
-//  void                            SetBorderColor(Color xColor);
-    void                            SetPosition(int xLeft, int xTop);
-    void                            SetSize(int xWidth, int xHeight);
-    void                            SetPositionAndSize(int xLeft, int xTop, int xWidth, int xHeight);
-	void                            SetTitle(LPCWSTR xTitleName);
-	void                            SetVisible(bool xVisibile);
-
     // Builders
     // { NONE }
 
