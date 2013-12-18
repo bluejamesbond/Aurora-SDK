@@ -78,7 +78,6 @@ public:
 
 	bool							aCONSTRAINT_CHANGED;
 
-
 	///////////////////////////////////////////////////////////
 
 	virtual void					Update(void* xArgs[]);

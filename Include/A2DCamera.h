@@ -40,7 +40,6 @@ class A2DModelFactory;
 class A2DRootPane;
 struct A2DWindowProperties;
 class A2DWindow;
-class A2DImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE

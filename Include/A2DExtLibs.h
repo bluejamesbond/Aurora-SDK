@@ -14,6 +14,8 @@
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef _WIN32
+
 // C RunTime Header Files
 #pragma comment(lib, "d3d10.lib")
 #pragma comment(lib, "d3dx10.lib")
@@ -31,8 +33,13 @@
 #include <memory.h>
 #include <tchar.h>
 #include <wchar.h>
-
 #include <iostream> 
 #include <fstream>
 #include <GdiPlus.h>
 #include <GdiPlusGraphics.h>
+
+#elif __UNIX
+
+#include <test_DELETE_PLEASE>
+
+#endif

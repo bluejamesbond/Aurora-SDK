@@ -2,7 +2,6 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #ifndef __A2DWINDOW_H__
 #define __A2DWINDOW_H__
 
@@ -66,11 +65,14 @@ class A2DImagePanel;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-using namespace Gdiplus;
+using namespace Gdiplus;  // WINDOWS specific
 
 class A2DWindow : public A2DAbstract
 {
 
+	/*********************************************************************/
+	/*                      CROSS-PLATFORM START                         */
+	/*********************************************************************/
 public:
 
     // Constructor
@@ -81,27 +83,37 @@ public:
   
 private:
 
-    // Variables
+    // Variables - NOTE: No need to use the acronym aOpt since variables are PRIVATE!
+	int								aDefaultCloseOperation;
+
+	bool							aVisible;
+	bool							aShadowed;
+	bool							aUndecorated;
+
+	float							aPadding;
+	float							aShadowPadding;
+
+	HWND                            aParentHandle;
+	HWND                            aChildHandle;
+
+	LPCWSTR                         aName;
+
 	HINSTANCE				  *		aHInstance;
+
+	Color							aBorderColor;
+
 	A2DFrame                  *     aFrame;
 
-    HWND                            aParentHwnd;
-    HWND                            aChildHwnd;
-	
-	// Variables
-	int								aPadding;
-	int								aShadowPadding;
+	A2DWindow				  *		aRelativeWindow;
 
 	A2DRect					        aRealRect;
 	A2DRect					        aRelativeRect;
 	A2DDims					        aRealDims;
 	A2DDims					        aRelativeDims;
-	LPCWSTR                         aName;
 
 public:
 
 	// Accessors and mutators
-
 	// These don't need mutators because we are giving direct access to the structs
 	A2DRect                   *     getRealBounds();
 	A2DRect                   *     getRelativeBounds();
@@ -141,58 +153,63 @@ public:
 	
 	float							getShadowPadding();
 	void							setShadowPadding(float xShadowPadding);
+	
+	// Additional
+	void							Update();
+	void                            Render();
+	void                            RenderComponent();
+	void                            RenderComponentClear();
+	void                            RenderComponentShadow();
+	void                            RenderComponentBorder();
+	
+	// Implementation
+	// { A2DABSTRACT }
+	virtual HRESULT                 Initialize();
+	virtual void                    Deinitialize();
+	virtual LPCWSTR                 GetClass();
+	virtual LPCWSTR                 ToString();
+	virtual bool                    operator==(A2DAbstract * xAbstract);
+
+	/*********************************************************************/
+	/*                      CROSS-PLATFORM END                           */
+	/*********************************************************************/
+
+	/*********************************************************************/
+	/*                      WINDOWS-SPECIFIC START                       */
+	/*********************************************************************/
+
+	// Variables - WINDOW ONLY - INTERNAL USE ONLY
+	int                             style;
+	SIZE                            aSize;
+	Graphics                  *     aGraphics;
 
 	// Builders
 	// { NONE }
 
 	// Factory
 	// { NONE }
-
-	// Additional
-
-public:
-
+	
     // Accessors
-	HWND					  *		GetChildHwnd();
+    // { NONE }
 
     // Mutators
-    // Builders
     // { NONE }
 
     // Factory
     // { NONE }
 
     // Additional
-	void							CacheVariables();
+    // { NONE }
 
     // Pure Virtual
     // { NONE }
 
     // Virtual
-    // { NONE }
-
-public:
-    
-    // Implementation
-    // { A2DABSTRACT }
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
+    // { NONE }	    
 
 private:
     
-    // Variables
-    int                             aOptionShadow = 1;
-	int                             aOptionBorder = 1;
-	bool							aOptionVisible;
-    int                             aOptionDecorated = 0;
-    int                             CurrentStyleProc;
-    Graphics                  *     aGraphics;
-    SIZE                            aWindowSize;
-
-    // Functions
+	// Functions
     void                            RunMessageLoop();
     ATOM                            RegisterClass(HWND xHwnd);
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
@@ -200,12 +217,10 @@ private:
 
     HRESULT                         CreateHandle(HWND& xHandler);
 	HRESULT                         CreateComponentResources();
-	void							Update();
-	void                            Render();
-    void                            RenderComponent();
-    void                            RenderComponentClear();
-    void                            RenderComponentShadow();
-    void                            RenderComponentBorder();
+
+	/*********************************************************************/
+	/*                      WINDOWS-SPECIFIC END                         */
+	/*********************************************************************/
 };
 
 #endif

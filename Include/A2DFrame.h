@@ -36,7 +36,6 @@
 #include "A2DMatrixFactory.h"
 #include "A2DRootPane.h"
 #include "A2DWindow.h"
-#include "A2DShared.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS

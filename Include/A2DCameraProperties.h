@@ -66,8 +66,7 @@ public:
         aLookAtY(0.0f),
         aLookAtZ(1.0f){}
 
-    A2DCameraProperties(float xPositionX, float xPositionY, float xPositionZ,
-                            float xRotationX, float xRotationY, float xRotationZ):
+    A2DCameraProperties(float xPositionX, float xPositionY, float xPositionZ, float xRotationX, float xRotationY, float xRotationZ):
         aPositionX(xPositionX),
         aPositionY(xPositionY),
         aPositionZ(xPositionZ),

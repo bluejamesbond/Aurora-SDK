@@ -2,14 +2,11 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DWindow.h"
 
-A2DWindow::A2DWindow(HINSTANCE * xHInstance, A2DWindowProperties* xWinProps) :
-aHInstance(xHInstance),
-aWindowProps(xWinProps)
-{}
+A2DWindow::A2DWindow(HINSTANCE * xHInstance) : aHInstance(xHInstance) {}
 
 A2DWindow::~A2DWindow(){}
 
-void A2DWindow::SetUndecorated(bool xUndecoratedFlag)
+void A2DWindow::setUndecorated(bool xUndecoratedFlag)
 {
 	// we cannot just use WS_POPUP style
     // WS_THICKFRAME: without this the window cannot be resized and so aero snap, de-maximizing and minimizing won't work
@@ -20,43 +17,55 @@ void A2DWindow::SetUndecorated(bool xUndecoratedFlag)
 
 	LONG lStyle, lExStyle;
 
-	lStyle = GetWindowLongPtr(aParentHwnd, GWL_STYLE);
-	lExStyle = GetWindowLongPtr(aParentHwnd, GWL_EXSTYLE);
+	lStyle = GetWindowLongPtr(aParentHandle, GWL_STYLE);
+	lExStyle = GetWindowLongPtr(aParentHandle, GWL_EXSTYLE);
 
 	lStyle &= xUndecoratedFlag ? ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU) : (WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
 	lStyle |= xUndecoratedFlag ? (WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP) : 0;
 	lExStyle |= xUndecoratedFlag ? (WS_EX_LAYERED | WS_EX_APPWINDOW) : WS_EX_LAYERED;
 
-	SetWindowLongPtr(aParentHwnd, GWL_STYLE, lStyle);
-	SetWindowLongPtr(aParentHwnd, GWL_EXSTYLE, lExStyle);
+	SetWindowLongPtr(aParentHandle, GWL_STYLE, lStyle);
+	SetWindowLongPtr(aParentHandle, GWL_EXSTYLE, lExStyle);
 
 	//SetWindowPos(aParentWin->aHwnd, HWND_TOP, aWindowProps->aRealLeft, aWindowProps->aRealTop, aCacheRealWidth, aCacheRealHeight, SWP_FRAMECHANGED);
-	SetWindowPos(aParentHwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
+	SetWindowPos(aParentHandle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
-void A2DWindow::SetPadding(int xPad)
+void A2DWindow::setPadding(float xPadding)
 {
-	// Default values will be used. They are defined in SampleWindow resources.
-	// The final goal is to render this using pure GDI+ and cache it and reuse it during resize. 
-	// So that way, you can actually set a windowPadding!
+	aPadding = xPadding;
 }
 
-HWND* A2DWindow::GetChildHwnd()
+float A2DWindow::getPadding()
 {
-	return &aChildHwnd;
+	return aPadding;
 }
 
-void A2DWindow::SetShadow(bool xShadowFlag)
+void A2DWindow::setShadowPadding(float xShadowPadding)
+{
+	aShadowPadding = xShadowPadding;
+}
+
+float A2DWindow::getShadowPadding()
+{
+	return aShadowPadding;
+}
+
+HWND* A2DWindow::getChildWindowHandle()
+{
+	return &aChildWindowHandle;
+}
+
+void A2DWindow::setShadowed(bool xShadowed)
 {
 	if (!aOptionDecorated)
 	{
-		SetUndecorated(true);
+		setUndecorated(true);
 	}
 		
-	aOptionShadow = xShadowFlag ? 1 : 0;
+	aOptionShadow = aShadowed ? 1 : 0;
 
 	RenderComponent();
-
 }
 
 void A2DWindow::SetPosition(int xLeft, int xTop)
@@ -456,12 +465,6 @@ HRESULT A2DWindow::Initialize()
 
 void A2DWindow::Deinitialize()
 {
-	if (aWindowProps)
-	{
-		delete aWindowProps;  // <-- delete the pointer NOT the struct since this was passed in to you.
-		aWindowProps = nullptr;
-	}
-
-	aParentHwnd = NULL;
-	aChildHwnd = NULL;
+	aParentWindowHandle = NULL;
+	aChildWindowHandle = NULL;
 }
