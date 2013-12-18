@@ -289,37 +289,40 @@ void A2DWindow::Update()
     UpdateLayeredWindow(aParentHandle, screenDC, &ptDst, &aHDCSize, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
 }
 
-HRESULT A2DWindow::CreateResources()
+void A2DWindow::DestroyResources()
 {
-    return CreateComponentResources();
+	if (aGraphics)
+	{
+		delete aGraphics;
+		aGraphics = 0;
+	}
 }
 
-HRESULT A2DWindow::CreateComponentResources()
+HRESULT A2DWindow::CreateResources()
 {
-    HRESULT hr = S_OK;
-    HDC hdc, memDC;
+	HRESULT hr = S_OK;
+	HDC hdc, memDC;
 
-    // Cache variables as Gdi Real
-    aGdiRealRealX = aRect.aX;
-    aGdiRealRealY = aRect.aY;
-    aGdiRealRealWidth = aRect.aWidth;
-    aGdiRealRealHeight = aRect.aHeight;
-    aGdiRealRelativeX = aGdiRealRealX - aPadding;
-    aGdiRealRelativeY = aGdiRealRealY - aPadding;
-    aGdiRealRelativeWidth = aGdiRealRealWidth + aPadding * 2;
-    aGdiRealRelativeHeight = aGdiRealRealHeight + aPadding * 2;
+	// Cache variables as Gdi Real
+	aGdiRealRealX = aRect.aX;
+	aGdiRealRealY = aRect.aY;
+	aGdiRealRealWidth = aRect.aWidth + aBorderWidth * 2;
+	aGdiRealRealHeight = aRect.aHeight + aBorderWidth * 2;
+	aGdiRealRelativeX = aGdiRealRealX - aPadding - aBorderWidth;
+	aGdiRealRelativeY = aGdiRealRealY - aPadding - aBorderWidth;
+	aGdiRealRelativeWidth = aGdiRealRealWidth + aPadding * 2 ;
+	aGdiRealRelativeHeight = aGdiRealRealHeight + aPadding * 2 ;
 
-    hdc = GetDC(aParentHandle);
-    memDC = CreateCompatibleDC(hdc);
+	hdc = GetDC(aParentHandle);
+	memDC = CreateCompatibleDC(hdc);
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, (long)aGdiRealRelativeWidth, (long) aGdiRealRelativeHeight);
+	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, (long)aGdiRealRelativeWidth, (long)aGdiRealRelativeHeight);
 
-    SelectObject(memDC, memBitmap);
+	SelectObject(memDC, memBitmap);
 
-    aGraphics =  new Graphics(memDC);
+	aGraphics = new Graphics(memDC);
 
-    return hr;
-
+	return hr;
 }
 
 void A2DWindow::setVisible(bool xVisible)
@@ -333,6 +336,7 @@ void A2DWindow::setVisible(bool xVisible)
 
         ShowWindow(aChildHandle, SW_SHOWNORMAL);
         ShowWindow(aParentHandle, SW_SHOWNORMAL);
+
         RunMessageLoop();
     }
     else
@@ -344,11 +348,14 @@ void A2DWindow::setVisible(bool xVisible)
 
 void A2DWindow::RenderComponentBorder()
 {
+	if (aBorderWidth > 0)
+	{
 	Pen borderPen(aBorderColor, aBorderWidth);
     
 	aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
     
-    DeleteObject(&borderPen);
+	DeleteObject(&borderPen);
+	}
 }
 
 void A2DWindow::RenderComponent()
@@ -412,6 +419,47 @@ void A2DWindow::RenderComponentClear()
     aGraphics->Clear(Color::AlphaMask);
 }
 
+void A2DWindow::moveTo(int xPosX, int xPosY)
+{
+	HDWP hdwp = BeginDeferWindowPos(2);
+
+	if (hdwp)
+	{
+		int offset = aPadding + aBorderWidth;
+
+		hdwp = DeferWindowPos(hdwp, aParentHandle, NULL, xPosX, xPosX, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+		hdwp = DeferWindowPos(hdwp, aChildHandle, aParentHandle, xPosX + offset, xPosY + offset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+
+	if (hdwp)
+	{
+		EndDeferWindowPos(hdwp);
+	}
+}
+
+void A2DWindow::forceAlignment()
+{
+	int offset = aPadding + aBorderWidth;
+	RECT rect;
+
+	GetWindowRect(aChildHandle, &rect);
+
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
+
+	if (width > aMinWidth && height >aMinHeight)
+	{
+		aRect.aX = rect.left;
+		aRect.aY = rect.top;
+		aRect.aWidth = width;
+		aRect.aHeight = height;
+
+		CreateResources();
+		Update();
+		DestroyResources();
+	}
+}
+
 LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
     A2DWindow * aWindow;
@@ -422,14 +470,91 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
         aWindow = reinterpret_cast<A2DWindow*>(pCreate->lpCreateParams);
         SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
         
-        return S_OK;
+		return S_OK;
     }
     else
     {
-        aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-        
-        switch (xMessage)
-        {
+		switch (xMessage)
+		{
+		case WM_SHOWWINDOW:
+		{
+							  aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+
+							  return S_OK;
+		}
+		case WM_GETMINMAXINFO:
+		{
+								 ((MINMAXINFO *)xLParam)->ptMinTrackSize.x = 300;
+								 ((MINMAXINFO *)xLParam)->ptMinTrackSize.y = 300;
+
+			return 0;
+		}
+			case WM_SIZE:
+			{
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+						
+				if (aWindow->aChildHandle == xHwnd)
+				{
+					aWindow->forceAlignment();
+				}
+
+				return S_OK;
+			}
+			case WM_NCHITTEST:
+			{
+				const LONG border_width = 8; //in pixels
+				RECT winrect;
+				GetWindowRect(xHwnd, &winrect);
+				long x = GET_X_LPARAM(xLParam);
+				long y = GET_Y_LPARAM(xLParam);
+
+				//bottom left corner
+				if (x >= winrect.left && x < winrect.left + border_width &&
+					y < winrect.bottom && y >= winrect.bottom - border_width)
+				{
+					return HTBOTTOMLEFT;
+				}
+				//bottom right corner
+				if (x < winrect.right && x >= winrect.right - border_width &&
+					y < winrect.bottom && y >= winrect.bottom - border_width)
+				{
+					return HTBOTTOMRIGHT;
+				}
+				//top left corner
+				if (x >= winrect.left && x < winrect.left + border_width &&
+					y >= winrect.top && y < winrect.top + border_width)
+				{
+					return HTTOPLEFT;
+				}
+				//top right corner
+				if (x < winrect.right && x >= winrect.right - border_width &&
+					y >= winrect.top && y < winrect.top + border_width)
+				{
+					return HTTOPRIGHT;
+				}
+				//left border
+				if (x >= winrect.left && x < winrect.left + border_width)
+				{
+					return HTLEFT;
+				}
+				//right border
+				if (x < winrect.right && x >= winrect.right - border_width)
+				{
+					return HTRIGHT;
+				}
+				//bottom border
+				if (y < winrect.bottom && y >= winrect.bottom - border_width)
+				{
+					return HTBOTTOM;
+				}
+				//top border
+				if (y >= winrect.top && y < winrect.top + border_width)
+				{
+					return HTTOP;
+				}
+
+				return S_OK;
+			}
             case WM_CLOSE:
             {       
                 DestroyWindow(xHwnd);
@@ -490,7 +615,7 @@ HRESULT A2DWindow::Initialize()
 
 	setLocationRelativeTo(NULL);
 	setBorderColor(Color(202, 225, 255));
-	setBorderWidth(5);
+	setBorderWidth(0); //Force the border in DX window
 
     hr = RegisterClass();
 
@@ -509,6 +634,8 @@ HRESULT A2DWindow::Initialize()
     if (FAILED(hr)) return hr;
 
     Update();
+
+	DestroyResources();
 
     return hr;
 }

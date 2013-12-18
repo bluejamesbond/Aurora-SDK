@@ -37,6 +37,7 @@
 #include <fstream>
 #include <GdiPlus.h>
 #include <GdiPlusGraphics.h>
+#include <windowsx.h>
 
 #elif __UNIX
 

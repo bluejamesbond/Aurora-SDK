@@ -148,7 +148,7 @@ public:
     void                            RenderComponentClear();
     void                            RenderComponentBorder();
     HRESULT                         CreateResources();
-    HRESULT                         CreateComponentResources();
+	void	                        DestroyResources();
     
     // Implementation
     // { A2DABSTRACT }
@@ -184,6 +184,9 @@ public:
     SIZE                            aHDCSize;
     Graphics                  *     aGraphics;
 
+	int								aMinHeight = 300;
+	int								aMinWidth = 300;
+
     // Builders
     // { NONE }
 
@@ -215,6 +218,9 @@ private:
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
     static inline A2DWindow*        GetAppState(HWND xHwnd);
 
+	public:
+	void							moveTo(int xPosX, int xPosY);
+	void							forceAlignment();
     HRESULT                         RegisterClass();
 	HRESULT                         CreateHandle(HWND& xHandle);
 
