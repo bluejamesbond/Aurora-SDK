@@ -70,13 +70,13 @@ using namespace Gdiplus;  // WINDOWS specific
 class A2DWindow : public A2DAbstract
 {
 
-	/*********************************************************************/
-	/*                      CROSS-PLATFORM START                         */
-	/*********************************************************************/
+    /*********************************************************************/
+    /*                      CROSS-PLATFORM START                         */
+    /*********************************************************************/
 public:
 
     // Constructor
-	A2DWindow(HINSTANCE * xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
+    A2DWindow(HINSTANCE * xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
 
     // Deconstructor
     ~A2DWindow();
@@ -84,111 +84,121 @@ public:
 private:
 
     // Variables - NOTE: No need to use the acronym aOpt since variables are PRIVATE!
-	int								aDefaultCloseOperation;
+    int                             aDefaultCloseOperation;
 
-	bool							aVisible;
-	bool							aShadowed;
-	bool							aUndecorated;
+    bool                            aVisible;
+    bool                            aShadowed;
+    bool                            aUndecorated;
 
-	float							aPadding;
-	float							aShadowPadding;
+    float                           aPadding;
+    float                           aShadowPadding;
 
-	HWND                            aParentHandle;
-	HWND                            aChildHandle;
+    HWND                            aParentHandle;
+    HWND                            aChildHandle;
 
-	LPCWSTR                         aName;
+    LPCWSTR                         aName;
 
-	HINSTANCE				  *		aHInstance;
+    HINSTANCE                 *     aHInstance;
 
-	Color							aBorderColor;
+    Color                           aBorderColor;
 
-	A2DFrame                  *     aFrame;
+    A2DFrame                  *     aFrame;
 
-	A2DWindow				  *		aRelativeWindow;
+    A2DWindow                 *     aRelativeWindow;
 
-	A2DRect					        aRealRect;
-	A2DRect					        aRelativeRect;
-	A2DDims					        aRealDims;
-	A2DDims					        aRelativeDims;
+    A2DRect                         aRect;
 
 public:
 
-	// Accessors and mutators
-	// These don't need mutators because we are giving direct access to the structs
-	A2DRect                   *     getRealBounds();
-	A2DRect                   *     getRelativeBounds();
-	A2DDims					  *     getRealSize();
-	A2DDims					  *     getRelativeSize();
-		
-	// Accessing internal variables. Do not provide mutators for these.
-	HWND					  *		getChildHandle();
-	HWND					  *		getParentHandle();
+    // Accessors and mutators
+    // These don't need mutators because we are giving direct access to the structs
+    A2DRect                   *     getBounds();
+        
+    // Accessing internal variables. Do not provide mutators for these.
+    HWND                      *     getChildHandle();
+    HWND                      *     getParentHandle();
 
-	LPCWSTR					  *		getName(); // Fix this, should we use pointer or not?
-	void					  		setName(LPCWSTR * xName); // Fix this, should we use pointer or not?
-	
-	A2DFrame				  *     getFrame(); // GET
-	void						    setFrame(A2DFrame * xFrame); // SET
+    LPCWSTR                   *     getName(); // Fix this, should we use pointer or not?
+    void                            setName(LPCWSTR * xName); // Fix this, should we use pointer or not?
+    
+    A2DFrame                  *     getFrame(); // GET
+    void                            setFrame(A2DFrame * xFrame); // SET
 
-	bool						    isUndecorated(); // Get
-	void                            setUndecorated(bool xUndecoratedFlag); // SET
+    bool                            isUndecorated(); // Get
+    void                            setUndecorated(bool xUndecoratedFlag); // SET
 
-	int								getDefaultCloseOperation();
-	void							setDefaultCloseOperation(int xCloseOperation);
+    int                             getDefaultCloseOperation();
+    void                            setDefaultCloseOperation(int xCloseOperation);
 
-	A2DWindow				  *		getLocationRelativeTo();
-	void							setLocationRelativeTo(A2DWindow * xWindow);
-	
-	boolean							isVisible();
-	void                            setVisible(bool xVisibile);
+    A2DWindow                 *     getLocationRelativeTo();
+    void                            setLocationRelativeTo(A2DWindow * xWindow);
+    
+    bool                            isVisible();
+    void                            setVisible(bool xVisibile);
 
-	boolean							isShadowed();
-	void                            setShadowed(bool xShadowFlag);
+    bool                            isShadowed();
+    void                            setShadowed(bool xShadowFlag);
 
-	Color		                    getBorderColor();
-	void                            setBorderColor(Color xColor);
+    Color                           getBorderColor();
+    void                            setBorderColor(Color xBorderColor);
 
-	float							getPadding();
-	void							setPadding(float xPadding);
-	
-	float							getShadowPadding();
-	void							setShadowPadding(float xShadowPadding);
-	
-	// Additional
-	void							Update();
-	void                            Render();
-	void                            RenderComponent();
-	void                            RenderComponentClear();
-	void                            RenderComponentShadow();
-	void                            RenderComponentBorder();
-	
-	// Implementation
-	// { A2DABSTRACT }
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+    float                           getPadding();
+    void                            setPadding(float xPadding);
+    
+    float                           getShadowPadding();
+    void                            setShadowPadding(float xShadowPadding);
+    
+    // Additional
+    void                            Update();
+    void                            Render();
+    void                            RenderComponent();
+    void                            RenderComponentClear();
+    void                            RenderComponentBorder();
+    HRESULT                         CreateResources();
+    HRESULT                         CreateComponentResources();
+    
+    // Implementation
+    // { A2DABSTRACT }
+    virtual HRESULT                 Initialize();
+    virtual void                    Deinitialize();
+    virtual LPCWSTR                 GetClass();
+    virtual LPCWSTR                 ToString();
+    virtual bool                    operator==(A2DAbstract * xAbstract);
 
-	/*********************************************************************/
-	/*                      CROSS-PLATFORM END                           */
-	/*********************************************************************/
+    /*********************************************************************/
+    /*                      CROSS-PLATFORM END                           */
+    /*********************************************************************/
 
-	/*********************************************************************/
-	/*                      WINDOWS-SPECIFIC START                       */
-	/*********************************************************************/
+    /*********************************************************************/
+    /*                      WINDOWS-SPECIFIC START                       */
+    /*********************************************************************/
 
-	// Variables - WINDOW ONLY - INTERNAL USE ONLY
-	int                             style;
-	SIZE                            aSize;
-	Graphics                  *     aGraphics;
+    // Variables - WINDOW ONLY - INTERNAL USE ONLY
 
-	// Builders
-	// { NONE }
+    REAL                            aCachedZero = 0;
+    REAL                            aCachedPadding = 0;
+    REAL                            aCachedShadowPadding = 0;
 
-	// Factory
-	// { NONE }
-	
+    REAL                            aCachedRealX = 0;
+    REAL                            aCachedRealY = 0;
+    REAL                            aCachedRealWidth = 0;
+    REAL                            aCachedRealHeight = 0;
+
+    REAL                            aCachedRelativeX = 0;
+    REAL                            aCachedRelativeY = 0;
+    REAL                            aCachedRelativeWidth = 0;
+    REAL                            aCachedRelativeHeight = 0;
+
+    int                             aStyle;
+    SIZE                            aHDCSize;
+    Graphics                  *     aGraphics;
+
+    // Builders
+    // { NONE }
+
+    // Factory
+    // { NONE }
+    
     // Accessors
     // { NONE }
 
@@ -199,28 +209,27 @@ public:
     // { NONE }
 
     // Additional
-    // { NONE }
+    void                                                        preCache();
 
     // Pure Virtual
     // { NONE }
 
     // Virtual
-    // { NONE }	    
+    // { NONE }     
 
 private:
     
-	// Functions
+    // Functions
     void                            RunMessageLoop();
-    ATOM                            RegisterClass(HWND xHwnd);
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
     static inline A2DWindow*        GetAppState(HWND xHwnd);
 
-    HRESULT                         CreateHandle(HWND& xHandler);
-	HRESULT                         CreateComponentResources();
+    HRESULT                         RegisterClass();
+    HRESULT                         CreateHandle(HWND * xHandle);
 
-	/*********************************************************************/
-	/*                      WINDOWS-SPECIFIC END                         */
-	/*********************************************************************/
+    /*********************************************************************/
+    /*                      WINDOWS-SPECIFIC END                         */
+    /*********************************************************************/
 };
 
 #endif
