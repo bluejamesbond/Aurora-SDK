@@ -168,6 +168,23 @@ public:
 
     // Variables - WINDOW ONLY - INTERNAL USE ONLY
 
+	Image * topShadow;
+	Image * leftShadow;
+	Image * rightShadow;
+	Image * bottomShadow;
+	Image * topLeftShadow;
+	Image * bottomLeftShadow;
+	Image * topRightShadow;
+	Image * bottomRightShadow;
+	Image * background;
+
+
+	TextureBrush * topShadowBrush;
+	TextureBrush * leftShadowBrush;
+	TextureBrush * rightShadowBrush;
+	TextureBrush * bottomShadowBrush;
+	TextureBrush * backgroundBrush;
+
 	REAL                            aGdiRealZero = 0;
 
     REAL                            aGdiRealRealX = 0;

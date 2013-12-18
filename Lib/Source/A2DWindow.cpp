@@ -361,57 +361,30 @@ void A2DWindow::RenderComponentBorder()
 void A2DWindow::RenderComponent()
 {
     RenderComponentClear();
+	
+	topShadowBrush->ResetTransform();
+	leftShadowBrush->ResetTransform();
+	rightShadowBrush->ResetTransform();
+	bottomShadowBrush->ResetTransform();
 
-    Image topShadow(IDB_BSW_TOP_SHADOW_PNG);
-    Image leftShadow(IDB_BSW_LEFT_SHADOW_PNG);
-    Image rightShadow(IDB_BSW_RIGHT_SHADOW_PNG);
-    Image bottomShadow(IDB_BSW_BOTTOM_SHADOW_PNG);
-    Image topLeftShadow(IDB_BSW_TOP_LEFT_SHADOW_PNG);
-    Image bottomLeftShadow(IDB_BSW_BOTTOM_LEFT_SHADOW_PNG);
-    Image topRightShadow(IDB_BSW_TOP_RIGHT_SHADOW_PNG);
-    Image bottomRightShadow(IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG);
-    Image background(IDB_BSW_BACKGROUND_PNG);
+    topShadowBrush->TranslateTransform(aShadowPadding, aGdiRealZero);
+    aGraphics->FillRectangle(topShadowBrush, aShadowPadding, aGdiRealZero, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
-    TextureBrush topShadowBrush(&topShadow);
-    TextureBrush leftShadowBrush(&leftShadow);
-    TextureBrush rightShadowBrush(&rightShadow);
-    TextureBrush bottomShadowBrush(&bottomShadow);
-    TextureBrush backgroundBrush(&background);
+	leftShadowBrush->TranslateTransform(aShadowPadding, aPadding);
+    aGraphics->FillRectangle(leftShadowBrush, aGdiRealZero, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
 
-    topShadowBrush.TranslateTransform(aShadowPadding, aGdiRealZero);
-    aGraphics->FillRectangle(&topShadowBrush, aShadowPadding, aGdiRealZero, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
+	rightShadowBrush->TranslateTransform(aGdiRealRelativeWidth - aPadding, aShadowPadding);
+    aGraphics->FillRectangle(rightShadowBrush, aGdiRealRelativeWidth - aPadding, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
 
-    leftShadowBrush.TranslateTransform(aShadowPadding, aPadding);
-    aGraphics->FillRectangle(&leftShadowBrush, aGdiRealZero, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
+	bottomShadowBrush->TranslateTransform(aShadowPadding, aGdiRealRelativeHeight - aPadding);
+    aGraphics->FillRectangle(bottomShadowBrush, aShadowPadding, aGdiRealRealHeight + aPadding, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
-    rightShadowBrush.TranslateTransform(aGdiRealRelativeWidth - aPadding, aShadowPadding);
-    aGraphics->FillRectangle(&rightShadowBrush, aGdiRealRelativeWidth - aPadding, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
+    aGraphics->DrawImage(topLeftShadow, aGdiRealZero, aGdiRealZero, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(bottomLeftShadow, aGdiRealZero, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(topRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealZero, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(bottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
 
-    bottomShadowBrush.TranslateTransform(aShadowPadding, aGdiRealRelativeHeight - aPadding);
-    aGraphics->FillRectangle(&bottomShadowBrush, aShadowPadding, aGdiRealRealHeight + aPadding, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
-
-    aGraphics->DrawImage(&topLeftShadow, aGdiRealZero, aGdiRealZero, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(&bottomLeftShadow, aGdiRealZero, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(&topRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealZero, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(&bottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-
-    aGraphics->FillRectangle(&backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
-
-    DeleteObject(&topShadowBrush);
-    DeleteObject(&leftShadowBrush);
-    DeleteObject(&backgroundBrush);
-    DeleteObject(&rightShadowBrush);
-    DeleteObject(&bottomShadowBrush);
-
-    DeleteObject(&topShadow);
-    DeleteObject(&leftShadow);
-    DeleteObject(&rightShadow);
-    DeleteObject(&bottomShadow);
-    DeleteObject(&topLeftShadow);
-    DeleteObject(&topRightShadow);
-    DeleteObject(&bottomRightShadow);
-    DeleteObject(&bottomLeftShadow);
-    DeleteObject(&background);
+    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
 }
 
 void A2DWindow::RenderComponentClear()
@@ -690,6 +663,23 @@ HRESULT A2DWindow::Initialize()
 	setLocationRelativeTo(NULL);
 	setBorderColor(Color(202, 225, 255));
 	setBorderWidth(2); //Force the border in DX window
+
+	topShadow = new Image(IDB_BSW_TOP_SHADOW_PNG);
+	leftShadow = new Image(IDB_BSW_LEFT_SHADOW_PNG);
+	rightShadow = new Image(IDB_BSW_RIGHT_SHADOW_PNG);
+	bottomShadow = new Image(IDB_BSW_BOTTOM_SHADOW_PNG);
+	topLeftShadow = new Image(IDB_BSW_TOP_LEFT_SHADOW_PNG);
+	bottomLeftShadow = new Image (IDB_BSW_BOTTOM_LEFT_SHADOW_PNG);
+	topRightShadow = new Image(IDB_BSW_TOP_RIGHT_SHADOW_PNG);
+	bottomRightShadow = new Image(IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG);
+	background = new Image(IDB_BSW_BACKGROUND_PNG);
+
+
+	topShadowBrush = new TextureBrush(topShadow);
+	leftShadowBrush = new TextureBrush(leftShadow);
+	rightShadowBrush = new TextureBrush(rightShadow);
+	bottomShadowBrush = new TextureBrush(bottomShadow);
+	backgroundBrush = new TextureBrush(background);
 
     hr = RegisterClass();
 
