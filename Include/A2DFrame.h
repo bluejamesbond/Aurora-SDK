@@ -20,21 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DGraphics.h"
 #include "A2DAbstract.h"
-#include "A2DRenderable.h"
-#include "A2DWindowProperties.h"
-#include "A2DAbstractComponent.h"
-#include "A2DAbstractPipelineComponent.h"
-#include "A2DAbstractTexture.h"
-#include "A2DComponent.h"
-#include "A2DPanel.h"
-#include "A2DCamera.h"
-#include "A2DCameraProperties.h"
-#include "A2DRenderData.h"
-#include "A2DBackBuffer.h"
-#include "A2DMatrixFactory.h"
-#include "A2DRootPane.h"
 #include "A2DWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,17 +28,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 class	A2DAbstract;
-class	A2DRenderable;
-class	A2DAbstractComponent;
-class	A2DCamera;
-struct	A2DCameraProperties;
-struct	A2DRenderData;
-class	A2DMatrixFactory;
-class	A2DBackBuffer;
-struct	A2DBufferData;
-class	A2DMatrixFactory;
-class	A2DRootPane;
-struct	A2DWindowProperties;
 class	A2DWindow;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,14 +53,7 @@ private:
 
     // Variables
 	HINSTANCE				  *		aHInstance;
-    A2DRootPane               *     aRootPane;
-	A2DBackBuffer             *     aBackBuffer;
-	A2DTextureBuffer          *     aTextureBuffer;
-	A2DTextureBuffer          *     aBlurBuffer;
 	A2DWindow                 *     aWindow;
-    A2DCamera                 *     aCamera;
-    A2DRenderData             *     aRenderData;
-	A2DWindowProperties       *     aWindowProps;
 
     // Accessors
     // { NONE }
@@ -94,7 +62,7 @@ public:
 
     // Mutators
 	void							SetVisible(bool xVisibility);
-	void							SetName(LPCWSTR * xName);									// Set window name
+	/*	void							SetName(LPCWSTR * xName);									// Set window name
 	void							SetBounds(A2DRect * xRect);									// Edits A2DPreferences#WindowProperties via float
 	void							SetBounds(int xLeft, int xTop, int xWidth, int xHeight);    // Edits A2DPreferences#WindowProperties via Rect
 	void							SetSize(int xWidth, int xHeight);							// Edits A2DPreferences#WindowProperties float
@@ -103,7 +71,7 @@ public:
 	void							SetLocationRelativeTo(A2DFrame * xFrame);					// NULL means just center it. Dont worry about other cases.
 	void							SetVsync(bool xVsync);										// A2DPreferences#WindowProperties + Set default values for these (A2DCommons.h), but can be edited by user during runtime.
 	void							SetDefaultCloseOperation(int xOperation);					// Close the whole application on disposing of frame (Look at Java#JFrame)
-
+*/
 public:
 
     // Builders
@@ -119,9 +87,7 @@ public:
 public:
 
     // Accessors
-    A2DRootPane               *     GetRootPane();
-    A2DCamera                 *     GetCamera();
-    A2DRenderData             *     GetRenderData();
+    // { NONE }
 
 public:
 
