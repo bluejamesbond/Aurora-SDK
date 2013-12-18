@@ -489,7 +489,7 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 
 			return 0;
 		}
-			case WM_SIZE:
+		/*	case WM_SIZE:
 			{
 				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 						
@@ -499,7 +499,81 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 				}
 
 				return S_OK;
+			}*/
+			case WM_LBUTTONDOWN:
+			{
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				if (aWindow->aChildHandle != xHwnd) return 0;
+
+				SetCapture(xHwnd);
+				aWindow->isDragged = true;
+
+				return S_OK;
 			}
+			case WM_MOUSEMOVE:
+			{
+								 aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				if (!aWindow->isDragged)
+				{
+					POINT p;
+					GetCursorPos(&p);
+					ScreenToClient(xHwnd, &p);
+					aWindow->lastDraggedPoint = p;
+				}
+
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				if (aWindow->aChildHandle != xHwnd) return 0;
+
+				if (aWindow->isDragged)
+				{
+					POINT p;
+					GetCursorPos(&p);
+					ScreenToClient(xHwnd, &p);
+					
+					HDWP hdwp = BeginDeferWindowPos(2);
+
+					int deltaY = aWindow->lastDraggedPoint.y - p.y;
+					int deltaX = aWindow->lastDraggedPoint.x - p.x;
+
+					if (hdwp)
+					{
+						int offset = aWindow->getPadding() + aWindow->getBorderWidth();
+
+						A2DRect& aRect = aWindow->aRect;
+
+						hdwp = DeferWindowPos(hdwp, aWindow->aParentHandle, NULL, p.x, p.y, aRect.aWidth + deltaX, aRect.aHeight + deltaY, SWP_NOZORDER | SWP_NOACTIVATE);
+						
+						aRect.aX = p.x;
+						aRect.aY = p.y;
+						aRect.aWidth += deltaX;
+						aRect.aHeight += deltaY;
+
+						aWindow->CreateResources();
+						aWindow->Update();
+						aWindow->DestroyResources();
+					}
+
+					if (hdwp)
+					{
+						EndDeferWindowPos(hdwp);
+					}
+
+					aWindow->lastDraggedPoint = p;
+				}
+
+				return S_OK;
+			}
+			case WM_LBUTTONUP:
+			{
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				if (aWindow->aChildHandle != xHwnd) return 0;
+
+				ReleaseCapture();
+				aWindow->isDragged = false;
+
+				return S_OK;
+			}
+			/*
 			case WM_NCHITTEST:
 			{
 				const LONG border_width = 8; //in pixels
@@ -554,7 +628,7 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 				}
 
 				return S_OK;
-			}
+			}*/
             case WM_CLOSE:
             {       
                 DestroyWindow(xHwnd);

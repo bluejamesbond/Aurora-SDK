@@ -184,6 +184,8 @@ public:
     SIZE                            aHDCSize;
     Graphics                  *     aGraphics;
 
+	POINT							lastDraggedPoint;
+	bool							isDragged = false;
 	int								aMinHeight = 300;
 	int								aMinWidth = 300;
 
