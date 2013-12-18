@@ -481,14 +481,14 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 							  aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 
 							  return S_OK;
-		}
+		}/*
 		case WM_GETMINMAXINFO:
 		{
 								 ((MINMAXINFO *)xLParam)->ptMinTrackSize.x = 300;
 								 ((MINMAXINFO *)xLParam)->ptMinTrackSize.y = 300;
 
 			return 0;
-		}
+		}*/
 		/*	case WM_SIZE:
 			{
 				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
@@ -513,12 +513,12 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 			case WM_MOUSEMOVE:
 			{
 								 aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+								 if (aWindow->aChildHandle != xHwnd) return 0;
+
 				if (!aWindow->isDragged)
 				{
-					POINT p;
-					GetCursorPos(&p);
-					ScreenToClient(xHwnd, &p);
-					aWindow->lastDraggedPoint = p;
+					GetCursorPos(&aWindow->lastDraggedPoint);
+					ScreenToClient(xHwnd, &aWindow->lastDraggedPoint);
 				}
 
 				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
@@ -541,13 +541,13 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 
 						A2DRect& aRect = aWindow->aRect;
 
-						hdwp = DeferWindowPos(hdwp, aWindow->aParentHandle, NULL, p.x, p.y, aRect.aWidth + deltaX, aRect.aHeight + deltaY, SWP_NOZORDER | SWP_NOACTIVATE);
-						
-						aRect.aX = p.x;
-						aRect.aY = p.y;
+						aRect.aX = 500;
+						aRect.aY = 500;
 						aRect.aWidth += deltaX;
 						aRect.aHeight += deltaY;
 
+						hdwp = DeferWindowPos(hdwp, aWindow->aChildHandle, aWindow->aParentHandle, aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+						
 						aWindow->CreateResources();
 						aWindow->Update();
 						aWindow->DestroyResources();
@@ -689,7 +689,7 @@ HRESULT A2DWindow::Initialize()
 
 	setLocationRelativeTo(NULL);
 	setBorderColor(Color(202, 225, 255));
-	setBorderWidth(0); //Force the border in DX window
+	setBorderWidth(2); //Force the border in DX window
 
     hr = RegisterClass();
 
