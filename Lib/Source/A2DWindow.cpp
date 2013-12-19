@@ -61,10 +61,19 @@ Color A2DWindow::getBoxShadowColor()
 	return aBoxShadowColor;
 }
 
-void A2DWindow::updateBoxShadowCache()
+void A2DWindow::forceUpdateBackground()
 {
 	destroyBoxShadowResources();
 	createBoxShadowResources();
+	
+	HBRUSH brush = CreateSolidBrush(RGB(aBackgroundColor.GetRed(), aBackgroundColor.GetGreen(), aBackgroundColor.GetBlue()));
+	SetClassLongPtr(aParentHandle, GCLP_HBRBACKGROUND, (LONG)brush);
+}
+
+void A2DWindow::forceUpdateBoxShadow()
+{
+	DestroyBackgroundResources();
+	CreateBackgroundResources();
 }
 
 HWND* A2DWindow::getChildHandle()
@@ -108,6 +117,16 @@ Color A2DWindow::getBorderColor()
 void A2DWindow::setBorderColor(Color xBorderColor)
 {
     aBorderColor = xBorderColor;
+}
+
+Color A2DWindow::getBackgroundColor()
+{
+	return aBackgroundColor;
+}
+
+void A2DWindow::setBackgroundColor(Color xBackgroundColor)
+{
+	aBackgroundColor = xBackgroundColor;
 }
 
 bool A2DWindow::isVisible()
@@ -222,11 +241,11 @@ HRESULT A2DWindow::RegisterClass()
     wcex.hInstance = *aHInstance;
     wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.hbrBackground = CreateSolidBrush(RGB(aBackgroundColor.GetRed(), aBackgroundColor.GetGreen(), aBackgroundColor.GetBlue()));;
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = aName;
     wcex.hIconSm = LoadIcon(*aHInstance, IDI_APPLICATION);
-
+	
     return RegisterClassEx(&wcex);
 }
 
@@ -582,6 +601,7 @@ void A2DWindow::spliceToNinePatch(Image * src, Image * dest, float srcX, float s
 
 	graphics.DrawImage(src, FLOAT_ZERO, FLOAT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel);
 	graphics.DrawImage(src, FLOAT_ZERO, FLOAT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel); // Render twice to increase opacity
+	graphics.DrawImage(src, FLOAT_ZERO, FLOAT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel); // Render twice to increase opacity
 }
 
 HRESULT A2DWindow::createBoxShadowResources()
@@ -646,14 +666,42 @@ HRESULT A2DWindow::createBoxShadowResources()
 	return hr;
 }
 
-HRESULT A2DWindow::CreateResources()
+HRESULT A2DWindow::CreateBackgroundResources()
 {
 	HRESULT hr = S_OK;
 
-	aBackground = new Image(IDB_BSW_BACKGROUND_PNG);
+	aBackground = new Bitmap(1, 1);
+
+	Graphics  graphics(aBackground);
+	SolidBrush blackBrush(aBackgroundColor);
+
+	graphics.FillRectangle(&blackBrush, 0, 0, 1, 1);
 
 	aBackgroundBrush = new TextureBrush(aBackground);
 
+	return hr;
+}
+
+void A2DWindow::DestroyBackgroundResources()
+{
+	if (aBackground)
+	{
+		delete aBackground;
+		aBackground = 0;
+	}
+
+	if (aBackgroundBrush)
+	{
+		delete aBackgroundBrush;
+		aBackgroundBrush = 0;
+	}
+}
+
+HRESULT A2DWindow::CreateResources()
+{
+	HRESULT hr = S_OK;
+	
+	hr = CreateBackgroundResources();
 	if (FAILED(hr))	return hr;
 
 	hr = createBoxShadowResources();
@@ -676,7 +724,7 @@ void A2DWindow::DestroyResources()
 	}
 
 	destroyBoxShadowResources();
-
+	DestroyBackgroundResources();
 }
 
 void A2DWindow::setVisible(bool xVisible)
@@ -957,8 +1005,9 @@ HRESULT A2DWindow::Initialize()
 	setLocationRelativeTo(NULL);
 	setBorderColor(Color(202, 225, 255));
 	setBoxShadowColor(Color(255, 0, 0));
+	setBackgroundColor(Color(0, 0, 255));
 	setBorderWidth(1); //Force the border in DX window
-	setBoxShadowRadius(50);
+	setBoxShadowRadius(80);
 
     hr = RegisterClass();
 

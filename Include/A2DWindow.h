@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DCommons.h"
+#include "A2DCommon.h"
 #include "A2DFrame.h"
 #include "A2DAbstract.h"
 #include "A2DRect.h"
@@ -31,7 +31,6 @@
 
 class A2DFrame;
 class A2DAbstract;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -48,6 +47,23 @@ using namespace Gdiplus;  // WINDOWS specific
 
 class A2DWindow : public A2DAbstract
 {
+
+	/*********************************************************************/
+	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
+	/*********************************************************************/
+	/*********************************************************************/
+	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
+	/*********************************************************************/
+	/*********************************************************************/
+	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
+	/*********************************************************************/
+	/*********************************************************************/
+	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
+	/*********************************************************************/
+	/*********************************************************************/
+	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
+	/*********************************************************************/
+
 
     /*********************************************************************/
     /*                      CROSS-PLATFORM START                         */
@@ -81,7 +97,8 @@ private:
 
     HINSTANCE                 *     aHInstance;
 
-    Color                           aBorderColor;
+	Color                           aBorderColor;
+	Color                           aBackgroundColor;
 	Color							aBoxShadowColor;
 
     A2DFrame                  *     aFrame;
@@ -136,10 +153,14 @@ public:
 	Color                           getBoxShadowColor();
 	void                            setBoxShadowColor(Color xBoxShadowColor);
 
+	Color                           getBackgroundColor();
+	void                            setBackgroundColor(Color xBoxShadowColor);
+
     // Additional
     void                            Update();
 	void                            Render();
-	void							updateBoxShadowCache();
+	void							forceUpdateBoxShadow();
+	void							forceUpdateBackground();
     void                            RenderComponent();
     void                            RenderComponentBorder();
     HRESULT                         CreateResources();
@@ -233,13 +254,15 @@ private:
     HRESULT                         RegisterClass();
     HRESULT                         CreateHandle(HWND& xHandle);
 
-    // Box Shadow
+	// Background
+	HRESULT							CreateBackgroundResources();
+	void							DestroyBackgroundResources();
 
-	// Set 1
+    // Box Shadow - Set 1
 	HRESULT                         createBoxShadowResources();
     void                            destroyBoxShadowResources();
 
-	// Set 2
+	//  Box Shadow - Set 2
 	void                            spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight);
 	float                     *		getGaussianKernel(int xRadius);
 	void							applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius);
