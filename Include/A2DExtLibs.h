@@ -28,11 +28,14 @@
 #include "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\D3DX10math.h"
 #include "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\D3DX9tex.h"
 
+#define _USE_MATH_DEFINES
+
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
 #include <wchar.h>
+#include <math.h>
 #include <iostream> 
 #include <fstream>
 #include <GdiPlus.h>

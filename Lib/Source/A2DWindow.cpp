@@ -102,7 +102,7 @@ bool A2DWindow::isVisible()
 void A2DWindow::setName(LPCWSTR * xName)
 {
     aName = *xName;
-    SetWindowText(aChildHandle, *xName);
+    // SetWindowText(aChildHandle, *xName);
     SetWindowText(aParentHandle, *xName);
 }
 
@@ -292,7 +292,7 @@ void A2DWindow::Update()
 	SelectObject(memDC, memBitmap);
 
 	aGraphics = new Graphics(memDC);
-
+		
 	/***********************************************/
 
     Render();
@@ -314,7 +314,7 @@ void A2DWindow::Update()
 	UpdateLayeredWindow(aParentHandle, screenDC, &ptDst, &size, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
 	
 	/***********************************************/
-
+	
 	aGraphics->ReleaseHDC(memDC);
 	delete aGraphics;
 	aGraphics = 0;
@@ -331,10 +331,173 @@ void A2DWindow::DestroyResources()
 
 }
 
+float* A2DWindow::createGaussianKernel(int xRadius) 
+{
+	if (xRadius < 1)
+	{
+		return NULL;
+	}
+
+	int dataLength = xRadius * 2 + 1;
+
+	float * data = new float[dataLength];
+
+	float sigma = xRadius / 3.0f;
+	float twoSigmaSquare = 2.0f * sigma * sigma;
+	float sigmaRoot = (float) sqrt(twoSigmaSquare * M_PI);
+	float total = 0.0f;
+
+	for (int i = -xRadius; i <= xRadius; i++) 
+	{
+		float distance = i * i;
+		int index = i + xRadius;
+		data[index] = (float) exp(-distance / twoSigmaSquare) / sigmaRoot;
+		total += data[index];
+	}
+
+	for (int i = 0; i < dataLength; i++) 
+	{
+		data[i] /= total;
+	}
+
+	return data;
+}
+
+BitmapData * A2DWindow::getLockedBitmapData(Bitmap * src)
+{
+	int srcWidth = src->GetWidth();
+	int srcHeight = src->GetHeight();
+		
+	BitmapData * bitmapData = new BitmapData();
+
+	Status ret = src->LockBits(new Rect(0, 0, srcWidth, srcHeight),
+		ImageLockMode::ImageLockModeRead | ImageLockMode::ImageLockModeWrite,
+		src->GetPixelFormat(),
+		bitmapData);
+
+	if (ret != Ok) 
+	{
+		return NULL;
+	}
+	
+	return bitmapData;
+}
+
+Bitmap * A2DWindow::filter(Bitmap * src, int radius)
+{
+	Bitmap * vertBlur = new Bitmap(src->GetWidth(), src->GetHeight());
+	Bitmap * horiBlur = new Bitmap(src->GetWidth(), src->GetHeight());
+
+	BitmapData * srcData = getLockedBitmapData(src);
+	BitmapData * vertBlurDstData = getLockedBitmapData(vertBlur);
+	BitmapData * horiBlurDstData = getLockedBitmapData(horiBlur);
+
+	float * kernel = createGaussianKernel(radius);
+
+	// horizontal pass
+	blur(srcData, horiBlurDstData, src->GetWidth(), src->GetHeight(), kernel, radius);
+	
+	// vertical pass
+	blur(horiBlurDstData, vertBlurDstData, src->GetWidth(), src->GetHeight(), kernel, radius);
+
+	src->UnlockBits(srcData);
+	vertBlur->UnlockBits(vertBlurDstData);
+	horiBlur->UnlockBits(horiBlurDstData);
+	
+	delete srcData;
+	delete vertBlurDstData;
+	delete horiBlurDstData;
+
+	delete horiBlur;
+
+	return vertBlur;
+}
+
+void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width, int height, float * kernel, int radius)
+{
+	float a = 0;
+	float r = 0;
+	float g = 0;
+	float b = 0;
+
+	int ca = 0;
+	int cr = 0;
+	int cg = 0;
+	int cb = 0;
+
+	height = srcPixels->Height;
+	width = srcPixels->Width;
+
+	for (int y = 0; y < srcPixels->Height; y++)
+	{
+		int index = y;
+		int offset = y * width;
+
+		byte* pixelSrcRow = (byte *)srcPixels->Scan0 + (y * srcPixels->Stride);
+		byte* pixelDstRow = (byte *)dstPixels->Scan0 + (y * dstPixels->Stride);
+
+		for (int x = 0; x < srcPixels->Width; x++)
+		{
+			a = r = g = b = 0.0f;
+
+			for (int i = -radius; i <= radius; i++)
+			{
+				int subOffset = x + i;
+
+				if (subOffset < 0 || subOffset >= width) 
+				{
+					subOffset = (x + width) % width;
+				}
+
+				float blurFactor = kernel[radius + i];
+
+				a += blurFactor * pixelSrcRow[x * 4 + 3];
+				r += blurFactor * pixelSrcRow[x * 4 + 2];
+				g += blurFactor * pixelSrcRow[x * 4 + 1];
+				b += blurFactor * pixelSrcRow[x * 4];
+			}
+
+			ca = (int)(a + 0.5f);
+			cr = (int)(r + 0.5f);
+			cg = (int)(g + 0.5f);
+			cb = (int)(b + 0.5f);
+			
+			ca = ca > 255 ? 255 : ca;
+			cr = cr > 255 ? 255 : cr;
+			cg = cg > 255 ? 255 : cg;
+			cb = ca > 255 ? 255 : cb;
+
+			pixelDstRow[x * 4 + 3] = ca;
+			pixelDstRow[x * 4 + 2] = cr;
+			pixelDstRow[x * 4 + 1] = cg;
+			pixelDstRow[x * 4] = cb;
+
+			index += height;
+		}
+	}
+}
+
+void A2DWindow::createShadowResources()
+{
+	float radius = aPadding;
+	float realDim = aPadding * 4;
+	float relativeDim = realDim * 4;
+	
+	Bitmap * solid = new Bitmap(TEST);
+	Bitmap * blurred;
+	/*
+	Graphics * graphics = Graphics::FromImage(solid);
+	SolidBrush blackBrush(Color(255, 0, 0, 0));
+	
+	graphics->FillRectangle(&blackBrush, aPadding, aPadding, realDim, realDim);*/
+
+	cachedBitmap = blurred = filter(solid, radius);
+}
+
 HRESULT A2DWindow::CreateResources()
 {
 	HRESULT hr = S_OK;
-
+	
 	topShadow = new Image(IDB_BSW_TOP_SHADOW_PNG);
 	leftShadow = new Image(IDB_BSW_LEFT_SHADOW_PNG);
 	rightShadow = new Image(IDB_BSW_RIGHT_SHADOW_PNG);
@@ -344,7 +507,6 @@ HRESULT A2DWindow::CreateResources()
 	topRightShadow = new Image(IDB_BSW_TOP_RIGHT_SHADOW_PNG);
 	bottomRightShadow = new Image(IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG);
 	background = new Image(IDB_BSW_BACKGROUND_PNG);
-
 
 	topShadowBrush = new TextureBrush(topShadow);
 	leftShadowBrush = new TextureBrush(leftShadow);
@@ -364,7 +526,7 @@ void A2DWindow::setVisible(bool xVisible)
         // Create resources!
         aFrame->CreateResources();
 
-        ShowWindow(aChildHandle, SW_SHOWNORMAL);
+        // ShowWindow(aChildHandle, SW_SHOWNORMAL);
         ShowWindow(aParentHandle, SW_SHOWNORMAL);
 
         RunMessageLoop();
@@ -394,12 +556,12 @@ void A2DWindow::RenderComponent()
 	leftShadowBrush->ResetTransform();
 	rightShadowBrush->ResetTransform();
 	bottomShadowBrush->ResetTransform();
-
-    topShadowBrush->TranslateTransform(aShadowPadding, aGdiRealZero);
-    aGraphics->FillRectangle(topShadowBrush, aShadowPadding, aGdiRealZero, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
+	/*
+	topShadowBrush->TranslateTransform(aShadowPadding, FLOAT_ZERO);
+	aGraphics->FillRectangle(topShadowBrush, aShadowPadding, FLOAT_ZERO, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
 	leftShadowBrush->TranslateTransform(aShadowPadding, aPadding);
-    aGraphics->FillRectangle(leftShadowBrush, aGdiRealZero, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
+    aGraphics->FillRectangle(leftShadowBrush, FLOAT_ZERO, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
 
 	rightShadowBrush->TranslateTransform(aGdiRealRelativeWidth - aPadding, aShadowPadding);
     aGraphics->FillRectangle(rightShadowBrush, aGdiRealRelativeWidth - aPadding, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
@@ -407,12 +569,14 @@ void A2DWindow::RenderComponent()
 	bottomShadowBrush->TranslateTransform(aShadowPadding, aGdiRealRelativeHeight - aPadding);
     aGraphics->FillRectangle(bottomShadowBrush, aShadowPadding, aGdiRealRealHeight + aPadding, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
-    aGraphics->DrawImage(topLeftShadow, aGdiRealZero, aGdiRealZero, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(bottomLeftShadow, aGdiRealZero, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(topRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealZero, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(topLeftShadow, FLOAT_ZERO, FLOAT_ZERO, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(bottomLeftShadow, FLOAT_ZERO, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(topRightShadow, aGdiRealRelativeWidth - aShadowPadding, FLOAT_ZERO, aShadowPadding, aShadowPadding);
     aGraphics->DrawImage(bottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
 
-    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);	
+    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);	*/
+
+	aGraphics->DrawImage(cachedBitmap, 0, 0);
 }
 
 void A2DWindow::moveTo(int xPosX, int xPosY)
@@ -697,6 +861,8 @@ HRESULT A2DWindow::Initialize()
     hr = CreateResources();
 
     if (FAILED(hr)) return hr;
+
+	createShadowResources();
 
     Update();
 	

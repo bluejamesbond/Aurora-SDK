@@ -35,7 +35,9 @@ class A2DAbstract;
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
-        
+
+#define FLOAT_ZERO											0.0f
+
 #define RES_BSW_DIR                                         L"..\\..\\..\\Aurora-SDK\\Lib\\Assets\\Images\\"
 #define IDB_BSW_BOTTOM_LEFT_SHADOW_PNG                      RES_BSW_DIR L"muzzler windows-sync bottomLeftShadow [a] 1.png"
 #define IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG                     RES_BSW_DIR L"muzzler windows-sync bottomRightShadow [a] 1.png"
@@ -46,6 +48,7 @@ class A2DAbstract;
 #define IDB_BSW_LEFT_SHADOW_PNG                             RES_BSW_DIR L"muzzler windows-sync leftShadow [a] 1.png"
 #define IDB_BSW_RIGHT_SHADOW_PNG                            RES_BSW_DIR L"muzzler windows-sync rightShadow [a] 1.png"
 #define IDB_BSW_BACKGROUND_PNG                              RES_BSW_DIR L"muzzler windows-sync background [a] 2.jpg"
+#define TEST												RES_BSW_DIR L"muzzler windows-sync textureBackground [a] 1.png"
 #define IDP_BSW_ACTIVE_BORDER_COLOR                         0x00929292
 #define DEF_PAD_VALUE                                       25
 #define DEF_SPAD_VALUE                                      75
@@ -183,18 +186,16 @@ public:
 	TextureBrush * rightShadowBrush;
 	TextureBrush * bottomShadowBrush;
 	TextureBrush * backgroundBrush;
+	
+	float                            aGdiRealRealX = 0;
+	float                            aGdiRealRealY = 0;
+	float                            aGdiRealRealWidth = 0;
+	float                            aGdiRealRealHeight = 0;
 
-	REAL                            aGdiRealZero = 0;
-
-    REAL                            aGdiRealRealX = 0;
-    REAL                            aGdiRealRealY = 0;
-    REAL                            aGdiRealRealWidth = 0;
-    REAL                            aGdiRealRealHeight = 0;
-
-    REAL                            aGdiRealRelativeX = 0;
-    REAL                            aGdiRealRelativeY = 0;
-    REAL                            aGdiRealRelativeWidth = 0;
-    REAL                            aGdiRealRelativeHeight = 0;
+	float                            aGdiRealRelativeX = 0;
+	float                            aGdiRealRelativeY = 0;
+	float                            aGdiRealRelativeWidth = 0;
+	float                            aGdiRealRelativeHeight = 0;
 
     int                             aStyle;
     Graphics                  *     aGraphics;
@@ -234,6 +235,13 @@ private:
     void                            RunMessageLoop();
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
     static inline A2DWindow*        GetAppState(HWND xHwnd);
+	void							createShadowResources();
+	float *							createGaussianKernel(int xRadius);
+	void							blur(BitmapData * srcPixels, BitmapData * dstPixels, int width, int height, float * kernel, int radius);
+	Bitmap *						filter(Bitmap * src, int radius);
+	BitmapData *					getLockedBitmapData(Bitmap * src);
+
+	Bitmap *						cachedBitmap;
 
 	public:
 	void							moveTo(int xPosX, int xPosY);
