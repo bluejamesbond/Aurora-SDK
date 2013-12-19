@@ -20,6 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "A2DCommons.h"
 #include "A2DFrame.h"
 #include "A2DAbstract.h"
 #include "A2DRect.h"
@@ -38,20 +39,6 @@ class A2DAbstract;
 
 #define FLOAT_ZERO											0.0f
 #define FLOAT_ONE                                           1.0f
-
-#define RES_BSW_DIR                                         L"..\\..\\..\\Aurora-SDK\\Lib\\Assets\\Images\\"
-#define IDB_BSW_BOTTOM_LEFT_SHADOW_PNG                      RES_BSW_DIR L"muzzler windows-sync bottomLeftShadow [a] 1.png"
-#define IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG                     RES_BSW_DIR L"muzzler windows-sync bottomRightShadow [a] 1.png"
-#define IDB_BSW_BOTTOM_SHADOW_PNG                           RES_BSW_DIR L"muzzler windows-sync bottomShadow [a] 1.png"
-#define IDB_BSW_TOP_LEFT_SHADOW_PNG                         RES_BSW_DIR L"muzzler windows-sync topLeftShadow [a] 1.png"
-#define IDB_BSW_TOP_RIGHT_SHADOW_PNG                        RES_BSW_DIR L"muzzler windows-sync topRightShadow [a] 1.png"
-#define IDB_BSW_TOP_SHADOW_PNG                              RES_BSW_DIR L"muzzler windows-sync topShadow [a] 1.png"
-#define IDB_BSW_LEFT_SHADOW_PNG                             RES_BSW_DIR L"muzzler windows-sync leftShadow [a] 1.png"
-#define IDB_BSW_RIGHT_SHADOW_PNG                            RES_BSW_DIR L"muzzler windows-sync rightShadow [a] 1.png"
-#define IDB_BSW_BACKGROUND_PNG                              RES_BSW_DIR L"muzzler windows-sync background [a] 2.jpg"
-#define IDP_BSW_ACTIVE_BORDER_COLOR                         0x00929292
-#define DEF_PAD_VALUE                                       25
-#define DEF_SPAD_VALUE                                      75
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
