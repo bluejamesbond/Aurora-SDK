@@ -379,7 +379,8 @@ BitmapData * A2DWindow::getLockedBitmapData(Bitmap * src)
 	{
 		return NULL;
 	}
-	
+
+
 	return bitmapData;
 }
 
@@ -418,7 +419,6 @@ Bitmap * A2DWindow::filter(Bitmap * src, int radius)
 
 	SYSOUT_INT(blurred->GetWidth());
 	SYSOUT_INT(blurred->GetHeight());
-
 
 	return rotated;
 }
@@ -484,9 +484,10 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 
 void A2DWindow::createShadowResources()
 {
-	float radius = 50;
-	float realDim = radius * 2;
-	float relativeDim = realDim * 2;
+	float radius = aPadding = 200;
+	float radiusSafety = aShadowPadding = radius * 2;
+	float realDim = radius * 3;
+	float relativeDim = realDim + radius * 2;
 	
 	Bitmap * solid = new Bitmap(relativeDim, relativeDim);
 	Bitmap * blurred;
@@ -497,29 +498,64 @@ void A2DWindow::createShadowResources()
 	graphics.FillRectangle(&blackBrush, radius, radius, realDim, realDim);
 	
 	cachedBitmap = blurred = filter(solid, radius);
-}
 
-HRESULT A2DWindow::CreateResources()
-{
-	HRESULT hr = S_OK;
+	topLeftShadow = new Bitmap(radiusSafety, radiusSafety);
+	bottomLeftShadow = new Bitmap(radiusSafety, radiusSafety);
+	topRightShadow = new Bitmap(radiusSafety, radiusSafety);
+	bottomRightShadow = new Bitmap(radiusSafety, radiusSafety);
+
+	topShadow = new Bitmap(1, radius);
+	leftShadow = new Bitmap(radius, 1);
+	rightShadow = new Bitmap(radius, 1);
+	bottomShadow = new Bitmap(1, radius);
 	
-	topShadow = new Image(IDB_BSW_TOP_SHADOW_PNG);
-	leftShadow = new Image(IDB_BSW_LEFT_SHADOW_PNG);
-	rightShadow = new Image(IDB_BSW_RIGHT_SHADOW_PNG);
-	bottomShadow = new Image(IDB_BSW_BOTTOM_SHADOW_PNG);
-	topLeftShadow = new Image(IDB_BSW_TOP_LEFT_SHADOW_PNG);
-	bottomLeftShadow = new Image(IDB_BSW_BOTTOM_LEFT_SHADOW_PNG);
-	topRightShadow = new Image(IDB_BSW_TOP_RIGHT_SHADOW_PNG);
-	bottomRightShadow = new Image(IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG);
-	background = new Image(IDB_BSW_BACKGROUND_PNG);
+	Graphics graphics2(topLeftShadow);
+	graphics2.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, radiusSafety, UnitPixel);
+	graphics2.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, radiusSafety, UnitPixel);
+	
+	Graphics graphics3(bottomLeftShadow);
+	graphics3.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radiusSafety, radiusSafety, radiusSafety, UnitPixel);
+	graphics3.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radiusSafety, radiusSafety, radiusSafety, UnitPixel);
+
+	Graphics graphics4(bottomRightShadow);
+	graphics4.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety, UnitPixel);
+	graphics4.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety, UnitPixel);
+	
+	Graphics graphics5(topRightShadow);
+	graphics5.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radiusSafety, FLOAT_ZERO, radiusSafety, radiusSafety, UnitPixel);
+	graphics5.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radiusSafety, FLOAT_ZERO, radiusSafety, radiusSafety, UnitPixel);
+
+	Graphics graphics6(topShadow);
+	graphics6.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, FLOAT_ZERO, 1.0f, radius, UnitPixel);
+	graphics6.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, FLOAT_ZERO, 1.0f, radius, UnitPixel);
+
+	Graphics graphics7(leftShadow);
+	graphics7.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, radius, 1.0f, UnitPixel);
+	graphics7.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, radius, 1.0f, UnitPixel);
+
+	Graphics graphics8(rightShadow);
+	graphics8.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radius, radiusSafety, radius, 1.0f, UnitPixel);
+	graphics8.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, relativeDim - radius, radiusSafety, radius, 1.0f, UnitPixel);
+	
+	Graphics graphics9(bottomShadow);
+	graphics9.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, relativeDim - radius, 1.0f, radius, UnitPixel);
+	graphics9.DrawImage(blurred, FLOAT_ZERO, FLOAT_ZERO, radiusSafety, relativeDim - radius, 1.0f, radius, UnitPixel);
 
 	topShadowBrush = new TextureBrush(topShadow);
 	leftShadowBrush = new TextureBrush(leftShadow);
 	rightShadowBrush = new TextureBrush(rightShadow);
 	bottomShadowBrush = new TextureBrush(bottomShadow);
+}
+
+HRESULT A2DWindow::CreateResources()
+{
+	HRESULT hr = S_OK;
+
+	background = new Image(IDB_BSW_BACKGROUND_PNG);
+
 	backgroundBrush = new TextureBrush(background);
 
-	return hr;
+		return hr;
 }
 
 void A2DWindow::setVisible(bool xVisible)
@@ -531,7 +567,7 @@ void A2DWindow::setVisible(bool xVisible)
         // Create resources!
         aFrame->CreateResources();
 
-        // ShowWindow(aChildHandle, SW_SHOWNORMAL);
+        ShowWindow(aChildHandle, SW_SHOWNORMAL);
         ShowWindow(aParentHandle, SW_SHOWNORMAL);
 
         RunMessageLoop();
@@ -561,11 +597,11 @@ void A2DWindow::RenderComponent()
 	leftShadowBrush->ResetTransform();
 	rightShadowBrush->ResetTransform();
 	bottomShadowBrush->ResetTransform();
-	/*
+	
 	topShadowBrush->TranslateTransform(aShadowPadding, FLOAT_ZERO);
 	aGraphics->FillRectangle(topShadowBrush, aShadowPadding, FLOAT_ZERO, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
 
-	leftShadowBrush->TranslateTransform(aShadowPadding, aPadding);
+	leftShadowBrush->TranslateTransform(FLOAT_ZERO, aShadowPadding);
     aGraphics->FillRectangle(leftShadowBrush, FLOAT_ZERO, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
 
 	rightShadowBrush->TranslateTransform(aGdiRealRelativeWidth - aPadding, aShadowPadding);
@@ -573,15 +609,15 @@ void A2DWindow::RenderComponent()
 
 	bottomShadowBrush->TranslateTransform(aShadowPadding, aGdiRealRelativeHeight - aPadding);
     aGraphics->FillRectangle(bottomShadowBrush, aShadowPadding, aGdiRealRealHeight + aPadding, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
-
-    aGraphics->DrawImage(topLeftShadow, FLOAT_ZERO, FLOAT_ZERO, aShadowPadding, aShadowPadding);
+	
+	aGraphics->DrawImage(topLeftShadow, FLOAT_ZERO, FLOAT_ZERO, aShadowPadding, aShadowPadding);
     aGraphics->DrawImage(bottomLeftShadow, FLOAT_ZERO, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
     aGraphics->DrawImage(topRightShadow, aGdiRealRelativeWidth - aShadowPadding, FLOAT_ZERO, aShadowPadding, aShadowPadding);
     aGraphics->DrawImage(bottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
 
-    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);	*/
+    aGraphics->FillRectangle(backgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);	
 
-	aGraphics->DrawImage(cachedBitmap, 0, 0);
+//	aGraphics->DrawImage(cachedBitmap, 0, 0);
 }
 
 void A2DWindow::moveTo(int xPosX, int xPosY)
@@ -849,7 +885,7 @@ HRESULT A2DWindow::Initialize()
 
 	setLocationRelativeTo(NULL);
 	setBorderColor(Color(202, 225, 255));
-	setBorderWidth(2); //Force the border in DX window
+	setBorderWidth(1); //Force the border in DX window
 
     hr = RegisterClass();
 
