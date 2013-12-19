@@ -38,6 +38,11 @@ class A2DAbstract;
 
 #define FLOAT_ZERO											0.0f
 
+#define SYSOUT_FLT(x)										_RPT1( 0, "%f\n", x )
+#define SYSOUT_INT(x)										_RPT1( 0, "%d\n", x )
+#define SYSOUT_HEX(x)										_RPT1( 0, "0x%X\n", x )
+#define SYSOUT_STR(x)										_RPT1( 0, "%s\n", x )
+
 #define RES_BSW_DIR                                         L"..\\..\\..\\Aurora-SDK\\Lib\\Assets\\Images\\"
 #define IDB_BSW_BOTTOM_LEFT_SHADOW_PNG                      RES_BSW_DIR L"muzzler windows-sync bottomLeftShadow [a] 1.png"
 #define IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG                     RES_BSW_DIR L"muzzler windows-sync bottomRightShadow [a] 1.png"
@@ -48,7 +53,7 @@ class A2DAbstract;
 #define IDB_BSW_LEFT_SHADOW_PNG                             RES_BSW_DIR L"muzzler windows-sync leftShadow [a] 1.png"
 #define IDB_BSW_RIGHT_SHADOW_PNG                            RES_BSW_DIR L"muzzler windows-sync rightShadow [a] 1.png"
 #define IDB_BSW_BACKGROUND_PNG                              RES_BSW_DIR L"muzzler windows-sync background [a] 2.jpg"
-#define TEST												RES_BSW_DIR L"muzzler windows-sync textureBackground [a] 1.png"
+#define TEST												RES_BSW_DIR L"muzzler windows-sync textureLogo [a] 1.png"
 #define IDP_BSW_ACTIVE_BORDER_COLOR                         0x00929292
 #define DEF_PAD_VALUE                                       25
 #define DEF_SPAD_VALUE                                      75

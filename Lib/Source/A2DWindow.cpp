@@ -398,7 +398,7 @@ Bitmap * A2DWindow::filter(Bitmap * src, int radius)
 	blur(srcData, horiBlurDstData, src->GetWidth(), src->GetHeight(), kernel, radius);
 	
 	// vertical pass
-	blur(horiBlurDstData, vertBlurDstData, src->GetWidth(), src->GetHeight(), kernel, radius);
+	blur(horiBlurDstData, srcData, src->GetHeight(), src->GetWidth(), kernel, radius);
 
 	src->UnlockBits(srcData);
 	vertBlur->UnlockBits(vertBlurDstData);
@@ -410,7 +410,7 @@ Bitmap * A2DWindow::filter(Bitmap * src, int radius)
 
 	delete horiBlur;
 
-	return vertBlur;
+	return src;
 }
 
 void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width, int height, float * kernel, int radius)
@@ -424,11 +424,8 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 	int cr = 0;
 	int cg = 0;
 	int cb = 0;
-
-	height = srcPixels->Height;
-	width = srcPixels->Width;
-
-	for (int y = 0; y < srcPixels->Height; y++)
+	
+	for (int y = 0; y < height; y++)
 	{
 		int index = y;
 		int offset = y * width;
@@ -436,7 +433,7 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 		byte* pixelSrcRow = (byte *)srcPixels->Scan0 + (y * srcPixels->Stride);
 		byte* pixelDstRow = (byte *)dstPixels->Scan0 + (y * dstPixels->Stride);
 
-		for (int x = 0; x < srcPixels->Width; x++)
+		for (int x = 0; x < width; x++)
 		{
 			a = r = g = b = 0.0f;
 
@@ -444,17 +441,20 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 			{
 				int subOffset = x + i;
 
-				if (subOffset < 0 || subOffset >= width) 
+				if (subOffset < 0 || subOffset >= width)
 				{
 					subOffset = (x + width) % width;
 				}
 
 				float blurFactor = kernel[radius + i];
 
-				a += blurFactor * pixelSrcRow[x * 4 + 3];
-				r += blurFactor * pixelSrcRow[x * 4 + 2];
-				g += blurFactor * pixelSrcRow[x * 4 + 1];
-				b += blurFactor * pixelSrcRow[x * 4];
+				int position = offset + subOffset;
+
+				a += blurFactor * (float)pixelSrcRow[position * 4 + 3];
+				r += blurFactor * (float)pixelSrcRow[position * 4 + 2];
+				g += blurFactor * (float)pixelSrcRow[position * 4 + 1];
+				b += blurFactor * (float)pixelSrcRow[position * 4];
+
 			}
 
 			ca = (int)(a + 0.5f);
@@ -466,12 +466,27 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 			cr = cr > 255 ? 255 : cr;
 			cg = cg > 255 ? 255 : cg;
 			cb = ca > 255 ? 255 : cb;
+			/*
+			if (ca != 0)
+			{
+				SYSOUT_HEX(pixelSrcRow[x * 4 + 3]);
+				SYSOUT_HEX(pixelSrcRow[x * 4 + 2]);
+				SYSOUT_HEX(pixelSrcRow[x * 4 + 1]);
+				SYSOUT_HEX(pixelSrcRow[x * 4]);
+				SYSOUT_STR("-----------------");
+				SYSOUT_HEX(ca);
+				SYSOUT_HEX(cr);
+				SYSOUT_HEX(cg);
+				SYSOUT_HEX(cb);
 
+				while (true){}
+			}
+			*/
 			pixelDstRow[x * 4 + 3] = ca;
 			pixelDstRow[x * 4 + 2] = cr;
 			pixelDstRow[x * 4 + 1] = cg;
 			pixelDstRow[x * 4] = cb;
-
+			
 			index += height;
 		}
 	}
@@ -479,7 +494,7 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 
 void A2DWindow::createShadowResources()
 {
-	float radius = aPadding;
+	float radius = 25;
 	float realDim = aPadding * 4;
 	float relativeDim = realDim * 4;
 	
