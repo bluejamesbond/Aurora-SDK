@@ -159,8 +159,8 @@ public:
     // Additional
     void                            Update();
 	void                            Render();
-	void							forceUpdateBoxShadow();
-	void							forceUpdateBackground();
+	void							updateAndCacheBoxShadow();
+	void							UpdateAndCacheBackground();
     void                            RenderComponent();
     void                            RenderComponentBorder();
     HRESULT                         CreateResources();
@@ -202,15 +202,15 @@ private:
 	TextureBrush              *     aBottomShadowBrush;
 	TextureBrush              *     aBackgroundBrush;
 	
-	float                           aGdiRealRealX = 0;
-	float                           aGdiRealRealY = 0;
-	float                           aGdiRealRealWidth = 0;
-	float                           aGdiRealRealHeight = 0;
+	float                           aRealX = 0;
+	float                           aRealY = 0;
+	float                           aRealWidth = 0;
+	float                           aRealHeight = 0;
 
-	float                           aGdiRealRelativeX = 0;
-	float                           aGdiRealRelativeY = 0;
-	float                           aGdiRealRelativeWidth = 0;
-	float                           aGdiRealRelativeHeight = 0;
+	float                           aRelativeX = 0;
+	float                           aRelativeY = 0;
+	float                           aRelativeWidth = 0;
+	float                           aRelativeHeight = 0;
 
     int                             aStyle;
     Graphics                  *     aGraphics;

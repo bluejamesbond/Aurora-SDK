@@ -27,7 +27,7 @@ void A2DWindow::setUndecorated(bool xUndecoratedFlag)
     SetWindowLongPtr(aParentHandle, GWL_STYLE, lStyle);
     SetWindowLongPtr(aParentHandle, GWL_EXSTYLE, lExStyle);
 
-    //SetWindowPos(aParentWin->aHwnd, HWND_TOP, aWindowProps->aRealLeft, aWindowProps->aRealTop, aGdiRealRealWidth, aGdiRealRealHeight, SWP_FRAMECHANGED);
+    //SetWindowPos(aParentWin->aHwnd, HWND_TOP, aWindowProps->aRealLeft, aWindowProps->aRealTop, aRealWidth, aRealHeight, SWP_FRAMECHANGED);
     SetWindowPos(aParentHandle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
@@ -43,7 +43,9 @@ float A2DWindow::getPadding()
 
 void A2DWindow::setBoxShadowRadius(float xBoxShadowRadius)
 {
-	aBoxShadowRadius = xBoxShadowRadius;
+	if (abs(xBoxShadowRadius) < 1) return;
+
+	aBoxShadowRadius = abs(xBoxShadowRadius);
 }
 
 float A2DWindow::getBoxShadowRadius()
@@ -61,19 +63,19 @@ Color A2DWindow::getBoxShadowColor()
 	return aBoxShadowColor;
 }
 
-void A2DWindow::forceUpdateBackground()
+void A2DWindow::UpdateAndCacheBackground()
 {
-	destroyBoxShadowResources();
-	createBoxShadowResources();
+	DestroyBackgroundResources();
+	CreateBackgroundResources();
 	
 	HBRUSH brush = CreateSolidBrush(RGB(aBackgroundColor.GetRed(), aBackgroundColor.GetGreen(), aBackgroundColor.GetBlue()));
 	SetClassLongPtr(aParentHandle, GCLP_HBRBACKGROUND, (LONG)brush);
 }
 
-void A2DWindow::forceUpdateBoxShadow()
+void A2DWindow::updateAndCacheBoxShadow()
 {
-	DestroyBackgroundResources();
-	CreateBackgroundResources();
+	destroyBoxShadowResources();
+	createBoxShadowResources();
 }
 
 HWND* A2DWindow::getChildHandle()
@@ -190,47 +192,6 @@ float A2DWindow::getBorderWidth()
 	return aBorderWidth;
 }
 
-/*
-void A2DWindow::SetPosition(int xLeft, int xTop)
-{
-    HDWP hdwp;
-    hdwp = BeginDeferWindowPos(2);
-    
-    if (hdwp)
-    {
-        hdwp = DeferWindowPos(hdwp, aParentHwnd, NULL, xLeft, xTop, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
-        hdwp = DeferWindowPos(hdwp, aChildHwnd, aParentHwnd, xLeft, xTop, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
-    }
-
-    if (hdwp)
-    {
-        EndDeferWindowPos(hdwp);
-    }
-
-    // No need to redraw since you are just moving.
-}
-
-void A2DWindow::SetSize(int xWidth, int xHeight)
-{
-    HDWP hdwp;
-    hdwp = BeginDeferWindowPos(2);
-    
-    if (hdwp)
-    {
-        hdwp = DeferWindowPos(hdwp, aParentHwnd, NULL, 0, 0, xWidth, xHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-        hdwp = DeferWindowPos(hdwp, aChildHwnd, aParentHwnd, 0, 0, xWidth, xHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-    }
-
-    if (hdwp)
-    {
-        EndDeferWindowPos(hdwp);
-    }
-
-    // Redraw
-    Update();
-}
-*/
-
 HRESULT A2DWindow::RegisterClass()
 {
     WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
@@ -273,12 +234,12 @@ HRESULT A2DWindow::CreateHandle(HWND& xHandle)
     DWORD           lStyle, lExStyle;
     LPCWSTR         className, titleName;
     
-	left =			(int)(xHandle == aParentHandle ? aRect.aX - aPadding : aRect.aX + aBorderWidth);
-	top =			(int)(xHandle == aParentHandle ? aRect.aY - aPadding : aRect.aY + aBorderWidth);
-	width =			(int)(xHandle == aParentHandle ? aRect.aWidth - aPadding * 2 : aRect.aWidth - aBorderWidth * 2);
-	height =		(int)(xHandle == aParentHandle ? aRect.aHeight - aPadding * 2 : aRect.aHeight - aBorderWidth * 2);
-	lStyle =		(int)(xHandle == aParentHandle ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
-	lExStyle =		(int)(xHandle == aParentHandle ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	left =			static_cast<int>(xHandle == aParentHandle ? aRect.aX - aPadding : aRect.aX + aBorderWidth);
+	top =			static_cast<int>(xHandle == aParentHandle ? aRect.aY - aPadding : aRect.aY + aBorderWidth);
+	width =			static_cast<int>(xHandle == aParentHandle ? aRect.aWidth - aPadding * 2 : aRect.aWidth - aBorderWidth * 2);
+	height =		static_cast<int>(xHandle == aParentHandle ? aRect.aHeight - aPadding * 2 : aRect.aHeight - aBorderWidth * 2);
+	lStyle =		static_cast<int>(xHandle == aParentHandle ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
+	lExStyle =		static_cast<int>(xHandle == aParentHandle ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
 	hwndParent =	xHandle == aParentHandle ? HWND_DESKTOP : aParentHandle;
     className =     aName;
     titleName =     aName;
@@ -309,15 +270,17 @@ void A2DWindow::Update()
 {
 	HDC hdc, memDC;
 
-	// Cache variables as Gdi Real
-	aGdiRealRealX = aRect.aX;
-	aGdiRealRealY = aRect.aY;
-	aGdiRealRealWidth = aRect.aWidth + aBorderWidth * 2;
-	aGdiRealRealHeight = aRect.aHeight + aBorderWidth * 2;
-	aGdiRealRelativeX = aGdiRealRealX - aPadding - aBorderWidth;
-	aGdiRealRelativeY = aGdiRealRealY - aPadding - aBorderWidth;
-	aGdiRealRelativeWidth = aGdiRealRealWidth + aPadding * 2;
-	aGdiRealRelativeHeight = aGdiRealRealHeight + aPadding * 2;
+	// Cache variables to ensure that these variables
+	// won't be changed in the middle of Update() via concurrent
+	// threads.
+	aRealX = aRect.aX;
+	aRealY = aRect.aY;
+	aRealWidth = aRect.aWidth + aBorderWidth * 2;
+	aRealHeight = aRect.aHeight + aBorderWidth * 2;
+	aRelativeX = aRealX - aPadding - aBorderWidth;
+	aRelativeY = aRealY - aPadding - aBorderWidth;
+	aRelativeWidth = aRealWidth + aPadding * 2;
+	aRelativeHeight = aRealHeight + aPadding * 2;
 
 	hdc = GetDC(aParentHandle);
 	memDC = CreateCompatibleDC(hdc);
@@ -334,10 +297,10 @@ void A2DWindow::Update()
 
 	/***********************************************/
 
-	SIZE size = { (long)aGdiRealRelativeWidth, (long)aGdiRealRelativeHeight };
+	SIZE size = { (long)aRelativeWidth, (long)aRelativeHeight };
 
 	HDC screenDC = GetDC(NULL);
-	POINT ptDst = { (long)aGdiRealRelativeX, (long)aGdiRealRelativeY };
+	POINT ptDst = { (long)aRelativeX, (long)aRelativeY };
 	POINT ptSrc = { 0, 0 };
 
 	BLENDFUNCTION blendFunction;
@@ -456,7 +419,7 @@ float* A2DWindow::getGaussianKernel(int xRadius)
 
 	for (int i = -xRadius; i <= xRadius; i++) 
 	{
-		float distance = i * i;
+		float distance = (float)(i * i);
 		int index = i + xRadius;
 		data[index] = (float) exp(-distance / twoSigmaSquare) / sigmaRoot;
 		total += data[index];
@@ -577,10 +540,10 @@ void  A2DWindow::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPix
 				b += blurFactor * (float)pixelSrcRow[position * 4];
 			}
 
-			ca = (int)(a + 0.5f);
-			cr = (int)(r + 0.5f);
-			cg = (int)(g + 0.5f);
-			cb = (int)(b + 0.5f);
+			ca = static_cast<int>(a + 0.5f);
+			cr = static_cast<int>(r + 0.5f);
+			cg = static_cast<int>(g + 0.5f);
+			cb = static_cast<int>(b + 0.5f);
 			
 			ca = ca > 255 ? 255 : ca;
 			cr = cr > 255 ? 255 : cr;
@@ -617,17 +580,21 @@ HRESULT A2DWindow::createBoxShadowResources()
 	float realDim = radius * 3;
 	float relativeDim = realDim + radius * 2;
 	
-    aTopLeftShadow = new Bitmap(radiusSafety, radiusSafety);
-    aBottomLeftShadow = new Bitmap(radiusSafety, radiusSafety);
-    aTopRightShadow = new Bitmap(radiusSafety, radiusSafety);
-    aBottomRightShadow = new Bitmap(radiusSafety, radiusSafety);
+	int radiusAsInt = static_cast<int>(radius);
+	int radiusSafetyAsInt = static_cast<int>(radiusSafety);
+	int relativeDimAsInt = static_cast<int>(relativeDim);
 
-    aTopShadow = new Bitmap(1, radius);
-    aLeftShadow = new Bitmap(radius, 1);
-    aRightShadow = new Bitmap(radius, 1);
-    aBottomShadow = new Bitmap(1, radius);
+	aTopLeftShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aBottomLeftShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aTopRightShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aBottomRightShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
 
-	solid = new Bitmap(relativeDim, relativeDim);
+	aTopShadow = new Bitmap(1, radiusAsInt);
+	aLeftShadow = new Bitmap(radiusAsInt, 1);
+	aRightShadow = new Bitmap(radiusAsInt, 1);
+	aBottomShadow = new Bitmap(1, radiusAsInt);
+
+	solid = new Bitmap(relativeDimAsInt, relativeDimAsInt);
 	graphics = new Graphics(solid);
 
 	// Draw base shape
@@ -636,7 +603,7 @@ HRESULT A2DWindow::createBoxShadowResources()
 
     // Create box shadow
 	
-	blurred = applyGaussianBlur(solid, radius);
+	blurred = applyGaussianBlur(solid, radiusAsInt);
 	
     // Cache as 9-patch
 	
@@ -754,7 +721,7 @@ void A2DWindow::RenderComponentBorder()
 	{
 		Pen borderPen(aBorderColor, aBorderWidth);
     
-		aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);
+		aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aRealWidth, aRealHeight);
     
 		DeleteObject(&borderPen);
 	}
@@ -768,23 +735,23 @@ void A2DWindow::RenderComponent()
 	aBottomShadowBrush->ResetTransform();
 	
 	aTopShadowBrush->TranslateTransform(aShadowPadding, FLOAT_ZERO);
-	aGraphics->FillRectangle(aTopShadowBrush, aShadowPadding, FLOAT_ZERO, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
+	aGraphics->FillRectangle(aTopShadowBrush, aShadowPadding, FLOAT_ZERO, aRelativeWidth - aShadowPadding * 2, aPadding);
 
 	aLeftShadowBrush->TranslateTransform(FLOAT_ZERO, aShadowPadding);
-    aGraphics->FillRectangle(aLeftShadowBrush, FLOAT_ZERO, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
+    aGraphics->FillRectangle(aLeftShadowBrush, FLOAT_ZERO, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
 
-	aRightShadowBrush->TranslateTransform(aGdiRealRelativeWidth - aPadding, aShadowPadding);
-    aGraphics->FillRectangle(aRightShadowBrush, aGdiRealRelativeWidth - aPadding, aShadowPadding, aPadding, aGdiRealRelativeHeight - aShadowPadding * 2);
+	aRightShadowBrush->TranslateTransform(aRelativeWidth - aPadding, aShadowPadding);
+    aGraphics->FillRectangle(aRightShadowBrush, aRelativeWidth - aPadding, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
 
-	aBottomShadowBrush->TranslateTransform(aShadowPadding, aGdiRealRelativeHeight - aPadding);
-    aGraphics->FillRectangle(aBottomShadowBrush, aShadowPadding, aGdiRealRealHeight + aPadding, aGdiRealRelativeWidth - aShadowPadding * 2, aPadding);
+	aBottomShadowBrush->TranslateTransform(aShadowPadding, aRelativeHeight - aPadding);
+    aGraphics->FillRectangle(aBottomShadowBrush, aShadowPadding, aRealHeight + aPadding, aRelativeWidth - aShadowPadding * 2, aPadding);
 	
 	aGraphics->DrawImage(aTopLeftShadow, FLOAT_ZERO, FLOAT_ZERO, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(aBottomLeftShadow, FLOAT_ZERO, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(aTopRightShadow, aGdiRealRelativeWidth - aShadowPadding, FLOAT_ZERO, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(aBottomRightShadow, aGdiRealRelativeWidth - aShadowPadding, aGdiRealRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(aBottomLeftShadow, FLOAT_ZERO, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(aTopRightShadow, aRelativeWidth - aShadowPadding, FLOAT_ZERO, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(aBottomRightShadow, aRelativeWidth - aShadowPadding, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
 
-    aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aGdiRealRealWidth, aGdiRealRealHeight);	
+    aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aRealWidth, aRealHeight);	
 }
 
 LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
@@ -873,7 +840,7 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 					aRect.aY = 500;
 					aRect.aWidth += deltaX;
 					aRect.aHeight += deltaY;
-
+					
 					aWindow->Update();
 
 					SetWindowPos(aWindow->aChildHandle, aWindow->aParentHandle, aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, SWP_NOZORDER | SWP_NOACTIVATE);						
