@@ -1,35 +1,34 @@
 ////////////////////////////////////////////////////////////////////////////////
+// GAURDS
+////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DLINBACKBUFFER_H__
-#define __A2DLINBACKBUFFER_H__
+#ifndef __A2DBACKBUFFER_H__
+#define __A2DBACKBUFFER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DLINBACKBUFFER
+//      A2DBACKBUFFER
 //
 //  Synopsis:
-//      Custom LINUX/UNIX implementation of A2DAbstractBackBuffer to allow a 
-//		Cross-Platform SDK Implementation
+//      Differentiates which of the two possible arcs could match the given arc
+//      parameters.
 //
 //------------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
-#include "OpenGlClass.h"
-#include "InputClass.h"
-#include "GraphicsClass.h"
+
+#include "A2DWindowProperties.h"
+#include "A2DAbstract.h"
 #include "A2DAbstractBackBuffer.h"
-#include "A2DCPResultHandle.h"
-#include "A2DCPWindowHandle.h"
 #include "A2DCPDevice.h"
-#include "A2DCPInstanceHandle.h"
-#include "A2DCPString.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
+
 class A2D;
 class A2DAbstract;
 class A2DRenderable;
@@ -48,22 +47,25 @@ class A2DAbstractBackBuffer;
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
-class A2DLinBackBuffer: public A2DAbstract, public A2DAbstractBackBuffer
+            
+#define A2DBACKBUFFER_LL(str1, str2)                              str1 str2
+
+////////////////////////////////////////////////////////////////////////////////
+// DECLARATION
+////////////////////////////////////////////////////////////////////////////////
+
+class A2DBackBuffer : public A2DAbstract, public A2DAbstractBackBuffer
 {
 
 public:
-	// Constructor
-	A2DLinBackBuffer(A2DWindow * xWindow, A2DWindowProperties * xWindowProps);
+
+    // Constructor
+	A2DBackBuffer(A2DWindow * xWindow, A2DWindowProperties * xWindowProps);
 
     // Deconstructor
-    ~A2DLinBackBuffer();
+    ~A2DBackBuffer();
 
     // Variables
-    								aVertexBuffer;
-    								aIndexBuffer;
-
-    /*
-    //Windows Variables
     IDXGISwapChain            *     aDXGISwapChain;
     ID3D10Device              *     aDXDevice;
     ID3D10RenderTargetView    *     aDXRenderTargetView;
@@ -74,7 +76,7 @@ public:
 	ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
 	char							aVideoCardDescription[128];
 	int								aVideoCardMemory;
-	*/
+
 private:
 	// Variables
 	A2DWindowProperties       *     aWindowProps;
