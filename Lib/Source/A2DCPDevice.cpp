@@ -6,22 +6,22 @@ A2DCPDevice::A2DCPDevice(){}
 A2DCPDevice::~A2DCPDevice(){}
 
 #ifndef WIN32
-HDC A2DCPDevice::getDev()
+HDC A2DCPDevice::getDevice()
 {
-	return aDev;
+	return aDevice;
 }
 
-void A2DCPDevice::setHandle(HDC xDev)
+void A2DCPDevice::setDevice(HDC xDevice)
 {
-	aDev = xDev;
+	aDevice = xDevice;
 }
 #else
-ID3D10Device A2DCPDevice::getHandle()
+ID3D10Device A2DCPDevice::getDevice()
 {
-	return aDev;
+	return aDevice;
 }
-void A2DCPDevice::setDev(ID3D10Device xDev)
+void A2DCPDevice::setDevice(ID3D10Device xDevice)
 {
-	aDev = xDev;
+	aDevice = xDevice;
 }
 #endif
