@@ -22,6 +22,7 @@
 
 #include "A2DWindowProperties.h"
 #include "A2DAbstract.h"
+#include "A2DAbstractBackBuffer.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -40,6 +41,7 @@ class A2DRootPane;
 struct A2DWindowProperties;
 class A2DWindow;
 class A2DImagePanel;
+class A2DAbstractBackBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -51,7 +53,7 @@ class A2DImagePanel;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DBackBuffer : public A2DAbstract
+class A2DBackBuffer : public A2DAbstract, public A2DAbstractBackBuffer
 {
 
 public:

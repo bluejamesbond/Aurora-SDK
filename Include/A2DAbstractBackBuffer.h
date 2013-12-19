@@ -25,6 +25,7 @@
 #include "A2DCPString.h"
 #include "A2DCPResultHandle.h"
 #include "A2DCPInstanceHandle.h"
+#include "A2DCPDevice.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -43,6 +44,8 @@ class A2DRootPane;
 struct A2DWindowProperties;
 class A2DWindow;
 class A2DImagePanel;
+class A2DAbstractBackBuffer;
+class A2DCPDevice;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -73,11 +76,11 @@ private:
 
 public:
     // Accessors
-    ID3D10Device              *     GetDevice();
+    virtual A2DCPDevice               *     GetDevice() = 0;
 
 public:
     // Mutators
-    void                            SetZBuffer(bool val);
+    virtual void                            SetZBuffer(bool val) = 0;
     
     // Builders
     // { NONE }
@@ -87,9 +90,9 @@ public:
 
 public:
     // Additional
-    void                            SetActive();
-    void                            Swap();
-    void                            Clear();
+    virtual void                            SetActive() = 0;
+    virtual void                            Swap() = 0;
+    virtual void                            Clear() = 0;
 
     // Pure Virtual
     // { NONE }
@@ -101,10 +104,10 @@ public:
 
     // Implementation
     // { A2DABSTRACT }
-    virtual HRESULT                 Initialize();
+    virtual A2DCPResultHandle       Initialize();
     virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
+    virtual A2DCPString             GetClass();
+    virtual A2DCPString             ToString();
     virtual bool                    operator==(A2DAbstract * xAbstract);
 
 };
