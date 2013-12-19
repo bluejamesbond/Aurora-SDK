@@ -385,32 +385,42 @@ BitmapData * A2DWindow::getLockedBitmapData(Bitmap * src)
 
 Bitmap * A2DWindow::filter(Bitmap * src, int radius)
 {
-	Bitmap * vertBlur = new Bitmap(src->GetWidth(), src->GetHeight());
-	Bitmap * horiBlur = new Bitmap(src->GetWidth(), src->GetHeight());
-
-	BitmapData * srcData = getLockedBitmapData(src);
-	BitmapData * vertBlurDstData = getLockedBitmapData(vertBlur);
-	BitmapData * horiBlurDstData = getLockedBitmapData(horiBlur);
-
+	Bitmap * blurred = new Bitmap(src->GetWidth(), src->GetHeight());
+	Bitmap * rotated = new Bitmap(src->GetHeight(), src->GetWidth());
+	
 	float * kernel = createGaussianKernel(radius);
 
 	// horizontal pass
-	blur(srcData, horiBlurDstData, src->GetWidth(), src->GetHeight(), kernel, radius);
+	BitmapData * srcData = getLockedBitmapData(src);
+	BitmapData * blurredData = getLockedBitmapData(blurred);
+
+	blur(srcData, blurredData, src->GetWidth(), src->GetHeight(), kernel, radius);
+
+	blurred->UnlockBits(blurredData);
+
+	SYSOUT_INT(src->GetWidth());
+	SYSOUT_INT(src->GetHeight());
+
+	//delete blurredData;
+
+	blurred->RotateFlip(Rotate90FlipNone);
 	
-	// vertical pass
-	blur(horiBlurDstData, srcData, src->GetHeight(), src->GetWidth(), kernel, radius);
+	blurredData = getLockedBitmapData(blurred);
+	BitmapData * rotatedData = getLockedBitmapData(rotated);
+
+	blur(blurredData, rotatedData, blurred->GetWidth(), blurred->GetHeight(), kernel, radius);
 
 	src->UnlockBits(srcData);
-	vertBlur->UnlockBits(vertBlurDstData);
-	horiBlur->UnlockBits(horiBlurDstData);
-	
-	delete srcData;
-	delete vertBlurDstData;
-	delete horiBlurDstData;
+	blurred->UnlockBits(blurredData);
+	rotated->UnlockBits(rotatedData);
 
-	delete horiBlur;
+	rotated->RotateFlip(Rotate270FlipNone);
 
-	return src;
+	SYSOUT_INT(blurred->GetWidth());
+	SYSOUT_INT(blurred->GetHeight());
+
+
+	return rotated;
 }
 
 void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width, int height, float * kernel, int radius)
@@ -427,9 +437,6 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 	
 	for (int y = 0; y < height; y++)
 	{
-		int index = y;
-		int offset = y * width;
-
 		byte* pixelSrcRow = (byte *)srcPixels->Scan0 + (y * srcPixels->Stride);
 		byte* pixelDstRow = (byte *)dstPixels->Scan0 + (y * dstPixels->Stride);
 
@@ -448,7 +455,7 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 
 				float blurFactor = kernel[radius + i];
 
-				int position = offset + subOffset;
+				int position = subOffset;
 
 				a += blurFactor * (float)pixelSrcRow[position * 4 + 3];
 				r += blurFactor * (float)pixelSrcRow[position * 4 + 2];
@@ -466,46 +473,29 @@ void  A2DWindow::blur(BitmapData * srcPixels, BitmapData * dstPixels, int width,
 			cr = cr > 255 ? 255 : cr;
 			cg = cg > 255 ? 255 : cg;
 			cb = ca > 255 ? 255 : cb;
-			/*
-			if (ca != 0)
-			{
-				SYSOUT_HEX(pixelSrcRow[x * 4 + 3]);
-				SYSOUT_HEX(pixelSrcRow[x * 4 + 2]);
-				SYSOUT_HEX(pixelSrcRow[x * 4 + 1]);
-				SYSOUT_HEX(pixelSrcRow[x * 4]);
-				SYSOUT_STR("-----------------");
-				SYSOUT_HEX(ca);
-				SYSOUT_HEX(cr);
-				SYSOUT_HEX(cg);
-				SYSOUT_HEX(cb);
 
-				while (true){}
-			}
-			*/
 			pixelDstRow[x * 4 + 3] = ca;
 			pixelDstRow[x * 4 + 2] = cr;
 			pixelDstRow[x * 4 + 1] = cg;
 			pixelDstRow[x * 4] = cb;
-			
-			index += height;
 		}
 	}
 }
 
 void A2DWindow::createShadowResources()
 {
-	float radius = 25;
-	float realDim = aPadding * 4;
-	float relativeDim = realDim * 4;
+	float radius = 50;
+	float realDim = radius * 2;
+	float relativeDim = realDim * 2;
 	
-	Bitmap * solid = new Bitmap(TEST);
+	Bitmap * solid = new Bitmap(relativeDim, relativeDim);
 	Bitmap * blurred;
-	/*
-	Graphics * graphics = Graphics::FromImage(solid);
+	
+	Graphics graphics (solid);
 	SolidBrush blackBrush(Color(255, 0, 0, 0));
 	
-	graphics->FillRectangle(&blackBrush, aPadding, aPadding, realDim, realDim);*/
-
+	graphics.FillRectangle(&blackBrush, radius, radius, realDim, realDim);
+	
 	cachedBitmap = blurred = filter(solid, radius);
 }
 
