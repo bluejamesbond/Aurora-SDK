@@ -21,6 +21,10 @@
 
 #include "A2DWindowProperties.h"
 #include "A2DAbstract.h"
+#include "A2DCPWindowHandle.h"
+#include "A2DCPString.h"
+#include "A2DCPResultHandle.h"
+#include "A2DCPInstanceHandle.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -44,7 +48,6 @@ class A2DImagePanel;
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
             
-#define A2DBACKBUFFER_LL(str1, str2)                              str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -62,16 +65,6 @@ public:
     ~A2DBackBuffer();
 
     // Variables
-    IDXGISwapChain            *     aDXGISwapChain;
-    ID3D10Device              *     aDXDevice;
-    ID3D10RenderTargetView    *     aDXRenderTargetView;
-    ID3D10Texture2D           *     aDXDepthStencilBuffer;
-    ID3D10DepthStencilState   *     aDXDepthStencilState;
-    ID3D10DepthStencilView    *     aDXDepthStencilView;
-    ID3D10RasterizerState     *     aDXRasterState;
-	ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
-	char							aVideoCardDescription[128];
-	int								aVideoCardMemory;
 
 private:
 	// Variables

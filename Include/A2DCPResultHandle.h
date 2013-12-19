@@ -17,11 +17,11 @@ public:
 	//mutators and accessors
 
 #ifndef WIN32
-	bool			getResultHandle();
-	void			setResultHandle(bool xHandle);
+	bool			getHandle();
+	void			setHandle(bool xHandle);
 #else
-	HRESULT			getResultHandle();
-	void			setResultHandle(HRESULT xHandle);
+	HRESULT			getHandle();
+	void			setHandle(HRESULT xHandle);
 
 #endif
 

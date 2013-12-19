@@ -1,7 +1,7 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DCPInstanceHandle.h"
 
-A2DCPInstanceHandle::A2DCPInstanceHandle(){}
+A2DCPDevice::A2DCPDevice(){}
 
 A2DCPInstanceHandle::~A2DCPInstanceHandle(){}
 

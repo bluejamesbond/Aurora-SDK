@@ -24,6 +24,9 @@
 #include "A2DAbstract.h"
 #include "A2DWindowProperties.h"
 #include "A2DCPWindowHandle.h"
+#include "A2DCPResultHandle.h"
+#include "A2DCPInstanceHandle.h"
+#include "A2DCPString.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
