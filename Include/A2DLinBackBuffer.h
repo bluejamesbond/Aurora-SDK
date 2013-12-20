@@ -26,6 +26,9 @@
 #include "A2DCPDevice.h"
 #include "A2DCPInstanceHandle.h"
 #include "A2DCPString.h"
+#include "OpenGlClass.h"
+#include "InputClass.h"
+#include "GraphicsClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -62,19 +65,11 @@ public:
     								aVertexBuffer;
     								aIndexBuffer;
 
-    /*
+    
     //Windows Variables
     IDXGISwapChain            *     aDXGISwapChain;
-    ID3D10Device              *     aDXDevice;
-    ID3D10RenderTargetView    *     aDXRenderTargetView;
-    ID3D10Texture2D           *     aDXDepthStencilBuffer;
-    ID3D10DepthStencilState   *     aDXDepthStencilState;
-    ID3D10DepthStencilView    *     aDXDepthStencilView;
-    ID3D10RasterizerState     *     aDXRasterState;
-	ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
-	char							aVideoCardDescription[128];
-	int								aVideoCardMemory;
-	*/
+    A2DCPDevice               *     aDXDevice;
+
 private:
 	// Variables
 	A2DWindowProperties       *     aWindowProps;
