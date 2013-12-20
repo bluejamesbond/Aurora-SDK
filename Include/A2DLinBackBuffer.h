@@ -47,6 +47,8 @@ struct A2DWindowProperties;
 class A2DWindow;
 class A2DImagePanel;
 class A2DAbstractBackBuffer;
+class OpenGlClass;
+class InputClass;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE

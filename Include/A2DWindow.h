@@ -24,10 +24,11 @@
 #include "A2DAbstract.h"
 #include "A2DRect.h"
 #include "A2DAbstractWindow.h"
-#include "A2DCPString.h"
+/*#include "A2DCPString.h"
 #include "A2DCPWindowHandle.h"
 #include "A2DCPInstanceHandle.h"
 #include "A2DCPResultHandle.h"
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -36,10 +37,11 @@
 class A2DFrame;
 class A2DAbstract;
 class A2DAbstractWindow;
-class A2DCPString;
+/*class A2DCPString;
 class A2DCPWindowHandle;
 class A2DCPResultHandle;
 class A2DCPInstanceHandle;
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE

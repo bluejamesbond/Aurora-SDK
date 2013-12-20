@@ -23,10 +23,12 @@
 #include "A2DFrame.h"
 #include "A2DAbstract.h"
 #include "A2DWindowProperties.h"
-#include "A2DCPWindowHandle.h"
+//WE WILL UTILIZE HE CP TYPES LATER, FOR NOW IT'S ALL MS WINDOWS
+/*#include "A2DCPWindowHandle.h"
 #include "A2DCPResultHandle.h"
 #include "A2DCPInstanceHandle.h"
 #include "A2DCPString.h"
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -79,13 +81,13 @@ private:
 	float                           aPadding;
 	float                           aShadowPadding;
 
-	A2DCPWindowHandle               aParentHandle;
-	A2DCPWindowHandle               aChildHandle;
+	HWND			                aParentHandle;
+	HWND			                aChildHandle;
 
-	A2DCPString			            aName;
+	LPCWSTR				            aName;
 	// LPCWSTR or string
 
-	A2DCPInstanceHandle       *     aHInstance;
+	xHInstance                *     aHInstance;
 
 	Color                           aBorderColor;
 
@@ -99,35 +101,35 @@ public:
 
 	// Accessors and mutators
 	// These don't need mutators because we are giving direct access to the structs
-	virtual A2DRect                   *     getBounds() = 0;
+	virtual A2DRect                   *     getBounds();
 
 	// Accessing internal variables. Do not provide mutators for these.
-	virtual A2DCPWindowHandle         *     getChildHandle() = 0;
-	virtual A2DCPWindowHandle         *     getParentHandle() = 0;
+	virtual HWND			          *     getChildHandle();
+	virtual HWND			          *     getParentHandle();
 
-	virtual A2DCPString               *     getName() = 0; // Fix this, should we use pointer or not?
-	virtual void                            setName(A2DCPString * xName) = 0; // Fix this, should we use pointer or not?
+	virtual LPCWSTR	                  *     getName(); // Fix this, should we use pointer or not?
+	virtual void                            setName(A2DCPString * xName); // Fix this, should we use pointer or not?
 
-	virtual A2DFrame                  *     getFrame() = 0; // GET
-	virtual void                            setFrame(A2DFrame * xFrame) = 0; // SET
+	virtual A2DFrame                  *     getFrame(); // GET
+	virtual void                            setFrame(A2DFrame * xFrame); // SET
 
-	virtual bool                            isUndecorated() = 0; // Get
-	virtual void                            setUndecorated(bool xUndecoratedFlag) = 0; // SET
+	virtual bool                            isUndecorated(); // Get
+	virtual void                            setUndecorated(bool xUndecoratedFlag); // SET
 
-	virtual int                             getDefaultCloseOperation() = 0;
-	virtual void                            setDefaultCloseOperation(int xCloseOperation) = 0;
+	virtual int                             getDefaultCloseOperation();
+	virtual void                            setDefaultCloseOperation(int xCloseOperation);
 
 	virtual A2DWindow                 *     getLocationRelativeTo() = 0;
-	virtual void                            setLocationRelativeTo(A2DWindow * xWindow) = 0;
+	virtual void                            setLocationRelativeTo(A2DWindow * xWindow);
 
-	virtual bool                            isVisible() = 0;
-	virtual void                            setVisible(bool xVisibile) = 0;
+	virtual bool                            isVisible();
+	virtual void                            setVisible(bool xVisibile);
 
-	virtual bool                            isShadowed() = 0;
-	virtual void                            setShadowed(bool xShadowFlag) = 0;
+	virtual bool                            isShadowed();
+	virtual void                            setShadowed(bool xShadowFlag);
 
-	virtual Color                           getBorderColor() = 0;
-	virtual void                            setBorderColor(Color xBorderColor) = 0;
+	virtual Color                           getBorderColor();
+	virtual void                            setBorderColor(Color xBorderColor);
 
 	// Additional
 	virtual void                            Update() = 0;
@@ -135,15 +137,15 @@ public:
 	virtual void                            RenderComponent() = 0;
 	virtual void                            RenderComponentClear() = 0;
 	virtual void                            RenderComponentBorder() = 0;
-	virtual A2DCPResultHandle               CreateResources() = 0;
-	virtual A2DCPResultHandle               CreateComponentResources() = 0;
+	virtual HRESULT                         CreateResources() = 0;
+	virtual HRESULT			                CreateComponentResources() = 0;
 
 	// Implementation
 	// { A2DABSTRACT }
-	virtual A2DCPResultHandle               Initialize() = 0;
+	virtual HRESULT			                Initialize() = 0;
 	virtual void							Deinitialize() = 0;
-	virtual A2DCPString						GetClass() = 0;
-	virtual A2DCPString					    ToString() = 0;
+	virtual LPCWSTR  						GetClass() = 0;
+	virtual LPCWSTR						    ToString() = 0;
 	virtual bool							operator==(A2DAbstract * xAbstract) = 0;
 
 };
