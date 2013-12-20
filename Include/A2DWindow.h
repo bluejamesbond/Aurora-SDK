@@ -36,7 +36,7 @@ class A2DAbstract;
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define FLOAT_ZERO											0.0f
+#define FLOAT_ZERO                                          0.0f
 #define FLOAT_ONE                                           1.0f
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ using namespace Gdiplus;  // WINDOWS specific
 
 class A2DWindow : public A2DAbstract
 {
-	/*********************************************************************/
+    /*********************************************************************/
     /*                      CROSS-PLATFORM START                         */
     /*********************************************************************/
 
@@ -64,36 +64,36 @@ protected:
     // Variables
 
 
-	/*********************************************************************/
-	/*                                OPTIONS                            */
-	/*********************************************************************/
-	
-	float							aOptBoxShadowRadius;
-	float							aOptBorderWidth;
-	
-	Color                           aOptBorderColor;
-	Color                           aOptBackgroundColor;
-	Color							aOptBoxShadowColor;
+    /*********************************************************************/
+    /*                                OPTIONS                            */
+    /*********************************************************************/
+    
+    float                           aOptBoxShadowRadius;
+    float                           aOptBorderWidth;
+    
+    Color                           aOptBorderColor;
+    Color                           aOptBackgroundColor;
+    Color                           aOptBoxShadowColor;
 
 private :
 
-	/*********************************************************************/
-	/*                              REQUIRED                             */
-	/*********************************************************************/
+    /*********************************************************************/
+    /*                              REQUIRED                             */
+    /*********************************************************************/
 
-	int                             aDefaultCloseOperation;
+    int                             aDefaultCloseOperation;
 
-	bool                            aVisible;
-	bool                            aShadowed;
-	bool                            aUndecorated;
+    bool                            aVisible;
+    bool                            aShadowed;
+    bool                            aUndecorated;
 
-	LPCWSTR                         aName;
-	
-	HWND                            aParentHWnd;
-	HWND                            aChildHWnd;
-	HINSTANCE                 *     aHInstance;
+    LPCWSTR                         aName;
+    
+    HWND                            aParentHWnd;
+    HWND                            aChildHWnd;
+    HINSTANCE                 *     aHInstance;
 
-	A2DRect							aRect;
+    A2DRect                         aRect;
     A2DFrame                  *     aFrame;
     A2DWindow                 *     aRelativeWindow;
 
@@ -130,28 +130,28 @@ public:
 
     Color                           getBorderColor();
     void                            setBorderColor(Color xBorderColor);
-	
-	float		                    getBorderWidth();
-	void                            setBorderWidth(float xWidth);
+    
+    float                           getBorderWidth();
+    void                            setBorderWidth(float xWidth);
 
     float                           getBoxShadowRadius();
-	void                            setBoxShadowRadius(float xBoxShadowRadius);
+    void                            setBoxShadowRadius(float xBoxShadowRadius);
     
-	Color                           getBoxShadowColor();
-	void                            setBoxShadowColor(Color xBoxShadowColor);
+    Color                           getBoxShadowColor();
+    void                            setBoxShadowColor(Color xBoxShadowColor);
 
-	Color                           getBackgroundColor();
-	void                            setBackgroundColor(Color xBoxShadowColor);
+    Color                           getBackgroundColor();
+    void                            setBackgroundColor(Color xBoxShadowColor);
 
     // Additional
     void                            Update();
-	void                            Render();
-	void							updateAndCacheBoxShadow();
-	void							UpdateAndCacheBackground();
+    void                            Render();
+    void                            updateAndCacheBoxShadow();
+    void                            UpdateAndCacheBackground();
     void                            RenderComponent();
     void                            RenderComponentBorder();
     HRESULT                         CreateResources();
-	void	                        DestroyResources();
+    void                            DestroyResources();
     
     // Implementation
     // { A2DABSTRACT }
@@ -173,42 +173,42 @@ private:
 
     // Variables - WINDOW ONLY - INTERNAL USE ONLY
 
-	Image			          *		aTopShadow;
-	Image                     *    	aLeftShadow;
-	Image                     *		aRightShadow;
-	Image                     *     aBottomShadow;
-	Image                     *     aTopLeftShadow;
-	Image                     *     aBottomLeftShadow;
-	Image                     *     aTopRightShadow;
-	Image                     *     aBottomRightShadow;
-	Image                     *     aBackground;
+    Image                     *     aTopShadow;
+    Image                     *     aLeftShadow;
+    Image                     *     aRightShadow;
+    Image                     *     aBottomShadow;
+    Image                     *     aTopLeftShadow;
+    Image                     *     aBottomLeftShadow;
+    Image                     *     aTopRightShadow;
+    Image                     *     aBottomRightShadow;
+    Image                     *     aBackground;
 
-	TextureBrush              *     aTopShadowBrush;
-	TextureBrush              *     aLeftShadowBrush;
-	TextureBrush              *     aRightShadowBrush;
-	TextureBrush              *     aBottomShadowBrush;
-	TextureBrush              *     aBackgroundBrush;
+    TextureBrush              *     aTopShadowBrush;
+    TextureBrush              *     aLeftShadowBrush;
+    TextureBrush              *     aRightShadowBrush;
+    TextureBrush              *     aBottomShadowBrush;
+    TextureBrush              *     aBackgroundBrush;
 
-	float                           aPadding;
-	float                           aShadowPadding;
+    float                           aPadding;
+    float                           aShadowPadding;
 
-	float                           aRealX = 0;
-	float                           aRealY = 0;
-	float                           aRealWidth = 0;
-	float                           aRealHeight = 0;
+    float                           aRealX = 0;
+    float                           aRealY = 0;
+    float                           aRealWidth = 0;
+    float                           aRealHeight = 0;
 
-	float                           aRelativeX = 0;
-	float                           aRelativeY = 0;
-	float                           aRelativeWidth = 0;
-	float                           aRelativeHeight = 0;
+    float                           aRelativeX = 0;
+    float                           aRelativeY = 0;
+    float                           aRelativeWidth = 0;
+    float                           aRelativeHeight = 0;
 
     int                             aStyle;
     Graphics                  *     aGraphics;
 
-	POINT							lastDraggedPoint;
-	bool							isDragged = false;
-	int								aMinHeight = 300;
-	int								aMinWidth = 300;
+    POINT                           lastDraggedPoint;
+    bool                            isDragged = false;
+    int                             aMinHeight = 300;
+    int                             aMinWidth = 300;
 
     // Builders
     // { NONE }
@@ -242,22 +242,22 @@ private:
     void                            RunMessageLoop();
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
     HRESULT                         RegisterClass();
-	HWND							CreateCompatibleWindow(bool isParent);
+    HWND                            CreateCompatibleWindow(bool isParent);
 
-	// Background
-	HRESULT							CreateBackgroundResources();
-	void							DestroyBackgroundResources();
+    // Background
+    HRESULT                         CreateBackgroundResources();
+    void                            DestroyBackgroundResources();
 
     // Box Shadow - Set 1
-	HRESULT                         createBoxShadowResources();
+    HRESULT                         createBoxShadowResources();
     void                            destroyBoxShadowResources();
 
-	//  Box Shadow - Set 2
-	void                            spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight);
-	float                     *		getGaussianKernel(int xRadius);
-	void							applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius);
-	Bitmap                    *		applyGaussianBlur(Bitmap * src, int radius);
-	BitmapData                *		getLockedBitmapData(Bitmap * src);    
+    //  Box Shadow - Set 2
+    void                            spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight);
+    float                     *     getGaussianKernel(int xRadius);
+    void                            applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius);
+    Bitmap                    *     applyGaussianBlur(Bitmap * src, int radius);
+    BitmapData                *     getLockedBitmapData(Bitmap * src);    
 
     /*********************************************************************/
     /*                      WINDOWS-SPECIFIC END                         */
