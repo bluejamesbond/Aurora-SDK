@@ -1,6 +1,11 @@
 
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DWindow.h"
+#include "../../include/A2DAbstractWindow.h"
+#include "../../include/A2DCPString.h"
+#include "../../include/A2DCPWindowHandle.h"
+#include "../../include/A2DCPResultHandle.h"
+#include "../../include/A2DCPInstanceHandle.h"
 
 A2DWindow::A2DWindow(HINSTANCE * xHInstance) : aHInstance(xHInstance) {}
 

@@ -23,6 +23,11 @@
 #include "A2DFrame.h"
 #include "A2DAbstract.h"
 #include "A2DRect.h"
+#include "A2DAbstractWindow.h"
+#include "A2DCPString.h"
+#include "A2DCPWindowHandle.h"
+#include "A2DCPInstanceHandle.h"
+#include "A2DCPResultHandle.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -30,7 +35,11 @@
 
 class A2DFrame;
 class A2DAbstract;
-
+class A2DAbstractWindow;
+class A2DCPString;
+class A2DCPWindowHandle;
+class A2DCPResultHandle;
+class A2DCPInstanceHandle;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -56,7 +65,7 @@ class A2DAbstract;
 
 using namespace Gdiplus;  // WINDOWS specific
 
-class A2DWindow : public A2DAbstract
+class A2DWindow : public A2DAbstract, public A2DAbstractWindow
 {
 
     /*********************************************************************/
@@ -80,15 +89,15 @@ private:
     bool                            aUndecorated;
 
     float                           aPadding;
-	float                           aShadowPadding;
-	float							aBorderWidth;
+    float                           aShadowPadding;
+    float                           aBorderWidth;
 
-    HWND                            aParentHandle;
-	HWND                            aChildHandle;
+    A2DCPWindowHandle               aParentHandle;
+    A2DCPWindowHandle               aChildHandle;
 
-    LPCWSTR                         aName;
+    A2DCPString                     aName;
 
-    HINSTANCE                 *     aHInstance;
+    A2DCPInstanceHandle       *     aHInstance;
 
     Color                           aBorderColor;
 
@@ -105,10 +114,10 @@ public:
     A2DRect                   *     getBounds();
         
     // Accessing internal variables. Do not provide mutators for these.
-    HWND                      *     getChildHandle();
-    HWND                      *     getParentHandle();
+    A2DCPWindowHandle         *     getChildHandle();
+    A2DCPWindowHandle         *     getParentHandle();
 
-    LPCWSTR                   *     getName(); // Fix this, should we use pointer or not?
+    A2DCPString               *     getName(); // Fix this, should we use pointer or not?
     void                            setName(LPCWSTR * xName); // Fix this, should we use pointer or not?
     
     A2DFrame                  *     getFrame(); // GET
@@ -147,15 +156,15 @@ public:
     void                            RenderComponent();
     void                            RenderComponentClear();
     void                            RenderComponentBorder();
-    HRESULT                         CreateResources();
-    HRESULT                         CreateComponentResources();
+    A2DCPResultHandle               CreateResources();
+    A2DCPResultHandle               CreateComponentResources();
     
     // Implementation
     // { A2DABSTRACT }
     virtual HRESULT                 Initialize();
     virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
+    virtual A2DCPString             GetClass();
+    virtual A2DCPString             ToString();
     virtual bool                    operator==(A2DAbstract * xAbstract);
 
     /*********************************************************************/

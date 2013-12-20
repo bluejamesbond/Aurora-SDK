@@ -59,9 +59,6 @@ class A2DAbstractWindow;
 class A2DAbstractWindow : public A2DAbstract
 {
 
-	/*********************************************************************/
-	/*                      CROSS-PLATFORM START                         */
-	/*********************************************************************/
 public:
 
 	// Constructor
@@ -132,12 +129,6 @@ public:
 	virtual Color                           getBorderColor() = 0;
 	virtual void                            setBorderColor(Color xBorderColor) = 0;
 
-	virtual float                           getPadding() = 0;
-	virtual void                            setPadding(float xPadding) = 0;
-
-	virtual float                           getShadowPadding() = 0;
-	virtual void                            setShadowPadding(float xShadowPadding) = 0;
-
 	// Additional
 	virtual void                            Update() = 0;
 	virtual void                            Render() = 0;
@@ -155,71 +146,6 @@ public:
 	virtual A2DCPString					    ToString() = 0;
 	virtual bool							operator==(A2DAbstract * xAbstract) = 0;
 
-	/*********************************************************************/
-	/*                      CROSS-PLATFORM END                           */
-	/*********************************************************************/
-
-	/*********************************************************************/
-	/*                      WINDOWS-SPECIFIC START                       */
-	/*********************************************************************/
-
-	// Variables - WINDOW ONLY - INTERNAL USE ONLY
-
-	REAL                            aCachedZero = 0;
-	REAL                            aCachedPadding = 0;
-	REAL                            aCachedShadowPadding = 0;
-
-	REAL                            aCachedRealX = 0;
-	REAL                            aCachedRealY = 0;
-	REAL                            aCachedRealWidth = 0;
-	REAL                            aCachedRealHeight = 0;
-
-	REAL                            aCachedRelativeX = 0;
-	REAL                            aCachedRelativeY = 0;
-	REAL                            aCachedRelativeWidth = 0;
-	REAL                            aCachedRelativeHeight = 0;
-
-	int                             aStyle;
-	SIZE                            aHDCSize;
-	Graphics                  *     aGraphics;
-
-	// Builders
-	// { NONE }
-
-	// Factory
-	// { NONE }
-
-	// Accessors
-	// { NONE }
-
-	// Mutators
-	// { NONE }
-
-	// Factory
-	// { NONE }
-
-	// Additional
-	void                                                        preCache();
-
-	// Pure Virtual
-	// { NONE }
-
-	// Virtual
-	// { NONE }     
-
-private:
-
-	// Functions
-	void                            RunMessageLoop();
-	static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
-	static inline A2DWindow*        GetAppState(HWND xHwnd);
-
-	HRESULT                         RegisterClass();
-	HRESULT                         CreateHandle(HWND * xHandle);
-
-	/*********************************************************************/
-	/*                      WINDOWS-SPECIFIC END                         */
-	/*********************************************************************/
 };
 
 #endif
