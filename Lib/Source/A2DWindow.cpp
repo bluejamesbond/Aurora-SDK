@@ -6,6 +6,16 @@ A2DWindow::A2DWindow(HINSTANCE * xHInstance) : aHInstance(xHInstance) {}
 
 A2DWindow::~A2DWindow(){}
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be 
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setUndecorated(bool xUndecoratedFlag)
 {
     // we cannot just use WS_POPUP style
@@ -17,87 +27,194 @@ void A2DWindow::setUndecorated(bool xUndecoratedFlag)
 
     LONG lStyle, lExStyle;
 
-    lStyle = GetWindowLongPtr(aParentHandle, GWL_STYLE);
-    lExStyle = GetWindowLongPtr(aParentHandle, GWL_EXSTYLE);
+    lStyle = GetWindowLongPtr(aParentHWnd, GWL_STYLE);
+    lExStyle = GetWindowLongPtr(aParentHWnd, GWL_EXSTYLE);
 
     lStyle &= xUndecoratedFlag ? ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU) : (WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
     lStyle |= xUndecoratedFlag ? (WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP) : 0;
     lExStyle |= xUndecoratedFlag ? (WS_EX_LAYERED | WS_EX_APPWINDOW) : WS_EX_LAYERED;
 
-    SetWindowLongPtr(aParentHandle, GWL_STYLE, lStyle);
-    SetWindowLongPtr(aParentHandle, GWL_EXSTYLE, lExStyle);
+    SetWindowLongPtr(aParentHWnd, GWL_STYLE, lStyle);
+    SetWindowLongPtr(aParentHWnd, GWL_EXSTYLE, lExStyle);
 
-    //SetWindowPos(aParentWin->aHwnd, HWND_TOP, aWindowProps->aRealLeft, aWindowProps->aRealTop, aRealWidth, aRealHeight, SWP_FRAMECHANGED);
-    SetWindowPos(aParentHandle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
+    SetWindowPos(aParentHWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
-void A2DWindow::setPadding(float xPadding)
-{
-    aPadding = xPadding;
-}
 
-float A2DWindow::getPadding()
-{
-    return aPadding;
-}
-
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setBoxShadowRadius(float xBoxShadowRadius)
 {
 	if (abs(xBoxShadowRadius) < 1) return;
 
-	aBoxShadowRadius = abs(xBoxShadowRadius);
+	aOptBoxShadowRadius = abs(xBoxShadowRadius);
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 float A2DWindow::getBoxShadowRadius()
 {
-	return aBoxShadowRadius;
+	return aOptBoxShadowRadius;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setBoxShadowColor(Color xBoxShadowColor)
 {
-	aBoxShadowColor = xBoxShadowColor;
+	aOptBoxShadowColor = xBoxShadowColor;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 Color A2DWindow::getBoxShadowColor()
 {
-	return aBoxShadowColor;
+	return aOptBoxShadowColor;
 }
 
+/**
+* 
+* This method creates a 1x1 image of the color indicated by the 
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 void A2DWindow::UpdateAndCacheBackground()
 {
 	DestroyBackgroundResources();
 	CreateBackgroundResources();
 	
-	HBRUSH brush = CreateSolidBrush(RGB(aBackgroundColor.GetRed(), aBackgroundColor.GetGreen(), aBackgroundColor.GetBlue()));
-	SetClassLongPtr(aParentHandle, GCLP_HBRBACKGROUND, (LONG)brush);
+	HBRUSH brush = CreateSolidBrush(RGB(aOptBackgroundColor.GetRed(), aOptBackgroundColor.GetGreen(), aOptBackgroundColor.GetBlue()));
+	SetClassLongPtr(aParentHWnd, GCLP_HBRBACKGROUND, (LONG)brush);
+
+	CloseHandle(brush);
 }
 
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 void A2DWindow::updateAndCacheBoxShadow()
 {
 	destroyBoxShadowResources();
 	createBoxShadowResources();
 }
 
-HWND* A2DWindow::getChildHandle()
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
+HWND A2DWindow::getChildHWnd()
 {
-    return &aChildHandle;
+    return aChildHWnd;
 }
 
-HWND* A2DWindow::getParentHandle()
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
+HWND A2DWindow::getParentHWnd()
 {
-    return &aParentHandle;
+    return aParentHWnd;
 }
-
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 bool A2DWindow::isShadowed()
 {
     return aShadowed;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 bool A2DWindow::isUndecorated()
 {
 	return aUndecorated;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setShadowed(bool xShadowed)
 {
     if (!isUndecorated())
@@ -111,68 +228,198 @@ void A2DWindow::setShadowed(bool xShadowed)
     Update();
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 Color A2DWindow::getBorderColor()
 {
-    return aBorderColor;
+    return aOptBorderColor;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setBorderColor(Color xBorderColor)
 {
-    aBorderColor = xBorderColor;
+    aOptBorderColor = xBorderColor;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 Color A2DWindow::getBackgroundColor()
 {
-	return aBackgroundColor;
+	return aOptBackgroundColor;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setBackgroundColor(Color xBackgroundColor)
 {
-	aBackgroundColor = xBackgroundColor;
+	aOptBackgroundColor = xBackgroundColor;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 bool A2DWindow::isVisible()
 {
 	return aVisible;
 }
 
-void A2DWindow::setName(LPCWSTR * xName)
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
+void A2DWindow::setName(LPCWSTR xName)
 {
-    aName = *xName;
-    // SetWindowText(aChildHandle, *xName);
-    SetWindowText(aParentHandle, *xName);
+    aName = xName;
+    // SetWindowText(aChildHWnd, *xName);
+    SetWindowText(aParentHWnd, xName);
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 LPCWSTR * A2DWindow::getName()
 {
     return &aName;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void  A2DWindow::setFrame(A2DFrame * xFrame)
 {
     aFrame = xFrame;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 A2DFrame *  A2DWindow::getFrame()
 {
     return aFrame;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 A2DRect * A2DWindow::getBounds()
 {
     return &aRect;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 int A2DWindow::getDefaultCloseOperation()
 {
     return aDefaultCloseOperation;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setDefaultCloseOperation(int xOperation)
 {
     aDefaultCloseOperation = xOperation;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setLocationRelativeTo(A2DWindow * xWindow)
 {
 	if (xWindow == NULL)
@@ -182,16 +429,49 @@ void A2DWindow::setLocationRelativeTo(A2DWindow * xWindow)
 	}
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 void A2DWindow::setBorderWidth(float xBorderWidth)
 {
-	aBorderWidth = xBorderWidth;
+	aOptBorderWidth = xBorderWidth;
 }
 
+/**
+*
+* Sets the visibility of the decorations around a window. Enabling
+* decorations shows you the maximize, minimize, and close buttons.
+*
+* @param bool
+*            the boolean indicating whether window should be
+*            decorated or not.
+* @return void
+*/
 float A2DWindow::getBorderWidth()
 {
-	return aBorderWidth;
+	return aOptBorderWidth;
 }
 
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 HRESULT A2DWindow::RegisterClass()
 {
     WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
@@ -202,7 +482,7 @@ HRESULT A2DWindow::RegisterClass()
     wcex.hInstance = *aHInstance;
     wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = CreateSolidBrush(RGB(aBackgroundColor.GetRed(), aBackgroundColor.GetGreen(), aBackgroundColor.GetBlue()));;
+	wcex.hbrBackground = CreateSolidBrush(RGB(aOptBackgroundColor.GetRed(), aOptBackgroundColor.GetGreen(), aOptBackgroundColor.GetBlue()));;
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = aName;
     wcex.hIconSm = LoadIcon(*aHInstance, IDI_APPLICATION);
@@ -210,6 +490,19 @@ HRESULT A2DWindow::RegisterClass()
     return RegisterClassEx(&wcex);
 }
 
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 void A2DWindow::RunMessageLoop()
 {
     MSG msg;
@@ -226,7 +519,20 @@ void A2DWindow::RunMessageLoop()
     }
 }
 
-HRESULT A2DWindow::CreateHandle(HWND& xHandle)
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
+HWND A2DWindow::CreateCompatibleWindow(bool isParent)
 {
     HRESULT         hr = S_OK;
     HWND            hWnd, hwndParent;
@@ -234,38 +540,61 @@ HRESULT A2DWindow::CreateHandle(HWND& xHandle)
     DWORD           lStyle, lExStyle;
     LPCWSTR         className, titleName;
     
-	left =			static_cast<int>(xHandle == aParentHandle ? aRect.aX - aPadding : aRect.aX + aBorderWidth);
-	top =			static_cast<int>(xHandle == aParentHandle ? aRect.aY - aPadding : aRect.aY + aBorderWidth);
-	width =			static_cast<int>(xHandle == aParentHandle ? aRect.aWidth - aPadding * 2 : aRect.aWidth - aBorderWidth * 2);
-	height =		static_cast<int>(xHandle == aParentHandle ? aRect.aHeight - aPadding * 2 : aRect.aHeight - aBorderWidth * 2);
-	lStyle =		static_cast<int>(xHandle == aParentHandle ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
-	lExStyle =		static_cast<int>(xHandle == aParentHandle ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
-	hwndParent =	xHandle == aParentHandle ? HWND_DESKTOP : aParentHandle;
-    className =     aName;
-    titleName =     aName;
+	left = static_cast<int>(isParent ? aRect.aX - aPadding : aRect.aX + aOptBorderWidth);
+	top = static_cast<int>(isParent ? aRect.aY - aPadding : aRect.aY + aOptBorderWidth);
+	width = static_cast<int>(isParent ? aRect.aWidth - aPadding * 2 : aRect.aWidth - aOptBorderWidth * 2);
+	height = static_cast<int>(isParent ? aRect.aHeight - aPadding * 2 : aRect.aHeight - aOptBorderWidth * 2);
+	lStyle = static_cast<int>(isParent ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
+	lExStyle = static_cast<int>(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
+    className =  aName;
+    titleName =  aName;
 
     hWnd = CreateWindowEx(lExStyle, className, titleName, lStyle, left, top, width, height, hwndParent, NULL, *aHInstance, this);
-    hr = hWnd ? S_OK : E_FAIL;
-    if (FAILED(hr)) return hr;
-
-    xHandle = hWnd;
-    aStyle = WS_EX_APPWINDOW;
+	
+	aStyle = WS_EX_APPWINDOW;
     
-	if (aChildHandle && aParentHandle)
+	if (aChildHWnd && aParentHWnd)
     {
         // Force the child on top of parent!
-        SetWindowPos(aChildHandle, aParentHandle, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        SetWindowPos(aChildHWnd, aParentHWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
     }
 
-    return hr;
+	return hWnd;
 }
 
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 void A2DWindow::Render()
 {   
     RenderComponent();
     RenderComponentBorder();
 }
 
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 void A2DWindow::Update()
 {
 	HDC hdc, memDC;
@@ -275,14 +604,14 @@ void A2DWindow::Update()
 	// threads.
 	aRealX = aRect.aX;
 	aRealY = aRect.aY;
-	aRealWidth = aRect.aWidth + aBorderWidth * 2;
-	aRealHeight = aRect.aHeight + aBorderWidth * 2;
-	aRelativeX = aRealX - aPadding - aBorderWidth;
-	aRelativeY = aRealY - aPadding - aBorderWidth;
+	aRealWidth = aRect.aWidth + aOptBorderWidth * 2;
+	aRealHeight = aRect.aHeight + aOptBorderWidth * 2;
+	aRelativeX = aRealX - aPadding - aOptBorderWidth;
+	aRelativeY = aRealY - aPadding - aOptBorderWidth;
 	aRelativeWidth = aRealWidth + aPadding * 2;
 	aRelativeHeight = aRealHeight + aPadding * 2;
 
-	hdc = GetDC(aParentHandle);
+	hdc = GetDC(aParentHWnd);
 	memDC = CreateCompatibleDC(hdc);
 
 	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
@@ -309,7 +638,7 @@ void A2DWindow::Update()
 	blendFunction.BlendOp = AC_SRC_OVER;
 	blendFunction.SourceConstantAlpha = 255;
 
-	UpdateLayeredWindow(aParentHandle, screenDC, &ptDst, &size, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
+	UpdateLayeredWindow(aParentHWnd, screenDC, &ptDst, &size, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
 	
 	/***********************************************/
 	
@@ -322,8 +651,19 @@ void A2DWindow::Update()
 	DeleteObject(memDC);
 }
 
-
-
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 void A2DWindow::destroyBoxShadowResources()
 {	
 	if (aTopLeftShadow)
@@ -401,6 +741,19 @@ void A2DWindow::destroyBoxShadowResources()
 
 }
 
+/**
+*
+* This method creates a 1x1 image of the color indicated by the
+* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
+* that color. The aOptBackgroundColor
+*
+* @see #destroyBackgroundResources()
+* @see #createBackgroundResources()
+* @see #createResources()
+* @see #destroyResources()
+* @param  void
+* @return void
+*/
 float* A2DWindow::getGaussianKernel(int xRadius)
 {
 	if (xRadius < 1)
@@ -450,6 +803,23 @@ BitmapData * A2DWindow::getLockedBitmapData(Bitmap * src)
 	return bitmapData;
 }
 
+
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 Bitmap * A2DWindow::applyGaussianBlur(Bitmap * src, int radius)
 {
 	// NOTE: There could be memory leaks if the BitmapData is NULL
@@ -504,6 +874,22 @@ Bitmap * A2DWindow::applyGaussianBlur(Bitmap * src, int radius)
 	return rotated;
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void  A2DWindow::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius)
 {
 	int ca = 0, cr = 0, cg = 0, cb = 0;
@@ -558,6 +944,22 @@ void  A2DWindow::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPix
 	}
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
 {
     Graphics graphics(dest);
@@ -567,15 +969,31 @@ void A2DWindow::spliceToNinePatch(Image * src, Image * dest, float srcX, float s
 	graphics.DrawImage(src, FLOAT_ZERO, FLOAT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel); // Render twice to increase opacity
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 HRESULT A2DWindow::createBoxShadowResources()
 {
 	HRESULT hr = S_OK;
 
 	Bitmap * solid, *blurred;
 	Graphics * graphics;
-    SolidBrush blackBrush(aBoxShadowColor);
+    SolidBrush blackBrush(aOptBoxShadowColor);
 
-	float radius = aBoxShadowRadius;
+	float radius = aOptBoxShadowRadius;
 	float radiusSafety = radius * 2;
 	float realDim = radius * 3;
 	float relativeDim = realDim + radius * 2;
@@ -633,6 +1051,22 @@ HRESULT A2DWindow::createBoxShadowResources()
 	return hr;
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 HRESULT A2DWindow::CreateBackgroundResources()
 {
 	HRESULT hr = S_OK;
@@ -640,7 +1074,7 @@ HRESULT A2DWindow::CreateBackgroundResources()
 	aBackground = new Bitmap(1, 1);
 
 	Graphics  graphics(aBackground);
-	SolidBrush blackBrush(aBackgroundColor);
+	SolidBrush blackBrush(aOptBackgroundColor);
 
 	graphics.FillRectangle(&blackBrush, 0, 0, 1, 1);
 
@@ -649,6 +1083,22 @@ HRESULT A2DWindow::CreateBackgroundResources()
 	return hr;
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::DestroyBackgroundResources()
 {
 	if (aBackground)
@@ -664,6 +1114,22 @@ void A2DWindow::DestroyBackgroundResources()
 	}
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 HRESULT A2DWindow::CreateResources()
 {
 	HRESULT hr = S_OK;
@@ -676,6 +1142,22 @@ HRESULT A2DWindow::CreateResources()
 	return hr;
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::DestroyResources()
 {
 	if (aBackground)
@@ -694,6 +1176,22 @@ void A2DWindow::DestroyResources()
 	DestroyBackgroundResources();
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::setVisible(bool xVisible)
 {
     aVisible = xVisible;
@@ -703,23 +1201,39 @@ void A2DWindow::setVisible(bool xVisible)
         // Create resources!
         aFrame->CreateResources();
 
-        ShowWindow(aChildHandle, SW_SHOWNORMAL);
-        ShowWindow(aParentHandle, SW_SHOWNORMAL);
+        ShowWindow(aChildHWnd, SW_SHOWNORMAL);
+        ShowWindow(aParentHWnd, SW_SHOWNORMAL);
 
         RunMessageLoop();
     }
     else
     {
-        ShowWindow(aChildHandle, SW_HIDE);
-        ShowWindow(aParentHandle, SW_HIDE);
+        ShowWindow(aChildHWnd, SW_HIDE);
+        ShowWindow(aParentHWnd, SW_HIDE);
     }
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::RenderComponentBorder()
 {
-	if (aBorderWidth > 0)
+	if (aOptBorderWidth > 0)
 	{
-		Pen borderPen(aBorderColor, aBorderWidth);
+		Pen borderPen(aOptBorderColor, aOptBorderWidth);
     
 		aGraphics->DrawRectangle(&borderPen, aPadding, aPadding, aRealWidth, aRealHeight);
     
@@ -727,6 +1241,22 @@ void A2DWindow::RenderComponentBorder()
 	}
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::RenderComponent()
 {	
 	aTopShadowBrush->ResetTransform();
@@ -754,6 +1284,22 @@ void A2DWindow::RenderComponent()
     aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aRealWidth, aRealHeight);	
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
     A2DWindow * aWindow;
@@ -772,183 +1318,187 @@ LRESULT CALLBACK A2DWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 		{
 		case WM_SHOWWINDOW:
 		{
-							  aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 
-							  return S_OK;
-		}/*
-		case WM_GETMINMAXINFO:
+			return S_OK;
+		}
+		case WM_LBUTTONDOWN:
 		{
-								 ((MINMAXINFO *)xLParam)->ptMinTrackSize.x = 300;
-								 ((MINMAXINFO *)xLParam)->ptMinTrackSize.y = 300;
+			aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			if (aWindow->aChildHWnd != xHwnd) return 0;
 
-			return 0;
-		}*/
-		/*	case WM_SIZE:
+			SetCapture(xHwnd);
+			aWindow->isDragged = true;
+
+			return S_OK;
+		}
+		case WM_MOUSEMOVE:
+		{
+			aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			if (aWindow->aChildHWnd != xHwnd) return 0;
+
+			if (!aWindow->isDragged)
 			{
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-						
-				if (aWindow->aChildHandle == xHwnd)
-				{
-					aWindow->forceAlignment();
-				}
-
-				return S_OK;
-			}*/
-			case WM_LBUTTONDOWN:
-			{
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				if (aWindow->aChildHandle != xHwnd) return 0;
-
-				SetCapture(xHwnd);
-				aWindow->isDragged = true;
-
-				return S_OK;
+				GetCursorPos(&aWindow->lastDraggedPoint);
+				ScreenToClient(xHwnd, &aWindow->lastDraggedPoint);
 			}
-			case WM_MOUSEMOVE:
+
+			aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			if (aWindow->aChildHWnd != xHwnd) return 0;
+
+			if (aWindow->isDragged)
 			{
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				if (aWindow->aChildHandle != xHwnd) return 0;
 
-				if (!aWindow->isDragged)
-				{
-					GetCursorPos(&aWindow->lastDraggedPoint);
-					ScreenToClient(xHwnd, &aWindow->lastDraggedPoint);
-				}
-
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				if (aWindow->aChildHandle != xHwnd) return 0;
-
-				if (aWindow->isDragged)
-				{
-
-					POINT p;
-					GetCursorPos(&p);
-					ScreenToClient(xHwnd, &p);
+				POINT p;
+				GetCursorPos(&p);
+				ScreenToClient(xHwnd, &p);
 					
-					HDWP hdwp = BeginDeferWindowPos(2);
+				HDWP hdwp = BeginDeferWindowPos(2);
 
-					int deltaY = aWindow->lastDraggedPoint.y - p.y;
-					int deltaX = aWindow->lastDraggedPoint.x - p.x;
+				int deltaY = aWindow->lastDraggedPoint.y - p.y;
+				int deltaX = aWindow->lastDraggedPoint.x - p.x;
 
-					int offset = aWindow->getPadding() + aWindow->getBorderWidth();
+				int offset = aWindow->getBoxShadowRadius() + aWindow->getBorderWidth();
 
-					// DEFER REGION //
+				// DEFER REGION //
 
-					A2DRect& aRect = aWindow->aRect;
+				A2DRect& aRect = aWindow->aRect;
 
-					aRect.aX = 500;
-					aRect.aY = 500;
-					aRect.aWidth += deltaX;
-					aRect.aHeight += deltaY;
+				aRect.aX = 500;
+				aRect.aY = 500;
+				aRect.aWidth += deltaX;
+				aRect.aHeight += deltaY;
 					
-					aWindow->Update();
+				aWindow->Update();
 
-					SetWindowPos(aWindow->aChildHandle, aWindow->aParentHandle, aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, SWP_NOZORDER | SWP_NOACTIVATE);						
+				SetWindowPos(aWindow->aChildHWnd, aWindow->aParentHWnd, aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, SWP_NOZORDER | SWP_NOACTIVATE);						
 
-					// DEFER REGION //
+				// DEFER REGION //
 
-					aWindow->lastDraggedPoint = p;
-				}
-
-				return S_OK;
+				aWindow->lastDraggedPoint = p;
 			}
-			case WM_LBUTTONUP:
-			{
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				if (aWindow->aChildHandle != xHwnd) return 0;
 
-				ReleaseCapture();
-				aWindow->isDragged = false;
+			return S_OK;
+		}
+		case WM_LBUTTONUP:
+		{
+			aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			if (aWindow->aChildHWnd != xHwnd) return 0;
 
-				return S_OK;
-			}
-			/*
-			case WM_NCHITTEST:
-			{
-				const LONG border_width = 8; //in pixels
-				RECT winrect;
-				GetWindowRect(xHwnd, &winrect);
-				long x = GET_X_LPARAM(xLParam);
-				long y = GET_Y_LPARAM(xLParam);
+			ReleaseCapture();
+			aWindow->isDragged = false;
 
-				//bottom left corner
-				if (x >= winrect.left && x < winrect.left + border_width &&
-					y < winrect.bottom && y >= winrect.bottom - border_width)
-				{
-					return HTBOTTOMLEFT;
-				}
-				//bottom right corner
-				if (x < winrect.right && x >= winrect.right - border_width &&
-					y < winrect.bottom && y >= winrect.bottom - border_width)
-				{
-					return HTBOTTOMRIGHT;
-				}
-				//top left corner
-				if (x >= winrect.left && x < winrect.left + border_width &&
-					y >= winrect.top && y < winrect.top + border_width)
-				{
-					return HTTOPLEFT;
-				}
-				//top right corner
-				if (x < winrect.right && x >= winrect.right - border_width &&
-					y >= winrect.top && y < winrect.top + border_width)
-				{
-					return HTTOPRIGHT;
-				}
-				//left border
-				if (x >= winrect.left && x < winrect.left + border_width)
-				{
-					return HTLEFT;
-				}
-				//right border
-				if (x < winrect.right && x >= winrect.right - border_width)
-				{
-					return HTRIGHT;
-				}
-				//bottom border
-				if (y < winrect.bottom && y >= winrect.bottom - border_width)
-				{
-					return HTBOTTOM;
-				}
-				//top border
-				if (y >= winrect.top && y < winrect.top + border_width)
-				{
-					return HTTOP;
-				}
+			return S_OK;
+		}
+        case WM_CLOSE:
+        {       
+            DestroyWindow(xHwnd);
 
-				return S_OK;
-			}*/
-            case WM_CLOSE:
-            {       
-                DestroyWindow(xHwnd);
-                return S_OK;
-            }
-            case WM_DESTROY:
-            {       
-                PostQuitMessage(0);
-                return S_OK;
-            }
+            return S_OK;
+        }
+        case WM_DESTROY:
+        {       
+			PostQuitMessage(0);
+			CloseHandle(xHwnd);
+
+            return S_OK;
+        }
         }
     }
 
     return  DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 }
 
+
+/**
+* 
+* Returns a thumbnail of a source image. <code>newSize</code> defines the
+* length of the longest dimension of the thumbnail. The other dimension is
+* then computed according to the dimensions ratio of the original picture.
+* 
+* This method favors speed over quality. When the new size is less than
+* half the longest dimension of the source image,
+* {@link #createThumbnail(BufferedImage, int)} or
+* {@link #createThumbnail(BufferedImage, int, int)} should be used instead
+* to ensure the quality of the result without sacrificing too much
+* performance.
+*
+* @see #createThumbnailFast(java.awt.image.BufferedImage, int, int)
+* @see #createThumbnail(java.awt.image.BufferedImage, int)
+* @see #createThumbnail(java.awt.image.BufferedImage, int, int)
+* @param image
+*            the source image
+* @param newSize
+*            the length of the largest dimension of the thumbnail
+* @return a new compatible <code>BufferedImage</code> containing a
+*         thumbnail of <code>image</code>
+* @throws IllegalArgumentException
+*             if <code>newSize</code> is larger than the largest
+*             dimension of <code>image</code> or &lt;= 0
+*/
 LPCWSTR A2DWindow::GetClass()
 {
     return L"A2DWindow";
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 LPCWSTR A2DWindow::ToString()
 {
     return L"A2DWindow";
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 bool A2DWindow::operator==(A2DAbstract * xAbstract)
 {
     return false;
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 HRESULT A2DWindow::Initialize()
 {
     HRESULT hr = S_OK;
@@ -959,7 +1509,7 @@ HRESULT A2DWindow::Initialize()
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     
 	/*****************************************************/
-	// TEMP SETUP
+
 	aRect.aX = 30;
 	aRect.aY = 30;
 	aRect.aHeight = 480;
@@ -967,7 +1517,6 @@ HRESULT A2DWindow::Initialize()
 	aPadding = 25;
 	aShadowPadding = 75;
 	aName = L"TESTING";
-	/*****************************************************/
 
 	setLocationRelativeTo(NULL);
 	setBorderColor(Color(202, 225, 255));
@@ -976,17 +1525,19 @@ HRESULT A2DWindow::Initialize()
 	setBorderWidth(1); //Force the border in DX window
 	setBoxShadowRadius(80);
 
+	/*****************************************************/
+
     hr = RegisterClass();
 
     if (FAILED(hr)) return hr;
     
-    hr = CreateHandle(aParentHandle);
+	aParentHWnd = A2DWindow::CreateCompatibleWindow(true);
 
-    if (FAILED(hr)) return hr;
+	if (!aParentHWnd) return E_FAIL;
 
-    hr = CreateHandle(aChildHandle);
+	aChildHWnd = A2DWindow::CreateCompatibleWindow(false);
 
-    if (FAILED(hr)) return hr;
+	if (!aChildHWnd) return E_FAIL;
 
     hr = CreateResources();
 
@@ -997,8 +1548,24 @@ HRESULT A2DWindow::Initialize()
     return hr;
 }
 
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
 void A2DWindow::Deinitialize()
 {
-    aParentHandle = NULL;
-    aChildHandle = NULL;
+    aParentHWnd = NULL;
+    aChildHWnd = NULL;
 }

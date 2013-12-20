@@ -47,27 +47,10 @@ using namespace Gdiplus;  // WINDOWS specific
 
 class A2DWindow : public A2DAbstract
 {
-
 	/*********************************************************************/
-	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
-	/*********************************************************************/
-	/*********************************************************************/
-	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
-	/*********************************************************************/
-	/*********************************************************************/
-	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
-	/*********************************************************************/
-	/*********************************************************************/
-	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
-	/*********************************************************************/
-	/*********************************************************************/
-	/* USER CONTRACT:: MUST NOT CALL ANYTHING BEFORE INITIALIZE          */
-	/*********************************************************************/
-
-
-    /*********************************************************************/
     /*                      CROSS-PLATFORM START                         */
     /*********************************************************************/
+
 public:
 
     // Constructor
@@ -76,36 +59,43 @@ public:
     // Deconstructor
     ~A2DWindow();
   
-private:
+protected:
 
-    // Variables - NOTE: No need to use the acronym aOpt since variables are PRIVATE!
-    int                             aDefaultCloseOperation;
+    // Variables
 
-    bool                            aVisible;
-    bool                            aShadowed;
-    bool                            aUndecorated;
 
-    float                           aPadding;
-	float                           aShadowPadding;
-	float							aBoxShadowRadius;
-	float							aBorderWidth;
+	/*********************************************************************/
+	/*                                OPTIONS                            */
+	/*********************************************************************/
+	
+	float							aOptBoxShadowRadius;
+	float							aOptBorderWidth;
+	
+	Color                           aOptBorderColor;
+	Color                           aOptBackgroundColor;
+	Color							aOptBoxShadowColor;
 
-    HWND                            aParentHandle;
-	HWND                            aChildHandle;
+private :
 
-    LPCWSTR                         aName;
+	/*********************************************************************/
+	/*                              REQUIRED                             */
+	/*********************************************************************/
 
-    HINSTANCE                 *     aHInstance;
+	int                             aDefaultCloseOperation;
 
-	Color                           aBorderColor;
-	Color                           aBackgroundColor;
-	Color							aBoxShadowColor;
+	bool                            aVisible;
+	bool                            aShadowed;
+	bool                            aUndecorated;
 
+	LPCWSTR                         aName;
+	
+	HWND                            aParentHWnd;
+	HWND                            aChildHWnd;
+	HINSTANCE                 *     aHInstance;
+
+	A2DRect							aRect;
     A2DFrame                  *     aFrame;
-
     A2DWindow                 *     aRelativeWindow;
-
-    A2DRect                         aRect;
 
 public:
 
@@ -114,11 +104,11 @@ public:
     A2DRect                   *     getBounds();
         
     // Accessing internal variables. Do not provide mutators for these.
-    HWND                      *     getChildHandle();
-    HWND                      *     getParentHandle();
+    HWND                            getChildHWnd();
+    HWND                            getParentHWnd();
 
     LPCWSTR                   *     getName(); // Fix this, should we use pointer or not?
-    void                            setName(LPCWSTR * xName); // Fix this, should we use pointer or not?
+    void                            setName(LPCWSTR  xName); // Fix this, should we use pointer or not?
     
     A2DFrame                  *     getFrame(); // GET
     void                            setFrame(A2DFrame * xFrame); // SET
@@ -144,9 +134,6 @@ public:
 	float		                    getBorderWidth();
 	void                            setBorderWidth(float xWidth);
 
-    float                           getPadding();
-    void                            setPadding(float xPadding);
-    
     float                           getBoxShadowRadius();
 	void                            setBoxShadowRadius(float xBoxShadowRadius);
     
@@ -201,7 +188,10 @@ private:
 	TextureBrush              *     aRightShadowBrush;
 	TextureBrush              *     aBottomShadowBrush;
 	TextureBrush              *     aBackgroundBrush;
-	
+
+	float                           aPadding;
+	float                           aShadowPadding;
+
 	float                           aRealX = 0;
 	float                           aRealY = 0;
 	float                           aRealWidth = 0;
@@ -252,7 +242,7 @@ private:
     void                            RunMessageLoop();
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
     HRESULT                         RegisterClass();
-    HRESULT                         CreateHandle(HWND& xHandle);
+	HWND							CreateCompatibleWindow(bool isParent);
 
 	// Background
 	HRESULT							CreateBackgroundResources();
