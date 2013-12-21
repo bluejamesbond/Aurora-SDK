@@ -409,12 +409,12 @@ void A2DBackBuffer::SetZBuffer(bool val)
 
 LPCWSTR A2DBackBuffer::GetClass()
 {
-	return L"A2DCamera";
+	return L"A2DBackBuffer";
 }
 
 LPCWSTR A2DBackBuffer::ToString()
 {
-	return L"A2DCamera";
+	return L"A2DBackBuffer";
 }
 
 bool A2DBackBuffer::operator==(A2DAbstract * xAbstract)
