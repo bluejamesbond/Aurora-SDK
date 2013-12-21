@@ -54,7 +54,7 @@ class A2DAbstractBackBuffer;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DBackBuffer : public A2DAbstract, public A2DAbstractBackBuffer
+class A2DBackBuffer : public A2DAbstractBackBuffer
 {
 
 public:
