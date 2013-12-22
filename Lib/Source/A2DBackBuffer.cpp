@@ -301,6 +301,7 @@ HRESULT A2DBackBuffer::Initialize()
 }
 
 
+
 void A2DBackBuffer::Deinitialize()
 {
 	// Before shutting down set to windowed mode or when you release the 

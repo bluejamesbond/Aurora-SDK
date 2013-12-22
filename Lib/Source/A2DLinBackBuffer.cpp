@@ -73,8 +73,16 @@ HRESULT A2DLinBackBuffer::Initialize()
 	ReleaseDC(hwnd, deviceContext);
 	deviceContext = 0;
 
+	//GetVideoCardInfo(aCardName);
+
 	return true;
 }
+
+void A2DLinBackBuffer::GetVideoCardInfo(char* xcardName)
+	{
+		strcpy_s(cardName, 128, m_videoCardDescription);
+		return;
+	}
 
 bool A2DLinBackBuffer::LoadExtensionList()
 {

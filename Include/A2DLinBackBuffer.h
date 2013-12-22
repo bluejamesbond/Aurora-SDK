@@ -146,14 +146,17 @@ private:
 	// Variables
 	A2DWindowProperties       *     aWindowProps;
 	A2DWindow				  *     aWindow;
-    HDC m_deviceContext;
-    HGLRC m_renderingContext;
+    HDC                             m_deviceContext;
+    HGLRC                           m_renderingContext;
+    float                           m_worldMatrix[16];
+    float                           m_projectionMatrix[16];
+    char                            m_videoCardDescription[128];
 
 public:
     // Accessors
     A2DCPDevice              *     GetDevice();
+    void                           GetVideoCardInfo(char* xcardName);
 
-public:
     // Mutators
     virtual void                   SetZBuffer(bool val); //sets depth buffer since always enabled for us
     
