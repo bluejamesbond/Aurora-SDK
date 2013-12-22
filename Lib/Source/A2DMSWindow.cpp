@@ -106,8 +106,8 @@ void A2DMSWindow::UpdateAndCacheBackground()
 */
 void A2DMSWindow::updateAndCacheBoxShadow()
 {
-destroyBoxShadowResources();
-createBoxShadowResources();
+    destroyBoxShadowResources();
+    createBoxShadowResources();
 }
 
 /**

@@ -39,6 +39,7 @@ class A2DAbstractWindow;
 
 #define FLOAT_ZERO                                          0.0f
 #define FLOAT_ONE                                           1.0f
+#define WIN32_LEAN_AND_MEAN
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -60,8 +61,6 @@ public:
     // Deconstructor
     ~A2DLinWindow();
   
-
-private :
 
     /*********************************************************************/
     /*                              REQUIRED                             */
@@ -117,6 +116,10 @@ public:
     /*********************************************************************/
 
 private:
+    //GL ONLY. NOT GL + LINUX THOUGH, SO WINDOWS STUFF BELOW AS WELL
+    LPCWSTR m_applicationName;
+    HINSTANCE m_hinstance;
+    HWND m_hwnd;
 
     // Variables - WINDOW ONLY - INTERNAL USE ONLY
 

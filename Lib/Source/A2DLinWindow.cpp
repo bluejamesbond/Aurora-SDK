@@ -106,8 +106,8 @@ void A2DMSWindow::UpdateAndCacheBackground()
 */
 void A2DMSWindow::updateAndCacheBoxShadow()
 {
-destroyBoxShadowResources();
-createBoxShadowResources();
+    destroyBoxShadowResources();
+    createBoxShadowResources();
 }
 
 /**
@@ -907,49 +907,6 @@ void A2DMSWindow::RenderComponentBorder()
 * @param kernel the kernel of the blur effect
 * @param radius the radius of the blur effect
 */
-void A2DMSWindow::RenderComponent()
-{   
-    aTopShadowBrush->ResetTransform();
-    aLeftShadowBrush->ResetTransform();
-    aRightShadowBrush->ResetTransform();
-    aBottomShadowBrush->ResetTransform();
-    
-    aTopShadowBrush->TranslateTransform(aShadowPadding, FLOAT_ZERO);
-    aGraphics->FillRectangle(aTopShadowBrush, aShadowPadding, FLOAT_ZERO, aRelativeWidth - aShadowPadding * 2, aPadding);
-
-    aLeftShadowBrush->TranslateTransform(FLOAT_ZERO, aShadowPadding);
-    aGraphics->FillRectangle(aLeftShadowBrush, FLOAT_ZERO, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
-
-    aRightShadowBrush->TranslateTransform(aRelativeWidth - aPadding, aShadowPadding);
-    aGraphics->FillRectangle(aRightShadowBrush, aRelativeWidth - aPadding, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
-
-    aBottomShadowBrush->TranslateTransform(aShadowPadding, aRelativeHeight - aPadding);
-    aGraphics->FillRectangle(aBottomShadowBrush, aShadowPadding, aRelativeHeight - aPadding, aRelativeWidth - aShadowPadding * 2, aPadding);
-    
-    aGraphics->DrawImage(aTopLeftShadow, FLOAT_ZERO, FLOAT_ZERO, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(aBottomLeftShadow, FLOAT_ZERO, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(aTopRightShadow, aRelativeWidth - aShadowPadding, FLOAT_ZERO, aShadowPadding, aShadowPadding);
-    aGraphics->DrawImage(aBottomRightShadow, aRelativeWidth - aShadowPadding, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-
-    aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aRealWidth, aRealHeight);    
-}
-
-/**
-* Blurs the source pixels into the destination pixels. The force of
-* the blur is specified by the radius which must be greater than 0.</p>
-* The source and destination pixels arrays are expected to be in the
-* INT_ARGB format.
-*
-* After this method is executed, dstPixels contains a transposed and
-* filtered copy of srcPixels.
-*
-* @param srcPixels the source pixels
-* @param dstPixels the destination pixels
-* @param width the width of the source picture
-* @param height the height of the source picture
-* @param kernel the kernel of the blur effect
-* @param radius the radius of the blur effect
-*/
 LRESULT CALLBACK A2DMSWindow::WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
     A2DMSWindow * aWindow;
@@ -1374,3 +1331,78 @@ void A2DMSWindow::Deinitialize()
     aParentHWnd = NULL;
     aHNWnd = NULL;
 }
+
+/**
+* Blurs the source pixels into the destination pixels. The force of
+* the blur is specified by the radius which must be greater than 0.</p>
+* The source and destination pixels arrays are expected to be in the
+* INT_ARGB format.
+*
+* After this method is executed, dstPixels contains a transposed and
+* filtered copy of srcPixels.
+*
+* @param srcPixels the source pixels
+* @param dstPixels the destination pixels
+* @param width the width of the source picture
+* @param height the height of the source picture
+* @param kernel the kernel of the blur effect
+* @param radius the radius of the blur effect
+*/
+bool A2DLinWindow::RenderComponent()
+{
+    float worldMatrix[16];
+    float viewMatrix[16];
+    float projectionMatrix[16];
+
+
+    // Clear the buffers to begin the scene.
+    m_OpenGL->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+    // Generate the view matrix based on the camera's position.
+    m_Camera->Render();
+
+    // Get the world, view, and projection matrices from the opengl and camera objects.
+    m_OpenGL->GetWorldMatrix(worldMatrix);
+    m_Camera->GetViewMatrix(viewMatrix);
+    m_OpenGL->GetProjectionMatrix(projectionMatrix);
+
+    // Set the color shader as the current shader program and set the matrices that it will use for rendering.
+    m_ColorShader->SetShader(m_OpenGL);
+    m_ColorShader->SetShaderParameters(m_OpenGL, worldMatrix, viewMatrix, projectionMatrix);
+
+    // Render the model using the color shader.
+    m_Model->Render(m_OpenGL);
+    
+    // Present the rendered scene to the screen.
+    m_OpenGL->Swap(); //m_OpenGL is an A2DLinBackBuffer object (?)
+
+    return true;
+}
+
+/*
+void A2DMSWindow::RenderComponent()
+{   
+    aTopShadowBrush->ResetTransform();
+    aLeftShadowBrush->ResetTransform();
+    aRightShadowBrush->ResetTransform();
+    aBottomShadowBrush->ResetTransform();
+    
+    aTopShadowBrush->TranslateTransform(aShadowPadding, FLOAT_ZERO);
+    aGraphics->FillRectangle(aTopShadowBrush, aShadowPadding, FLOAT_ZERO, aRelativeWidth - aShadowPadding * 2, aPadding);
+
+    aLeftShadowBrush->TranslateTransform(FLOAT_ZERO, aShadowPadding);
+    aGraphics->FillRectangle(aLeftShadowBrush, FLOAT_ZERO, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
+
+    aRightShadowBrush->TranslateTransform(aRelativeWidth - aPadding, aShadowPadding);
+    aGraphics->FillRectangle(aRightShadowBrush, aRelativeWidth - aPadding, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
+
+    aBottomShadowBrush->TranslateTransform(aShadowPadding, aRelativeHeight - aPadding);
+    aGraphics->FillRectangle(aBottomShadowBrush, aShadowPadding, aRelativeHeight - aPadding, aRelativeWidth - aShadowPadding * 2, aPadding);
+    
+    aGraphics->DrawImage(aTopLeftShadow, FLOAT_ZERO, FLOAT_ZERO, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(aBottomLeftShadow, FLOAT_ZERO, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(aTopRightShadow, aRelativeWidth - aShadowPadding, FLOAT_ZERO, aShadowPadding, aShadowPadding);
+    aGraphics->DrawImage(aBottomRightShadow, aRelativeWidth - aShadowPadding, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+
+    aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aRealWidth, aRealHeight);    
+}*/

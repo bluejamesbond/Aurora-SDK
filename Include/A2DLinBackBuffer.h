@@ -133,9 +133,40 @@ public:
     // Deconstructor
     ~A2DLinBackBuffer();
 
-    // Variables
-    								aVertexBuffer;
-    								aIndexBuffer;
+    //GL Variables
+    PFNGLATTACHSHADERPROC glAttachShader;
+    PFNGLBINDBUFFERPROC glBindBuffer;
+    PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+    PFNGLBUFFERDATAPROC glBufferData;
+    PFNGLCOMPILESHADERPROC glCompileShader;
+    PFNGLCREATEPROGRAMPROC glCreateProgram;
+    PFNGLCREATESHADERPROC glCreateShader;
+    PFNGLDELETEBUFFERSPROC glDeleteBuffers;
+    PFNGLDELETEPROGRAMPROC glDeleteProgram;
+    PFNGLDELETESHADERPROC glDeleteShader;
+    PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
+    PFNGLDETACHSHADERPROC glDetachShader;
+    PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+    PFNGLGENBUFFERSPROC glGenBuffers;
+    PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+    PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
+    PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+    PFNGLGETPROGRAMIVPROC glGetProgramiv;
+    PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+    PFNGLGETSHADERIVPROC glGetShaderiv;
+    PFNGLLINKPROGRAMPROC glLinkProgram;
+    PFNGLSHADERSOURCEPROC glShaderSource;
+    PFNGLUSEPROGRAMPROC glUseProgram;
+    PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+    PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
+    PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+    PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+    PFNGLACTIVETEXTUREPROC glActiveTexture;
+    PFNGLUNIFORM1IPROC glUniform1i;
+    PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+    PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+    PFNGLUNIFORM3FVPROC glUniform3fv;
+    PFNGLUNIFORM4FVPROC glUniform4fv;
 
     
     //Windows Variables
