@@ -35,6 +35,7 @@
 #include "A2DMatrixFactory.h"
 #include "A2DRootPane.h"
 #include "A2DWindow.h"
+#include "A2DMSWindow.h"
 #include "A2DGXSettings.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +53,6 @@ class	A2DBackBuffer;
 struct	A2DBufferData;
 class	A2DMatrixFactory;
 class	A2DRootPane;
-class	A2DWindow;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -81,10 +81,19 @@ private:
 	A2DBackBuffer             *     aBackBuffer;
 	A2DTextureBuffer          *     aTextureBuffer;
 	A2DTextureBuffer          *     aBlurBuffer;
-	A2DWindow                 *     aWindow;
     A2DCamera                 *     aCamera;
     A2DRenderData             *     aRenderData;
 	A2DGXSettings			  		aGXSettings;
+
+	#ifdef _WIN32
+
+	A2DWindow<HWND, LPCWSTR>  *     aWindow;
+
+	#elif __UNIX
+
+	A2DWindow<WINDOWX, STRING>  *     aWindow;
+
+	#endif
 
     // Accessors
     // { NONE }

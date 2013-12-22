@@ -24,12 +24,9 @@
 #define A2D_GRAPHICS_ACTIVE_BUFFER_SECONDARY		          0x3512
 #define A2D_GRAPHICS_ACTIVE_BUFFER_TERTIARY					  0x3513
 
-#define A2D_WINDOW_DEFAULT_PADDING							  25;
-#define A2D_WINDOW_DEFAULT_SHADOW_PADDING					  75;
-#define A2D_WINDOW_DEFAULT_POS_X							  25;
-#define A2D_WINDOW_DEFAULT_POS_Y							  25;
-#define A2D_WINDOW_DEFAULT_WIDTH							  800;
-#define A2D_WINDOW_DEFAULT_HEIGHT							  600;
+#define A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO					 2
+#define A2D_WINDOW_RESIZE_EDGE_DISTANCE                      10
+#define A2D_WINDOW_RESIZE_DEFAULT_DISTANCE					 3
 
 #define A2D_GRAPHICSTOOLKIT_BASIC_TEXTURE_SHADER			  0x4000
 #define A2D_GRAPHICSTOOLKIT_VERTICAL_BLUR_TEXTURE_SHADER      0x4001
@@ -47,5 +44,12 @@
 
 #define	A2D_OPT_BACKGROUND_SIZE_COVER						  0x3009
 #define	A2D_OPT_BACKGROUND_SIZE_STRETCH						  0x300A
+
+// Debugging
+
+#define SYSOUT_FLT(x)										  _RPT1( 0, "%f\n", x )
+#define SYSOUT_INT(x)										  _RPT1( 0, "%d\n", x )
+#define SYSOUT_HEX(x)										  _RPT1( 0, "0x%X\n", x )
+#define SYSOUT_STR(x)										  _RPT1( 0, "%s\n", x )
 
 #endif

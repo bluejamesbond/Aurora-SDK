@@ -97,8 +97,15 @@ HRESULT A2DFrame::Initialize()
 
 	// -----------------------------------------------------
 
-	aWindow = new A2DWindow(aHInstance, aWindowProps);
+#ifdef _WIN32
 
+	aWindow = new A2DMSWindow(aHInstance);
+
+#elif __UNIX
+
+	aWindow = new A2DLXWindow();
+
+#endif
 	hr = aWindow->Initialize();
 	if (FAILED(hr))	return hr;
 
