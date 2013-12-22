@@ -21,7 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DCommon.h"
-#include "A2DWindowProperties.h"
 #include "A2DVertexData.h"
 #include "A2DBackBuffer.h"
 #include "A2DTextureShader.h"
@@ -45,7 +44,6 @@ struct A2DRenderData;
 class A2DBackBuffer;
 class A2DMatrixFactory;
 class A2DRootPane;
-struct A2DWindowProperties;
 class A2DWindow;
 struct A2DVertexData;
 class A2DTexture;

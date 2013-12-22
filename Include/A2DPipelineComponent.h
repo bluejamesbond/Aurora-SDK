@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DCAMERA_H__
-#define __A2DCAMERA_H__
+#ifndef __A2DPIPELINECOMPONENT_H__
+#define __A2DPIPELINECOMPONENT_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DCAMERA
+//      A2DPIPELINECOMPONENT
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DCameraProperties.h"
+#include "A2DExtLibs.h"
 #include "A2DAbstract.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,63 +45,45 @@ class A2DWindow;
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DCAMERA_LL(str1, str2)                              str1 str2
-
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DCamera : public A2DAbstract
+class A2DPipelineComponent : public A2DAbstract
 {
 
 public:
 
-    // Constructor
-    A2DCamera();
-    A2DCamera(A2DCameraProperties * xCameraProps);
+	// Constructor
+	A2DPipelineComponent(A2DBackBuffer * xBackBuffer);
 
-    // Deconstructor
-    ~A2DCamera();
+	// Deconstructor
+	~A2DPipelineComponent();
 
-private:
-
-    // Variables
-    A2DCameraProperties       *     aCameraProps;
-    D3DXMATRIX                *     aViewMatrix;
+protected:
+	// Variables
+	A2DBackBuffer			*		aBackBuffer;
 
 public:
 
-    // Accesors
-    D3DXMATRIX                *     GetViewMatrix();
-    A2DCameraProperties       *     GetProperties();          // returns the camera properties by pointer
+	// Pure Virtual
+	virtual HRESULT					CreateResources(void * xArgs[]) = 0;
+	virtual void					Update(void * xArgs[]) = 0; // Dont worry about destroying anything...but all that into Destroy Resources
+	virtual void					Render() = 0; // Render should be defined seperately but called inside Update
+	virtual void					DestroyResources() = 0;
 
-private:
-
-    // Builders
-    // { NONE }
-
-    // Factory
-    // { NONE }
-
-public:
-    // Additional
-	void						   CreateResources();
-
-    // Pure Virtual
-    // { NONE }
-
-    // Virtual
-    // { NONE }
+	// Virtual
+	// { NONE }
 
 public:
 
-    // Implementation
-    // { A2DABSTRACT }
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
+	// Implementation
+	// { A2DABSTRACT }
+	virtual HRESULT                 Initialize();
+	virtual void                    Deinitialize(); // Set Backbuffer pointer to 0 during this step! 
+	virtual LPCWSTR                 GetClass();
+	virtual LPCWSTR                 ToString();
+	virtual bool                    operator==(A2DAbstract * xAbstract);
 
 };
 

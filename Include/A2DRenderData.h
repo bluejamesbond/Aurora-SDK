@@ -31,12 +31,10 @@ class A2DAbstract;
 class A2DRenderable;
 class A2DAbstractComponent;
 class A2DCamera;
-struct A2DCameraProperties;
 struct A2DRenderData;
 class A2DBackBuffer;
 class A2DMatrixFactory;
 class A2DRootPane;
-struct A2DWindowProperties;
 class A2DWindow;
 class A2DTextureBuffer;
 
@@ -67,9 +65,10 @@ public:
     D3DXMATRIX                *     aWorldMatrix;
     D3DXMATRIX                *     aOrthogonalMatrix;
     D3DXMATRIX                *     aProjectionMatrix;
-    A2DCameraProperties       *     aCameraProps;
+
+	A2DWindow				  *		aWindow;
+    A2DCamera				  *     aCamera;
     A2DBackBuffer             *     aBackBuffer;
-    A2DWindowProperties       *     aWindowProps;
 	A2DTextureBuffer          *     aTextureBuffer;
 	A2DTextureBuffer          *     aBlurBuffer;
 

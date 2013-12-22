@@ -39,7 +39,7 @@ struct A2DRenderData;
 class A2DBackBuffer;
 class A2DModelFactory;
 class A2DRootPane;
-struct A2DWindowProperties;
+
 class A2DWindow;
 struct A2DVertexData;
 struct A2DQuadData;

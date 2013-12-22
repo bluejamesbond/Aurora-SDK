@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DWindowProperties.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -37,7 +37,7 @@ class A2DBackBuffer;
 class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
-struct A2DWindowProperties;
+
 class A2DWindow;
 class A2DImagePanel;
 

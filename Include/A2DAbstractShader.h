@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DExtLibs.h"
-#include "A2DAbstractPipelineComponent.h"
+#include "A2DPipelineComponent.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -28,7 +28,7 @@
 
 class A2D;
 class A2DAbstract;
-class A2DAbstractPipelineComponent;
+class A2DPipelineComponent;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -38,7 +38,7 @@ class A2DAbstractPipelineComponent;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractShader : public A2DAbstractPipelineComponent
+class A2DAbstractShader : public A2DPipelineComponent
 {
 public:
 	A2DAbstractShader(A2DBackBuffer * xBackBuffer);

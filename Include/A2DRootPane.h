@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DWindowProperties.h"
+
 #include "A2DRenderData.h"
 #include "A2DVertexData.h"
 #include "A2DBackBuffer.h"
@@ -37,7 +37,7 @@ class A2DRenderable;
 class A2DCamera;
 struct A2DCameraProperties;
 class A2DBackBuffer;
-struct A2DWindowProperties;
+
 class A2DWindow;
 class A2DAbstractComponent;
 
@@ -57,7 +57,7 @@ class A2DRootPane : public A2DPanel
 public:
 
 	// Constructor
-	A2DRootPane(A2DWindowProperties * xWindowProps);
+	// { NONE }
 
 	// Deconstructor
 	// { NONE }
@@ -65,7 +65,6 @@ public:
 private:
 
 	// Variables
-	A2DWindowProperties       *     aWindowProps;
 	bool							aLockDimensions = false;
 
 	// Accessors

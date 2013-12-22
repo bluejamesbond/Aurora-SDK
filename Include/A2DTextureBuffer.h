@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DCommon.h"
-#include "A2DWindowProperties.h"
+
 #include "A2DVertexData.h"
 #include "A2DBackBuffer.h"
 #include "A2DAbstractTexture.h"

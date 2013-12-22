@@ -23,9 +23,8 @@
 #include "A2DGraphics.h"
 #include "A2DAbstract.h"
 #include "A2DRenderable.h"
-#include "A2DWindowProperties.h"
 #include "A2DAbstractComponent.h"
-#include "A2DAbstractPipelineComponent.h"
+#include "A2DPipelineComponent.h"
 #include "A2DAbstractTexture.h"
 #include "A2DComponent.h"
 #include "A2DPanel.h"
@@ -36,6 +35,7 @@
 #include "A2DMatrixFactory.h"
 #include "A2DRootPane.h"
 #include "A2DWindow.h"
+#include "A2DGXSettings.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -52,7 +52,6 @@ class	A2DBackBuffer;
 struct	A2DBufferData;
 class	A2DMatrixFactory;
 class	A2DRootPane;
-struct	A2DWindowProperties;
 class	A2DWindow;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +68,7 @@ class A2DFrame : public A2DAbstract
 public:
     
     // Constructor
-	A2DFrame(HINSTANCE * xHInstance);
+	A2DFrame(HINSTANCE  xHInstance);
 
     // Deconstructor
 	~A2DFrame();
@@ -77,7 +76,7 @@ public:
 private:
 
     // Variables
-	HINSTANCE				  *		aHInstance;
+	HINSTANCE				  		aHInstance;
     A2DRootPane               *     aRootPane;
 	A2DBackBuffer             *     aBackBuffer;
 	A2DTextureBuffer          *     aTextureBuffer;
@@ -85,7 +84,7 @@ private:
 	A2DWindow                 *     aWindow;
     A2DCamera                 *     aCamera;
     A2DRenderData             *     aRenderData;
-	A2DWindowProperties       *     aWindowProps;
+	A2DGXSettings			  		aGXSettings;
 
     // Accessors
     // { NONE }
@@ -94,7 +93,7 @@ public:
 
     // Mutators
 	void							SetVisible(bool xVisibility);
-	void							SetName(LPCWSTR * xName);									// Set window name
+	void							SetName(LPCWSTR  xName);									// Set window name
 	void							SetBounds(A2DRect * xRect);									// Edits A2DPreferences#WindowProperties via float
 	void							SetBounds(int xLeft, int xTop, int xWidth, int xHeight);    // Edits A2DPreferences#WindowProperties via Rect
 	void							SetSize(int xWidth, int xHeight);							// Edits A2DPreferences#WindowProperties float

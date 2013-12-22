@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DExtLibs.h"
-#include "A2DAbstractPipelineComponent.h"
+#include "A2DPipelineComponent.h"
 #include "A2DVertexData.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@
 
 class A2D;
 class A2DAbstract;
-class A2DAbstractPipelineComponent;
+class A2DPipelineComponent;
 class A2DBackBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ class A2DBackBuffer;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractShape : public A2DAbstractPipelineComponent
+class A2DAbstractShape : public A2DPipelineComponent
 {
 public:
 	A2DAbstractShape(A2DBackBuffer * xBackBuffer, int xVertexCount);
