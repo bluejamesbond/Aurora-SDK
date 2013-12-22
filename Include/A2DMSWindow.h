@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DMSWindow_H__
-#define __A2DMSWindow_H__
+#ifndef __A2DMSWINDOW_H__
+#define __A2DMSWINDOW_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DMSWindow
+//      A2DMSWINDOW
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,15 +20,12 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "A2DExtLibs.h"
+#include "A2DCommon.h"
 #include "A2DFrame.h"
 #include "A2DAbstract.h"
 #include "A2DRect.h"
-#include "A2DAbstractWindow.h"
-/*#include "A2DCPString.h"
-#include "A2DCPWindowHandle.h"
-#include "A2DCPInstanceHandle.h"
-#include "A2DCPResultHandle.h"
-*/
+#include "A2DDims.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -36,30 +33,13 @@
 
 class A2DFrame;
 class A2DAbstract;
-class A2DAbstractWindow;
-/*class A2DCPString;
-class A2DCPWindowHandle;
-class A2DCPResultHandle;
-class A2DCPInstanceHandle;
-*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
-        
-#define RES_BSW_DIR                                         L"..\\..\\..\\Aurora-SDK\\Lib\\Assets\\Images\\"
-#define IDB_BSW_BOTTOM_LEFT_SHADOW_PNG                      RES_BSW_DIR L"muzzler windows-sync bottomLeftShadow [a] 1.png"
-#define IDB_BSW_BOTTOM_RIGHT_SHADOW_PNG                     RES_BSW_DIR L"muzzler windows-sync bottomRightShadow [a] 1.png"
-#define IDB_BSW_BOTTOM_SHADOW_PNG                           RES_BSW_DIR L"muzzler windows-sync bottomShadow [a] 1.png"
-#define IDB_BSW_TOP_LEFT_SHADOW_PNG                         RES_BSW_DIR L"muzzler windows-sync topLeftShadow [a] 1.png"
-#define IDB_BSW_TOP_RIGHT_SHADOW_PNG                        RES_BSW_DIR L"muzzler windows-sync topRightShadow [a] 1.png"
-#define IDB_BSW_TOP_SHADOW_PNG                              RES_BSW_DIR L"muzzler windows-sync topShadow [a] 1.png"
-#define IDB_BSW_LEFT_SHADOW_PNG                             RES_BSW_DIR L"muzzler windows-sync leftShadow [a] 1.png"
-#define IDB_BSW_RIGHT_SHADOW_PNG                            RES_BSW_DIR L"muzzler windows-sync rightShadow [a] 1.png"
-#define IDB_BSW_BACKGROUND_PNG                              RES_BSW_DIR L"muzzler windows-sync background [a] 2.jpg"
-#define IDP_BSW_ACTIVE_BORDER_COLOR                         0x00929292
-#define DEF_PAD_VALUE                                       25
-#define DEF_SPAD_VALUE                                      75
+
+#define FLOAT_ZERO                                          0.0f
+#define FLOAT_ONE                                           1.0f
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -67,106 +47,66 @@ class A2DCPInstanceHandle;
 
 using namespace Gdiplus;  // WINDOWS specific
 
-class A2DMSWindow : public A2DAbstract, public A2DAbstractWindow
+class A2DMSWindow : public A2DWindow<HWND, LPCWSTR>
 {
-
     /*********************************************************************/
     /*                      CROSS-PLATFORM START                         */
     /*********************************************************************/
+
 public:
 
     // Constructor
-    A2DMSWindow(HINSTANCE * xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
+	A2DMSWindow(HINSTANCE  xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
 
     // Deconstructor
-    ~A2DMSWindow();
+	~A2DMSWindow();
   
-private:
 
-    // Variables - NOTE: No need to use the acronym aOpt since variables are PRIVATE!
-    int                             aDefaultCloseOperation;
+private :
 
-    bool                            aVisible;
-    bool                            aShadowed;
-    bool                            aUndecorated;
+    /*********************************************************************/
+    /*                              REQUIRED                             */
+    /*********************************************************************/
 
-    float                           aPadding;
-    float                           aShadowPadding;
-    float                           aBorderWidth;
-
-    A2DCPWindowHandle               aParentHandle;
-    A2DCPWindowHandle               aChildHandle;
-
-    A2DCPString                     aName;
-
-    A2DCPInstanceHandle       *     aHInstance;
-
-    Color                           aBorderColor;
-
-    A2DFrame                  *     aFrame;
-
-    A2DMSWindow                 *     aRelativeWindow;
-
-    A2DRect                         aRect;
+	
 
 public:
 
+	HINSTANCE                       aHInstance;
+
     // Accessors and mutators
     // These don't need mutators because we are giving direct access to the structs
-    A2DRect                   *     getBounds();
-        
-    // Accessing internal variables. Do not provide mutators for these.
-    A2DCPWindowHandle         *     getChildHandle();
-    A2DCPWindowHandle         *     getParentHandle();
+    // Accessing internal variables. Do not provide mutators for these.\
 
-    A2DCPString               *     getName(); // Fix this, should we use pointer or not?
-    void                            setName(LPCWSTR * xName); // Fix this, should we use pointer or not?
+	//Windows specific, for now. maybe change later
+	virtual void					setMinimumSize(float xWidth, float xHeight);
+
+	//A2DMSWindow               *     getLocationRelativeTo(); never defined
     
-    A2DFrame                  *     getFrame(); // GET
-    void                            setFrame(A2DFrame * xFrame); // SET
+    virtual void                    setVisible(bool xVisibile);
 
-    bool                            isUndecorated(); // Get
-    void                            setUndecorated(bool xUndecoratedFlag); // SET
+	virtual void                    setUndecorated(bool xUndecoratedFlag); // SET
 
-    int                             getDefaultCloseOperation();
-    void                            setDefaultCloseOperation(int xCloseOperation);
+    virtual void                    setBoxShadowRadius(float xBoxShadowRadius);
 
-    A2DMSWindow                 *     getLocationRelativeTo();
-    void                            setLocationRelativeTo(A2DMSWindow * xWindow);
-    
-    bool                            isVisible();
-    void                            setVisible(bool xVisibile);
+	virtual void					setName(LPCWSTR xName);
 
-    bool                            isShadowed();
-    void                            setShadowed(bool xShadowFlag);
-
-    Color                           getBorderColor();
-    void                            setBorderColor(Color xBorderColor);
-	
-	float		                    getBorderWidth();
-	void                            setBorderWidth(float xWidth);
-
-    float                           getPadding();
-    void                            setPadding(float xPadding);
-    
-    float                           getShadowPadding();
-    void                            setShadowPadding(float xShadowPadding);
-    
     // Additional
-    void                            Update();
-    void                            Render();
-    void                            RenderComponent();
-    void                            RenderComponentClear();
-    void                            RenderComponentBorder();
-    A2DCPResultHandle               CreateResources();
-    A2DCPResultHandle               CreateComponentResources();
+    virtual void                    Update();
+	virtual void				    updateAndCacheBoxShadow();
+    virtual void                    UpdateAndCacheBackground();
+
+    virtual  void                   RenderComponent();
+    virtual void                    RenderComponentBorder();
+    virtual HRESULT                 CreateResources();
+    virtual void                    DestroyResources();
     
     // Implementation
     // { A2DABSTRACT }
     virtual HRESULT                 Initialize();
     virtual void                    Deinitialize();
-    virtual A2DCPString             GetClass();
-    virtual A2DCPString             ToString();
+    virtual LPCWSTR                 GetClass();
+    virtual LPCWSTR                 ToString();
     virtual bool                    operator==(A2DAbstract * xAbstract);
 
     /*********************************************************************/
@@ -177,23 +117,51 @@ public:
     /*                      WINDOWS-SPECIFIC START                       */
     /*********************************************************************/
 
+private:
+
     // Variables - WINDOW ONLY - INTERNAL USE ONLY
 
-	REAL                            aGdiRealZero = 0;
+    Image                     *     aTopShadow;
+    Image                     *     aLeftShadow;
+    Image                     *     aRightShadow;
+    Image                     *     aBottomShadow;
+    Image                     *     aTopLeftShadow;
+    Image                     *     aBottomLeftShadow;
+    Image                     *     aTopRightShadow;
+    Image                     *     aBottomRightShadow;
+    Image                     *     aBackground;
 
-    REAL                            aGdiRealRealX = 0;
-    REAL                            aGdiRealRealY = 0;
-    REAL                            aGdiRealRealWidth = 0;
-    REAL                            aGdiRealRealHeight = 0;
+    TextureBrush              *     aTopShadowBrush;
+    TextureBrush              *     aLeftShadowBrush;
+    TextureBrush              *     aRightShadowBrush;
+    TextureBrush              *     aBottomShadowBrush;
+    TextureBrush              *     aBackgroundBrush;
 
-    REAL                            aGdiRealRelativeX = 0;
-    REAL                            aGdiRealRelativeY = 0;
-    REAL                            aGdiRealRelativeWidth = 0;
-    REAL                            aGdiRealRelativeHeight = 0;
+    float                           aPadding;
+    float                           aShadowPadding;
+
+    float                           aRealX = 0;
+    float                           aRealY = 0;
+    float                           aRealWidth = 0;
+    float                           aRealHeight = 0;
+
+    float                           aRelativeX = 0;
+    float                           aRelativeY = 0;
+    float                           aRelativeWidth = 0;
+    float                           aRelativeHeight = 0;
 
     int                             aStyle;
-    SIZE                            aHDCSize;
     Graphics                  *     aGraphics;
+
+    bool                            isDragged = false;
+	bool							isResizing = false;
+	bool							aWinMoveRes = false;
+
+	HWND							aParentHWnd;
+	HCURSOR							aCurrentCursor;
+	POINT                           aLastDraggedPoint;
+
+	A2DDims							aMinSafeDims;
 
     // Builders
     // { NONE }
@@ -211,7 +179,7 @@ public:
     // { NONE }
 
     // Additional
-    void                                                        preCache();
+    // { NONE }
 
     // Pure Virtual
     // { NONE }
@@ -222,12 +190,27 @@ public:
 private:
     
     // Functions
+
+    // Win API
     void                            RunMessageLoop();
     static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
-    static inline A2DMSWindow*        GetAppState(HWND xHwnd);
-
     HRESULT                         RegisterClass();
-	HRESULT                         CreateHandle(HWND& xHandle);
+    HWND                            CreateCompatibleWindow(bool isParent);
+
+    // Background
+    HRESULT                         CreateBackgroundResources();
+    void                            DestroyBackgroundResources();
+
+    // Box Shadow - Set 1
+    HRESULT                         createBoxShadowResources();
+    void                            destroyBoxShadowResources();
+
+    //  Box Shadow - Set 2
+    void                            spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight);
+    float                     *     getGaussianKernel(int xRadius);
+    void                            applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius);
+    Bitmap                    *     applyGaussianBlur(Bitmap * src, int radius);
+    BitmapData                *     getLockedBitmapData(Bitmap * src);    
 
     /*********************************************************************/
     /*                      WINDOWS-SPECIFIC END                         */

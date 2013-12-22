@@ -2,17 +2,17 @@
 // GUARDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DWindow_H__
-#define __A2DWindow_H__
+#ifndef __A2DWINDOW_H__
+#define __A2DWINDOW_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DWindow
+//      A2DWINDOW
 //
 //  Synopsis:
 //      Abstract Class to allow cross-patform implementation of A2DWindow. 
-//		Currently compatible with Windows and Linux.
+//      Currently compatible with Windows and Linux.
 //
 //------------------------------------------------------------------------------
 
@@ -20,20 +20,14 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DFrame.h"
 #include "A2DAbstract.h"
-#include "A2DWindowProperties.h"
-//WE WILL UTILIZE HE CP TYPES LATER, FOR NOW IT'S ALL MS WINDOWS
-/*#include "A2DCPWindowHandle.h"
-#include "A2DCPResultHandle.h"
-#include "A2DCPInstanceHandle.h"
-#include "A2DCPString.h"
-*/
+#include "A2DRect.h"
+#include "A2DCommon.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
-
+class A2DFrame;
 class A2D;
 class A2DAbstract;
 class A2DRenderable;
@@ -46,9 +40,7 @@ class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
 struct A2DWindowProperties;
-class A2DWindow;
 class A2DImagePanel;
-class A2DWindow;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -58,96 +50,126 @@ class A2DWindow;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
+using namespace Gdiplus;
+
+template <typename HNWND, typename HSTRING> 
 class A2DWindow : public A2DAbstract
 {
 
 public:
 
-	// Constructor
-	A2DWindow(A2DCPInstanceHandle * xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
-		//A2DCPInstanceHandle will be defined later as custom type for HINSTANCE + linux type
-	// Deconstructor
-	~A2DWindow();
+    // Constructor
+    // A2DWindow(); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
+        //A2DCPInstanceHWnd will be defined later as custom type for HINSTANCE + linux type
+    // Deconstructor
+    // ~A2DWindow(); 
 
-private:
+protected:
 
-	// Variables - NOTE: No need to use the acronym aOpt since variables are PRIVATE!
-	int                             aDefaultCloseOperation;
+    // Variables
 
-	bool                            aVisible;
-	bool                            aShadowed;
-	bool                            aUndecorated;
 
-	float                           aPadding;
-	float                           aShadowPadding;
+    /*********************************************************************/
+    /*                                OPTIONS                            */
+    /*********************************************************************/
+    A2DDims                         aMinDims;
+    A2DDims                         aMaxDims;
 
-	HWND			                aParentHandle;
-	HWND			                aChildHandle;
+    float                           aOptBoxShadowRadius;
+    float                           aOptBorderWidth;
 
-	LPCWSTR				            aName;
-	// LPCWSTR or string
+    Color                           aOptBorderColor;
+    Color                           aOptBackgroundColor;
+    Color                           aOptBoxShadowColor;
 
-	xHInstance                *     aHInstance;
+protected:
 
-	Color                           aBorderColor;
+    // Variables - NOTE: No need to use the acronym aOpt since variables are PRIVATE!
+    int                             aDefaultCloseOperation;
 
-	A2DFrame                  *     aFrame;
+    bool                            aVisible;
+    bool                            aShadowed;
+    bool                            aUndecorated;
+    
+    HNWND                           aHNWnd;
+    HSTRING                         aName;
+        
+    A2DFrame                  *     aFrame;
 
-	A2DWindow                 *     aRelativeWindow;
+    A2DWindow                 *     aRelativeWindow;
 
-	A2DRect                         aRect;
+    A2DRect                         aRect;
 
 public:
 
-	// Accessors and mutators
-	// These don't need mutators because we are giving direct access to the structs
-	virtual A2DRect                   *     getBounds();
+    // Accessors and mutators
+    // These don't need mutators because we are giving direct access to the structs
 
-	// Accessing internal variables. Do not provide mutators for these.
-	virtual HWND			          *     getChildHandle();
-	virtual HWND			          *     getParentHandle();
+    virtual void                            setMinimumSize(A2DDims * xSize);
+    virtual A2DDims                   *     getMinimumSize();
+    virtual void                            setMaximumSize(float xWidth, float xHeight);
+    virtual A2DDims                   *     getMaximumSize();
 
-	virtual LPCWSTR	                  *     getName(); // Fix this, should we use pointer or not?
-	virtual void                            setName(A2DCPString * xName); // Fix this, should we use pointer or not?
+    virtual A2DRect                   *     getBounds();
 
-	virtual A2DFrame                  *     getFrame(); // GET
-	virtual void                            setFrame(A2DFrame * xFrame); // SET
+    // Accessing internal variables. Do not provide mutators for these.
+    virtual HNWND                           getHNWnd();
 
-	virtual bool                            isUndecorated(); // Get
-	virtual void                            setUndecorated(bool xUndecoratedFlag); // SET
+    virtual HSTRING                         getName(); // Fix this, should we use pointer or not?
+    virtual void                            setName(HSTRING xName); // Fix this, should we use pointer or not?
 
-	virtual int                             getDefaultCloseOperation();
-	virtual void                            setDefaultCloseOperation(int xCloseOperation);
+    virtual A2DFrame                  *     getFrame(); // GET
+    virtual void                            setFrame(A2DFrame * xFrame); // SET
 
-	virtual A2DWindow                 *     getLocationRelativeTo() = 0;
-	virtual void                            setLocationRelativeTo(A2DWindow * xWindow);
+    virtual bool                            isUndecorated(); // Get
+    virtual void                            setUndecorated(bool xUndecoratedFlag); // SET
 
-	virtual bool                            isVisible();
-	virtual void                            setVisible(bool xVisibile);
+    virtual int                             getDefaultCloseOperation();
+    virtual void                            setDefaultCloseOperation(int xCloseOperation);
 
-	virtual bool                            isShadowed();
-	virtual void                            setShadowed(bool xShadowFlag);
+    virtual void                            setLocationRelativeTo(A2DWindow * xWindow);
 
-	virtual Color                           getBorderColor();
-	virtual void                            setBorderColor(Color xBorderColor);
+    virtual bool                            isVisible();
+    virtual void                            setVisible(bool xVisible);
 
-	// Additional
-	virtual void                            Update() = 0;
-	virtual void                            Render() = 0;
-	virtual void                            RenderComponent() = 0;
-	virtual void                            RenderComponentClear() = 0;
-	virtual void                            RenderComponentBorder() = 0;
-	virtual HRESULT                         CreateResources() = 0;
-	virtual HRESULT			                CreateComponentResources() = 0;
+    virtual bool                            isShadowed();
+    virtual void                            setShadowed(bool xShadowFlag);
 
-	// Implementation
-	// { A2DABSTRACT }
-	virtual HRESULT			                Initialize() = 0;
-	virtual void							Deinitialize() = 0;
-	virtual LPCWSTR  						GetClass() = 0;
-	virtual LPCWSTR						    ToString() = 0;
-	virtual bool							operator==(A2DAbstract * xAbstract) = 0;
+    virtual Color                           getBorderColor();
+    virtual void                            setBorderColor(Color xBorderColor);
 
+    virtual float                           getBoxShadowRadius();
+    virtual void                            setBoxShadowRadius(float xBoxShadowRadius); //overloaded in mswindow + lin
+
+    virtual Color                           getBoxShadowColor();
+    virtual void                            setBoxShadowColor(Color xBoxShadowColor);
+
+    virtual Color                           getBackgroundColor();
+    virtual void                            setBackgroundColor(Color xBoxShadowColor);
+
+    // Additional
+    virtual void                            Update();
+    void                                    Render(); 
+    virtual void                            RenderComponent() = 0;
+    virtual void                            RenderComponentBorder() = 0;
+    virtual HRESULT                         CreateResources() = 0;
+    virtual void                            DestroyResources() = 0;
+    virtual void                            updateAndCacheBoxShadow()=0;
+    virtual void                            UpdateAndCacheBackground()=0;
+
+    // Implementation
+    // { A2DABSTRACT }
+    virtual HRESULT                         Initialize() = 0;
+    virtual void                            Deinitialize() = 0;
+    virtual LPCWSTR                         GetClass() = 0;
+    virtual LPCWSTR                         ToString() = 0;
+    virtual bool                            operator==(A2DAbstract * xAbstract) = 0;
+
+protected:
+    virtual void                            setBorderWidth(float xBorderWidth);
+    virtual float                           getBorderWidth();
 };
+
+#include "../Lib/Source/Templates/A2DWindow.tpp"
 
 #endif
