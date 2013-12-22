@@ -2,16 +2,16 @@
 // GUARDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DWINDOW_H__
-#define __A2DWINDOW_H__
+#ifndef __A2DNATIVEWINDOW_H__
+#define __A2DNATIVEWINDOW_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DWINDOW
+//      A2DNATIVEWINDOW
 //
 //  Synopsis:
-//      Abstract Class to allow cross-patform implementation of A2DWindow. 
+//      Abstract Class to allow cross-patform implementation of A2DNativeWindow. 
 //      Currently compatible with Windows and Linux.
 //
 //------------------------------------------------------------------------------
@@ -39,12 +39,14 @@ class A2DBackBuffer;
 class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
-struct A2DWindowProperties;
 class A2DImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
+
+#define HNWND	HWND
+#define HSTRING	LPCWSTR
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -52,17 +54,16 @@ class A2DImagePanel;
 
 using namespace Gdiplus;
 
-template <typename HNWND, typename HSTRING> 
-class A2DWindow : public A2DAbstract
+class A2DNativeWindow : public A2DAbstract
 {
 
 public:
 
     // Constructor
-    // A2DWindow(); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
+    // A2DNativeWindow(); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
         //A2DCPInstanceHWnd will be defined later as custom type for HINSTANCE + linux type
     // Deconstructor
-    // ~A2DWindow(); 
+    // ~A2DNativeWindow(); 
 
 protected:
 
@@ -96,7 +97,7 @@ protected:
         
     A2DFrame                  *     aFrame;
 
-    A2DWindow                 *     aRelativeWindow;
+    A2DNativeWindow                 *     aRelativeWindow;
 
     A2DRect                         aRect;
 
@@ -127,7 +128,7 @@ public:
     virtual int                             getDefaultCloseOperation();
     virtual void                            setDefaultCloseOperation(int xCloseOperation);
 
-    virtual void                            setLocationRelativeTo(A2DWindow * xWindow);
+    virtual void                            setLocationRelativeTo(A2DNativeWindow * xWindow);
 
     virtual bool                            isVisible();
     virtual void                            setVisible(bool xVisible);
@@ -169,7 +170,5 @@ protected:
     virtual void                            setBorderWidth(float xBorderWidth);
     virtual float                           getBorderWidth();
 };
-
-#include "../Lib/Source/Templates/A2DWindow.tpp"
 
 #endif
