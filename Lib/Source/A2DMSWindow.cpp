@@ -7,6 +7,13 @@ A2DMSWindow::A2DMSWindow(HINSTANCE xHInstance)
 
 A2DMSWindow::~A2DMSWindow(){}
 
+/**
+* Sets the minimum size of the window being referenced
+*
+* @param float, float
+*            first determines width, second height
+* @return void
+*/
 void A2DMSWindow::setMinimumSize(float xWidth, float xHeight)
 {
     aMinDims.aWidth = max(aOptBoxShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO, xWidth);
@@ -54,12 +61,11 @@ void A2DMSWindow::setUndecorated(bool xUndecoratedFlag)
 
 /**
 *
-* Sets the visibility of the decorations around a window. Enabling
-* decorations shows you the maximize, minimize, and close buttons.
+* Sets the visibility of the shaow around the window. dependent on
+* the radius passed in
 *
-* @param bool
-*            the boolean indicating whether window should be
-*            decorated or not.
+* @param float
+*            value indicating size of the shadow in terms of radius
 * @return void
 */
 void A2DMSWindow::setBoxShadowRadius(float xBoxShadowRadius)
@@ -93,9 +99,8 @@ void A2DMSWindow::UpdateAndCacheBackground()
 
 /**
 *
-* This method creates a 1x1 image of the color indicated by the
-* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
-* that color. The aOptBackgroundColor
+* This method creates a 1x1 image of the shadow and updates all the windows derived of the aParentHWnd to
+* that shadow.
 *
 * @see #destroyBackgroundResources()
 * @see #createBackgroundResources()
@@ -112,16 +117,16 @@ void A2DMSWindow::updateAndCacheBoxShadow()
 
 /**
 *
-* This method creates a 1x1 image of the color indicated by the
-* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
-* that color. The aOptBackgroundColor
+* Registers the windows information of the current class
+* as necessitated by the windows api
 *
 * @see #destroyBackgroundResources()
 * @see #createBackgroundResources()
 * @see #createResources()
 * @see #destroyResources()
 * @param  void
-* @return void
+* @return HRESULT 
+*  		  of success or failiure
 */
 HRESULT A2DMSWindow::RegisterClass()
 {
@@ -143,14 +148,9 @@ HRESULT A2DMSWindow::RegisterClass()
 
 /**
 *
-* This method creates a 1x1 image of the color indicated by the
-* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
-* that color. The aOptBackgroundColor
+* The main loop that refreshes, sets, and displays the window
+* of the frame
 *
-* @see #destroyBackgroundResources()
-* @see #createBackgroundResources()
-* @see #createResources()
-* @see #destroyResources()
 * @param  void
 * @return void
 */
@@ -170,6 +170,15 @@ void A2DMSWindow::RunMessageLoop()
     }
 }
 
+/**
+*
+* Sets the name of the specified window refrencing it
+* to the string passed in
+*
+* @param  LPCWSTR
+		 Long String of the desired name to set it to
+* @return void
+*/
 void A2DMSWindow::setName(LPCWSTR xName)
 {
     A2DWindow::setName(xName);
@@ -180,16 +189,12 @@ void A2DMSWindow::setName(LPCWSTR xName)
 
 /**
 *
-* This method creates a 1x1 image of the color indicated by the
-* aOptBackgroundColor and updates all the windows derived of the aParentHWnd to
-* that color. The aOptBackgroundColor
-*
-* @see #destroyBackgroundResources()
-* @see #createBackgroundResources()
-* @see #createResources()
-* @see #destroyResources()
-* @param  void
-* @return void
+* Creates a Window within the parent's parameters if it's a child
+* or outside the parent's parameters if it's not
+* @param  bool
+		  whether the window is a parent or not
+* @return HWND
+		  A handle to the window
 */
 HWND A2DMSWindow::CreateCompatibleWindow(bool isParent)
 {
