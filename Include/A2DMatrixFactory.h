@@ -20,13 +20,13 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#include "A2DDims.h"
+#include "A2DGXSettings.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
 class A2DAbstract;
 class A2DRenderable;
 class A2DAbstractComponent;
@@ -37,9 +37,7 @@ class A2DBackBuffer;
 class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
-
 class A2DWindow;
-class A2DImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////The 
 // DEFINE
@@ -56,40 +54,11 @@ class A2DMatrixFactory
 
 public:
 
-    // Constructor
-    // { NONE }
-    
-    // Deconstructor
-    // { NONE }
-
-    // Variables
-    // { NONE }
-
-    // Accessors
-    // { NONE }
-
-    // Mutators
-    // { NONE }
-
-    // Builders
-    // { NONE }
-
     // Factory
     static D3DXMATRIX         *     createDefaultWorldMatrix();
-    static D3DXMATRIX         *     createDefaultProjectionMatrix(A2DWindowProperties * xWindowProps);
-    static D3DXMATRIX         *     createDefaultOrthogonalMatrix(A2DWindowProperties * xWindowProps);
+	static D3DXMATRIX         *     createDefaultProjectionMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings);
+	static D3DXMATRIX         *     createDefaultOrthogonalMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings);
     
-    // Additional
-    // { NONE }
-
-    // Pure Virtual
-    // { NONE }
-
-    // Virtual
-    // { NONE }
-
-    // Implementations
-    // { NONE}
 
 };
 

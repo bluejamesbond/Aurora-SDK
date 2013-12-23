@@ -2,8 +2,8 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DBackBuffer.h"
 
-A2DBackBuffer::A2DBackBuffer(A2DWindow * xWindow, A2DWindowProperties * xWindowProps) :
-aWindowProps(xWindowProps),
+A2DBackBuffer::A2DBackBuffer(A2DAbstractWindow * xWindow, A2DGXSettings * xGXSettings) :
+aGXSettings(xGXSettings),
 aWindow(xWindow),
 aDXGISwapChain(0),
 aDXDevice(0),
@@ -35,7 +35,7 @@ HRESULT A2DBackBuffer::Initialize()
 	D3D10_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
-	int error;
+	int error, width = aWindow->getBounds()->aWidth, height = aWindow->getBounds()->aHeight;
 
 	// Create a DirectX graphics interface factory.
 	hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**) &factory);
@@ -65,9 +65,9 @@ HRESULT A2DBackBuffer::Initialize()
 	// When a match is found store the numerator and denominator of the refresh rate for that monitor.
 	for (i = 0; i < numModes; i++)
 	{
-		if (displayModeList[i].Width == (unsigned int) aWindowProps->aRealWidth)
+		if (displayModeList[i].Width == width)
 		{
-			if (displayModeList[i].Height == (unsigned int) aWindowProps->aRealHeight)
+			if (displayModeList[i].Height == height)
 			{
 				numerator = displayModeList[i].RefreshRate.Numerator;
 				denominator = displayModeList[i].RefreshRate.Denominator;
@@ -109,14 +109,14 @@ HRESULT A2DBackBuffer::Initialize()
 	swapChainDesc.BufferCount = 1;
 
 	// Set the width and height of the back buffer.
-	swapChainDesc.BufferDesc.Width = (int) aWindowProps->aRealWidth;
-	swapChainDesc.BufferDesc.Height = (int) aWindowProps->aRealHeight;
+	swapChainDesc.BufferDesc.Width = width;
+	swapChainDesc.BufferDesc.Height = height;
 
 	// Set regular 32-bit surface for the back buffer.
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	// Set the refresh rate of the back buffer.
-	if (aWindowProps->aVsync)
+	if (aGXSettings->aVsync)
 	{
 		swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
@@ -131,14 +131,14 @@ HRESULT A2DBackBuffer::Initialize()
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
 	// Set the handle for the window to render to.
-	swapChainDesc.OutputWindow = *aWindowProps->aWindow->GetChildHwnd();
+	swapChainDesc.OutputWindow = *static_cast<HWND*>(aWindow->getPlatformCompatibleWindowHandle());
 
 	// Turn multisampling off.
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 
 	// Set to full screen or windowed mode.
-	if (aWindowProps->aFullScreen)
+	if (aGXSettings->aFullScreen)
 	{
 		swapChainDesc.Windowed = false;
 	}
@@ -178,8 +178,8 @@ HRESULT A2DBackBuffer::Initialize()
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 
 	// Set up the description of the depth buffer.
-	depthBufferDesc.Width = (int) aWindowProps->aRealWidth;
-	depthBufferDesc.Height = (int) aWindowProps->aRealHeight;
+	depthBufferDesc.Width = width;
+	depthBufferDesc.Height = height;
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -263,8 +263,8 @@ HRESULT A2DBackBuffer::Initialize()
 	aDXDevice->RSSetState(aDXRasterState);
 
 	// Setup the viewport for rendering.
-	viewport.Width = (int) aWindowProps->aRealWidth;
-	viewport.Height = (int) aWindowProps->aRealHeight;
+	viewport.Width = width;
+	viewport.Height = height;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
@@ -393,7 +393,7 @@ void A2DBackBuffer::Swap()
 	// rendering is complete.
 
 	// Lock to screen refresh rate or present as fast as possible
-	aDXGISwapChain->Present(aWindowProps->aVsync ? 1 : 0, 0);
+	aDXGISwapChain->Present(aGXSettings->aVsync ? 1 : 0, 0);
 }
 
 ID3D10Device * A2DBackBuffer::GetDevice()

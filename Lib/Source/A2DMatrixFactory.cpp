@@ -17,7 +17,7 @@ D3DXMATRIX * A2DMatrixFactory::createDefaultWorldMatrix()
 	return worldMatrix;
 }
 
-D3DXMATRIX * A2DMatrixFactory::createDefaultProjectionMatrix(A2DWindowProperties * xWindowProps)
+D3DXMATRIX * A2DMatrixFactory::createDefaultProjectionMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings)
 {
 	// Create
 	D3DXMATRIX * projectionMatrix;
@@ -25,17 +25,17 @@ D3DXMATRIX * A2DMatrixFactory::createDefaultProjectionMatrix(A2DWindowProperties
 
 	// Set
 	fieldOfView = ((float) D3DX_PI / 4.0f);
-	screenAspect = ((float) xWindowProps->aRealWidth) / ((float) xWindowProps->aRealHeight);
+	screenAspect = xWindowSize->aWidth / xWindowSize->aHeight;
 	projectionMatrix = new D3DXMATRIX;
 
 	// Initialize
-	D3DXMatrixPerspectiveFovLH(projectionMatrix, fieldOfView, screenAspect, xWindowProps->aScreenNear, xWindowProps->aScreenDepth);
+	D3DXMatrixPerspectiveFovLH(projectionMatrix, fieldOfView, screenAspect, xSettings->aScreenNear, xSettings->aScreenDepth);
 
 	// Return Pointer
 	return projectionMatrix;
 }
 
-D3DXMATRIX * A2DMatrixFactory::createDefaultOrthogonalMatrix(A2DWindowProperties * xWindowProps)
+D3DXMATRIX * A2DMatrixFactory::createDefaultOrthogonalMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings)
 {
 	// Create
 	D3DXMATRIX * orthogonalMatrix;
@@ -44,7 +44,7 @@ D3DXMATRIX * A2DMatrixFactory::createDefaultOrthogonalMatrix(A2DWindowProperties
 	orthogonalMatrix = new D3DXMATRIX;
 
 	// Initialize
-	D3DXMatrixOrthoLH(orthogonalMatrix, ((float)xWindowProps->aRealWidth), ((float)xWindowProps->aRealHeight), xWindowProps->aScreenNear, xWindowProps->aScreenDepth);
+	D3DXMatrixOrthoLH(orthogonalMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
 
 	// Return Pointer
 	return orthogonalMatrix;

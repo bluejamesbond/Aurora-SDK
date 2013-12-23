@@ -37,10 +37,10 @@ void A2DAbstractComponent::SetBounds(A2DRect * xRect)
 {
 	A2DGraphics * graphics = GetGraphics();
 	
-	aOptRect.aWidth = xRect->aWidth;
-	aOptRect.aHeight = xRect->aHeight;
-	aOptRect.aX = xRect->aX;
-	aOptRect.aY = xRect->aY;
+	aOptRegion.aWidth = xRect->aWidth;
+	aOptRegion.aHeight = xRect->aHeight;
+	aOptRegion.aX = xRect->aX;
+	aOptRegion.aY = xRect->aY;
 
 	if (graphics)
 	{
@@ -52,10 +52,10 @@ void A2DAbstractComponent::SetBounds(int xX, int xY, int xWidth, int xHeight)
 {
 	A2DGraphics * graphics = GetGraphics();
 
-	aOptRect.aWidth = xWidth;
-	aOptRect.aHeight = xHeight;
-	aOptRect.aX = xX;
-	aOptRect.aY = xY;
+	aOptRegion.aWidth = xWidth;
+	aOptRegion.aHeight = xHeight;
+	aOptRegion.aX = xX;
+	aOptRegion.aY = xY;
 
 	if (graphics)
 	{
@@ -222,7 +222,7 @@ void A2DAbstractComponent::DestroyResources()
 
 HRESULT A2DAbstractComponent::CreateComponentResources(A2DRenderData * xRenderData)
 {
-	HRESULT hr;
+	HRESULT hr = S_OK;
 	A2DGraphics * graphics;
 
 	// This is an example when of when I used A2DAbstract
@@ -239,12 +239,17 @@ HRESULT A2DAbstractComponent::CreateComponentResources(A2DRenderData * xRenderDa
 
 	// Tell graphics to call the render method once in order to
 	// set aside only those resources.
-	graphics->SetMode(A2D_GRAPHICS_MODE_CREATE);
+	// graphics->SetMode(A2D_GRAPHICS_MODE_CREATE);
 
 	// A2DGraphics will call the parent Render method once
-	hr = graphics->CreateResources();
+	// hr = graphics->CreateResources();
 
 	return hr;
+}
+
+A2DRect * A2DAbstractComponent::GetBounds()
+{
+	return &aOptRegion;
 }
 
 void A2DAbstractComponent::DestroyComponentResources(){}

@@ -4,10 +4,7 @@
 
 A2DQuad::A2DQuad(A2DBackBuffer * xBackBuffer, A2DRect * xRect) :
 A2DAbstractShape(xBackBuffer, 6), aQuadWidth(xRect->aWidth), aQuadHeight(xRect->aHeight),
-aTexture(0)
-{
-
-}
+aTexture(0){}
 
 A2DQuad::~A2DQuad(){}
 
@@ -102,13 +99,13 @@ void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 		aPrevPosY = aRect->aY;
 
 		// Calculate the screen coordinates of the left side of the bitmap.
-		aLeft = ((aWinProps->aRealWidth / 2) * -1) + realX;
+		aLeft = ((aWindowDims->aWidth / 2) * -1) + realX;
 
 		// Calculate the screen coordinates of the right side of the bitmap.
 		aRight = aLeft + realWidth;
 
 		// Calculate the screen coordinates of the top of the bitmap.
-		aTop = (aWinProps->aRealHeight / 2) - realY;
+		aTop = (aWindowDims->aHeight / 2) - realY;
 
 		// Calculate the screen coordinates of the bottom of the bitmap.
 		aBottom = aTop - realHeight;
@@ -191,7 +188,7 @@ void A2DQuad::Update(void* xArgs[])
 	// Set variables.
 	aRect = static_cast<A2DRect*>(xArgs[0]);
 	aTexture = static_cast<A2DTexture*>(xArgs[1]);
-	aWinProps = static_cast<A2DWindowProperties*>(xArgs[2]);
+	aWindowDims = static_cast<A2DDims*>(xArgs[2]);
 
 	HRESULT hr;
 
@@ -231,7 +228,7 @@ void A2DQuad::SetConstraints(A2DRect * xRect)
 
 HRESULT A2DQuad::Initialize()
 {
-	HRESULT hr;
+	HRESULT hr = S_OK;
 	
 	aConstraints = new A2DRect();
 
@@ -280,7 +277,7 @@ void A2DQuad::Deinitialize()
 	// Delete the pointer but do not deallocate memory.
 	aTexture = 0;
 	aBackBuffer = 0;
-	aWinProps = 0;
+	aWindowDims = 0;
 }
 
 LPCWSTR A2DQuad::GetClass()

@@ -7,9 +7,9 @@ aViewMatrix(NULL),
 aWorldMatrix(NULL),
 aOrthogonalMatrix(NULL),
 aProjectionMatrix(NULL),
-aCameraProps(NULL),
+aCamera(NULL),
 aBackBuffer(NULL),
-aWindowProps(NULL)
+aWindow(NULL)
 {}
 
 A2DRenderData::A2DRenderData(A2DRenderData * xRenderData) :
@@ -17,11 +17,11 @@ aViewMatrix (xRenderData->aViewMatrix),
 aWorldMatrix (xRenderData->aWorldMatrix), 
 aOrthogonalMatrix (xRenderData->aOrthogonalMatrix), 
 aProjectionMatrix (xRenderData->aProjectionMatrix), 
-aCameraProps (xRenderData->aCameraProps), 
+aCamera(xRenderData->aCamera),
 aBackBuffer (xRenderData->aBackBuffer), 
 aTextureBuffer(xRenderData->aTextureBuffer),
 aBlurBuffer(xRenderData->aBlurBuffer),
-aWindowProps(xRenderData->aWindowProps)
+aWindow(xRenderData->aWindow)
 {}
 
 /////////////////////////////////////////////////////////////////////////////

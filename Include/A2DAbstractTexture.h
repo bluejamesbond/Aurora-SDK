@@ -83,7 +83,7 @@ public:
 	// { A2DABSTRACTPIPELINECOMPONENT }
 	virtual HRESULT					CreateResources(void * xArgs[]) = 0;
 	virtual void					Update(void * xArgs[]) = 0;
-	virtual void					Render() = 0; // Render should be defined seperately but called inside Update
+	virtual void					Render() {};
 	virtual void					DestroyResources();
 
 public:

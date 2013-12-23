@@ -36,12 +36,12 @@ HRESULT A2DAbstractFrame::CreateResources()
 	aRenderData->aBackBuffer = aBackBuffer;
 	aRenderData->aTextureBuffer = aTextureBuffer;
 	aRenderData->aBlurBuffer = aBlurBuffer;
-	aRenderData->aWindowProps = aWindowProps;
-	aRenderData->aCameraProps = aCamera->GetProperties();
+	aRenderData->aWindow = aWindow;
+	aRenderData->aCamera = aCamera;
 	aRenderData->aViewMatrix = aCamera->GetViewMatrix();
 	aRenderData->aWorldMatrix = A2DMatrixFactory::createDefaultWorldMatrix();
-	aRenderData->aProjectionMatrix = A2DMatrixFactory::createDefaultProjectionMatrix(aWindowProps);
-	aRenderData->aOrthogonalMatrix = A2DMatrixFactory::createDefaultOrthogonalMatrix(aWindowProps);
+	aRenderData->aProjectionMatrix = A2DMatrixFactory::createDefaultProjectionMatrix(static_cast<A2DDims *>(aWindow->getBounds()), &aGXSettings);
+	aRenderData->aOrthogonalMatrix = A2DMatrixFactory::createDefaultOrthogonalMatrix(static_cast<A2DDims *>(aWindow->getBounds()), &aGXSettings);
 
 	// Create children resources; This also calls all subsequent children and
 	// creates their resources.
@@ -67,6 +67,65 @@ void A2DAbstractFrame::Update()
 	aRenderData->aBackBuffer->Swap();
 }
 
+
+void A2DAbstractFrame::SetName(LPCWSTR xName)
+{
+	aWindow->setName(xName);
+}
+
+void A2DAbstractFrame::SetBounds(A2DRect * xRect)
+{
+	aWindow->getBounds()->aHeight = xRect->aHeight;
+	aWindow->getBounds()->aWidth = xRect->aWidth;
+	aWindow->getBounds()->aX = xRect->aX;
+	aWindow->getBounds()->aY = xRect->aY;
+}
+
+void A2DAbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xHeight)
+{
+	aWindow->getBounds()->aHeight = xHeight;
+	aWindow->getBounds()->aWidth = xWidth;
+	aWindow->getBounds()->aX = xLeft;
+	aWindow->getBounds()->aY = xTop;
+}
+
+void A2DAbstractFrame::SetSize(float xWidth, float xHeight)
+{
+	aWindow->getBounds()->aHeight = xHeight;
+	aWindow->getBounds()->aWidth = xWidth;
+}
+
+void A2DAbstractFrame::SetSize(A2DDims * xDims)
+{
+	aWindow->getBounds()->aHeight = xDims->aHeight;
+	aWindow->getBounds()->aWidth = xDims->aWidth;
+}
+
+void A2DAbstractFrame::SetUndecorated(bool xDecorated)
+{
+	aWindow->setUndecorated(xDecorated);
+}
+
+void A2DAbstractFrame::SetLocationRelativeTo(A2DAbstractFrame * xFrame)
+{
+	aWindow->setLocationRelativeTo(xFrame ? xFrame->aWindow : NULL); //        WTF IS THIS INPUT FRAME BUT NEED WINDOW WTF
+}
+
+void A2DAbstractFrame::SetVsync(bool xVsync)
+{
+	// A2DWindow doesn't have vsync yet.
+}
+
+void A2DAbstractFrame::SetDefaultCloseOperation(int xOperation)
+{
+	aWindow->setDefaultCloseOperation(xOperation);
+}
+
+void A2DAbstractFrame::SetVisible(bool xVisible)
+{
+	aWindow->setVisible(xVisible);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY A2D_ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
@@ -90,18 +149,25 @@ HRESULT A2DAbstractFrame::Initialize()
 {
 	HRESULT hr;	
 	
-	aWindow = createPlatformDependentWindow();
+	// -----------------------------------------------------
+
+	aWindow = createPlatformCompatibleWindow();
+
+	hr = aWindow->Initialize();
+	if (FAILED(hr))	return hr;
+
+	aWindow->setFrame(this);
 
 	// -----------------------------------------------------
 
-	aRootPane = new A2DRootPane(aWindowProps);
+	aRootPane = new A2DRootPane;
 
 	hr = aRootPane->Initialize();
 	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
 
-	aBackBuffer = new A2DBackBuffer(aWindow, aWindowProps);
+	aBackBuffer = new A2DBackBuffer(aWindow, &aGXSettings);
 
 	hr = aBackBuffer->Initialize();
 	if (FAILED(hr))	return hr;
@@ -115,14 +181,14 @@ HRESULT A2DAbstractFrame::Initialize()
 
 	// -----------------------------------------------------
 
-	aTextureBuffer = new A2DTextureBuffer(aBackBuffer, aWindowProps->GetRealSize());
+	aTextureBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(aWindow->getBounds()));
 
 	hr = aTextureBuffer->Initialize();
 	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
 
-	aBlurBuffer = new A2DTextureBuffer(aBackBuffer, aWindowProps->GetRealSize());
+	aBlurBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(aWindow->getBounds()));
 
 	hr = aBlurBuffer->Initialize();
 	if (FAILED(hr))	return hr;
@@ -136,8 +202,7 @@ HRESULT A2DAbstractFrame::Initialize()
 
 	// -----------------------------------------------------
 
-	aRootPane->SetBounds(0, 0, aWindowProps->GetRealSize()->aWidth, aWindowProps->GetRealSize()->aHeight);
-	aWindow->SetFrame(this);
+	aRootPane->SetBounds(0, 0, aWindow->getBounds()->aWidth, aWindow->getBounds()->aHeight);
 
 	// -----------------------------------------------------
 	

@@ -64,8 +64,10 @@ struct A2DImageProperties : public A2DAbstract
 
 public:
 
-	// Implementation
-	// { A2DABSTRACT }
+////////////////////////////////////////////////////////////////////////////////
+// A2DABSTRACT
+////////////////////////////////////////////////////////////////////////////////
+
 	virtual HRESULT                 Initialize();
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();

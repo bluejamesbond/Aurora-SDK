@@ -5,7 +5,7 @@
 
 
 A2DAbstractShape::A2DAbstractShape(A2DBackBuffer * xBackBuffer, int xVertexCount) : 
-A2DAbstractPipelineComponent(xBackBuffer), 
+A2DPipelineComponent(xBackBuffer), 
 aVertexCount(xVertexCount), aIndexCount(xVertexCount) {}
 
 A2DAbstractShape::~A2DAbstractShape(){}

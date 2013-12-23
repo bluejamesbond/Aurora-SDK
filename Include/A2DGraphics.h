@@ -28,6 +28,7 @@
 #include "A2DTexture.h"
 #include "A2DQuad.h"
 #include "A2DImageProperties.h"
+#include "A2DAbstractComponent.h"
 #include "A2DPipeline.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,9 +48,7 @@ class A2DRootPane;
 class A2DWindow;
 struct A2DVertexData;
 class A2DTexture;
-class	A2DGraphicsToolkit;
-class	A2DTextureBuffer;
-
+class A2DTextureBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -64,32 +63,23 @@ class A2DGraphics : public A2DRenderData
 
 public:
 
-	// Constructor
 	A2DGraphics(A2DAbstractComponent * xComponent, A2DRenderData * xRenderData);
 
 	// Deconstructor
 	~A2DGraphics();
 
-	// Variables
+private:
+
 	A2DImageProperties				aSecondaryBufferProps;					// background-size/background-repeat
 	A2DRect							aClip;
 
-private:
-
-	// Variables
 	bool							aDoubleBuffer = false;
 	A2DAbstractComponent	  *		aComponent;
-	A2DAbstractPipelineComponent *	aPipelineComponents[10];
-
-	// Accessors
-	// { NONE }
+	A2DPipelineComponent      *		aPipelineComponents[10];
 
 public:
-	// Mutators
-	// { NONE }
 
 	// Additional
-	HRESULT							CreateResources();
 	void 							Recalculate();
 	void							NextRender();
 	void							RenderSecondaryBuffer();
@@ -103,9 +93,9 @@ private:
 
 public:
 
-	//////////////////////////////////////////////////////////
-	// A2DABSTRACT IMPLEMENTATION
-	//////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// A2DABSTRACT
+////////////////////////////////////////////////////////////////////////////////
 
 	virtual HRESULT                 Initialize();
 	virtual void                    Deinitialize();

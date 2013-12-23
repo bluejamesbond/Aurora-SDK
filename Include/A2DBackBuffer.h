@@ -20,8 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #include "A2DAbstract.h"
+#include "A2DGXSettings.h"
 #include "A2DAbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,6 @@ struct A2DRenderData;
 class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
-class A2DImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -75,8 +74,8 @@ public:
 
 private:
 	// Variables
-	A2DWindow				  *     aWindow;
-	A2DGXSettings			        aGXSettings;
+	A2DAbstractWindow		  *     aWindow;
+	A2DGXSettings			  *     aGXSettings;
 
 public:
     // Accessors

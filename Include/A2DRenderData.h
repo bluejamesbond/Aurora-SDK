@@ -21,6 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DAbstract.h"
+#include "A2DAbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -33,9 +34,6 @@ class A2DAbstractComponent;
 class A2DCamera;
 struct A2DRenderData;
 class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DRootPane;
-class A2DWindow;
 class A2DTextureBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +64,7 @@ public:
     D3DXMATRIX                *     aOrthogonalMatrix;
     D3DXMATRIX                *     aProjectionMatrix;
 
-	A2DWindow				  *		aWindow;
+	A2DAbstractWindow		  *		aWindow;
     A2DCamera				  *     aCamera;
     A2DBackBuffer             *     aBackBuffer;
 	A2DTextureBuffer          *     aTextureBuffer;

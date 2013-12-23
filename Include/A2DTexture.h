@@ -78,8 +78,7 @@ public:
 	// { A2DABSTRACTTEXTURE }
 	virtual HRESULT					CreateResources(void * xArgs[]);
 	virtual void					Update(void * xArgs[]);
-	virtual void					Render(); // Render should be defined seperately but called inside Update
-	virtual void					DestroyResources();
+	virtual void					DestroyResources() {};
 
 public:
 	// Implementation

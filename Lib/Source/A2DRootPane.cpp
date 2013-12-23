@@ -2,9 +2,6 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DRootPane.h"
 
-A2DRootPane::A2DRootPane(A2DWindowProperties * xWindowProps) :
-aWindowProps(xWindowProps){}
-
 void A2DRootPane::RenderComponent(A2DRenderData * xRenderData)
 {
 	A2DComponent::RenderComponent(xRenderData);

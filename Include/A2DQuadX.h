@@ -25,6 +25,7 @@
 #include "A2DRect.h"
 #include "A2DVertexData.h"
 #include "A2DBackBuffer.h"
+#include "A2DQuad.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS

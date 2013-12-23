@@ -20,8 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DGraphics.h"
 #include "A2DAbstract.h"
+#include "A2DGraphics.h"
 #include "A2DRenderable.h"
 #include "A2DAbstractComponent.h"
 #include "A2DPipelineComponent.h"
@@ -35,8 +35,8 @@
 #include "A2DMatrixFactory.h"
 #include "A2DRootPane.h"
 #include "A2DAbstractWindow.h"
-#include "A2DMSWindow.h"
 #include "A2DGXSettings.h"
+#include "A2DRect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -86,8 +86,8 @@ public:
 	void							SetVisible(bool xVisibility);
 	void							SetName(LPCWSTR  xName);
 	void							SetBounds(A2DRect * xRect);
-	void							SetBounds(int xLeft, int xTop, int xWidth, int xHeight);
-	void							SetSize(int xWidth, int xHeight);
+	void							SetBounds(float xLeft, float xTop, float xWidth, float xHeight);
+	void							SetSize(float xWidth, float xHeight);
 	void							SetSize(A2DDims * xDims);
 	void							SetUndecorated(bool xDecorated);
 	void							SetLocationRelativeTo(A2DAbstractFrame * xFrame);

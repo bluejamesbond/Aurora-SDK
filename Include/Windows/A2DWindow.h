@@ -20,6 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../Windows/A2DExtLibs.h"
 #include "../A2DCommon.h"
 #include "../A2DAbstract.h"
 #include "../A2DRect.h"
@@ -149,8 +150,14 @@ private:
 // A2DABSTRACTWINDOW
 ////////////////////////////////////////////////////////////////////////////////
 
+protected:
+
+	virtual void                    render();
+
 public:
 
+	virtual void              *     getPlatformCompatibleWindowHandle();
+	
     virtual void                    setMinimumSize(A2DDims * xSize);
     virtual void                    setMaximumSize(A2DDims * xSize);
     virtual void                    setName(LPCWSTR xName);
@@ -164,11 +171,6 @@ public:
     virtual void                    setShadowRadius(float xShadowRadius);
     virtual void                    setShadowColor(Color xShadowColor);
     virtual void                    setBackgroundColor(Color xBackgroundColor);
-
-protected:
-
-    virtual void                    render();
-    virtual void              *     getPlatformCompatibleWindowHandle();
    
 ////////////////////////////////////////////////////////////////////////////////
 // A2DABSTRACT

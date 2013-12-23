@@ -9,9 +9,9 @@ A2DRenderData(xRenderData)
 
 void A2DGraphics::DrawImage(A2DPipeline * xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
 {
-	A2DAbstractPipelineComponent * texture;
-	A2DAbstractPipelineComponent * quad;
-	A2DAbstractPipelineComponent * textureShader;
+	A2DPipelineComponent * texture;
+	A2DPipelineComponent * quad;
+	A2DPipelineComponent * textureShader;
 
 	// Pipeline not initalized
 	if (xPipeline = NULL)
@@ -59,7 +59,7 @@ void A2DGraphics::DrawImage(A2DPipeline * xPipeline, LPCWSTR * xSrc, A2DRect * a
 
 	// Pipeline needs to be updated and rendered
 	void * textureArgs[] = { xSrc };
-	void * quadArgs[] = { texture, aRect, aWindowProps };
+	void * quadArgs[] = { texture, aRect, aWindow->getBounds() };
 	void * textureShaderArgs[] = { texture };
 
 	texture->Update(textureArgs);
@@ -98,10 +98,12 @@ void A2DGraphics::CalculateBounds()
 	A2DAbstractComponent * parentComp;
 	bool hasParent;
 
-	parentComp  = aComponent->GetParent();
+	parentComp = aComponent->GetParent();
 	hasParent = parentComp != NULL;
 	parentRect = hasParent ? parentComp->GetBounds() : NULL;
 	parentGraphicsClip = hasParent ? &parentComp->GetGraphics()->aClip : NULL;
+
+	compRect = aComponent->GetBounds();
 
 	aClip.aX = (hasParent ? parentGraphicsClip->aX: 0) + compRect->aX;
 	aClip.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect->aY;

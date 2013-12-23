@@ -20,10 +20,10 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "A2DExtLibs.h"
 #include "A2DAbstract.h"
 #include "A2DRect.h"
 #include "A2DCommon.h"
-#include "A2DExtLibs.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -90,7 +90,10 @@ public:
 
 protected:
 
-    virtual void                    render() = 0;
+	virtual void                    render() = 0;
+
+public:
+
     virtual void              *     getPlatformCompatibleWindowHandle() = 0;
 
 public:

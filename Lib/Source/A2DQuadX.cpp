@@ -29,7 +29,7 @@ void A2DQuadX::Update(void * xArgs[])
 	// Set variables.
 	aRect = static_cast<A2DRect*>(xArgs[0]);
 	aTexture = static_cast<A2DTexture*>(xArgs[1]); 
-	aWinProps = static_cast<A2DWindowProperties*>(xArgs[2]);
+	aWindowDims = static_cast<A2DDims*>(xArgs[2]);
 
 	hr = Map();
 	if (FAILED(hr)) return;
@@ -61,25 +61,25 @@ HRESULT A2DQuadX::Map()
 
 void A2DQuadX::BuildVertex()
 {
-		// Load the vertex array with data.
-		aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
-		aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
+	// Load the vertex array with data.
+	aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
+	aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
 
-		aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
-		aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);
+	aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
+	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);
 
-		aVertices[aIndex].position = D3DXVECTOR3(aLeft, aBottom, 0.0f);  // Bottom left.
-		aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aBottomTex);
+	aVertices[aIndex].position = D3DXVECTOR3(aLeft, aBottom, 0.0f);  // Bottom left.
+	aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aBottomTex);
 
-		// Second triangle.
-		aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
-		aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
+	// Second triangle.
+	aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
+	aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
 
-		aVertices[aIndex].position = D3DXVECTOR3(aRight, aTop, 0.0f);  // Top right.
-		aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aTopTex);
+	aVertices[aIndex].position = D3DXVECTOR3(aRight, aTop, 0.0f);  // Top right.
+	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aTopTex);
 
-		aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
-		aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);	
+	aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
+	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);	
 }
 
 HRESULT A2DQuadX::MapCoords()

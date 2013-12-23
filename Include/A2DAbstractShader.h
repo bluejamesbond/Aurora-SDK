@@ -53,9 +53,7 @@ public:
 	static ID3D10BlendState		*	aBlendDisabledState;
 
 	virtual HRESULT					CreateResources(void * xArgs[]);
-	virtual void					Update(void * xArgs[]);
 	virtual void					Render(); // Render should be defined seperately but called inside Update
-	virtual void					DestroyResources();
 
 	HRESULT							LoadFromFile(LPCWSTR * xFilename);
 	HRESULT							CreateBlendStates();

@@ -53,39 +53,17 @@ class A2DAbstractComponent;
 
 class A2DRootPane : public A2DPanel
 {
-	
-public:
-
-	// Constructor
-	// { NONE }
-
-	// Deconstructor
-	// { NONE }
 
 private:
 
-	// Variables
 	bool							aLockDimensions = false;
-
-	// Accessors
-	// { NONE }
-
-	// Mutators
-	// { NONE }
-
-	// Additional
-	// { NONE }
-
-	// Pure Virtual
-	// { NONE }
-
-	// Virtual
-	// { NONE }
 
 public:
 
-	// Implementation
-	// { A2DABSTRACTCOMPONENT }
+////////////////////////////////////////////////////////////////////////////////
+// A2DPANEL
+////////////////////////////////////////////////////////////////////////////////
+
 	virtual void                    RenderComponent(A2DRenderData * xRenderData);
 	virtual void                    RenderComponentBorder(A2DRenderData * xRenderData);
 	virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
@@ -93,8 +71,10 @@ public:
 
 public:
 
-	// Implementation
-	// { A2DABSTRACT }
+////////////////////////////////////////////////////////////////////////////////
+// A2DABSTRACT
+////////////////////////////////////////////////////////////////////////////////
+
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
 	virtual bool                    operator==(A2DAbstract * xAbstract);

@@ -81,7 +81,7 @@ public:
 public:
 
 	// Accessors
-	virtual A2DRect			  *		GetBounds();
+	A2DRect					  *		GetBounds();
 
 	// Mutators
 	// { NONE }

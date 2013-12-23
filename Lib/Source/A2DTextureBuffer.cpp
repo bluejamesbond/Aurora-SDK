@@ -5,8 +5,8 @@
 A2DTextureBuffer::A2DTextureBuffer(A2DBackBuffer * xBackBuffer, A2DDims * xSize) :
 A2DAbstractTexture(xBackBuffer)
 {
-	aSize.aWidth = xSize->aWidth;
-	aSize.aHeight = xSize->aHeight;
+	aDims.aWidth = xSize->aWidth;
+	aDims.aHeight = xSize->aHeight;
 }
 
 bool A2DTextureBuffer::hasAlpha()
@@ -26,8 +26,8 @@ HRESULT A2DTextureBuffer::CreateResources(void * xArgs[])
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 
 	// Setup the render target texture description.
-	textureDesc.Width = (int)aSize.aWidth;
-	textureDesc.Height = (int)aSize.aHeight;
+	textureDesc.Width = (int)aDims.aWidth;
+	textureDesc.Height = (int)aDims.aHeight;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

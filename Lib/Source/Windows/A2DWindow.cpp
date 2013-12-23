@@ -77,8 +77,6 @@ void A2DWindow::runMessageLoop()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-
-        if (aFrame) aFrame->update();
     }
 }
 
@@ -829,13 +827,13 @@ void A2DWindow::setMaximumSize(A2DDims * xSize)
 
 void A2DWindow::setName(LPCWSTR xName)
 {
-    A2DWindow::setName(xName);
+	aName = xName;
 
     SetWindowText(aChildHWnd, aName);
     SetWindowText(aParentHWnd, aName);
 }
 
-void A2DWindow::setUndecorated(bool xUndecoratedFlag)
+void A2DWindow::setUndecorated(bool xUndecorated)
 {
     // we cannot just use WS_POPUP style
     // WS_THICKFRAME: without this the window cannot be resized and so aero snap, de-maximizing and minimizing won't work
@@ -844,7 +842,7 @@ void A2DWindow::setUndecorated(bool xUndecoratedFlag)
     // WS_CAPTION: enables aero minimize animation/transition
     // WS_MAXIMIZEBOX, WS_MINIMIZEBOX: enable minimize/maximize
 
-    A2DWindow::setUndecorated(xUndecoratedFlag);
+	aUndecorated = xUndecorated;
 
     // Window has not been set up, return
     if (!aParentHWnd)   return;
@@ -886,9 +884,6 @@ void A2DWindow::setVisible(bool xVisible)
 
     if (aVisible)
     {
-        // Create resources!
-        aFrame->CreateResources();
-
         ShowWindow(aChildHWnd, SW_SHOWNORMAL);
         ShowWindow(aParentHWnd, SW_SHOWNORMAL);
 

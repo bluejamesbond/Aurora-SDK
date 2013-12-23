@@ -3,7 +3,7 @@
 #include "../../include/A2DAbstractShader.h"
 
 A2DAbstractShader::A2DAbstractShader(A2DBackBuffer * xBackBuffer) : 
-A2DAbstractPipelineComponent(xBackBuffer){}
+A2DPipelineComponent(xBackBuffer){}
 A2DAbstractShader::~A2DAbstractShader(){}
 
 HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR * xFilename)
@@ -31,13 +31,20 @@ HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR * xFilename)
 			MessageBox(*aHWnd, *xFilename, L"Missing Shader File", MB_OK);
 		}
 
-		return false;
+		return hr;
 	}
+
+	return hr;
 }
+
+void A2DAbstractShader::SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename){}
+
+ID3D10BlendState *	A2DAbstractShader::aBlendState = NULL;
+ID3D10BlendState *	A2DAbstractShader::aBlendDisabledState = NULL;
 
 HRESULT A2DAbstractShader::CreateResources(void * xArgs[])
 {
-	HRESULT hr;
+	HRESULT hr = S_OK;
 	D3D10_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
 	D3D10_PASS_DESC passDesc;
@@ -127,6 +134,8 @@ HRESULT A2DAbstractShader::CreateBlendStates()
 
 	hr = aDXDevice->CreateBlendState(&blendDesc, &aBlendDisabledState);
 	if (FAILED(hr))		return hr;
+
+	return hr;
 }
 
 HRESULT A2DAbstractShader::Initialize()

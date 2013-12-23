@@ -20,33 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
-
-class	A2D;
-class	A2DAbstract;
-class	A2DRenderable;
-class	A2DAbstractComponent;
-class	A2DCamera;
-struct	A2DCameraProperties;
-struct	A2DRenderData;
-class	A2DMatrixFactory;
-class	A2DBackBuffer;
-class	A2DMatrixFactory;
-class	A2DModelFactory;
-class	A2DRootPane;
-struct	A2DWindowProperties;
-class	A2DWindow;
-class	A2DImagePanel;
-
-
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
-
-#define A2DABSTRACT_LL(str1, str2)                            str1 str2
+#include "A2DExtLibs.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -55,32 +29,6 @@ class	A2DImagePanel;
 class A2DAbstract
 {
 public:
-    
-    // Constructor
-    A2DAbstract();
-    
-    // Deconstructor
-	~A2DAbstract();
-
-	// Variables
-	// { NONE }
-
-	// Accessors
-	// { NONE }
-
-	// Mutators
-	// { NONE }
-
-	// Builders
-	// { NONE }
-
-	// Factory
-	// { NONE }
-
-	// Additional
-	// { NONE }
-
-protected:
 
     // Pure Virtual
     virtual HRESULT                 Initialize() = 0;                           // Initialize  
@@ -91,11 +39,7 @@ protected:
     virtual bool                    operator==(A2DAbstract * xAbstract);        // Class type       
     virtual LPCWSTR                 ToString();                                 // Class type 
 
-public:
-	virtual bool					isClass(LPCWSTR xClass) final; // To prevent it from being overridden, I put a final here.
-
-    // Implementations
-    // { NONE}
+	virtual bool					isClass(LPCWSTR xClass) final;
 };
 
 #endif

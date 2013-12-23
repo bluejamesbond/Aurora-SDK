@@ -2,6 +2,11 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DTextureShader.h"
 
+A2DTextureShader::A2DTextureShader(A2DBackBuffer * xBackBuffer) :
+A2DAbstractShader(xBackBuffer){}
+
+A2DTextureShader::~A2DTextureShader(){}
+
 HRESULT A2DTextureShader::CreateResources(void * xArgs[])
 {
 	HRESULT hr = S_OK;
@@ -30,6 +35,8 @@ HRESULT A2DTextureShader::CreateResources(void * xArgs[])
 
 	return hr;
 }
+
+void A2DTextureShader::DestroyResources(){}
 
 void A2DTextureShader::Update(void * xArgs[])
 {

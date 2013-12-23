@@ -2,10 +2,6 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DAbstract.h"
 
-A2DAbstract::A2DAbstract(){}
-
-A2DAbstract::~A2DAbstract(){}
-
 LPCWSTR A2DAbstract::GetClass()
 {
 	return L"A2DAbstract";

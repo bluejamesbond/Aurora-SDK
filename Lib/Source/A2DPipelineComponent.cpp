@@ -5,6 +5,8 @@
 A2DPipelineComponent::A2DPipelineComponent(A2DBackBuffer * xBackBuffer) :
 aBackBuffer(xBackBuffer){}
 
+A2DPipelineComponent::~A2DPipelineComponent(){}
+
 HRESULT A2DPipelineComponent::Initialize()
 {
 	return S_OK;
