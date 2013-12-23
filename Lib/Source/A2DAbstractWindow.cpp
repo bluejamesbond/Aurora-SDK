@@ -91,3 +91,13 @@ void A2DAbstractWindow::update()
 {
 	render();
 }
+
+void A2DAbstractWindow::renderGX()
+{
+	aFrame->Update();
+}
+
+void A2DAbstractWindow::createGXResources()
+{
+	aFrame->CreateResources();
+}

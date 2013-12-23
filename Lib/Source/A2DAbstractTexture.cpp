@@ -80,8 +80,6 @@ void A2DAbstractTexture::Deinitialize()
 {
 	delete &aDims;
 	delete &aClip;
-
-	A2DPipelineable::Deinitialize();
 }
 
 HRESULT A2DAbstractTexture::Initialize()

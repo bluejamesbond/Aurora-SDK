@@ -22,6 +22,7 @@
 
 #include "A2DAbstractComponent.h"
 #include "A2DImageProperties.h"
+#include "A2DPipeline.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -71,6 +72,7 @@ public:
 	//Public Methods
 	void SetDoubleBuffered(bool xDoubleBuffer);
 	bool IsDoubleBuffered();
+	A2DPipeline * pipeline = NULL;
 
 protected:
 

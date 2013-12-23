@@ -7,42 +7,43 @@ aComponent(xComponent),
 A2DRenderData(xRenderData)
 {}
 
-void A2DGraphics::DrawImage(A2DPipeline * xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
+void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
 {
 	A2DPipelineable * texture;
 	A2DPipelineable * quad;
 	A2DPipelineable * textureShader;
 
 	// Pipeline not initalized
-	if (xPipeline = NULL)
+	if (*xPipeline == NULL)
 	{
-		xPipeline = new A2DPipeline();
+		*xPipeline = new A2DPipeline();
 
 		texture = new A2DTexture(aBackBuffer, xSrc);
 		quad = new A2DQuad(aBackBuffer, aRect);
 		textureShader = new A2DTextureShader(aBackBuffer);
 
+		// Catch the failure here itself
 		quad->Initialize();
 		texture->Initialize();
 		textureShader->Initialize();
 
-		xPipeline->aPipelineComps[0] = texture;
-		xPipeline->aPipelineComps[1] = quad;
-		xPipeline->aPipelineComps[2] = textureShader;
+		(*xPipeline)->aPipelineComps[0] = texture;
+		(*xPipeline)->aPipelineComps[1] = quad;
+		(*xPipeline)->aPipelineComps[2] = textureShader;
 
-		xPipeline->aLength = 3;
+		(*xPipeline)->aLength = 3;
 
 		return;
 	}
 
-	texture = xPipeline->aPipelineComps[0];
-	quad = xPipeline->aPipelineComps[1];
-	textureShader = xPipeline->aPipelineComps[2];
+	texture = (*xPipeline)->aPipelineComps[0];
+	quad = (*xPipeline)->aPipelineComps[1];
+	textureShader = (*xPipeline)->aPipelineComps[2];
 
 	// Pipeline requires a hard reset
 	// A2DPipeline::nextLifeCycle();
 	//   - Use during window resize
-	if (xPipeline->aGlobalLifeCycle > xPipeline->aLifeCycle)
+	if ((*xPipeline)->aGlobalLifeCycle > (*xPipeline)->aLifeCycle)
 	{
 		void * textureArgs[] = { xSrc };
 		void * quadArgs[] = { texture };
@@ -52,19 +53,19 @@ void A2DGraphics::DrawImage(A2DPipeline * xPipeline, LPCWSTR * xSrc, A2DRect * a
 		quad->CreateResources(quadArgs);
 		textureShader->CreateResources(textureShaderArgs);
 
-		xPipeline->aLifeCycle++;
+		(*xPipeline)->aLifeCycle++;
 
 		return;
 	}
 
 	// Pipeline needs to be updated and rendered
 	void * textureArgs[] = { xSrc };
-	void * quadArgs[] = { texture, aRect, aWindow->getBounds() };
+	void * quadArgs[] = { aRect, texture, aWindow->getBounds() };
 	void * textureShaderArgs[] = { texture };
 
 	texture->Update(textureArgs);
 	quad->Update(quadArgs);
-	textureShader->CreateResources(textureShaderArgs);
+	textureShader->Update(textureShaderArgs);
 				
 	quad->Render();
 	textureShader->Render();

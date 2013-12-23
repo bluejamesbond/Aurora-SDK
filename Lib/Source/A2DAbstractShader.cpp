@@ -6,7 +6,7 @@ A2DAbstractShader::A2DAbstractShader(A2DBackBuffer * xBackBuffer) : aBackBuffer(
 
 A2DAbstractShader::~A2DAbstractShader(){}
 
-HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR * xFilename)
+HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR xFilename)
 {
 	HRESULT hr;
 	ID3D10Blob* errorMessage;
@@ -15,20 +15,20 @@ HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR * xFilename)
 	errorMessage = 0;
 
 	// Load the shader in from the file.
-	hr = D3DX10CreateEffectFromFile(*xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
-		aDXDevice, NULL, NULL, &aEffect, &errorMessage, NULL);
+	hr = D3DX10CreateEffectFromFile(xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+		aBackBuffer->aDXDevice, NULL, NULL, &aEffect, &errorMessage, NULL);
 
 	if (FAILED(hr))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
 		if (errorMessage)
 		{
-			SysOut(errorMessage, xFilename);
+			SysOut(errorMessage, &xFilename);
 		}
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(*aHWnd, *xFilename, L"Missing Shader File", MB_OK);
+			// MessageBox(*aHWnd, xFilename, L"Missing Shader File", MB_OK);
 		}
 
 		return hr;
@@ -39,9 +39,6 @@ HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR * xFilename)
 
 void A2DAbstractShader::SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename){}
 
-ID3D10BlendState *	A2DAbstractShader::aBlendState = NULL;
-ID3D10BlendState *	A2DAbstractShader::aBlendDisabledState = NULL;
-
 HRESULT A2DAbstractShader::CreateResources(void * xArgs[])
 {
 	HRESULT hr = S_OK;
@@ -49,9 +46,12 @@ HRESULT A2DAbstractShader::CreateResources(void * xArgs[])
 	unsigned int numElements;
 	D3D10_PASS_DESC passDesc;
 
+	hr = LoadFromFile(L"../../../Aurora-SDK/Lib/Assets/Shaders/texture.fx");
+	if (FAILED(hr))			return hr;
+
 	// Get a pointer to the technique inside the shader.
-	aTechnique = aEffect->GetTechniqueByName("A2DShaderTechnique");
-	if (!aTechnique)		return hr;
+	aTechnique = aEffect->GetTechniqueByName("MainTechnique");
+	if (!aTechnique)		return E_FAIL;
 
 	// Now setup the layout of the data that goes into the shader.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
@@ -78,7 +78,7 @@ HRESULT A2DAbstractShader::CreateResources(void * xArgs[])
 	aTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
 
 	// Create the input layout.
-	hr = aDXDevice->CreateInputLayout(polygonLayout, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &aLayout);
+	hr = aBackBuffer->aDXDevice->CreateInputLayout(polygonLayout, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &aLayout);
 	if (FAILED(hr))		return hr;
 
 	return hr;
@@ -93,7 +93,7 @@ void A2DAbstractShader::Render()
 	// else aDXDevice->OMSetBlendState(g_pBlendDisableState, 0, 0xffffffff);
 
 	// Set the input layout.
-	aDXDevice->IASetInputLayout(aLayout);
+	aBackBuffer->aDXDevice->IASetInputLayout(aLayout);
 
 	// Get the description structure of the technique from inside the shader so it can be used for rendering.
 	aTechnique->GetDesc(&techniqueDesc);
@@ -102,7 +102,7 @@ void A2DAbstractShader::Render()
 	for (i = 0; i < techniqueDesc.Passes; ++i)
 	{
 		aTechnique->GetPassByIndex(i)->Apply(0);
-		aDXDevice->DrawIndexed(6, 0, 0);
+		aBackBuffer->aDXDevice->DrawIndexed(6, 0, 0);
 	}
 }
 
@@ -127,12 +127,12 @@ HRESULT A2DAbstractShader::CreateBlendStates()
 	blendDesc.DestBlendAlpha = D3D10_BLEND_ZERO;
 	blendDesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
 
-	hr = aDXDevice->CreateBlendState(&blendDesc, &aBlendState);
+	hr = aBackBuffer->aDXDevice->CreateBlendState(&blendDesc, &aBlendState);
 	if (FAILED(hr))		return hr;
 
 	blendDesc.BlendEnable[0] = FALSE;
 
-	hr = aDXDevice->CreateBlendState(&blendDesc, &aBlendDisabledState);
+	hr = aBackBuffer->aDXDevice->CreateBlendState(&blendDesc, &aBlendDisabledState);
 	if (FAILED(hr))		return hr;
 
 	return hr;

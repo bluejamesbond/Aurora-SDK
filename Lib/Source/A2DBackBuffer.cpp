@@ -373,12 +373,10 @@ void A2DBackBuffer::Clear()
 {
 	float color[4];
 
-	color[0] = 0.0f;
-	color[1] = 0.0f;
-	color[2] = 0.0f;
+	color[0] = 0.5f;
+	color[1] = 0.1f;
+	color[2] = 0.8f;
 	color[3] = 1.0f;
-
-	// OutputDebugString(L"Clearing scene\n");
 
 	// Clear the back buffer.
 	aDXDevice->ClearRenderTargetView(aDXRenderTargetView, color);

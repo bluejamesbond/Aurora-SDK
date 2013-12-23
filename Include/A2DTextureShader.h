@@ -21,6 +21,7 @@
 
 #include "A2DExtLibs.h"
 #include "A2DAbstractShader.h"
+#include "A2DTexture.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS

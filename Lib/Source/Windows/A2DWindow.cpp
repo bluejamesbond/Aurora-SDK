@@ -77,6 +77,8 @@ void A2DWindow::runMessageLoop()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
+		A2DAbstractWindow::renderGX();
     }
 }
 
@@ -886,6 +888,8 @@ void A2DWindow::setVisible(bool xVisible)
     {
         ShowWindow(aChildHWnd, SW_SHOWNORMAL);
         ShowWindow(aParentHWnd, SW_SHOWNORMAL);
+		
+		A2DAbstractWindow::createGXResources();
 
         runMessageLoop();
     }

@@ -57,14 +57,14 @@ LRESULT A2DAbstractFrame::PumpWindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * 
 
 void A2DAbstractFrame::Update()
 {
-	aRenderData->aBackBuffer->SetActive();
-	aRenderData->aBackBuffer->Clear();
-	aRenderData->aBackBuffer->SetZBuffer(false);
+	aBackBuffer->SetActive();
+	aBackBuffer->Clear();
+	aBackBuffer->SetZBuffer(false);
 
 	aRootPane->Update();	
 
-	aRenderData->aBackBuffer->SetZBuffer(true);
-	aRenderData->aBackBuffer->Swap();
+	aBackBuffer->SetZBuffer(true);
+	aBackBuffer->Swap();
 }
 
 

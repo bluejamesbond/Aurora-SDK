@@ -85,7 +85,7 @@ public:
 	void							RenderSecondaryBuffer();
 	void							RenderBlurBuffer();
 	void							SetActiveBuffer(int xBuffer);
-	void							DrawImage(A2DPipeline * xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps);
+	void							DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps);
 	void							DrawImage(A2DPipeline * xPipeline, A2DTexture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, A2DImageProperties * xImageProps, int xBlur);
 
 private:

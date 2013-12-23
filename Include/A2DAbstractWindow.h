@@ -83,7 +83,9 @@ public:
     Color                           getBackgroundColor();
     float                           getBorderWidth();
 	void                            setFrame(A2DAbstractFrame * xFrame);
-    
+	void							renderGX();
+	void							createGXResources();
+
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////

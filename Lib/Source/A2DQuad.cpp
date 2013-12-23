@@ -22,6 +22,7 @@ HRESULT A2DQuad::Map()
 	
 }
 
+// NOTE: Cross platform - via skype message -Mathew K.
 void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 {
 

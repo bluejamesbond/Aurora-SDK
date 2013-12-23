@@ -31,7 +31,7 @@ HRESULT A2DTextureShader::CreateResources(void * xArgs[])
 	aProjectionMatrixPtr->SetMatrix(static_cast<float*>(xArgs[2]));
 
 	// Bind the texture.
-	aTexturePtr->SetResource(static_cast<ID3D10ShaderResourceView*>(xArgs[3]));
+	aTexturePtr->SetResource(static_cast<A2DTexture*>(xArgs[3])->GetResource());
 
 	return hr;
 }
@@ -41,7 +41,7 @@ void A2DTextureShader::DestroyResources(){}
 void A2DTextureShader::Update(void * xArgs[])
 {
 	// Bind the texture.
-	aTexturePtr->SetResource(static_cast<ID3D10ShaderResourceView*>(xArgs[0]));
+	aTexturePtr->SetResource(static_cast<A2DTexture*>(xArgs[0])->GetResource());
 
 	A2DAbstractShader::Render();
 }

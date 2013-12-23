@@ -21,6 +21,7 @@
 
 #include "A2DExtLibs.h"
 #include "A2DPipelineable.h"
+#include "A2DBackBuffer.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -55,13 +56,13 @@ protected:
 	ID3D10Device				*	aDXDevice;
 	ID3D10EffectTechnique		*	aTechnique;
 	ID3D10InputLayout			*	aLayout;
-	static ID3D10BlendState		*	aBlendState;
-	static ID3D10BlendState		*	aBlendDisabledState;
+	ID3D10BlendState		*	aBlendState;
+	ID3D10BlendState		*	aBlendDisabledState;
 
 	virtual HRESULT					CreateResources(void * xArgs[]);
 	virtual void					Render(); // Render should be defined seperately but called inside Update
 
-	HRESULT							LoadFromFile(LPCWSTR * xFilename);
+	HRESULT							LoadFromFile(LPCWSTR  xFilename);
 	HRESULT							CreateBlendStates();
 	void							SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename);
 
