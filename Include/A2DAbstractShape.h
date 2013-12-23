@@ -22,6 +22,7 @@
 #include "A2DExtLibs.h"
 #include "A2DPipelineable.h"
 #include "A2DVertexData.h"
+#include "A2DRect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -65,18 +66,18 @@ protected:
 	///////////////////////////////////////////
 
 	virtual HRESULT					CreateResources(void * xArgs[]);
-	virtual void					Update(void * xArgs[]);
+	virtual void					Update(void * xArgs[]) = 0;
 	virtual void					Render(); // Render should be defined seperately but called inside Update
 	virtual void					DestroyResources();
 
 protected:
 
-	virtual void					CalculateCoords();
-	virtual HRESULT					MapCoords();
+	virtual void					CalculateCoords(A2DRect * xTexRect) = 0; // NEEDS TO CHANGE WILL SHAPES WILL NOT ALWAYS HAVE TEXTURES
+	virtual HRESULT					MapCoords() = 0;
 
 public:
 
-	virtual HRESULT					SetAsTexture();
+	//virtual HRESULT					SetAsTexture() = 0;
 
 public:
 

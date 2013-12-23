@@ -82,13 +82,19 @@ public:
 
 	virtual void					Update(void* xArgs[]);
 	virtual HRESULT					Map();
-	
-	virtual void					CalculateCoords(A2DRect * xTexRect);
-	virtual HRESULT					MapCoords();
 
 	////////////////////////////////////////////////////////////
 
+public:
+
 	virtual void					SetConstraints(A2DRect * xRect);
+
+	////////////////////////////////////////////////////////////
+
+protected:
+
+	virtual void					CalculateCoords(A2DRect * xTexRect);
+	virtual HRESULT					MapCoords();
 
 	////////////////////////////////////////////////////////////
 
