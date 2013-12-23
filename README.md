@@ -27,3 +27,4 @@ Conventions
 3. Client-side folders will be lowercased.
 4. `camelCase` for functions and variables.
 5. `A2DCamelCase` for classes.
+6. CP = Cross Platform, GLW = GL Windows, GLX = GL Linux
