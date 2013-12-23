@@ -22,7 +22,7 @@
 
 
 #include "A2DAbstract.h"
-#include "A2DWindow.h"
+#include "A2DAbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -38,7 +38,6 @@ struct A2DRenderData;
 class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
-class A2DWindow;
 class A2DImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +56,7 @@ class A2DBackBuffer : public A2DAbstract
 public:
 
     // Constructor
-	A2DBackBuffer(A2DWindow * xWindow, A2DGXSettings * xGXSettings);
+	A2DBackBuffer(A2DAbstractWindow * xWindow, A2DGXSettings * xGXSettings);
 
     // Deconstructor
     ~A2DBackBuffer();

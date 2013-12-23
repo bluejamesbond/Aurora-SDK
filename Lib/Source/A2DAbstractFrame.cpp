@@ -1,30 +1,25 @@
 
 #include "../../Include/A2DExtLibs.h"
-#include "../../Include/A2DFrame.h"
+#include "../../Include/A2DAbstractFrame.h"
 #include "../../Include/A2DTextureBuffer.h"
 
-A2DFrame::A2DFrame(HINSTANCE * xHInstance) : aHInstance(xHInstance) {}
-
-A2DFrame::~A2DFrame(){}
-
-A2DRootPane * A2DFrame::GetRootPane()
+A2DRootPane * A2DAbstractFrame::GetRootPane()
 {
 	return aRootPane;
 }
 
-A2DCamera * A2DFrame::GetCamera()
+A2DCamera * A2DAbstractFrame::GetCamera()
 {
 	return aCamera;
 }
 
-A2DRenderData * A2DFrame::GetRenderData()
+A2DRenderData * A2DAbstractFrame::GetRenderData()
 {
 	return aRenderData;
 }
 
-HRESULT A2DFrame::CreateResources()
+HRESULT A2DAbstractFrame::CreateResources()
 {
-	
 	HRESULT hr;
 
 	// Adjust camera settings and then create its resources.
@@ -55,12 +50,12 @@ HRESULT A2DFrame::CreateResources()
 	return hr;
 }
 
-LRESULT A2DFrame::PumpWindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
+LRESULT A2DAbstractFrame::PumpWindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
 {
 	return aRootPane->WindowMsg(xHwnd, xMessage,xWParam, xLParam);
 }
 
-void A2DFrame::Update()
+void A2DAbstractFrame::Update()
 {
 	aRenderData->aBackBuffer->SetActive();
 	aRenderData->aBackBuffer->Clear();
@@ -76,38 +71,26 @@ void A2DFrame::Update()
 // REQUIRED BY A2D_ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DFrame::GetClass()
+LPCWSTR A2DAbstractFrame::GetClass()
 {
 	return L"A2DFrame";
 }
 
-LPCWSTR A2DFrame::ToString()
+LPCWSTR A2DAbstractFrame::ToString()
 {
 	return L"A2DFrame";
 }
 
-bool A2DFrame::operator==(A2DAbstract * xAbstract)
+bool A2DAbstractFrame::operator==(A2DAbstract * xAbstract)
 {
 	return false;
 }
 
-HRESULT A2DFrame::Initialize()
+HRESULT A2DAbstractFrame::Initialize()
 {
 	HRESULT hr;	
-
-	// -----------------------------------------------------
-
-#ifdef _WIN32
-
-	aWindow = new A2DMSWindow(aHInstance);
-
-#elif __UNIX
-
-	aWindow = new A2DLXWindow();
-
-#endif
-	hr = aWindow->Initialize();
-	if (FAILED(hr))	return hr;
+	
+	aWindow = createPlatformDependentWindow();
 
 	// -----------------------------------------------------
 
@@ -161,7 +144,7 @@ HRESULT A2DFrame::Initialize()
 	return hr;
 }
 
-void A2DFrame::Deinitialize()
+void A2DAbstractFrame::Deinitialize()
 {
 	// Release the D3D object.
 	if (aBackBuffer)

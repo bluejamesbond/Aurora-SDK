@@ -20,12 +20,11 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2DExtLibs.h"
 #include "../A2DCommon.h"
-#include "../A2DFrame.h"
 #include "../A2DAbstract.h"
 #include "../A2DRect.h"
 #include "../A2DDims.h"
+#include "../A2DAbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -38,87 +37,48 @@ class A2DAbstract;
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define FLOAT_ZERO                                          0.0f
-#define FLOAT_ONE                                           1.0f
+#define FLOAT_ZERO                                            0.0f
+#define FLOAT_ONE                                             1.0f
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-using namespace Gdiplus;  // WINDOWS specific
+using namespace Gdiplus;
 
-class A2DWindow : public A2DNativeWindow
+class A2DWindow : public A2DAbstractWindow
 {
-    /*********************************************************************/
-    /*                      CROSS-PLATFORM START                         */
-    /*********************************************************************/
+
+////////////////////////////////////////////////////////////////////////////////
+// PLATFORM COMPATIBLE IMPLEMENTATION
+////////////////////////////////////////////////////////////////////////////////
 
 public:
 
-    // Constructor
-	A2DWindow(HINSTANCE  xHInstance); // <-- WILL ALWAYS CENTER THE WINDOW FOR NOW
+    A2DWindow(HINSTANCE  xHInstance);
 
-    // Deconstructor
-	~A2DWindow();
-  
-
-private :
-
-    /*********************************************************************/
-    /*                              REQUIRED                             */
-    /*********************************************************************/
-
-	
-
-public:
-
-	HINSTANCE                       aHInstance;
-
-    // Accessors and mutators
-    // These don't need mutators because we are giving direct access to the structs
-    // Accessing internal variables. Do not provide mutators for these.
-	//Windows specific, for now. maybe change later
-	virtual void					setMinimumSize(float xWidth, float xHeight);
-
-	//A2DWindow               *     getLocationRelativeTo(); never defined
-    
-    virtual void                    setVisible(bool xVisibile);
-
-	virtual void                    setUndecorated(bool xUndecoratedFlag); // SET
-
-    virtual void                    setBoxShadowRadius(float xBoxShadowRadius);
-
-	virtual void					setName(LPCWSTR xName);
-
-    // Additional
-    virtual void                    Update();
-	virtual void				    updateAndCacheBoxShadow();
-    virtual void                    UpdateAndCacheBackground();
-
-    virtual  void                   RenderComponent();
-    virtual void                    RenderComponentBorder();
-    virtual HRESULT                 CreateResources();
-    virtual void                    DestroyResources();
-    
-    // Implementation
-    // { A2DABSTRACT }
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
-
-    /*********************************************************************/
-    /*                      CROSS-PLATFORM END                           */
-    /*********************************************************************/
-
-    /*********************************************************************/
-    /*                      WINDOWS-SPECIFIC START                       */
-    /*********************************************************************/
-
+    ~A2DWindow();
+     
 private:
 
-    // Variables - WINDOW ONLY - INTERNAL USE ONLY
+    int                             aStyle;
+
+    float                           aPadding;
+    float                           aShadowPadding;
+
+    float                           aRealX = 0;
+    float                           aRealY = 0;
+    float                           aRealWidth = 0;
+    float                           aRealHeight = 0;
+
+    float                           aRelativeX = 0;
+    float                           aRelativeY = 0;
+    float                           aRelativeWidth = 0;
+    float                           aRelativeHeight = 0;
+
+    bool                            isDragged = false;
+    bool                            isResizing = false;
+    bool                            aWinMoveRes = false;
 
     Image                     *     aTopShadow;
     Image                     *     aLeftShadow;
@@ -136,85 +96,92 @@ private:
     TextureBrush              *     aBottomShadowBrush;
     TextureBrush              *     aBackgroundBrush;
 
-    float                           aPadding;
-    float                           aShadowPadding;
-
-    float                           aRealX = 0;
-    float                           aRealY = 0;
-    float                           aRealWidth = 0;
-    float                           aRealHeight = 0;
-
-    float                           aRelativeX = 0;
-    float                           aRelativeY = 0;
-    float                           aRelativeWidth = 0;
-    float                           aRelativeHeight = 0;
-
-    int                             aStyle;
     Graphics                  *     aGraphics;
 
-    bool                            isDragged = false;
-	bool							isResizing = false;
-	bool							aWinMoveRes = false;
+    HINSTANCE                       aHInstance; 
+    HWND                            aHResizeWnd;
+    HWND                            aParentHWnd;
+    HWND                            aChildHWnd;
+    HCURSOR                         aCurrentCursor;
+    POINT                           aLastDraggedPoint;
 
-	HWND							aHResizeWnd; // Handle of the window that handles the resizing.
-	HWND							aParentHWnd;
-	HCURSOR							aCurrentCursor;
-	POINT                           aLastDraggedPoint;
+    A2DDims                         aMinSafeDims;
 
-	A2DDims							aMinSafeDims;
+public:
 
-    // Builders
-    // { NONE }
-
-    // Factory
-    // { NONE }
-    
-    // Accessors
-    // { NONE }
-
-    // Mutators
-    // { NONE }
-
-    // Factory
-    // { NONE }
-
-    // Additional
-    // { NONE }
-
-    // Pure Virtual
-    // { NONE }
-
-    // Virtual
-    // { NONE }     
+    static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 private:
     
-    // Functions
+    void                            setMinimumSize(float xWidth, float xHeight);
+    void                            setMaximumSize(float xWidth, float xHeight);
 
-    // Win API
-    void                            RunMessageLoop();
-    static LRESULT CALLBACK         WndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
-    HRESULT                         RegisterClass();
-    HWND                            CreateCompatibleWindow(bool isParent);
+    void                            runMessageLoop();
 
-    // Background
-    HRESULT                         CreateBackgroundResources();
-    void                            DestroyBackgroundResources();
+    HWND                            createCompatibleWindow(bool isParent);
+    HRESULT                         createBackgroundResources();
+    HRESULT                         createShadowResources();
+    HRESULT                         registerClass();
 
-    // Box Shadow - Set 1
-    HRESULT                         createBoxShadowResources();
-    void                            destroyBoxShadowResources();
+    HRESULT                         updateOnMouseDown(HWND xHwnd);
+    HRESULT                         updateOnMouseMove(HWND xHwnd);
+    HRESULT                         updateOnMouseUp(HWND xHwnd);
 
-    //  Box Shadow - Set 2
+    void                            destroyBackgroundResources();
+    void                            destroyShadowResources();
+
     void                            spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight);
     float                     *     getGaussianKernel(int xRadius);
     void                            applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius);
     Bitmap                    *     applyGaussianBlur(Bitmap * src, int radius);
-    BitmapData                *     getLockedBitmapData(Bitmap * src);    
+    BitmapData                *     getLockedBitmapData(Bitmap * src); 
 
-    /*********************************************************************/
-    /*                      WINDOWS-SPECIFIC END                         */
-    /*********************************************************************/
+
+    virtual void                    updateAndCacheShadow();
+    virtual void                    updateAndCacheBackground();
+
+    virtual void                    renderComponent();
+    virtual void                    renderComponentBorder();
+    virtual HRESULT                 createResources();
+    virtual void                    destroyResources();
+
+////////////////////////////////////////////////////////////////////////////////
+// A2DABSTRACTWINDOW
+////////////////////////////////////////////////////////////////////////////////
+
+public:
+
+    virtual void                    setMinimumSize(A2DDims * xSize);
+    virtual void                    setMaximumSize(A2DDims * xSize);
+    virtual void                    setName(LPCWSTR xName);
+    virtual void                    setUndecorated(bool xUndecoratedFlag);
+    virtual void                    setDefaultCloseOperation(int xCloseOperation);
+    virtual void                    setLocationRelativeTo(A2DAbstractWindow * xWindow);
+    virtual void                    setVisible(bool xVisible);
+    virtual void                    setBorderColor(Color xBorderColor);
+    virtual void                    setBorderWidth(float xBorderWidth);
+    virtual void                    setShadowed(bool xShadowFlag);
+    virtual void                    setShadowRadius(float xShadowRadius);
+    virtual void                    setShadowColor(Color xShadowColor);
+    virtual void                    setBackgroundColor(Color xBackgroundColor);
+
+protected:
+
+    virtual void                    render();
+    virtual void              *     getPlatformCompatibleWindowHandle();
+   
+////////////////////////////////////////////////////////////////////////////////
+// A2DABSTRACT
+////////////////////////////////////////////////////////////////////////////////
+
+public:
+
+    virtual HRESULT                 Initialize();
+    virtual void                    Deinitialize();
+    virtual LPCWSTR                 GetClass();
+    virtual LPCWSTR                 ToString();
+    virtual bool                    operator==(A2DAbstract * xAbstract);
+
 };
 
 #endif

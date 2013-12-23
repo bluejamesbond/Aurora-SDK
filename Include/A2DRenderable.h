@@ -55,13 +55,7 @@ class A2DRenderable : public A2DAbstract
 {
 
 public:
-
-	// Constructor
-	A2DRenderable();
-
-	// Deconstructor
-	~A2DRenderable();
-
+	
 	// Variables
 	// { NONE }
 
@@ -95,11 +89,11 @@ public:
 
 	// Implementation
 	// { A2DABSTRACT }
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual HRESULT                 Initialize() = 0;
+	virtual void                    Deinitialize() = 0;
+	virtual LPCWSTR                 GetClass() = 0;
+	virtual LPCWSTR                 ToString() = 0;
+	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
 
 };
 
