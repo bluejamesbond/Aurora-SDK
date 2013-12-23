@@ -22,7 +22,7 @@
 
 #include "A2DExtLibs.h"
 #include "A2DAbstract.h"
-#include "A2DPipelineComponent.h"
+#include "A2DPipelineable.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -30,7 +30,7 @@
 
 class A2D;
 class A2DAbstract;
-class A2DPipelineComponent;
+class A2DPipelineable;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -49,7 +49,7 @@ public:
 
 	A2DPipeline(A2DPipeline * xRenderData);
 
-	A2DPipelineComponent		  * aPipelineComps[8];
+	A2DPipelineable		  * aPipelineComps[8];
 
 	int							    aLength = 0;
 	int								aLifeCycle = 0;

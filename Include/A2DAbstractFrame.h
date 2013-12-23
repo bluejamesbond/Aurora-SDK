@@ -24,7 +24,7 @@
 #include "A2DGraphics.h"
 #include "A2DRenderable.h"
 #include "A2DAbstractComponent.h"
-#include "A2DPipelineComponent.h"
+#include "A2DPipelineable.h"
 #include "A2DAbstractTexture.h"
 #include "A2DComponent.h"
 #include "A2DPanel.h"

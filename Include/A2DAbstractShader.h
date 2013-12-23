@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DExtLibs.h"
-#include "A2DPipelineComponent.h"
+#include "A2DPipelineable.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -28,7 +28,7 @@
 
 class A2D;
 class A2DAbstract;
-class A2DPipelineComponent;
+class A2DPipelineable;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -38,11 +38,17 @@ class A2DPipelineComponent;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractShader : public A2DPipelineComponent
+class A2DAbstractShader : public A2DPipelineable
 {
 public:
+
 	A2DAbstractShader(A2DBackBuffer * xBackBuffer);
+
 	~A2DAbstractShader();
+
+protected:
+	// Variables
+	A2DBackBuffer			*		aBackBuffer;
 
 	HWND						*	aHWnd;
 	ID3D10Effect				*	aEffect;

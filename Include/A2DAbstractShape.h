@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DExtLibs.h"
-#include "A2DPipelineComponent.h"
+#include "A2DPipelineable.h"
 #include "A2DVertexData.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@
 
 class A2D;
 class A2DAbstract;
-class A2DPipelineComponent;
+class A2DPipelineable;
 class A2DBackBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,11 +40,19 @@ class A2DBackBuffer;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractShape : public A2DPipelineComponent
+class A2DAbstractShape : public A2DPipelineable
 {
 public:
+
 	A2DAbstractShape(A2DBackBuffer * xBackBuffer, int xVertexCount);
+
 	~A2DAbstractShape();
+
+protected:
+
+	// Variables
+	A2DBackBuffer			*		aBackBuffer;
+
 
 	///////////////////////////////////////////
 

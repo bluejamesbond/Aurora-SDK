@@ -9,9 +9,9 @@ A2DRenderData(xRenderData)
 
 void A2DGraphics::DrawImage(A2DPipeline * xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
 {
-	A2DPipelineComponent * texture;
-	A2DPipelineComponent * quad;
-	A2DPipelineComponent * textureShader;
+	A2DPipelineable * texture;
+	A2DPipelineable * quad;
+	A2DPipelineable * textureShader;
 
 	// Pipeline not initalized
 	if (xPipeline = NULL)

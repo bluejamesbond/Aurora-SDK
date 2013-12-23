@@ -2,8 +2,8 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DAbstractShader.h"
 
-A2DAbstractShader::A2DAbstractShader(A2DBackBuffer * xBackBuffer) : 
-A2DPipelineComponent(xBackBuffer){}
+A2DAbstractShader::A2DAbstractShader(A2DBackBuffer * xBackBuffer) : aBackBuffer(xBackBuffer) {}
+
 A2DAbstractShader::~A2DAbstractShader(){}
 
 HRESULT A2DAbstractShader::LoadFromFile(LPCWSTR * xFilename)

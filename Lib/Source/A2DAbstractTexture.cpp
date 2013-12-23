@@ -3,7 +3,7 @@
 #include "../../include/A2DAbstractTexture.h"
 
 A2DAbstractTexture::A2DAbstractTexture(A2DBackBuffer * xBackBuffer) :
-A2DPipelineComponent(xBackBuffer),
+aBackBuffer(xBackBuffer),
 aResource(NULL) {}
 
 A2DAbstractTexture::~A2DAbstractTexture(){}
@@ -81,7 +81,7 @@ void A2DAbstractTexture::Deinitialize()
 	delete &aDims;
 	delete &aClip;
 
-	A2DPipelineComponent::Deinitialize();
+	A2DPipelineable::Deinitialize();
 }
 
 HRESULT A2DAbstractTexture::Initialize()

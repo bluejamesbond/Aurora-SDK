@@ -19,7 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DPipelineComponent.h"
+#include "A2DPipelineable.h"
 #include "A2DRect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,16 +38,18 @@ class A2DAbstractTexture;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractTexture : public A2DPipelineComponent
+class A2DAbstractTexture : public A2DPipelineable
 {
 public:
-	// Constructor
+
 	A2DAbstractTexture(A2DBackBuffer * xBackBuffer);
 
-	// Deconstructor
 	~A2DAbstractTexture();
 
 protected:
+	// Variables
+	A2DBackBuffer			*		aBackBuffer;
+
 	// Variables
 	A2DDims							aDims;
 	A2DRect							aClip;

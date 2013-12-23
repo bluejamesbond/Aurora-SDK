@@ -48,7 +48,7 @@ void A2DAbstractComponent::SetBounds(A2DRect * xRect)
 	}
 }
 
-void A2DAbstractComponent::SetBounds(int xX, int xY, int xWidth, int xHeight)
+void A2DAbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHeight)
 {
 	A2DGraphics * graphics = GetGraphics();
 

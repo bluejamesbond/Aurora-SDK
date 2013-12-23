@@ -75,7 +75,7 @@ private:
 
 	bool							aDoubleBuffer = false;
 	A2DAbstractComponent	  *		aComponent;
-	A2DPipelineComponent      *		aPipelineComponents[10];
+	A2DPipelineable      *		aPipelineComponents[10];
 
 public:
 

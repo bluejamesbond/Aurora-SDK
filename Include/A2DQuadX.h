@@ -21,7 +21,7 @@
 
 #include "A2DExtLibs.h"
 #include "A2DAbstract.h"
-#include "A2DAbstractPipelineComponent.h"
+#include "A2DPipelineable.h"
 #include "A2DRect.h"
 #include "A2DVertexData.h"
 #include "A2DBackBuffer.h"

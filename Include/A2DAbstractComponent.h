@@ -121,7 +121,7 @@ public:
 
 	// Virtual
 	virtual void					SetBounds(A2DRect * xRect);
-	virtual void					SetBounds(int xX, int xY, int xWidth, int xHeight);
+	virtual void					SetBounds(float xX, float xY, float xWidth, float xHeight);
 
 protected:
 

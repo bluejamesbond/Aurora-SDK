@@ -49,41 +49,21 @@ class A2DWindow;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DPipelineComponent : public A2DAbstract
+class A2DPipelineable : public A2DAbstract
 {
 
 public:
 
-	// Constructor
-	A2DPipelineComponent(A2DBackBuffer * xBackBuffer);
-
-	// Deconstructor
-	~A2DPipelineComponent();
-
-protected:
-	// Variables
-	A2DBackBuffer			*		aBackBuffer;
-
-public:
-
-	// Pure Virtual
 	virtual HRESULT					CreateResources(void * xArgs[]) = 0;
 	virtual void					Update(void * xArgs[]) = 0; // Dont worry about destroying anything...but all that into Destroy Resources
 	virtual void					Render() = 0; // Render should be defined seperately but called inside Update
 	virtual void					DestroyResources() = 0;
 
-	// Virtual
-	// { NONE }
-
-public:
-
-	// Implementation
-	// { A2DABSTRACT }
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize(); // Set Backbuffer pointer to 0 during this step! 
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual HRESULT                 Initialize() = 0;
+	virtual void                    Deinitialize() = 0; // Set Backbuffer pointer to 0 during this step! 
+	virtual LPCWSTR                 GetClass() = 0;
+	virtual LPCWSTR                 ToString() = 0;
+	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
 
 };
 
