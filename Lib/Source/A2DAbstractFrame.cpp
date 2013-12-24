@@ -27,7 +27,7 @@ HRESULT A2DAbstractFrame::CreateResources()
 
 	cameraProperties->aPositionX = 0.0f;
 	cameraProperties->aPositionY = 0.0f;
-	cameraProperties->aPositionZ = -50.0f;
+	cameraProperties->aPositionZ = -10.0f;
 
 	// Create properties once the properties have been set
 	aCamera->CreateResources();

@@ -69,9 +69,9 @@ void A2DCamera::CreateResources()
 	position.z = aCameraProps->aPositionZ;
 
 	// Setup where the camera is looking by default.
-	lookAt.x = aCameraProps->aLookAtXDef;
-	lookAt.y = aCameraProps->aLookAtYDef;
-	lookAt.z = aCameraProps->aLookAtZDef;
+	lookAt.x = 0;
+	lookAt.y = 0;
+	lookAt.z = 1;
 
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
 	pitch = aCameraProps->aRotationX * 0.0174532925f;

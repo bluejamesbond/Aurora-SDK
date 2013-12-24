@@ -94,23 +94,33 @@ void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 		aPrevPosX = aRect->aX;
 		aPrevPosY = aRect->aY;
 
+		/////////////////// HARD CODED //////////////////////////////
+		/////////////////// HARD CODED //////////////////////////////
+		/////////////////// HARD CODED //////////////////////////////
+		/////////////////// HARD CODED //////////////////////////////
+
 		// Calculate the screen coordinates of the left side of the bitmap.
-		aLeft = ((aWindowDims->aWidth / 2) * -1) + realX;
+		aLeft = -250;
 
 		// Calculate the screen coordinates of the right side of the bitmap.
-		aRight = aLeft + realWidth;
+		aRight = 250;
 
 		// Calculate the screen coordinates of the top of the bitmap.
-		aTop = (aWindowDims->aHeight / 2) - realY;
+		aTop = 482.0f;
 
 		// Calculate the screen coordinates of the bottom of the bitmap.
-		aBottom = aTop - realHeight;
+		aBottom = -282.0f;
 
 		// Calculate desired texture mapping.
-		aLeftTex = calcTX / aTexture->GetSize()->aWidth;
-		aRightTex = (calcTX + realTWidth) / aTexture->GetSize()->aWidth;
-		aTopTex = calcTY / aTexture->GetSize()->aHeight;
-		aBottomTex = (calcTY + realTHeight) / aTexture->GetSize()->aHeight;
+		aLeftTex = 0;
+		aRightTex = 1;
+		aTopTex = 0;
+		aBottomTex = 1;
+
+		/////////////////// HARD CODED //////////////////////////////
+		/////////////////// HARD CODED //////////////////////////////
+		/////////////////// HARD CODED //////////////////////////////
+		/////////////////// HARD CODED //////////////////////////////
 
 	}
 }
@@ -188,22 +198,6 @@ void A2DQuad::Update(void* xArgs[])
 	aRect = static_cast<A2DRect*>(xArgs[0]);
 	aTexture = static_cast<A2DTexture*>(xArgs[1]);
 	aWindowDims = static_cast<A2DDims*>(xArgs[2]);
-
-	//~~~~~~~~~~~TEST CODE~~~~~~~~~~~~~~~//
-	
-	aRect->aHeight = 50;
-	aRect->aWidth = 50;
-
-
-	aRect->aX = 350;
-	aRect->aX += aIncrement++;
-
-	aRect->aY = 300;
-
-	aTexture->GetClip()->aHeight = 764;
-	aTexture->GetClip()->aWidth = 500;
-
-	//~~~~~~~~~~~END TEST~~~~~~~~~~~~~~~~//
 
 	HRESULT hr;
 

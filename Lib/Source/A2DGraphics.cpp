@@ -50,7 +50,7 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 	{
 		void * textureArgs[] = { xSrc };
 		void * quadArgs[] = { texture };
-		void * textureShaderArgs[] = { aWorldMatrix, aViewMatrix, aProjectionMatrix, texture };
+		void * textureShaderArgs[] = { aWorldMatrix, aViewMatrix, aOrthogonalMatrix, texture };
 
 		texture->CreateResources(textureArgs);
 		quad->CreateResources(quadArgs);

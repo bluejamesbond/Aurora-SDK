@@ -20,11 +20,8 @@
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DGXSettings
+struct A2DGXSettings
 {
-
-public: 
-
 	float							aScreenNear = 0.1f;
 	float							aScreenDepth = 1000.0f;
 	bool                            aVsync = true;
