@@ -40,6 +40,6 @@
 
 #elif __UNIX
 
-#include <test_DELETE_PLEASE>
+#include "A2DGLXExtLibs.h"
 
 #endif
