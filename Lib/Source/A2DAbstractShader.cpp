@@ -102,7 +102,7 @@ void A2DAbstractShader::Render()
 	for (i = 0; i < techniqueDesc.Passes; ++i)
 	{
 		aTechnique->GetPassByIndex(i)->Apply(0);
-		aBackBuffer->aDXDevice->DrawIndexed(6, 0, 0);
+		aBackBuffer->aDXDevice->DrawIndexed(6, 0, 0); // hard coded 6. change this to a variable later.
 	}
 }
 

@@ -18,6 +18,9 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 	{
 		*xPipeline = new A2DPipeline();
 
+		aRect->aHeight = 50; // FORCED HERE to test something
+		aRect->aWidth = 50; // AND HERE
+
 		texture = new A2DTexture(aBackBuffer, xSrc);
 		quad = new A2DQuad(aBackBuffer, aRect);
 		textureShader = new A2DTextureShader(aBackBuffer);

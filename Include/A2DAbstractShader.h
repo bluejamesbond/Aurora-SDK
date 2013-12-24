@@ -56,8 +56,8 @@ protected:
 	ID3D10Device				*	aDXDevice;
 	ID3D10EffectTechnique		*	aTechnique;
 	ID3D10InputLayout			*	aLayout;
-	ID3D10BlendState		*	aBlendState;
-	ID3D10BlendState		*	aBlendDisabledState;
+	ID3D10BlendState			*	aBlendState;
+	ID3D10BlendState			*	aBlendDisabledState;
 
 	virtual HRESULT					CreateResources(void * xArgs[]);
 	virtual void					Render(); // Render should be defined seperately but called inside Update

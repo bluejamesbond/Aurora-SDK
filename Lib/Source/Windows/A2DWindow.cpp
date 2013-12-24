@@ -62,8 +62,8 @@ void A2DWindow::setMinimumSize(float xWidth, float xHeight)
 
 void A2DWindow::setMaximumSize(float xWidth, float xHeight)
 {
-    aMinDims.aWidth = max(aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO, xWidth);
-    aMinDims.aHeight = max(aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO, xHeight);
+    aMaxDims.aWidth = max(aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO, xWidth);
+    aMaxDims.aHeight = max(aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO, xHeight);
 }
 
 void A2DWindow::runMessageLoop()
@@ -1020,8 +1020,8 @@ HRESULT A2DWindow::Initialize()
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     
     /*****************************************************/
-    aRect.aHeight = 500;
-    aRect.aWidth = 640;
+    aRect.aHeight = 600;
+    aRect.aWidth = 800;
     aName = L"TESTING";
     
     setLocationRelativeTo(NULL);
@@ -1031,7 +1031,7 @@ HRESULT A2DWindow::Initialize()
     setBackgroundColor(Color(0, 0, 0));
     setShadowRadius(100);
     setMinimumSize(75, 75);
-    setMaximumSize(700, 500);
+    setMaximumSize(1000, 1000);
     
     /*****************************************************/
 

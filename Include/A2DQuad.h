@@ -75,6 +75,8 @@ public:
 	float							aBottomTex;
 
 	int								aIndex = 0;
+	int								aIncrement = 0;
+	int								aRealIncrement = 0;
 
 	bool							aCONSTRAINT_CHANGED;
 

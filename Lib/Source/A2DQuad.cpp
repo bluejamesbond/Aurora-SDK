@@ -52,11 +52,6 @@ void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 		float realTWidth, realTHeight, calcTX, calcTY;
 		float tWidthOffset, tHeightOffset;
 
-		xTexRect->aX = xTexRect->aX;
-		xTexRect->aY = xTexRect->aY;
-		xTexRect->aHeight = xTexRect->aHeight;
-		xTexRect->aWidth = xTexRect->aWidth;
-
 		calcWidth = aConstraints->aWidth < 0 ? aConstraints->aWidth - abs(aConstraints->aX) : aConstraints->aWidth;
 		calcHeight = aConstraints->aHeight < 0 ? aConstraints->aHeight - abs(aConstraints->aY) : aConstraints->aHeight;
 
@@ -159,6 +154,9 @@ HRESULT A2DQuad::MapCoords()
 
 	}
 
+	// Reset the index for future rendering.
+	aIndex = 0;
+
 	// Initialize the vertex buffer pointer to null first.
 	verticesPtr = 0;
 
@@ -190,6 +188,22 @@ void A2DQuad::Update(void* xArgs[])
 	aRect = static_cast<A2DRect*>(xArgs[0]);
 	aTexture = static_cast<A2DTexture*>(xArgs[1]);
 	aWindowDims = static_cast<A2DDims*>(xArgs[2]);
+
+	//~~~~~~~~~~~TEST CODE~~~~~~~~~~~~~~~//
+	
+	aRect->aHeight = 50;
+	aRect->aWidth = 50;
+
+
+	aRect->aX = 350;
+	aRect->aX += aIncrement++;
+
+	aRect->aY = 300;
+
+	aTexture->GetClip()->aHeight = 764;
+	aTexture->GetClip()->aWidth = 500;
+
+	//~~~~~~~~~~~END TEST~~~~~~~~~~~~~~~~//
 
 	HRESULT hr;
 
