@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DLINBACKBUFFER_H__
-#define __A2DLINBACKBUFFER_H__
+#ifndef __A2DGLBACKBUFFER_H__
+#define __A2DGLBACKBUFFER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DLINBACKBUFFER
+//      A2DGLBackBuffer
 //
 //  Synopsis:
 //      Custom LINUX/UNIX implementation of A2DAbstractBackBuffer to allow a 
@@ -17,18 +17,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
-/*#include "OpenGlClass.h"
-#include "InputClass.h"
-#include "GraphicsClass.h"*/
-#include "A2DAbstractBackBuffer.h"
-/*#include "A2DCPResultHandle.h"
-#include "A2DCPWindowHandle.h"
-#include "A2DCPDevice.h"
-#include "A2DCPInstanceHandle.h"
-#include "A2DCPString.h"*/
-#include <windows.h>
-#include <gl\gl.h>
-#include <math.h>
+
+#include "A2DBackBuffer.h"
+#include "A2DExtLibs.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,36 +28,19 @@ class A2D;
 class A2DAbstract;
 class A2DRenderable;
 class A2DAbstractComponent;
-class A2DCamera;
+class A2DGLCamera;
 struct A2DCameraProperties;
 struct A2DRenderData;
 class A2DMatrixFactory;
 class A2DModelFactory;
 class A2DRootPane;
-struct A2DWindowProperties;
-class A2DWindow;
+class A2DXWindow;
 class A2DImagePanel;
-class A2DAbstractBackBuffer;
-class OpenGlClass;
-class InputClass;
+class A2DBackBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
-#define WGL_DRAW_TO_WINDOW_ARB         0x2001
-#define WGL_ACCELERATION_ARB           0x2003
-#define WGL_SWAP_METHOD_ARB            0x2007
-#define WGL_SUPPORT_OPENGL_ARB         0x2010
-#define WGL_DOUBLE_BUFFER_ARB          0x2011
-#define WGL_PIXEL_TYPE_ARB             0x2013
-#define WGL_COLOR_BITS_ARB             0x2014
-#define WGL_DEPTH_BITS_ARB             0x2022
-#define WGL_STENCIL_BITS_ARB           0x2023
-#define WGL_FULL_ACCELERATION_ARB      0x2027
-#define WGL_SWAP_EXCHANGE_ARB          0x2028
-#define WGL_TYPE_RGBA_ARB              0x202B
-#define WGL_CONTEXT_MAJOR_VERSION_ARB  0x2091
-#define WGL_CONTEXT_MINOR_VERSION_ARB  0x2092
 #define GL_ARRAY_BUFFER                   0x8892
 #define GL_STATIC_DRAW                    0x88E4
 #define GL_FRAGMENT_SHADER                0x8B30
@@ -77,6 +52,10 @@ class InputClass;
 #define GL_BGRA                           0x80E1
 #define GL_ELEMENT_ARRAY_BUFFER           0x8893
 
+#define HRESULT int 
+#define S_OK 0
+#define E_FAIL 1
+#define FAILED(x) !x
 
 //////////////
 // TYPEDEFS //
@@ -120,18 +99,18 @@ typedef void (APIENTRY * PFNGLUNIFORM4FVPROC) (GLint location, GLsizei count, co
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: A2DLinBackBuffer
+// Class name: A2DGLBackBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DLinBackBuffer: public A2DAbstractBackBuffer
+class A2DGLBackBuffer: public A2DBackBuffer
 {
 
 public:
 	// Constructor
-	A2DLinBackBuffer(A2DWindow * xWindow, A2DWindowProperties * xWindowProps);
+	A2DGLBackBuffer(A2DWindow * xWindow, A2DGXSettings * xGXSettings);
 
     // Deconstructor
-    ~A2DLinBackBuffer();
+    ~A2DGLBackBuffer();
 
     //GL Variables
     PFNGLATTACHSHADERPROC glAttachShader;
@@ -170,12 +149,11 @@ public:
 
     
     //Windows Variables
-    IDXGISwapChain            *     aDXGISwapChain;
-    A2DCPDevice               *     aDXDevice;
+//
 
 private:
 	// Variables
-	A2DWindowProperties       *     aWindowProps;
+	A2DGXSettings             *     aGXSettings
 	A2DWindow				  *     aWindow;
     HDC                             m_deviceContext;
     HGLRC                           m_renderingContext;
@@ -219,9 +197,10 @@ public:
     virtual LPCWSTR                 ToString();
     virtual bool                    operator==(A2DAbstract * xAbstract);
 
+private:
+    
+    bool                            A2DGLBackBuffer::LoadExtensionList();
 };
 
-private:
-    bool                            A2DLinBackBuffer::LoadExtensionList()
 
 #endif
