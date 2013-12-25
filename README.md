@@ -32,6 +32,6 @@ Conventions
 Stages
 =======
 
-[x] Development
-[ ] Testing
-[ ] Finalizing
+- [x] Development
+- [ ] Testing
+- [ ] Finalizing
