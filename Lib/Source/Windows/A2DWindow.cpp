@@ -1,6 +1,7 @@
 
 #include "../../../Include/Windows/A2DExtLibs.h"
 #include "../../../Include/Windows/A2DWindow.h"
+#include "../../../Include/Windows/A2DFrame.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
@@ -843,6 +844,12 @@ void A2DWindow::setVisible(bool xVisible)
 
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
+
+		if (!A2DEventQueue::isDispatchingThread())
+		{
+			aFrame->CreateResources();
+			initPlatformCompatibleMessageLoop();
+		}
 	}
 	else
 	{
@@ -1015,10 +1022,48 @@ void* A2DWindow::getPlatformCompatibleWindowHandle()
 	return static_cast<void*>(&aChildHWnd);
 }
 
+void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue, A2DAbstractFrame * xFrame)
+{
+	MSG msg;
+
+	while (isVisible())
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		// Call the dispatcher!
+		xEventQueue->dispatchNextEvent();
+		
+		// Forced updating of rendering for now
+		xFrame->Update();
+	}
+}
+
+void A2DWindow::initPlatformCompatibleMessageLoop()
+{
+	MSG msg;
+	A2DAbstractFrame * frame = aFrame;
+
+	while (isVisible())
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		if (frame)
+		{
+			frame->Update();
+		}
+	}
+}
+
 void A2DWindow::render()
 {
-	HDC hdc, memDC;
-
 	// Cache variables to ensure that these variables
 	// won't be changed in the middle of update() via concurrent
 	// threads.
@@ -1039,11 +1084,13 @@ void A2DWindow::render()
 
 	/***********************************************/
 
-	hdc = GetDC(aParentHWnd);
-	memDC = CreateCompatibleDC(hdc);
+	SIZE size = { (long)aRelativeWidth, (long)aRelativeHeight };
+	HDC screenDC = GetDC(NULL);
+	HDC memDC = CreateCompatibleDC(screenDC);
+	POINT ptDst = { (long)aRelativeX, (long)aRelativeY };
+	POINT ptSrc = { 0, 0 };
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
-
+	HBITMAP memBitmap = CreateCompatibleBitmap(screenDC, aRelativeWidth, aRelativeHeight);	
 	SelectObject(memDC, memBitmap);
 
 	aGraphics = new Graphics(memDC);
@@ -1054,20 +1101,14 @@ void A2DWindow::render()
 	renderComponentBorder();
 
 	/***********************************************/
-
-	SIZE size = { (long)aRelativeWidth, (long)aRelativeHeight };
-
-	HDC screenDC = GetDC(NULL);
-	POINT ptDst = { (long)aRelativeX, (long)aRelativeY };
-	POINT ptSrc = { 0, 0 };
-
+	
 	BLENDFUNCTION blendFunction;
 	blendFunction.AlphaFormat = AC_SRC_ALPHA;
 	blendFunction.BlendFlags = 0;
 	blendFunction.BlendOp = AC_SRC_OVER;
 	blendFunction.SourceConstantAlpha = 255;
 
-	UpdateLayeredWindow(aParentHWnd, screenDC, &ptDst, &size, aGraphics->GetHDC(), &ptSrc, 0, &blendFunction, 2);
+	UpdateLayeredWindow(aParentHWnd, screenDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
 	/***********************************************/
 
@@ -1082,8 +1123,10 @@ void A2DWindow::render()
 	aGraphics = 0;
 
 	DeleteObject(memBitmap);
-	DeleteObject(hdc);
-	DeleteObject(memDC);
+	ReleaseDC(NULL, memDC);
+	ReleaseDC(NULL, screenDC);
+	DeleteDC(screenDC);
+	DeleteDC(memDC);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

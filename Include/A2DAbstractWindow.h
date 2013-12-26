@@ -107,6 +107,11 @@ protected:
 public:
 
 	virtual void              *     getPlatformCompatibleWindowHandle() = 0;
+	virtual void			  		initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue, A2DAbstractFrame * xFrame) = 0;
+
+protected:
+
+	virtual void			  		initPlatformCompatibleMessageLoop() = 0;
 
 public:
 

@@ -45,37 +45,6 @@ void A2DEventQueue::removeAllEvents()
 	aEventQueue = new queue<A2DRunnable*>();
 }
 
-void A2DEventQueue::run()
-{
-	// This region is not the cleanest - however it has been
-	// forced to create faster rendering.
-
-	MSG msg;
-
-	// Create A2DFrame resources inside EDT
-
-	A2DAbstractEventQueue::run();
-
-	A2DAbstractWindow& window = *aWindow; // cache
-
-	while (window.isVisible())
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		if (hasEvent())
-		{
-			getQueueLock();
-			peekEvent()->run();
-			popEvent();
-			releaseQueueLock();
-		}
-	}
-}
-
 HRESULT A2DEventQueue::Initialize()
 {
 	aEventQueue = new queue<A2DRunnable *>();

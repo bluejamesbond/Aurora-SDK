@@ -143,9 +143,7 @@ HRESULT A2DAbstractFrame::Initialize()
 
 	hr = aEventQueue->Initialize();
 	if (FAILED(hr))	return hr;
-
-	aEventQueue->startDispatchingThread();
-
+	
 	// -----------------------------------------------------
 
 	aRenderData = new A2DRenderData();
@@ -159,6 +157,10 @@ HRESULT A2DAbstractFrame::Initialize()
 
 	hr = aRootPane->Initialize();
 	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	aEventQueue->startDispatchingThread();
 
 	// -----------------------------------------------------
 
@@ -216,31 +218,7 @@ HRESULT A2DAbstractFrame::CreateResources()
 
 	hr = aWindow->Initialize();
 	if (FAILED(hr))	return hr;
-
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	SetName(L"Muzzler - Notification Center");                                // Set the title
-	setBackground(0xF2, 0x34, 0x11);
-	setBorder(0xFF, 0xFF, 0xFF, 0xFF, 10.0f);
-	setShadow(0xFF, 0x00, 0xFF, 0x00, 100.0f);
-	SetLocationRelativeTo(NULL); 
-	SetVisible(true);
-
+	
 	// -----------------------------------------------------
 
 	aBackBuffer = new A2DBackBuffer(aWindow, &aGXSettings);
@@ -270,6 +248,30 @@ HRESULT A2DAbstractFrame::CreateResources()
 	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	
+	this->SetName(L"Muzzler - Notification Center");                                // Set the title
+	this->setBackground(0xF2, 0x34, 0x11);
+	this->setBorder(0xFF, 0xFF, 0xFF, 0xFF, 10.0f);
+	this->setShadow(0xFF, 0x00, 0xFF, 0x00, 100.0f);
+	this->SetLocationRelativeTo(NULL);
+	this->SetVisible(true);
 
 	// Adjust camera settings and then create its resources.
 	A2DCameraProperties * cameraProperties = aCamera->GetProperties();

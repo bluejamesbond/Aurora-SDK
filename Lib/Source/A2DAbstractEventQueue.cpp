@@ -123,6 +123,35 @@ void A2DAbstractEventQueue::resumeDispatchingThread()
 
 void A2DAbstractEventQueue::run()
 {
+	// Create frame resources inside EDT
 	aFrame->CreateResources();
-	aWindow = aFrame->getWindow();
+
+	// Start platform compatible message loop which will
+	// embed the event dispatcher
+	aFrame->getWindow()->initPlatformCompatibleEventDispatcher(this, aFrame);
+}
+
+bool A2DAbstractEventQueue::isDispatchingThread()
+{
+	A2DAbstractEventQueue& eventQueue = getInstance();
+
+	if (eventQueue == NULL)
+	{
+		return false;
+	}
+
+	// Fix this concept!
+
+	return true;
+}
+
+void A2DAbstractEventQueue::dispatchNextEvent()
+{
+	if (hasEvent())
+	{
+		getQueueLock();
+		peekEvent()->run();
+		popEvent();
+		releaseQueueLock();
+	}
 }

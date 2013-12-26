@@ -55,17 +55,19 @@ private:
 	HANDLE aEventQueueLock;
 	HINSTANCE aHIsntance;
 
-protected:
+public:
 	
 	// Queue
 	virtual bool                    getQueueLock();
 	virtual void                    releaseQueueLock();
 	virtual A2DRunnable *           peekEvent();
 	virtual void					popEvent();
-	virtual void                    pushEvent(A2DRunnable * xRunnable);
 	virtual bool                    hasEvent();
+
+protected:
+
+	virtual void                    pushEvent(A2DRunnable * xRunnable);
 	virtual void                    removeAllEvents();
-	virtual void					run(); // Acts as message loop!
 
 public:
 

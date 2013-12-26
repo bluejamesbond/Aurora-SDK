@@ -53,7 +53,6 @@ private:
 
 protected:
 
-    A2DAbstractWindow         *     aWindow;
 	A2DAbstractFrame		  *		aFrame;
 
 public:
@@ -61,8 +60,9 @@ public:
     void                            invokeLater(A2DRunnable * xRunnable);
     void                            invokeAndWait(A2DRunnable * xRunnable);
     void                            clearQueue();
+	void							dispatchNextEvent();
 
-    bool							isDispatchingThread();
+    static bool							isDispatchingThread();
     void							invokeRerender();
     void							invokeRevalidate();
     void							invokeReset();
@@ -78,17 +78,21 @@ public:
 	static A2DAbstractEventQueue*	aInstance;
 	static A2DAbstractEventQueue&	getInstance();
 
-protected:
-
     // Queue
+
+public:
+
     virtual bool                    getQueueLock() = 0;
 	virtual void                    releaseQueueLock() = 0;
 	virtual A2DRunnable *           peekEvent() = 0;
 	virtual void					popEvent() = 0;
-    virtual void                    pushEvent(A2DRunnable * xRunnable) = 0;
 	virtual bool                    hasEvent() = 0;
+
+protected:
+
+    virtual void                    pushEvent(A2DRunnable * xRunnable) = 0;
 	virtual void                    removeAllEvents() = 0;
-	virtual void					run(); // Message loop goes in here; Hard coded!
+	virtual void					run();
 
 	// Creators
 	virtual A2DAbstractThread*		createPlatformCompatibleThread(A2DRunnable * xRunnable) = 0;
