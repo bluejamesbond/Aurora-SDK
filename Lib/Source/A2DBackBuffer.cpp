@@ -35,7 +35,7 @@ HRESULT A2DBackBuffer::Initialize()
 	D3D10_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
-	int error, width = aWindow->getBounds().aWidth, height = aWindow->getBounds().aHeight;
+	int error, width = static_cast<int>(aWindow->getBounds().aWidth), height = static_cast<int>(aWindow->getBounds().aHeight);
 
 	// Create a DirectX graphics interface factory.
 	hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**) &factory);

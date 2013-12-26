@@ -33,10 +33,10 @@
 
 struct A2DColor
 {
-	short			aRed = 0xFF;
-	short			aBlue = 0xFF;
-	short			aGreen = 0xFF;
-	short			aAlpha = 0xFF;
+	byte			aRed = 0xFF;
+	byte			aBlue = 0xFF;
+	byte			aGreen = 0xFF;
+	byte			aAlpha = 0xFF;
 
 	A2DColor(){}
 

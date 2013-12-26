@@ -1078,19 +1078,19 @@ void A2DWindow::render()
 
 	/***********************************************/
 
-	HDWP hdwp = BeginDeferWindowPos(2);
+	// HDWP hdwp = BeginDeferWindowPos(2);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(aRelativeX), static_cast<int>(aRelativeY), static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	// if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(aRelativeX), static_cast<int>(aRelativeY), static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	/***********************************************/
 
-	SIZE size = { (long)aRelativeWidth, (long)aRelativeHeight };
-	HDC screenDC = GetDC(NULL);
-	HDC memDC = CreateCompatibleDC(screenDC);
-	POINT ptDst = { (long)aRelativeX, (long)aRelativeY };
+	SIZE size = { static_cast<long>(aRelativeWidth), static_cast<long>(aRelativeHeight) };
+	HDC hwndDC = GetDC(aParentHWnd);
+	HDC memDC = CreateCompatibleDC(hwndDC);
+	POINT ptDst = { static_cast<long>(aRelativeX), static_cast<long>(aRelativeY) };
 	POINT ptSrc = { 0, 0 };
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(screenDC, aRelativeWidth, aRelativeHeight);	
+	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight));
 	SelectObject(memDC, memBitmap);
 
 	aGraphics = new Graphics(memDC);
@@ -1108,13 +1108,15 @@ void A2DWindow::render()
 	blendFunction.BlendOp = AC_SRC_OVER;
 	blendFunction.SourceConstantAlpha = 255;
 
-	UpdateLayeredWindow(aParentHWnd, screenDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
+	UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
 	/***********************************************/
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	// if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
-	EndDeferWindowPos(hdwp);
+	// EndDeferWindowPos(hdwp);
+
+	SetWindowPos(aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	/***********************************************/
 
@@ -1124,8 +1126,8 @@ void A2DWindow::render()
 
 	DeleteObject(memBitmap);
 	ReleaseDC(NULL, memDC);
-	ReleaseDC(NULL, screenDC);
-	DeleteDC(screenDC);
+	ReleaseDC(aParentHWnd, hwndDC);
+	DeleteDC(hwndDC);
 	DeleteDC(memDC);
 }
 

@@ -60,7 +60,7 @@ void A2DAbstractFrame::SetLocationRelativeTo(A2DAbstractFrame * xFrame)
 	aWindow->update();
 }
 
-void A2DAbstractFrame::setBackground(short xRed, short xGreen, short xBlue)
+void A2DAbstractFrame::setBackground(byte xRed, byte xGreen, byte xBlue)
 {
 	A2DColor color;
 
@@ -72,7 +72,7 @@ void A2DAbstractFrame::setBackground(short xRed, short xGreen, short xBlue)
 	aWindow->setBackgroundColor(&color);
 }
 
-void A2DAbstractFrame::setBorder(short xAlpha, short xRed, short xGreen, short xBlue, float xWidth)
+void A2DAbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth)
 {
 	A2DColor color;
 
@@ -84,7 +84,7 @@ void A2DAbstractFrame::setBorder(short xAlpha, short xRed, short xGreen, short x
 	aWindow->setBorder(&color, xWidth);
 }
 
-void A2DAbstractFrame::setShadow(short xAlpha, short xRed, short xGreen, short xBlue, float xRadius)
+void A2DAbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius)
 {
 	A2DColor color;
 

@@ -80,9 +80,9 @@ public:
 	HRESULT                         CreateResources();
 	void                            Update();
 
-	void							setBackground(short xRed, short xGreen, short xBlue);
-	void							setBorder(short xAlpha, short xRed, short xGreen, short xBlue, float xWidth);
-	void							setShadow(short xAlpha, short xRed, short xGreen, short xBlue, float xRadius);
+	void							setBackground(byte xRed, byte xGreen, byte xBlue);
+	void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
+	void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
 	void							SetVisible(bool xVisibility);
 	void							SetName(LPCWSTR  xName);
 	void							SetBounds(A2DRect * xRect);
