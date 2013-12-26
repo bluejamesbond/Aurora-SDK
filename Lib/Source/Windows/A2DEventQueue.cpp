@@ -2,7 +2,7 @@
 #include "../../../Include/Windows/A2DExtLibs.h"
 #include "../../../Include/Windows/A2DEventQueue.h"
 
-A2DEventQueue::A2DEventQueue(A2DAbstractWindow * xWindow) : A2DAbstractEventQueue(xWindow){}
+A2DEventQueue::A2DEventQueue(A2DAbstractFrame * xFrame) : A2DAbstractEventQueue(xFrame){}
 
 bool A2DEventQueue::getQueueLock()
 {
@@ -51,7 +51,12 @@ void A2DEventQueue::run()
 	// forced to create faster rendering.
 
 	MSG msg;
-	A2DAbstractWindow& window = *aWindow;
+
+	// Create A2DFrame resources inside EDT
+
+	A2DAbstractEventQueue::run();
+
+	A2DAbstractWindow& window = *aWindow; // cache
 
 	while (window.isVisible())
 	{
@@ -103,4 +108,9 @@ bool A2DEventQueue::operator==(A2DAbstract * xAbstract)
 A2DAbstractThread* A2DEventQueue::createPlatformCompatibleThread(A2DRunnable * xRunnable)
 {
 	return new A2DThread(xRunnable);
+}
+
+A2DAbstractWindow* A2DEventQueue::createPlatformCompatibleWindow()
+{
+	return new A2DWindow(aHIsntance);
 }

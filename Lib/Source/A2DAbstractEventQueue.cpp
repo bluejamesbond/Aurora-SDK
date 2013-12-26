@@ -1,10 +1,10 @@
 
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DAbstractEventQueue.h"
+#include "../../include/A2DAbstractFrame.h"
 
-A2DAbstractEventQueue::A2DAbstractEventQueue(A2DAbstractWindow * xWindow) : aWindow(xWindow) {}
+A2DAbstractEventQueue::A2DAbstractEventQueue(A2DAbstractFrame * xFrame) : aFrame(xFrame) {}
 
-A2DAbstractEventQueue::~A2DAbstractEventQueue(){};
 
 void A2DAbstractEventQueue::invokeLater(A2DRunnable * xRunnable)
 {
@@ -71,11 +71,6 @@ A2DAbstractEventQueue* A2DAbstractEventQueue::getInstance()
 
 HRESULT A2DAbstractEventQueue::Initialize()
 {
-	if (!aWindow)
-	{
-		return E_FAIL;
-	}
-
 	aInstance = this;
 
 	return S_OK;
@@ -126,3 +121,8 @@ void A2DAbstractEventQueue::resumeDispatchingThread()
 	}
 }
 
+void A2DAbstractEventQueue::run()
+{
+	aFrame->CreateResources();
+	aWindow = aFrame->getWindow();
+}

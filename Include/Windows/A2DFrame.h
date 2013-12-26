@@ -50,6 +50,7 @@ private:
 protected:
 
 	virtual A2DAbstractWindow *		createPlatformCompatibleWindow();
+	virtual A2DAbstractEventQueue*	createPlatformCompatibleEventQueue();
 
 };
 

@@ -69,7 +69,6 @@ protected:
 private:
 
 	bool							aValidatedContents;
-	A2DAbstractEventQueue	  *		aEventQueue;
 
 public:
 
@@ -95,9 +94,6 @@ public:
 	A2DColor                        getBackgroundColor();
 	float                           getBorderWidth();
 	void                            setFrame(A2DAbstractFrame * xFrame);
-	void							createGXResources();
-	void							initEventDispatchingThread();
-	void							stopEventDispatchingThread();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// PLATFORM COMPATIBLE IMPLEMENTATION
@@ -111,7 +107,6 @@ protected:
 public:
 
 	virtual void              *     getPlatformCompatibleWindowHandle() = 0;
-	virtual A2DAbstractEventQueue*  createPlatformCompatibleEventQueue() = 0;
 
 public:
 
@@ -140,7 +135,7 @@ public:
 public:
 
 	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
+	virtual void                    Deinitialize() = 0;
 	virtual LPCWSTR                 GetClass() = 0;
 	virtual LPCWSTR                 ToString() = 0;
 	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;

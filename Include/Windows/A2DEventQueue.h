@@ -45,7 +45,7 @@ class A2DEventQueue : public A2DAbstractEventQueue
 {
 public:
 
-	A2DEventQueue::A2DEventQueue(A2DAbstractWindow * xWindow);
+	A2DEventQueue::A2DEventQueue(A2DAbstractFrame * xFrame);
 
 	A2DEventQueue::~A2DEventQueue();
 
@@ -53,6 +53,7 @@ private:
 
 	queue<A2DRunnable*> * aEventQueue;
 	HANDLE aEventQueueLock;
+	HINSTANCE aHIsntance;
 
 protected:
 	
@@ -70,6 +71,7 @@ public:
 
 	// Thread - Move from OS level to Global level!!!
 	virtual A2DAbstractThread *		createPlatformCompatibleThread(A2DRunnable * xRunnable);
+	virtual A2DAbstractWindow *		createPlatformCompatibleWindow();
 
 
 

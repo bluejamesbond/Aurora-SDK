@@ -71,6 +71,7 @@ private:
     A2DRenderData             *     aRenderData;
 	A2DGXSettings			  		aGXSettings;
 	A2DAbstractWindow	  	  * 	aWindow;
+	A2DAbstractEventQueue	  *		aEventQueue;
 
 public:
 
@@ -92,7 +93,7 @@ public:
 	void							SetLocationRelativeTo(A2DAbstractFrame * xFrame);
 	void							SetVsync(bool xVsync);
 	void							SetDefaultCloseOperation(int xOperation);
-
+	A2DAbstractWindow		  *		getWindow();
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
@@ -101,6 +102,7 @@ public:
 protected:
 
 	virtual A2DAbstractWindow *		createPlatformCompatibleWindow() = 0;
+	virtual A2DAbstractEventQueue*	createPlatformCompatibleEventQueue() = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // A2DABSTRACT

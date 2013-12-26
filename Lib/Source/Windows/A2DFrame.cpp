@@ -18,3 +18,8 @@ A2DAbstractWindow *	A2DFrame::createPlatformCompatibleWindow()
 {
 	return new A2DWindow(aHInstance);
 }
+
+A2DAbstractEventQueue * A2DFrame::createPlatformCompatibleEventQueue()
+{
+	return new A2DEventQueue(this);
+}

@@ -106,6 +106,11 @@ void A2DAbstractFrame::SetDefaultCloseOperation(int xOperation)
 	aWindow->setDefaultCloseOperation(xOperation);
 }
 
+A2DAbstractWindow* A2DAbstractFrame::getWindow()
+{
+	return aWindow;
+}
+
 void A2DAbstractFrame::SetVisible(bool xVisible)
 {
 	aWindow->setVisible(xVisible);
@@ -134,14 +139,19 @@ HRESULT A2DAbstractFrame::Initialize()
 {
 	HRESULT hr;	
 
-	// -----------------------------------------------------
+	aEventQueue = createPlatformCompatibleEventQueue();
 
-	aWindow = createPlatformCompatibleWindow();
-
-	hr = aWindow->Initialize();
+	hr = aEventQueue->Initialize();
 	if (FAILED(hr))	return hr;
 
-	aWindow->setFrame(this);
+	aEventQueue->startDispatchingThread();
+
+	// -----------------------------------------------------
+
+	aRenderData = new A2DRenderData();
+
+	hr = aRenderData->Initialize();
+	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
 
@@ -152,41 +162,6 @@ HRESULT A2DAbstractFrame::Initialize()
 
 	// -----------------------------------------------------
 
-	aBackBuffer = new A2DBackBuffer(aWindow, &aGXSettings);
-
-	hr = aBackBuffer->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aCamera = new A2DCamera();
-
-	hr = aCamera->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aTextureBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(&aWindow->getBounds()));
-
-	hr = aTextureBuffer->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aBlurBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(&aWindow->getBounds()));
-
-	hr = aBlurBuffer->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aRenderData = new A2DRenderData();
-
-	hr = aRenderData->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-		
 	return hr;
 }
 
@@ -234,6 +209,67 @@ A2DRootPane * A2DAbstractFrame::GetRootPane()
 HRESULT A2DAbstractFrame::CreateResources()
 {
 	HRESULT hr;
+
+	// -----------------------------------------------------
+
+	aWindow = createPlatformCompatibleWindow();
+
+	hr = aWindow->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	// TEMP TEMP
+	SetName(L"Muzzler - Notification Center");                                // Set the title
+	setBackground(0xF2, 0x34, 0x11);
+	setBorder(0xFF, 0xFF, 0xFF, 0xFF, 10.0f);
+	setShadow(0xFF, 0x00, 0xFF, 0x00, 100.0f);
+	SetLocationRelativeTo(NULL); 
+	SetVisible(true);
+
+	// -----------------------------------------------------
+
+	aBackBuffer = new A2DBackBuffer(aWindow, &aGXSettings);
+
+	hr = aBackBuffer->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	aCamera = new A2DCamera();
+
+	hr = aCamera->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	aTextureBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(&aWindow->getBounds()));
+
+	hr = aTextureBuffer->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	aBlurBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(&aWindow->getBounds()));
+
+	hr = aBlurBuffer->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
 
 	// Adjust camera settings and then create its resources.
 	A2DCameraProperties * cameraProperties = aCamera->GetProperties();

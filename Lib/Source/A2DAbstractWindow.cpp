@@ -231,30 +231,10 @@ void A2DAbstractWindow::revalidate()
 	validate();
 }
 
-void A2DAbstractWindow::createGXResources()
-{
-	aFrame->CreateResources();
-}
-
-void A2DAbstractWindow::stopEventDispatchingThread()
-{
-	aEventQueue->suspendDispatchingThread();
-}
-
-void A2DAbstractWindow::initEventDispatchingThread()
-{
-	aEventQueue->startDispatchingThread();
-}
-
 HRESULT A2DAbstractWindow::Initialize()
 {
-	HRESULT hr;
-
-	aEventQueue = createPlatformCompatibleEventQueue();
-	hr = aEventQueue->Initialize();
-
-	if (FAILED(hr)) return hr;
-
+	HRESULT hr = S_OK;
+	
 	//------------------------------------------------------------
 	// A2DABSTRACTWINDOW DEFAULTS
 	//------------------------------------------------------------
@@ -308,14 +288,4 @@ HRESULT A2DAbstractWindow::Initialize()
 	//------------------------------------------------------------
 
 	return hr;
-}
-
-void A2DAbstractWindow::Deinitialize()
-{
-	if (aEventQueue)
-	{
-		aEventQueue->Deinitialize();
-		delete aEventQueue;
-		aEventQueue = 0;
-	}
 }

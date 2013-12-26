@@ -843,9 +843,6 @@ void A2DWindow::setVisible(bool xVisible)
 
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
-
-		A2DAbstractWindow::createGXResources();
-		A2DAbstractWindow::initEventDispatchingThread();
 	}
 	else
 	{
@@ -1129,11 +1126,6 @@ HRESULT A2DWindow::Initialize()
 	update();
 
 	return hr;
-}
-
-A2DAbstractEventQueue * A2DWindow::createPlatformCompatibleEventQueue()
-{
-	return new A2DEventQueue(this);
 }
 
 void A2DWindow::Deinitialize()

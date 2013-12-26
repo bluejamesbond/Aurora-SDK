@@ -30,6 +30,7 @@
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
+class A2DAbstractFrame;
 class A2DAbstractWindow;
 class A2DWindow;
 
@@ -42,11 +43,7 @@ class A2DAbstractEventQueue : public A2DRunnable, public A2DAbstract
 {
 public:
 
-    // Constructor
-    A2DAbstractEventQueue(A2DAbstractWindow * xWindow);
-
-    // Deconstructor
-    ~A2DAbstractEventQueue();
+	A2DAbstractEventQueue(A2DAbstractFrame * xFrame);
 
 private:
 
@@ -56,6 +53,7 @@ private:
 protected:
 
     A2DAbstractWindow         *     aWindow;
+	A2DAbstractFrame		  *		aFrame;
 
 public:
 
@@ -89,7 +87,9 @@ protected:
     virtual void                    pushEvent(A2DRunnable * xRunnable) = 0;
 	virtual bool                    hasEvent() = 0;
 	virtual void                    removeAllEvents() = 0;
-	virtual void					run() = 0;
+	virtual void					run(); // Message loop goes in here; Hard coded!
+
+	// Creators
 	virtual A2DAbstractThread*		createPlatformCompatibleThread(A2DRunnable * xRunnable) = 0;
 
 ////////////////////////////////////////////////////////////////////////////////

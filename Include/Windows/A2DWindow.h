@@ -179,7 +179,6 @@ protected:
 
 	virtual void                    render();
 	virtual void					validate();
-	virtual A2DAbstractEventQueue*	createPlatformCompatibleEventQueue();
 
 public:
 
