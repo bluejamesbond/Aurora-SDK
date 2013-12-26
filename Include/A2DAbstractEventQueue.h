@@ -23,6 +23,7 @@
 #include "A2DAbstract.h"
 #include "A2DRenderable.h"
 #include "A2DAbstractThread.h"
+#include "A2DToolkit.h"
 #include "A2DRunnable.h"
 #include "A2DRect.h"
 
@@ -75,7 +76,7 @@ public:
 	void							resumeDispatchingThread();
 
 	static A2DAbstractEventQueue*	aInstance;
-	static A2DAbstractEventQueue*	getInstance();
+	static A2DAbstractEventQueue&	getInstance();
 
 protected:
 

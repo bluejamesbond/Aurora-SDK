@@ -52,8 +52,7 @@ HANDLE A2DThread::aHandles[3];
 
 void A2DThread::waitAll()
 {
-	bool x = isAlive();
-	WaitForSingleObjectEx(aHThread, true, INFINITE);
+	WaitForSingleObject(aHThread, INFINITE);
 }
 
 DWORD WINAPI A2DThread::initThread(void * xParam)

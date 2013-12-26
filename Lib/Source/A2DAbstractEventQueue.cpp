@@ -64,9 +64,9 @@ void A2DAbstractEventQueue::invokeRerender()
 
 A2DAbstractEventQueue* A2DAbstractEventQueue::aInstance = NULL;
 
-A2DAbstractEventQueue* A2DAbstractEventQueue::getInstance()
+A2DAbstractEventQueue& A2DAbstractEventQueue::getInstance()
 {
-	return aInstance;
+	return *aInstance;
 }
 
 HRESULT A2DAbstractEventQueue::Initialize()
