@@ -16,3 +16,6 @@
 
 #include "../A2DExtLibs.h"
 
+#include <sstream>
+#include <thread>
+#include <queue>

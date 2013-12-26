@@ -74,15 +74,14 @@ private:
 
 public:
 
-	LRESULT							PumpWindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
-
 	A2DRootPane               *     GetRootPane();
-	A2DCamera                 *     GetCamera();
-	A2DRenderData             *     GetRenderData();
 
 	HRESULT                         CreateResources();
 	void                            Update();
 
+	void							setBackground(short xRed, short xGreen, short xBlue);
+	void							setBorder(short xAlpha, short xRed, short xGreen, short xBlue, float xWidth);
+	void							setShadow(short xAlpha, short xRed, short xGreen, short xBlue, float xRadius);
 	void							SetVisible(bool xVisibility);
 	void							SetName(LPCWSTR  xName);
 	void							SetBounds(A2DRect * xRect);
@@ -93,6 +92,7 @@ public:
 	void							SetLocationRelativeTo(A2DAbstractFrame * xFrame);
 	void							SetVsync(bool xVsync);
 	void							SetDefaultCloseOperation(int xOperation);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION

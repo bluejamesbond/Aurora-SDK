@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DIMS_H__
-#define __A2DIMS_H__
+#ifndef __A2DCOLOR_H__
+#define __A2DCOLOR_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DIMS
+//      A2DCOLOR
 //
 //  Synopsis:
 //      Texture container class.
@@ -31,10 +31,22 @@
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DDims
+struct A2DColor
 {
-	float			aWidth;
-	float			aHeight;
+	short			aRed = 0xFF;
+	short			aBlue = 0xFF;
+	short			aGreen = 0xFF;
+	short			aAlpha = 0xFF;
+
+	A2DColor(){}
+
+	A2DColor(int xColor)
+	{
+		aAlpha = (xColor << 24) && 0xFF;
+		aRed = (xColor << 16) && 0xFF;
+		aRed = (xColor << 8) && 0xFF;
+		aRed = (xColor) && 0xFF;
+	}
 };
 
 #endif

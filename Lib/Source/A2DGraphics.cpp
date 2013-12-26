@@ -7,6 +7,8 @@ aComponent(xComponent),
 A2DRenderData(xRenderData)
 {}
 
+A2DTextureShader * A2DGraphics::aTextureShader = NULL;
+
 void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
 {
 	A2DPipelineable * texture;
@@ -18,12 +20,9 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 	{
 		*xPipeline = new A2DPipeline();
 
-		aRect->aHeight = 50; // FORCED HERE to test something
-		aRect->aWidth = 50; // AND HERE
-
 		texture = new A2DTexture(aBackBuffer, xSrc);
 		quad = new A2DQuad(aBackBuffer, aRect);
-		textureShader = new A2DTextureShader(aBackBuffer);
+		textureShader = aTextureShader == NULL ? aTextureShader = new A2DTextureShader(aBackBuffer) : aTextureShader;
 
 		// Catch the failure here itself
 		quad->Initialize();
@@ -56,6 +55,8 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 		quad->CreateResources(quadArgs);
 		textureShader->CreateResources(textureShaderArgs);
 
+		static_cast<A2DQuad *>(quad)->SetConstraints(&aClip);
+
 		(*xPipeline)->aLifeCycle++;
 
 		return;
@@ -63,7 +64,7 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 
 	// Pipeline needs to be updated and rendered
 	void * textureArgs[] = { xSrc };
-	void * quadArgs[] = { aRect, texture, aWindow->getBounds() };
+	void * quadArgs[] = { aRect, texture, &aWindow->getBounds() };
 	void * textureShaderArgs[] = { texture };
 
 	texture->Update(textureArgs);
@@ -111,8 +112,8 @@ void A2DGraphics::CalculateBounds()
 
 	aClip.aX = (hasParent ? parentGraphicsClip->aX: 0) + compRect->aX;
 	aClip.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect->aY;
-	aClip.aWidth = min(compRect->aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
-	aClip.aHeight = min(compRect->aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
+	aClip.aWidth = min(compRect->aWidth, (hasParent ? parentRect->aWidth : INT_MAX)) - compRect->aX * 2;
+	aClip.aHeight = min(compRect->aHeight - -compRect->aY, (hasParent ? parentRect->aHeight : INT_MAX)) - compRect->aY * 2;
 }
 
 void A2DGraphics::Recalculate()

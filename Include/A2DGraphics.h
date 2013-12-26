@@ -77,6 +77,8 @@ private:
 	A2DAbstractComponent	  *		aComponent;
 	A2DPipelineable      *		aPipelineComponents[10];
 
+	static A2DTextureShader * aTextureShader;
+
 public:
 
 	// Additional

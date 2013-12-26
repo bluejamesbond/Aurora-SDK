@@ -207,14 +207,7 @@ void A2DQuad::Update(void* xArgs[])
 	aRect = static_cast<A2DRect*>(xArgs[0]);
 	aTexture = static_cast<A2DTexture*>(xArgs[1]);
 	aWindowDims = static_cast<A2DDims*>(xArgs[2]);
-
-	aRect->aX = aRect->aY = 0;
-	aRect->aWidth = 500;
-	aRect->aHeight = 764;
-	aConstraints->aWidth = 500;
-	aConstraints->aHeight = 764;
-
-
+	
 	HRESULT hr;
 
 	// Map vertices.

@@ -16,6 +16,9 @@
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
+#define FLT_ZERO                                              0.0f
+#define FLT_ONE                                               1.0f
+
 #define A2D_PIPELINE_PREPROCESS_START                         0x2510
 #define A2D_PIPELINE_PREPROCESS_CREATE                        0x2511
 #define A2D_PIPELINE_PREPROCESS_FINISH                        0x2512

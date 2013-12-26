@@ -35,9 +35,8 @@ class A2D;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DRect : public A2DDims
+struct A2DRect : public A2DDims
 {
-public:
 	float			aX;
 	float			aY;
 };
