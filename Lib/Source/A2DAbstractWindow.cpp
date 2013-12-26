@@ -201,18 +201,6 @@ float A2DAbstractWindow::getShadowRadius()
 }
 
 /**
-* Sets visiblity of referenced window object
-*
-* @param bool
-*			whether to set or not
-* @return void
-*/
-void A2DAbstractWindow::setVisible(bool xVisible)
-{
-	aVisible = xVisible;
-}
-
-/**
 * Update and re-renders the A2DAbstractWindow object
 *
 * @param void

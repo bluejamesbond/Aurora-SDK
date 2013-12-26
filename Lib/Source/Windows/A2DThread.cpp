@@ -2,7 +2,7 @@
 #include "../../../Include/Windows/A2DExtLibs.h"
 #include "../../../Include/Windows/A2DThread.h"
 
-A2DThread::A2DThread(A2DRunnable * xRunnable) : aRunnable (xRunnable), aThreadID (0) {}
+A2DThread::A2DThread(A2DRunnable * xRunnable) : A2DAbstractThread(xRunnable), aThreadID (0) {}
 
 A2DThread::~A2DThread(){}
 
@@ -23,6 +23,11 @@ void A2DThread::fire()
 void A2DThread::interrupt()
 {
     SuspendThread(aHThread);
+}
+
+int A2DThread::id()
+{
+    return 0;
 }
 
 void A2DThread::resume()
@@ -50,6 +55,11 @@ bool A2DThread::isAlive()
     return ((aHThread != NULL) && (WaitForSingleObject(aHThread, 0) != WAIT_OBJECT_0));
 }
 
+void A2DThread::waitAll()
+{
+	WaitForSingleObject(aHThread, INFINITE);
+}
+
 DWORD WINAPI A2DThread::initThread(void * xParam)
 {
 	A2DThread * thread = reinterpret_cast<A2DThread*>(xParam);
@@ -62,24 +72,6 @@ DWORD WINAPI A2DThread::initThread(void * xParam)
     }
 
     return -1;
-}
-
-void A2DThread::Deinitialize()
-{
-    if (isAlive())
-    {
-        stop();
-    } 
-}
-
-HRESULT A2DThread::Initialize()
-{
-    if (aRunnable == NULL)
-    {
-		return E_FAIL;
-    } 
-
-	return S_OK;
 }
 
 LPCWSTR A2DThread::GetClass()

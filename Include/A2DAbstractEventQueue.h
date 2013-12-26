@@ -22,6 +22,7 @@
 
 #include "A2DAbstract.h"
 #include "A2DRenderable.h"
+#include "A2DAbstractThread.h"
 #include "A2DRunnable.h"
 #include "A2DRect.h"
 
@@ -49,7 +50,8 @@ public:
 
 private:
 
-    A2DRunnable               *     aImmediateRunnable;
+    A2DRunnable               *     aImmediateRunnable = NULL;
+	A2DAbstractThread		  *		aThread = NULL;
 
 protected:
 
@@ -68,6 +70,12 @@ public:
 
     void                            invokeAnimationFrame(int xTime, A2DRunnable * xRunnable);
 	
+	int		 						waitForAllDispatchingThreads();
+
+	void							startDispatchingThread();
+	void							suspendDispatchingThread();
+	void							resumeDispatchingThread();
+
 protected:
 
     // Queue
@@ -79,13 +87,7 @@ protected:
 	virtual bool                    hasEvent() = 0;
 	virtual void                    removeAllEvents() = 0;
 	virtual void					run() = 0;
-
-public:
-
-    // Thread
-    virtual void                    startDispatchingThread() = 0;
-    virtual void                    suspendDispatchingThread() = 0;
-    virtual void                    resumeDispatchingThread() = 0;
+	virtual A2DAbstractThread*		createPlatformCompatibleThread(A2DRunnable * xRunnable) = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // A2DABSTRACT
@@ -94,7 +96,7 @@ public:
 public:
 
 	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize() = 0;
+	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass() = 0;
 	virtual LPCWSTR                 ToString() = 0;
 	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;

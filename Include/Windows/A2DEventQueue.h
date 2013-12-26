@@ -53,7 +53,6 @@ private:
 
 	queue<A2DRunnable*> * aEventQueue;
 	HANDLE aEventQueueLock;
-	A2DThread * aThread;
 
 protected:
 	
@@ -70,9 +69,7 @@ protected:
 public:
 
 	// Thread - Move from OS level to Global level!!!
-	virtual void                    startDispatchingThread();
-	virtual void                    suspendDispatchingThread();
-	virtual void                    resumeDispatchingThread();
+	virtual A2DAbstractThread *		createPlatformCompatibleThread(A2DRunnable * xRunnable);
 
 
 

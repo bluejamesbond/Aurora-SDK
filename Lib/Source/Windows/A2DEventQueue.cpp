@@ -70,36 +70,6 @@ void A2DEventQueue::run()
 	}
 }
 
-void A2DEventQueue::startDispatchingThread()
-{
-	if (aThread)
-	{
-		aThread->stop();
-		aThread->Deinitialize();
-		delete aThread;
-		aThread = 0;
-	}
-
-	aThread = new A2DThread(this);
-	aThread->start();
-}
-
-void A2DEventQueue::suspendDispatchingThread()
-{
-	if (aThread)
-	{
-		aThread->interrupt();
-	}
-}
-
-void A2DEventQueue::resumeDispatchingThread()
-{
-	if (aThread)
-	{
-		aThread->resume();
-	}
-}
-
 HRESULT A2DEventQueue::Initialize()
 {
 	aEventQueue = new queue<A2DRunnable *>();
@@ -109,21 +79,9 @@ HRESULT A2DEventQueue::Initialize()
 
 void A2DEventQueue::Deinitialize()
 {
-	CloseHandle(aEventQueueLock);
-	
-	if (aThread)
-	{
-		aThread->stop();
-		aThread->Deinitialize();
-		delete aThread;
-		aThread = 0;
-	}
+	A2DAbstractEventQueue::Deinitialize();
 
-	if (aEventQueue)
-	{
-		delete aEventQueue;
-		aEventQueue = 0;
-	}
+	CloseHandle(aEventQueueLock);	
 }
 
 LPCWSTR A2DEventQueue::GetClass()
@@ -139,4 +97,9 @@ LPCWSTR A2DEventQueue::ToString()
 bool A2DEventQueue::operator==(A2DAbstract * xAbstract)
 {
 	return false;
+}
+
+A2DAbstractThread* A2DEventQueue::createPlatformCompatibleThread(A2DRunnable * xRunnable)
+{
+	return new A2DThread(xRunnable);
 }

@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTHREAD_H__
-#define __A2DTHREAD_H__
+#ifndef __A2DABSTRACTRHEAD_H__
+#define __A2DABSTRACTRHEAD_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DTHREAD
+//      A2DABSTRACTRHEAD
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,52 +20,46 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2DAbstract.h"
-#include "../A2DRunnable.h"
-#include "../A2DAbstractThread.h"
+#include "A2DAbstract.h"
+#include "A2DRunnable.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DThread : public A2DAbstractThread
+class A2DAbstractThread : public A2DAbstract
 {
 
 public:
 
-	A2DThread(A2DRunnable * xRunnable);
-	~A2DThread();
+	A2DAbstractThread(A2DRunnable * xRunnable);
+	~A2DAbstractThread();
 
 private:
 
 	A2DRunnable * aRunnable;
-	HANDLE aHThread;
-	DWORD aThreadID;
 
 public:
 
-	virtual bool start();
-	virtual void interrupt();
-	virtual void resume();
-	virtual void stop();
-	virtual bool isAlive();
-	virtual int	id();
-	virtual void waitAll();
+	virtual bool start() = 0;
+	virtual void interrupt() = 0;
+	virtual void resume() = 0;
+	virtual void stop() = 0;
+	virtual bool isAlive() = 0;
+	virtual int	 id() = 0;
+	virtual void waitAll() = 0;
 
-protected:
-
-	void				fire();
-	static DWORD WINAPI initThread(void * xParam);
-
-////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// A2DABSTRACT
+	////////////////////////////////////////////////////////////////////////////////
 
 public:
 
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual HRESULT                 Initialize();
+	virtual void                    Deinitialize();
+	virtual LPCWSTR                 GetClass() = 0;
+	virtual LPCWSTR                 ToString() = 0;
+	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
 
 };
 
