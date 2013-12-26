@@ -62,12 +62,21 @@ void A2DAbstractEventQueue::invokeRerender()
 	// Yea right...
 }
 
+A2DAbstractEventQueue* A2DAbstractEventQueue::aInstance = NULL;
+
+A2DAbstractEventQueue* A2DAbstractEventQueue::getInstance()
+{
+	return aInstance;
+}
+
 HRESULT A2DAbstractEventQueue::Initialize()
 {
 	if (!aWindow)
 	{
 		return E_FAIL;
 	}
+
+	aInstance = this;
 
 	return S_OK;
 }
@@ -83,8 +92,6 @@ void A2DAbstractEventQueue::Deinitialize()
 	}
 }
 
-
-
 void A2DAbstractEventQueue::startDispatchingThread()
 {
 	if (aThread)
@@ -94,7 +101,7 @@ void A2DAbstractEventQueue::startDispatchingThread()
 		delete aThread;
 		aThread = 0;
 	}
-
+	
 	aThread = createPlatformCompatibleThread(this);
 	aThread->Initialize();
 

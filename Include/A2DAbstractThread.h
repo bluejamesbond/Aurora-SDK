@@ -39,8 +39,11 @@ private:
 
 	A2DRunnable * aRunnable;
 
-public:
+protected:
 
+	void fire();
+
+public:
 	virtual bool start() = 0;
 	virtual void interrupt() = 0;
 	virtual void resume() = 0;

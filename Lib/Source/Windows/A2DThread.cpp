@@ -8,16 +8,9 @@ A2DThread::~A2DThread(){}
 
 bool A2DThread::start()
 {
-	aHThread= CreateThread( NULL, 0, initThread, this, 0, &aThreadID );
+	aHThread= CreateThread( NULL, 0, &initThread, this, 0, &aThreadID );
+	aHandles[0] = aHThread;
     return (aHThread != NULL);
-}
-
-void A2DThread::fire()
-{
-	if (aRunnable)
-	{
-		aRunnable->run();
-	}
 }
 
 void A2DThread::interrupt()
@@ -37,7 +30,7 @@ void A2DThread::resume()
     while (resumeCount > 1)
     {
         resumeCount = ResumeThread(aHThread);
-    }    
+    }
 }
 
 void A2DThread::stop()
@@ -55,16 +48,19 @@ bool A2DThread::isAlive()
     return ((aHThread != NULL) && (WaitForSingleObject(aHThread, 0) != WAIT_OBJECT_0));
 }
 
+HANDLE A2DThread::aHandles[3];
+
 void A2DThread::waitAll()
 {
-	WaitForSingleObject(aHThread, INFINITE);
+	bool x = isAlive();
+	WaitForSingleObjectEx(aHThread, true, INFINITE);
 }
 
 DWORD WINAPI A2DThread::initThread(void * xParam)
 {
 	A2DThread * thread = reinterpret_cast<A2DThread*>(xParam);
 
-	if (!thread)
+	if (thread)
     {   
 		thread->fire();
 

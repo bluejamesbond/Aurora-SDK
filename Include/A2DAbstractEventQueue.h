@@ -76,6 +76,9 @@ public:
 	void							suspendDispatchingThread();
 	void							resumeDispatchingThread();
 
+	static A2DAbstractEventQueue*	aInstance;
+	static A2DAbstractEventQueue*	getInstance();
+
 protected:
 
     // Queue

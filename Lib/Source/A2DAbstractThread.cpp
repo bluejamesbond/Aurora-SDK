@@ -6,6 +6,14 @@ A2DAbstractThread::A2DAbstractThread(A2DRunnable * xRunnable) : aRunnable (xRunn
 
 A2DAbstractThread::~A2DAbstractThread(){}
 
+void A2DAbstractThread::fire()
+{
+	if (aRunnable)
+	{
+		aRunnable->run();
+	}
+}
+
 HRESULT A2DAbstractThread::Initialize()
 {
     if (aRunnable == NULL)

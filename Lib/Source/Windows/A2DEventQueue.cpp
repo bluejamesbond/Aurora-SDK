@@ -65,6 +65,7 @@ void A2DEventQueue::run()
 		{
 			getQueueLock();
 			peekEvent()->run();
+			popEvent();
 			releaseQueueLock();
 		}
 	}

@@ -38,9 +38,9 @@ public:
 
 private:
 
-	A2DRunnable * aRunnable;
 	HANDLE aHThread;
 	DWORD aThreadID;
+	static HANDLE aHandles[3];
 
 public:
 
@@ -54,7 +54,6 @@ public:
 
 protected:
 
-	void				fire();
 	static DWORD WINAPI initThread(void * xParam);
 
 ////////////////////////////////////////////////////////////////////////////////
