@@ -24,6 +24,11 @@ void A2DAbstractEventQueue::invokeAndWait(A2DRunnable * xRunnable)
 	}
 }
 
+A2DAbstractThread * A2DAbstractEventQueue::getDispatchingThread()
+{
+	return aThread;
+}
+
 void A2DAbstractEventQueue::clearQueue()
 {
 	removeAllEvents();
@@ -62,16 +67,16 @@ void A2DAbstractEventQueue::invokeRerender()
 	// Yea right...
 }
 
-A2DAbstractEventQueue* A2DAbstractEventQueue::aInstance = NULL;
+A2DAbstractEventQueue* A2DAbstractEventQueue::aClassInstance = NULL;
 
 A2DAbstractEventQueue& A2DAbstractEventQueue::getInstance()
 {
-	return *aInstance;
+	return *aClassInstance;
 }
 
 HRESULT A2DAbstractEventQueue::Initialize()
 {
-	aInstance = this;
+	aClassInstance = this;
 
 	return S_OK;
 }
@@ -148,18 +153,17 @@ void A2DAbstractEventQueue::run(int xThreadId)
 	aFrame->getWindow()->initPlatformCompatibleEventDispatcher(this, aFrame);
 }
 
-bool A2DAbstractEventQueue::isDispatchingThread()
+bool A2DAbstractEventQueue::isDispatchingThread(int xFrameId)
 {
-	A2DAbstractEventQueue& eventQueue = getInstance();
+	A2DAbstractEventQueue& eventQueue = A2DToolkit::getSystemEventQueue(xFrameId);
+	A2DAbstractThread& thread = A2DAbstractThread::getInstance();
 
-	if (eventQueue == NULL)
+	if (thread == NULL || eventQueue == NULL)
 	{
 		return false;
 	}
 
-	// Fix this concept!
-
-	return true;
+	return eventQueue.getDispatchingThread()->id() == thread.getCurrentThreadId();
 }
 
 bool A2DAbstractEventQueue::dispatchNextEvent()

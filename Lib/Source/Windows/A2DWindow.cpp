@@ -845,11 +845,11 @@ void A2DWindow::setVisible(bool xVisible)
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
 
-		if (!A2DEventQueue::isDispatchingThread())
-		{
-			aFrame->CreateResources();
-			initPlatformCompatibleMessageLoop();
-		}
+	//	if (!A2DEventQueue::isDispatchingThread() && aFrame)
+	//	{
+	//		aFrame->CreateResources();
+	//		initPlatformCompatibleMessageLoop();
+	//	}
 	}
 	else
 	{
@@ -1026,31 +1026,35 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 {
 	MSG msg;
 	bool& resizing = isResizing;
+	bool& visible = aVisible;
 
 	int defaultAllotedAnimationFrames = 10;
 	int currentAnimationFrame = 0;
 
-	while (isVisible())
+	while (true)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		
-		// Forced updating of rendering for now
-		if (xEventQueue->dispatchNextEvent())
+
+		if (visible)
 		{
-			currentAnimationFrame = defaultAllotedAnimationFrames;
-		}
-		else if (currentAnimationFrame > 0)
-		{
-			currentAnimationFrame--;
-			xFrame->Update();
-		}
-		else if (resizing)
-		{
-			xFrame->Update();
+			// Forced updating of rendering for now
+			if (xEventQueue->dispatchNextEvent())
+			{
+				currentAnimationFrame = defaultAllotedAnimationFrames;
+			}
+			else if (currentAnimationFrame > 0)
+			{
+				currentAnimationFrame--;
+				xFrame->Update();
+			}
+			else if (resizing)
+			{
+				xFrame->Update();
+			}
 		}
 	}
 }

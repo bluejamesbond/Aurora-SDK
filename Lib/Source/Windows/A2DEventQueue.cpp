@@ -6,8 +6,7 @@ A2DEventQueue::A2DEventQueue(A2DAbstractFrame * xFrame) : A2DAbstractEventQueue(
 
 bool A2DEventQueue::getQueueLock()
 {
-    WaitForSingleObject(aEventQueueLock, INFINITE);
-	return true;
+	return WaitForSingleObject(aEventQueueLock, INFINITE) != WAIT_ABANDONED;
 }
 
 void A2DEventQueue::releaseQueueLock()

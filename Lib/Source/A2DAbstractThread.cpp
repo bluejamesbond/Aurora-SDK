@@ -16,9 +16,16 @@ void A2DAbstractThread::fire()
 
 int A2DAbstractThread::aClassInstances = -1;
 
+A2DAbstractThread* A2DAbstractThread::aClassInstance = NULL;
+
 int A2DAbstractThread::getClassInstances()
 {
 	return aClassInstances + 1;
+}
+
+A2DAbstractThread& A2DAbstractThread::getInstance()
+{
+	return *aClassInstance;
 }
 
 HRESULT A2DAbstractThread::Initialize()
@@ -27,6 +34,8 @@ HRESULT A2DAbstractThread::Initialize()
     {
         return E_FAIL;
     } 
+
+	aClassInstance = this;
 
 	aId = ++aClassInstances;
 	

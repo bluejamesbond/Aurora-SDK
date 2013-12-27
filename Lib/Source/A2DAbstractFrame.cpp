@@ -115,7 +115,29 @@ A2DAbstractWindow* A2DAbstractFrame::getWindow()
 
 void A2DAbstractFrame::SetVisible(bool xVisible)
 {
-	aWindow->setVisible(xVisible);
+	if (aEventQueue)
+	{
+		if (xVisible)
+		{
+			if (!A2DAbstractEventQueue::isDispatchingThread(this->id()))
+			{
+				aEventQueue->invokeLater(this);
+				aEventQueue->resumeDispatchingThread();
+			}
+
+			aWindow->setVisible(xVisible);
+		}
+		else
+		{
+			aWindow->setVisible(xVisible);
+			aEventQueue->interruptDispatchingThread();
+		}
+	}
+}
+
+void A2DAbstractFrame::run(int xThreadId)
+{
+	this->Update();
 }
 
 /////////////////////////////////////////////////////////////////////////////

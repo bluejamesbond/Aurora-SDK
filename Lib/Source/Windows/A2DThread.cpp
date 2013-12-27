@@ -56,6 +56,11 @@ void A2DThread::waitAll()
 	WaitForMultipleObjects(A2DAbstractThread::getClassInstances(), aHandles, true, INFINITE);
 }
 
+int A2DThread::getCurrentThreadId()
+{
+	return static_cast<int>(GetCurrentThreadId());
+}
+
 DWORD WINAPI A2DThread::initThread(void * xParam)
 {
 	A2DThread * thread = reinterpret_cast<A2DThread*>(xParam);

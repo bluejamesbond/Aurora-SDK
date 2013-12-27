@@ -61,8 +61,9 @@ public:
     void                            invokeAndWait(A2DRunnable * xRunnable);
     void                            clearQueue();
 	bool							dispatchNextEvent();
+	A2DAbstractThread		 *		getDispatchingThread();
 
-    static bool						isDispatchingThread();
+	static bool						isDispatchingThread(int xFrameId);
     void							invokeRerender();
     void							invokeRevalidate();
     void							invokeReset();
@@ -76,7 +77,7 @@ public:
 	void							interruptDispatchingThread();
 	void							resumeDispatchingThread();
 
-	static A2DAbstractEventQueue*	aInstance;
+	static A2DAbstractEventQueue*	aClassInstance;
 	static A2DAbstractEventQueue&	getInstance();
 
     // Queue

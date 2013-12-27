@@ -58,7 +58,7 @@ class	A2DRootPane;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractFrame : public A2DAbstract
+class A2DAbstractFrame : public A2DAbstract, public A2DRunnable
 {
 	
 private:
@@ -99,6 +99,7 @@ public:
 	void							SetVsync(bool xVsync);
 	void							SetDefaultCloseOperation(int xOperation);
 	A2DAbstractWindow		  *		getWindow();
+	void							run(int xThreadId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION

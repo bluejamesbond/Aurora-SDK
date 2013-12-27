@@ -55,6 +55,7 @@ public:
 	virtual bool isAlive();
 	virtual int	id();
 	virtual void waitAll();
+	virtual int getCurrentThreadId();
 
 protected:
 

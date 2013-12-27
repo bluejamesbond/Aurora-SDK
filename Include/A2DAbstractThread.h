@@ -41,6 +41,7 @@ private:
 
 	int aId;
 	static int aClassInstances;
+	static A2DAbstractThread * aClassInstance;
 
 protected:
 
@@ -49,6 +50,8 @@ protected:
 
 public:
 
+	static A2DAbstractThread& getInstance();
+
 	virtual int	 id();
 	virtual bool start() = 0;
 	virtual void interrupt() = 0;
@@ -56,6 +59,7 @@ public:
 	virtual void stop() = 0;
 	virtual bool isAlive() = 0;
 	virtual void waitAll() = 0;
+	virtual int getCurrentThreadId() = 0;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// A2DABSTRACT
