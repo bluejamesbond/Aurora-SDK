@@ -7,7 +7,7 @@
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
-A2DWindow::A2DWindow(HINSTANCE xHInstance) : aHInstance(xHInstance){}
+A2DWindow::A2DWindow(A2DAbstractFrame * xFrame, HINSTANCE xHInstance) : A2DAbstractWindow(xFrame), aHInstance(xHInstance){}
 
 A2DWindow::~A2DWindow(){}
 
@@ -844,16 +844,6 @@ void A2DWindow::setVisible(bool xVisible)
 
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
-
-		if (aFrame)
-		{
-			if (!A2DEventQueue::isDispatchingThread(aFrame->id()))
-			{
-				aFrame->CreateResources();
-
-				initPlatformCompatibleMessageLoop();
-			}
-		}
 	}
 	else
 	{
@@ -1026,7 +1016,7 @@ void* A2DWindow::getPlatformCompatibleWindowHandle()
 	return static_cast<void*>(&aChildHWnd);
 }
 
-void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue, A2DAbstractFrame * xFrame)
+void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue)
 {
 	MSG msg;
 	bool& resizing = isResizing;
@@ -1034,6 +1024,9 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 
 	int defaultAllotedAnimationFrames = 10;
 	int currentAnimationFrame = 0;
+
+	A2DAbstractFrame& frame = *aFrame;
+	A2DAbstractEventQueue& eventQueue = *xEventQueue;
 
 	while (true)
 	{
@@ -1046,37 +1039,20 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 		if (visible)
 		{
 			// Forced updating of rendering for now
-			if (xEventQueue->dispatchNextEvent())
+			if (eventQueue.dispatchNextEvent())
 			{
 				currentAnimationFrame = defaultAllotedAnimationFrames;
 			}
 			else if (currentAnimationFrame > 0)
 			{
 				currentAnimationFrame--;
-				xFrame->Update();
+				frame.Update();
 			}
 			else if (resizing)
 			{
-				xFrame->Update();
+				frame.Update();
 			}
 		}
-	}
-}
-
-void A2DWindow::initPlatformCompatibleMessageLoop()
-{
-	MSG msg;
-	A2DAbstractFrame * frame = aFrame;
-
-	while (isVisible())
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		frame->Update();
 	}
 }
 

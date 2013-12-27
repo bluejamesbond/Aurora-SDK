@@ -16,7 +16,7 @@ A2DFrame::~A2DFrame(){}
 
 A2DAbstractWindow *	A2DFrame::createPlatformCompatibleWindow()
 {
-	return new A2DWindow(aHInstance);
+	return new A2DWindow(this, aHInstance);
 }
 
 A2DAbstractEventQueue * A2DFrame::createPlatformCompatibleEventQueue()

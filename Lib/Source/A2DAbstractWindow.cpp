@@ -4,6 +4,8 @@
 #include "../../include/A2DAbstractFrame.h"
 #include "../../include/A2DAbstractEventQueue.h"
 
+A2DAbstractWindow::A2DAbstractWindow(A2DAbstractFrame * xFrame) : aFrame(xFrame) {}
+
 /**
 * Notifies the user whether the window object being referenced
 * is shadowed
@@ -64,19 +66,6 @@ A2DColor A2DAbstractWindow::getBorderColor()
 LPCWSTR A2DAbstractWindow::getName()
 {
 	return aName;
-}
-
-/**
-* Sets the reference Frame of the specified Window object as
-* specified by the user
-*
-* @param A2DAbstractFrame
-the Frame that is associated with the window
-* @return void
-*/
-void  A2DAbstractWindow::setFrame(A2DAbstractFrame * xFrame)
-{
-	aFrame = xFrame;
 }
 
 /**

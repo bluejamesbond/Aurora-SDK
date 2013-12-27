@@ -78,8 +78,3 @@ A2DAbstractThread* A2DEventQueue::createPlatformCompatibleThread(A2DRunnable * x
 {
 	return new A2DThread(xRunnable);
 }
-
-A2DAbstractWindow* A2DEventQueue::createPlatformCompatibleWindow()
-{
-	return new A2DWindow(aHIsntance);
-}

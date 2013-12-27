@@ -208,34 +208,37 @@ HRESULT A2DAbstractFrame::Initialize()
 	return hr;
 }
 
-HRESULT A2DAbstractFrame::initialize_()
-{
-	HRESULT hr;
-
-	aId = ++aClassInstances;
-
-	// -----------------------------------------------------
-
-	aRenderData = new A2DRenderData();
-
-	hr = aRenderData->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aRootPane = new A2DRootPane;
-
-	hr = aRootPane->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	hr = createWindow();
-
-	// -----------------------------------------------------
-
-	return hr;
-}
+// Window is created here.
+// Note: We will not continue support development
+// outside of EDT. We might come back to it in the future.
+//HRESULT A2DAbstractFrame::initialize_()
+//{
+//	HRESULT hr;
+//
+//	aId = ++aClassInstances;
+//
+//	// -----------------------------------------------------
+//
+//	aRenderData = new A2DRenderData();
+//
+//	hr = aRenderData->Initialize();
+//	if (FAILED(hr))	return hr;
+//
+//	// -----------------------------------------------------
+//
+//	aRootPane = new A2DRootPane;
+//
+//	hr = aRootPane->Initialize();
+//	if (FAILED(hr))	return hr;
+//
+//	// -----------------------------------------------------
+//
+//	hr = createWindow();
+//
+//	// -----------------------------------------------------
+//
+//	return hr;
+//}
 
 void A2DAbstractFrame::Deinitialize()
 {
@@ -278,10 +281,10 @@ A2DRootPane * A2DAbstractFrame::GetRootPane()
 	return aRootPane;
 }
 
-HRESULT A2DAbstractFrame::createWindow()
+HRESULT A2DAbstractFrame::CreateResources()
 {
 	HRESULT hr;
-
+	
 	// -----------------------------------------------------
 
 	aWindow = createPlatformCompatibleWindow();
@@ -289,17 +292,6 @@ HRESULT A2DAbstractFrame::createWindow()
 	hr = aWindow->Initialize();
 	if (FAILED(hr))	return hr;
 
-	// -----------------------------------------------------
-
-	aWindow->setFrame(this);
-
-	return hr;
-}
-
-HRESULT A2DAbstractFrame::CreateResources()
-{
-	HRESULT hr;
-	
 	// -----------------------------------------------------
 
 	aBackBuffer = new A2DBackBuffer(aWindow, &aGXSettings);

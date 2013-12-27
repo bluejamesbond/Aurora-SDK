@@ -73,7 +73,6 @@ public:
 
 	// Thread - Move from OS level to Global level!!!
 	virtual A2DAbstractThread *		createPlatformCompatibleThread(A2DRunnable * xRunnable);
-	virtual A2DAbstractWindow *		createPlatformCompatibleWindow();
 
 
 

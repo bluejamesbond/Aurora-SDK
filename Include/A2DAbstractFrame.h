@@ -79,8 +79,6 @@ private:
 public:
 
 	A2DRootPane               *     GetRootPane();
-
-	HRESULT							createWindow();
 	HRESULT                         CreateResources();
 	void                            Update();
 	void							dispose();
@@ -101,9 +99,7 @@ public:
 	void							SetDefaultCloseOperation(int xOperation);
 	A2DAbstractWindow		  *		getWindow();
 	void							run(int xThreadId);
-
-	HRESULT							initialize_();
-
+	
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////

@@ -145,15 +145,12 @@ void A2DAbstractEventQueue::stopDispatchingThread()
 
 void A2DAbstractEventQueue::run(int xThreadId)
 {
-	// Create Window!
-	aFrame->createWindow();
-
 	// Create frame resources inside EDT
 	aFrame->CreateResources();
 
 	// Start platform compatible message loop which will
 	// embed the event dispatcher
-	aFrame->getWindow()->initPlatformCompatibleEventDispatcher(this, aFrame);
+	aFrame->getWindow()->initPlatformCompatibleEventDispatcher(this);
 }
 
 bool A2DAbstractEventQueue::isDispatchingThread(int xFrameId)

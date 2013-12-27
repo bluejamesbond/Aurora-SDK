@@ -50,7 +50,7 @@ class A2DWindow : public A2DAbstractWindow
 
 public:
 
-	A2DWindow(HINSTANCE  xHInstance);
+	A2DWindow(A2DAbstractFrame * xFrame, HINSTANCE  xHInstance);
 
 	~A2DWindow();
 
@@ -183,12 +183,8 @@ protected:
 public:
 
 	virtual void              *     getPlatformCompatibleWindowHandle();
-	virtual void			  		initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue, A2DAbstractFrame * xFrame);
-
-protected:
-
-	virtual void			  		initPlatformCompatibleMessageLoop();
-
+	virtual void			  		initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue);
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// A2DABSTRACT
 	////////////////////////////////////////////////////////////////////////////////

@@ -41,6 +41,9 @@ using namespace Gdiplus;
 
 class A2DAbstractWindow : public A2DAbstract
 {
+public:
+
+	A2DAbstractWindow(A2DAbstractFrame * xFrame);
 
 protected:
 
@@ -93,7 +96,6 @@ public:
 	A2DColor                        getShadowColor();
 	A2DColor                        getBackgroundColor();
 	float                           getBorderWidth();
-	void                            setFrame(A2DAbstractFrame * xFrame);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// PLATFORM COMPATIBLE IMPLEMENTATION
@@ -107,12 +109,8 @@ protected:
 public:
 
 	virtual void              *     getPlatformCompatibleWindowHandle() = 0;
-	virtual void			  		initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue, A2DAbstractFrame * xFrame) = 0;
-
-protected:
-
-	virtual void			  		initPlatformCompatibleMessageLoop() = 0;
-
+	virtual void			  		initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue) = 0;
+	
 public:
 
 	virtual void                    setMinimumSize(A2DDims * xSize) = 0;
