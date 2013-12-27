@@ -8,8 +8,8 @@ A2DThread::~A2DThread(){}
 
 bool A2DThread::start()
 {
-	aHThread= CreateThread( NULL, 0, &initThread, this, 0, &aThreadID );
-	aHandles[0] = aHThread;
+	aHThread = CreateThread(NULL, 0, &initThread, this, 0, &aThreadID);
+	aHandles[A2DAbstractThread::id()] = aHThread;
     return (aHThread != NULL);
 }
 
@@ -20,7 +20,7 @@ void A2DThread::interrupt()
 
 int A2DThread::id()
 {
-    return 0;
+	return static_cast<int>(aThreadID);
 }
 
 void A2DThread::resume()
@@ -33,12 +33,15 @@ void A2DThread::resume()
     }
 }
 
+HANDLE A2DThread::aHandles[50];
+
 void A2DThread::stop()
 {
     if (aHThread)
     {
 		TerminateThread( aHThread, 0 );
 		CloseHandle(aHThread);
+		aHandles[A2DAbstractThread::id()] = NULL;
 		aHThread= NULL;
     }
 }
@@ -48,11 +51,9 @@ bool A2DThread::isAlive()
     return ((aHThread != NULL) && (WaitForSingleObject(aHThread, 0) != WAIT_OBJECT_0));
 }
 
-HANDLE A2DThread::aHandles[3];
-
 void A2DThread::waitAll()
 {
-	WaitForSingleObject(aHThread, INFINITE);
+	WaitForMultipleObjects(A2DAbstractThread::getClassInstances(), aHandles, true, INFINITE);
 }
 
 DWORD WINAPI A2DThread::initThread(void * xParam)

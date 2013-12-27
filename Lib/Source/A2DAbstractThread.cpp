@@ -10,8 +10,15 @@ void A2DAbstractThread::fire()
 {
 	if (aRunnable)
 	{
-		aRunnable->run();
+		aRunnable->run(id());
 	}
+}
+
+int A2DAbstractThread::aClassInstances = -1;
+
+int A2DAbstractThread::getClassInstances()
+{
+	return aClassInstances + 1;
 }
 
 HRESULT A2DAbstractThread::Initialize()
@@ -21,7 +28,14 @@ HRESULT A2DAbstractThread::Initialize()
         return E_FAIL;
     } 
 
+	aId = ++aClassInstances;
+	
     return S_OK;
+}
+
+int A2DAbstractThread::id()
+{
+	return aId;
 }
 
 void A2DAbstractThread::Deinitialize()

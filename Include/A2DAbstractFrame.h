@@ -82,6 +82,7 @@ public:
 
 	HRESULT                         CreateResources();
 	void                            Update();
+	void							dispose();
 
 	int								id();
 	void							setBackground(byte xRed, byte xGreen, byte xBlue);

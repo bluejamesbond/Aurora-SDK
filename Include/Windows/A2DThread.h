@@ -20,6 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "A2DExtLibs.h"
 #include "../A2DAbstract.h"
 #include "../A2DRunnable.h"
 #include "../A2DAbstractThread.h"
@@ -27,6 +28,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
+
+using namespace std;
 
 class A2DThread : public A2DAbstractThread
 {
@@ -37,10 +40,11 @@ public:
 	~A2DThread();
 
 private:
-
+	
 	HANDLE aHThread;
 	DWORD aThreadID;
-	static HANDLE aHandles[3];
+
+	static HANDLE aHandles[50];
 
 public:
 

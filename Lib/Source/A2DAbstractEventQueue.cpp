@@ -19,7 +19,7 @@ void A2DAbstractEventQueue::invokeAndWait(A2DRunnable * xRunnable)
 {
 	if (getQueueLock())
 	{
-		xRunnable->run();
+		xRunnable->run(aThread->id());
 		releaseQueueLock();
 	}
 }
@@ -111,7 +111,7 @@ void A2DAbstractEventQueue::startDispatchingThread()
 	aThread->start();
 }
 
-void A2DAbstractEventQueue::suspendDispatchingThread()
+void A2DAbstractEventQueue::interruptDispatchingThread()
 {
 	if (aThread)
 	{
@@ -127,7 +127,18 @@ void A2DAbstractEventQueue::resumeDispatchingThread()
 	}
 }
 
-void A2DAbstractEventQueue::run()
+void A2DAbstractEventQueue::stopDispatchingThread()
+{
+	if (aThread)
+	{
+		aThread->stop();
+		delete aThread;
+		aThread = 0;
+	}
+}
+
+
+void A2DAbstractEventQueue::run(int xThreadId)
 {
 	// Create frame resources inside EDT
 	aFrame->CreateResources();
@@ -156,7 +167,7 @@ bool A2DAbstractEventQueue::dispatchNextEvent()
 	if (hasEvent())
 	{
 		getQueueLock();
-		peekEvent()->run();
+		peekEvent()->run(aThread->id());
 		popEvent();
 		releaseQueueLock();
 

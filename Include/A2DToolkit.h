@@ -33,7 +33,7 @@ class A2DToolkit
 {
 public:
 
-	static int waitForUI();
+	static int					  waitForBackgroundThreads();
 	static A2DAbstractEventQueue& getSystemEventQueue(int xFrameInstanceIndex);
 	static void					  addSystemEventQueue(A2DAbstractEventQueue * xEventQueue);
 

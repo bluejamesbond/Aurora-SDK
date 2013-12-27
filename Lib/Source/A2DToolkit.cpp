@@ -3,12 +3,13 @@
 #include "../../include/A2DToolkit.h"
 #include "../../include/A2DAbstractEventQueue.h"
 
-int A2DToolkit::waitForUI()
+int A2DToolkit::waitForBackgroundThreads()
 {
 	return A2DAbstractEventQueue::getInstance().waitForAllDispatchingThreads();
 }
 
 A2DAbstractEventQueue * A2DToolkit::aEventQueues[20];
+
 int A2DToolkit::aEventQueuesIndex = -1;
 int A2DToolkit::aEventQueuesLength = 20;
 

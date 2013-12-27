@@ -27,24 +27,24 @@ LRESULT CALLBACK A2DWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 		switch (xMessage)
 		{
 		case WM_LBUTTONDOWN:
-		{
-							   aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-							   return aWindow->updateOnMouseDown(xHwnd);
+		{					
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				return aWindow->updateOnMouseDown(xHwnd);
 		}
 		case WM_MOUSEMOVE:
 		{
-							 aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-							 return aWindow->updateOnMouseMove(xHwnd);
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				return aWindow->updateOnMouseMove(xHwnd);
 		}
 		case WM_LBUTTONUP:
 		{
-							 aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-							 return aWindow->updateOnMouseUp(xHwnd);
+				 aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				 return aWindow->updateOnMouseUp(xHwnd);
 		}
 		case WM_CLOSE:
 		{
-						 DestroyWindow(xHwnd);
-						 return S_OK;
+				DestroyWindow(xHwnd);
+				return S_OK;
 		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
@@ -103,10 +103,10 @@ HRESULT A2DWindow::updateOnMouseDown(HWND xHwnd)
 
 	isDragged = true;
 
-	left = (isParent ? aRelativeX + aPadding : 0);
-	top = (isParent ? aRelativeY + aPadding : 0);
-	bottom = (isParent ? top + aRect.aHeight : 0);
-	right = (isParent ? left + aRect.aWidth : 0);
+	left = (isParent ? aRelativeX + aPadding : aRealX);
+	top = (isParent ? aRelativeY + aPadding : aRealY);
+	bottom = top + aRect.aHeight;
+	right = left + aRect.aWidth;
 
 	if ((x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
 		x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
@@ -140,10 +140,10 @@ HRESULT A2DWindow::updateOnMouseMove(HWND xHwnd)
 	x = p.x;
 	y = p.y;
 
-	left = (isParent ? aRelativeX + aPadding : 0);
-	top = (isParent ? aRelativeY + aPadding : 0);
-	bottom = (isParent ? top + rect.aHeight : 0);
-	right = (isParent ? left + rect.aWidth : 0);
+	left = (isParent ? aRelativeX + aPadding : aRealX);
+	top = (isParent ? aRelativeY + aPadding : aRealY);
+	bottom = top + aRect.aHeight;
+	right = left + aRect.aWidth;
 
 	if (!isResizing)
 	{

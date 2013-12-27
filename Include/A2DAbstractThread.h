@@ -39,17 +39,22 @@ private:
 
 	A2DRunnable * aRunnable;
 
+	int aId;
+	static int aClassInstances;
+
 protected:
 
 	void fire();
+	static int getClassInstances();
 
 public:
+
+	virtual int	 id();
 	virtual bool start() = 0;
 	virtual void interrupt() = 0;
 	virtual void resume() = 0;
 	virtual void stop() = 0;
 	virtual bool isAlive() = 0;
-	virtual int	 id() = 0;
 	virtual void waitAll() = 0;
 
 	////////////////////////////////////////////////////////////////////////////////

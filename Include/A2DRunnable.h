@@ -24,7 +24,7 @@ class A2DRunnable
 
 public:
 
-	virtual void run() = 0;
+	virtual void run(int xThreadId) = 0;
 
 };
 

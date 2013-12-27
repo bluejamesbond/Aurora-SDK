@@ -62,7 +62,7 @@ public:
     void                            clearQueue();
 	bool							dispatchNextEvent();
 
-    static bool							isDispatchingThread();
+    static bool						isDispatchingThread();
     void							invokeRerender();
     void							invokeRevalidate();
     void							invokeReset();
@@ -72,7 +72,8 @@ public:
 	int		 						waitForAllDispatchingThreads();
 
 	void							startDispatchingThread();
-	void							suspendDispatchingThread();
+	void							stopDispatchingThread();
+	void							interruptDispatchingThread();
 	void							resumeDispatchingThread();
 
 	static A2DAbstractEventQueue*	aInstance;
@@ -92,7 +93,7 @@ protected:
 
     virtual void                    pushEvent(A2DRunnable * xRunnable) = 0;
 	virtual void                    removeAllEvents() = 0;
-	virtual void					run();
+	virtual void					run(int xThreadId);
 
 	// Creators
 	virtual A2DAbstractThread*		createPlatformCompatibleThread(A2DRunnable * xRunnable) = 0;

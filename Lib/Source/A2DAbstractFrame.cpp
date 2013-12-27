@@ -142,6 +142,15 @@ int A2DAbstractFrame::id()
 	return aId;
 }
 
+void A2DAbstractFrame::dispose()
+{
+	if (aEventQueue)
+	{
+		aWindow->setVisible(false);
+		aEventQueue->stopDispatchingThread();
+	}
+}
+
 HRESULT A2DAbstractFrame::Initialize()
 {
 	HRESULT hr;	
