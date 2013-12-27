@@ -110,10 +110,10 @@ void A2DGraphics::CalculateBounds()
 
 	compRect = aComponent->GetBounds();
 
-	aClip.aX = (hasParent ? parentGraphicsClip->aX: 0) + compRect->aX;
+	aClip.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect->aX;
 	aClip.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect->aY;
-	aClip.aWidth = min(compRect->aWidth, (hasParent ? parentRect->aWidth : INT_MAX)) - compRect->aX * 2;
-	aClip.aHeight = min(compRect->aHeight - -compRect->aY, (hasParent ? parentRect->aHeight : INT_MAX)) - compRect->aY * 2;
+	aClip.aWidth = min(compRect->aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
+	aClip.aHeight = min(compRect->aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
 }
 
 void A2DGraphics::Recalculate()
@@ -125,7 +125,7 @@ HRESULT A2DGraphics::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	Recalculate();
+	CalculateBounds();
 
 	return hr;
 }

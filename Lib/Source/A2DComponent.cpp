@@ -19,7 +19,10 @@ void A2DComponent::RenderComponent(A2DRenderData * xRenderData)
 {
 	A2DGraphics * graphics = (A2DGraphics *) xRenderData;
 
-	graphics->DrawImage(&pipeline, aOptBackgroundSrc, &aOptRegion, aOptBackgroundProps);
+	if (aOptBackgroundSrc != NULL)
+	{
+		graphics->DrawImage(&pipeline, aOptBackgroundSrc, &aOptBackgroundRegion, aOptBackgroundProps);
+	}
 }
 
 void A2DComponent::SetDoubleBuffered(bool xDoubleBuffer)

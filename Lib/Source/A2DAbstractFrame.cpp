@@ -7,6 +7,8 @@
 // REQUIRED BY A@D_ABSTRACT_FRAME
 /////////////////////////////////////////////////////////////////////////////
 
+int A2DAbstractFrame::aClassInstances = -1;
+
 void A2DAbstractFrame::SetName(LPCWSTR xName)
 {
 	aWindow->setName(xName);
@@ -135,9 +137,16 @@ bool A2DAbstractFrame::operator==(A2DAbstract * xAbstract)
 	return false;
 }
 
+int A2DAbstractFrame::id()
+{
+	return aId;
+}
+
 HRESULT A2DAbstractFrame::Initialize()
 {
 	HRESULT hr;	
+
+	aId = ++aClassInstances;
 
 	aEventQueue = createPlatformCompatibleEventQueue();
 
@@ -248,30 +257,6 @@ HRESULT A2DAbstractFrame::CreateResources()
 	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	// TEMP TEMP
-	
-	this->SetName(L"Muzzler - Notification Center");                                // Set the title
-	this->setBackground(0xF2, 0x34, 0x11);
-	this->setBorder(0xFF, 0xFF, 0xFF, 0xFF, 10.0f);
-	this->setShadow(0xFF, 0x00, 0xFF, 0x00, 100.0f);
-	this->SetLocationRelativeTo(NULL);
-	this->SetVisible(true);
 
 	// Adjust camera settings and then create its resources.
 	A2DCameraProperties * cameraProperties = aCamera->GetProperties();
@@ -294,7 +279,7 @@ HRESULT A2DAbstractFrame::CreateResources()
 	aRenderData->aProjectionMatrix = A2DMatrixFactory::createDefaultProjectionMatrix(static_cast<A2DDims *>(&aWindow->getBounds()), &aGXSettings);
 	aRenderData->aOrthogonalMatrix = A2DMatrixFactory::createDefaultOrthogonalMatrix(static_cast<A2DDims *>(&aWindow->getBounds()), &aGXSettings);
 
-	aRootPane->SetBounds(0, 0, aWindow->getBounds().aWidth/2, aWindow->getBounds().aHeight);
+	aRootPane->SetBounds(0, 0, aWindow->getBounds().aWidth, aWindow->getBounds().aHeight);
 
 	// Create children resources; This also calls all subsequent children and
 	// creates their resources.

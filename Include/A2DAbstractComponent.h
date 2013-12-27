@@ -72,6 +72,7 @@ protected:
 	int                             aChildrenCompsIndex = 0;
 
 	A2DRect							aOptRegion;
+	A2DRect							aOptBackgroundRegion;
 
 public:
 	// Accessors

@@ -73,6 +73,9 @@ private:
 	A2DAbstractWindow	  	  * 	aWindow;
 	A2DAbstractEventQueue	  *		aEventQueue;
 
+	int								aId;
+	static int						aClassInstances;
+
 public:
 
 	A2DRootPane               *     GetRootPane();
@@ -80,6 +83,7 @@ public:
 	HRESULT                         CreateResources();
 	void                            Update();
 
+	int								id();
 	void							setBackground(byte xRed, byte xGreen, byte xBlue);
 	void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
 	void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);

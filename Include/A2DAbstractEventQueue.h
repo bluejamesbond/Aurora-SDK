@@ -60,7 +60,7 @@ public:
     void                            invokeLater(A2DRunnable * xRunnable);
     void                            invokeAndWait(A2DRunnable * xRunnable);
     void                            clearQueue();
-	void							dispatchNextEvent();
+	bool							dispatchNextEvent();
 
     static bool							isDispatchingThread();
     void							invokeRerender();

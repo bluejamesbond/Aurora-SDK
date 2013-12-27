@@ -42,6 +42,9 @@ void A2DAbstractComponent::SetBounds(A2DRect * xRect)
 	aOptRegion.aX = xRect->aX;
 	aOptRegion.aY = xRect->aY;
 
+	aOptBackgroundRegion.aWidth = xRect->aWidth;
+	aOptBackgroundRegion.aHeight = xRect->aHeight;
+
 	if (graphics)
 	{
 		graphics->Recalculate();
@@ -56,6 +59,9 @@ void A2DAbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHe
 	aOptRegion.aHeight = xHeight;
 	aOptRegion.aX = xX;
 	aOptRegion.aY = xY;
+
+	aOptBackgroundRegion.aWidth = xWidth;
+	aOptBackgroundRegion.aHeight = xHeight;
 
 	if (graphics)
 	{
@@ -102,7 +108,11 @@ void A2DAbstractComponent::AddComponent(A2DAbstractComponent * xAbstractComponen
 	aChildrenComps[aChildrenCompsIndex++] = xAbstractComponent;
 
 	// Set the current component as the parent of the next
-	xAbstractComponent->SetParent(this);
+	xAbstractComponent->SetParent(this); 
+
+	// Create Component resources
+	xAbstractComponent->CreateResources(aGraphics);
+
 }
 
 void A2DAbstractComponent::SetParent(A2DAbstractComponent * xComponent)

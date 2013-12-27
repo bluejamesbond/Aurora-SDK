@@ -37,8 +37,8 @@ class A2D;
 
 struct A2DRect : public A2DDims
 {
-	float			aX;
-	float			aY;
+	float			aX = 0;
+	float			aY = 0;
 };
 
 #endif

@@ -99,6 +99,8 @@ void A2DAbstractEventQueue::startDispatchingThread()
 		aThread = 0;
 	}
 	
+	A2DToolkit::addSystemEventQueue(this); // added to A2DFrame index!
+
 	aThread = createPlatformCompatibleThread(this);
 	
 	hr = aThread->Initialize();	
@@ -149,7 +151,7 @@ bool A2DAbstractEventQueue::isDispatchingThread()
 	return true;
 }
 
-void A2DAbstractEventQueue::dispatchNextEvent()
+bool A2DAbstractEventQueue::dispatchNextEvent()
 {
 	if (hasEvent())
 	{
@@ -157,5 +159,9 @@ void A2DAbstractEventQueue::dispatchNextEvent()
 		peekEvent()->run();
 		popEvent();
 		releaseQueueLock();
+
+		return true;
 	}
+
+	return false;
 }

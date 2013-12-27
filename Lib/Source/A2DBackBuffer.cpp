@@ -373,9 +373,9 @@ void A2DBackBuffer::Clear()
 {
 	float color[4];
 
-	color[0] = 0.5f;
-	color[1] = 0.1f;
-	color[2] = 0.8f;
+	color[0] = 0.17f;
+	color[1] = 0.17f;
+	color[2] = 0.18f;
 	color[3] = 1.0f;
 
 	// Clear the back buffer.

@@ -1025,6 +1025,10 @@ void* A2DWindow::getPlatformCompatibleWindowHandle()
 void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue, A2DAbstractFrame * xFrame)
 {
 	MSG msg;
+	bool& resizing = isResizing;
+
+	int defaultAllotedAnimationFrames = 10;
+	int currentAnimationFrame = 0;
 
 	while (isVisible())
 	{
@@ -1033,12 +1037,21 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
-		// Call the dispatcher!
-		xEventQueue->dispatchNextEvent();
 		
 		// Forced updating of rendering for now
-		xFrame->Update();
+		if (xEventQueue->dispatchNextEvent())
+		{
+			currentAnimationFrame = defaultAllotedAnimationFrames;
+		}
+		else if (currentAnimationFrame > 0)
+		{
+			currentAnimationFrame--;
+			xFrame->Update();
+		}
+		else if (resizing)
+		{
+			xFrame->Update();
+		}
 	}
 }
 
