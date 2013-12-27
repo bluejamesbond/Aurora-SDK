@@ -89,6 +89,8 @@ void A2DAbstractEventQueue::Deinitialize()
 
 void A2DAbstractEventQueue::startDispatchingThread()
 {
+	HRESULT hr;
+
 	if (aThread)
 	{
 		aThread->stop();
@@ -98,7 +100,9 @@ void A2DAbstractEventQueue::startDispatchingThread()
 	}
 	
 	aThread = createPlatformCompatibleThread(this);
-	aThread->Initialize();
+	
+	hr = aThread->Initialize();	
+	if (FAILED(hr)) return;
 
 	// If it fails...screwed! -FIX IT. Catch the HRESULT!
 

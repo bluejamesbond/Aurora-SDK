@@ -1078,9 +1078,9 @@ void A2DWindow::render()
 
 	/***********************************************/
 
-	// HDWP hdwp = BeginDeferWindowPos(2);
+	HDWP hdwp = BeginDeferWindowPos(2);
 
-	// if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(aRelativeX), static_cast<int>(aRelativeY), static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(aRelativeX), static_cast<int>(aRelativeY), static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	/***********************************************/
 
@@ -1112,11 +1112,11 @@ void A2DWindow::render()
 
 	/***********************************************/
 
-	// if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
-	// EndDeferWindowPos(hdwp);
+	EndDeferWindowPos(hdwp);
 
-	SetWindowPos(aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	// SetWindowPos(aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	/***********************************************/
 
