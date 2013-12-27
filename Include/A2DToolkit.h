@@ -34,7 +34,7 @@ class A2DToolkit
 public:
 
 	static int					  waitForBackgroundThreads();
-	static A2DAbstractEventQueue& getSystemEventQueue(int xFrameInstanceIndex);
+	static A2DAbstractEventQueue* getSystemEventQueue(int xFrameInstanceIndex);
 	static void					  addSystemEventQueue(A2DAbstractEventQueue * xEventQueue);
 
 private:

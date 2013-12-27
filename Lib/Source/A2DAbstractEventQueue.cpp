@@ -69,9 +69,9 @@ void A2DAbstractEventQueue::invokeRerender()
 
 A2DAbstractEventQueue* A2DAbstractEventQueue::aClassInstance = NULL;
 
-A2DAbstractEventQueue& A2DAbstractEventQueue::getInstance()
+A2DAbstractEventQueue* A2DAbstractEventQueue::getInstance()
 {
-	return *aClassInstance;
+	return aClassInstance;
 }
 
 HRESULT A2DAbstractEventQueue::Initialize()
@@ -145,6 +145,9 @@ void A2DAbstractEventQueue::stopDispatchingThread()
 
 void A2DAbstractEventQueue::run(int xThreadId)
 {
+	// Create Window!
+	aFrame->createWindow();
+
 	// Create frame resources inside EDT
 	aFrame->CreateResources();
 
@@ -155,15 +158,15 @@ void A2DAbstractEventQueue::run(int xThreadId)
 
 bool A2DAbstractEventQueue::isDispatchingThread(int xFrameId)
 {
-	A2DAbstractEventQueue& eventQueue = A2DToolkit::getSystemEventQueue(xFrameId);
-	A2DAbstractThread& thread = A2DAbstractThread::getInstance();
+	A2DAbstractEventQueue* eventQueue = A2DToolkit::getSystemEventQueue(xFrameId);
+	A2DAbstractThread* thread = A2DAbstractThread::getInstance();
 
 	if (thread == NULL || eventQueue == NULL)
 	{
 		return false;
 	}
 
-	return eventQueue.getDispatchingThread()->id() == thread.getCurrentThreadId();
+	return eventQueue->getDispatchingThread()->id() == thread->getCurrentThreadId();
 }
 
 bool A2DAbstractEventQueue::dispatchNextEvent()

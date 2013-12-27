@@ -50,7 +50,7 @@ protected:
 
 public:
 
-	static A2DAbstractThread& getInstance();
+	static A2DAbstractThread* getInstance();
 
 	virtual int	 id();
 	virtual bool start() = 0;

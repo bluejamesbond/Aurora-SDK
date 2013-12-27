@@ -114,22 +114,23 @@ A2DAbstractWindow* A2DAbstractFrame::getWindow()
 }
 
 void A2DAbstractFrame::SetVisible(bool xVisible)
-{
-	if (aEventQueue)
+{	
+	if (xVisible)
 	{
-		if (xVisible)
+		if (!A2DAbstractEventQueue::isDispatchingThread(this->id()) && aEventQueue)
 		{
-			if (!A2DAbstractEventQueue::isDispatchingThread(this->id()))
-			{
-				aEventQueue->invokeLater(this);
-				aEventQueue->resumeDispatchingThread();
-			}
-
-			aWindow->setVisible(xVisible);
+			aEventQueue->invokeLater(this);
+			aEventQueue->resumeDispatchingThread();
 		}
-		else
+
+		aWindow->setVisible(xVisible);
+	}
+	else
+	{
+		aWindow->setVisible(xVisible);
+		
+		if (aEventQueue)
 		{
-			aWindow->setVisible(xVisible);
 			aEventQueue->interruptDispatchingThread();
 		}
 	}
@@ -207,6 +208,35 @@ HRESULT A2DAbstractFrame::Initialize()
 	return hr;
 }
 
+HRESULT A2DAbstractFrame::initialize_()
+{
+	HRESULT hr;
+
+	aId = ++aClassInstances;
+
+	// -----------------------------------------------------
+
+	aRenderData = new A2DRenderData();
+
+	hr = aRenderData->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	aRootPane = new A2DRootPane;
+
+	hr = aRootPane->Initialize();
+	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	hr = createWindow();
+
+	// -----------------------------------------------------
+
+	return hr;
+}
+
 void A2DAbstractFrame::Deinitialize()
 {
 	// Release the D3D object.
@@ -248,7 +278,7 @@ A2DRootPane * A2DAbstractFrame::GetRootPane()
 	return aRootPane;
 }
 
-HRESULT A2DAbstractFrame::CreateResources()
+HRESULT A2DAbstractFrame::createWindow()
 {
 	HRESULT hr;
 
@@ -258,6 +288,17 @@ HRESULT A2DAbstractFrame::CreateResources()
 
 	hr = aWindow->Initialize();
 	if (FAILED(hr))	return hr;
+
+	// -----------------------------------------------------
+
+	aWindow->setFrame(this);
+
+	return hr;
+}
+
+HRESULT A2DAbstractFrame::CreateResources()
+{
+	HRESULT hr;
 	
 	// -----------------------------------------------------
 

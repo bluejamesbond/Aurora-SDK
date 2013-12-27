@@ -78,7 +78,7 @@ public:
 	void							resumeDispatchingThread();
 
 	static A2DAbstractEventQueue*	aClassInstance;
-	static A2DAbstractEventQueue&	getInstance();
+	static A2DAbstractEventQueue*	getInstance();
 
     // Queue
 

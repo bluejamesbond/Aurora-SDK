@@ -71,7 +71,7 @@ private:
     A2DRenderData             *     aRenderData;
 	A2DGXSettings			  		aGXSettings;
 	A2DAbstractWindow	  	  * 	aWindow;
-	A2DAbstractEventQueue	  *		aEventQueue;
+	A2DAbstractEventQueue	  *		aEventQueue = NULL;
 
 	int								aId;
 	static int						aClassInstances;
@@ -80,6 +80,7 @@ public:
 
 	A2DRootPane               *     GetRootPane();
 
+	HRESULT							createWindow();
 	HRESULT                         CreateResources();
 	void                            Update();
 	void							dispose();
@@ -100,6 +101,8 @@ public:
 	void							SetDefaultCloseOperation(int xOperation);
 	A2DAbstractWindow		  *		getWindow();
 	void							run(int xThreadId);
+
+	HRESULT							initialize_();
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION

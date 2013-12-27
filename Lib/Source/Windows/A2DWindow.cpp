@@ -845,11 +845,15 @@ void A2DWindow::setVisible(bool xVisible)
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
 
-	//	if (!A2DEventQueue::isDispatchingThread() && aFrame)
-	//	{
-	//		aFrame->CreateResources();
-	//		initPlatformCompatibleMessageLoop();
-	//	}
+		if (aFrame)
+		{
+			if (!A2DEventQueue::isDispatchingThread(aFrame->id()))
+			{
+				aFrame->CreateResources();
+
+				initPlatformCompatibleMessageLoop();
+			}
+		}
 	}
 	else
 	{
@@ -1072,10 +1076,7 @@ void A2DWindow::initPlatformCompatibleMessageLoop()
 			DispatchMessage(&msg);
 		}
 
-		if (frame)
-		{
-			frame->Update();
-		}
+		frame->Update();
 	}
 }
 

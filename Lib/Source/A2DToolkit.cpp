@@ -5,7 +5,8 @@
 
 int A2DToolkit::waitForBackgroundThreads()
 {
-	return A2DAbstractEventQueue::getInstance().waitForAllDispatchingThreads();
+	// DO null check here!
+	return A2DAbstractEventQueue::getInstance()->waitForAllDispatchingThreads();
 }
 
 A2DAbstractEventQueue * A2DToolkit::aEventQueues[20];
@@ -18,7 +19,7 @@ void A2DToolkit::addSystemEventQueue(A2DAbstractEventQueue * xEventQueue)
 	aEventQueues[++aEventQueuesIndex] = xEventQueue;
 }
 
-A2DAbstractEventQueue& A2DToolkit::getSystemEventQueue(int xFrameInstanceIndex)
+A2DAbstractEventQueue* A2DToolkit::getSystemEventQueue(int xFrameInstanceIndex)
 {
-	return *aEventQueues[xFrameInstanceIndex];
+	return aEventQueues[xFrameInstanceIndex];
 }

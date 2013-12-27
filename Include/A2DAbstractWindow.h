@@ -63,7 +63,7 @@ protected:
 	LPCWSTR							aName;
 
 	A2DRect                         aRect;
-	A2DAbstractFrame          *     aFrame;
+	A2DAbstractFrame          *     aFrame = NULL;
 	A2DAbstractWindow         *     aRelativeWindow;
 
 private:

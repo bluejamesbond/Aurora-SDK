@@ -23,9 +23,9 @@ int A2DAbstractThread::getClassInstances()
 	return aClassInstances + 1;
 }
 
-A2DAbstractThread& A2DAbstractThread::getInstance()
+A2DAbstractThread* A2DAbstractThread::getInstance()
 {
-	return *aClassInstance;
+	return aClassInstance;
 }
 
 HRESULT A2DAbstractThread::Initialize()
