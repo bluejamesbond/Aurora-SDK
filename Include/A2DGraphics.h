@@ -26,7 +26,7 @@
 #include "A2DTextureShader.h"
 #include "A2DTextureBuffer.h"
 #include "A2DTexture.h"
-#include "A2DQuad.h"
+#include "A2DQuadFactory.h"
 #include "A2DImageProperties.h"
 #include "A2DAbstractComponent.h"
 #include "A2DPipeline.h"
@@ -58,40 +58,25 @@ class A2DTextureBuffer;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DGraphics : public A2DRenderData
+class A2DGraphics : public A2DRenderData, public A2DAbstract
 {
-
-public:
-
-	A2DGraphics(A2DAbstractComponent * xComponent, A2DRenderData * xRenderData);
-
-	// Deconstructor
-	~A2DGraphics();
-
+	
 private:
 
-	A2DImageProperties				aSecondaryBufferProps;					// background-size/background-repeat
-	A2DRect							aClip;
-
-	bool							aDoubleBuffer = false;
-	A2DAbstractComponent	  *		aComponent;
-	A2DPipelineable      *		aPipelineComponents[10];
-
-	static A2DTextureShader * aTextureShader;
+	ID3D10Device		**			aDXDevice;
+	A2DRect				 *			aClip;
+	A2DQuadFactory		 *			aQuadFactory;
+	A2DTextureShader	 *			aTextureShader;
 
 public:
 
 	// Additional
-	void 							Recalculate();
-	void							NextRender();
-	void							RenderSecondaryBuffer();
-	void							RenderBlurBuffer();
-	void							SetActiveBuffer(int xBuffer);
+	void							setClip(A2DRect * aRect);
+
 	void							DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps);
 	void							DrawImage(A2DPipeline * xPipeline, A2DTexture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, A2DImageProperties * xImageProps, int xBlur);
-
-private:
-	void							CalculateBounds();
+	
+	void							validate();
 
 public:
 

@@ -55,36 +55,10 @@ class A2DRenderable : public A2DAbstract
 {
 
 public:
+
+	// Pure Virtual
+	virtual void                    Update(A2DRenderData * xRenderData) = 0;
 	
-	// Variables
-	// { NONE }
-
-	// Mutators
-	// { NONE }
-
-	// Builders
-	// { NONE }
-
-	// Factory
-	// { NONE }
-
-	// Additional
-	// { NONE }
-
-protected:
-
-	// Pure Virtual
-	virtual HRESULT                 CreateResources(A2DRenderData * xRenderData) = 0;
-	virtual void                    DestroyResources() = 0;
-
-public:
-
-	// Pure Virtual
-	virtual void                    Update() = 0;
-
-	// Virtual
-	// { NONE }
-
 public:
 
 	// Implementation

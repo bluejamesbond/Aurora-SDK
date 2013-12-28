@@ -93,6 +93,12 @@ A2DRect A2DAbstractWindow::getBounds()
 	return aRect;
 }
 
+A2DDims * A2DAbstractWindow::_getSize()
+{
+	return static_cast<A2DDims*>(&aRect);
+}
+
+
 A2DDims A2DAbstractWindow::getSize()
 {
 	return static_cast<A2DDims>(aRect);

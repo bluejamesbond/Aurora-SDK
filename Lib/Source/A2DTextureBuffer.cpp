@@ -2,8 +2,8 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DTextureBuffer.h"
 
-A2DTextureBuffer::A2DTextureBuffer(A2DBackBuffer * xBackBuffer, A2DDims * xSize) :
-A2DAbstractTexture(xBackBuffer)
+A2DTextureBuffer::A2DTextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, A2DDims * xSize) :
+aDXDevice(xDXDevice), aBackBufferaDXDepthStencilView(xBackBufferaDXDepthStencilView)
 {
 	aDims.aWidth = xSize->aWidth;
 	aDims.aHeight = xSize->aHeight;
@@ -15,19 +15,20 @@ bool A2DTextureBuffer::hasAlpha()
 	return false;
 }
 
-HRESULT A2DTextureBuffer::CreateResources(void * xArgs[])
+HRESULT A2DTextureBuffer::Initialize()
 {
 	D3D10_TEXTURE2D_DESC textureDesc;
 	HRESULT hr;
 	D3D10_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	D3D10_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	ID3D10Device * device = *aDXDevice;
 
 	// Initialize the render target texture description.
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 
 	// Setup the render target texture description.
-	textureDesc.Width = (int)aDims.aWidth;
-	textureDesc.Height = (int)aDims.aHeight;
+	textureDesc.Width = static_cast<int>(aDims.aWidth);
+	textureDesc.Height = static_cast<int>(aDims.aHeight);
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -38,7 +39,7 @@ HRESULT A2DTextureBuffer::CreateResources(void * xArgs[])
 	textureDesc.MiscFlags = 0;
 
 	// Create the render target texture.
-	hr = aBackBuffer->aDXDevice->CreateTexture2D(&textureDesc, NULL, &aDXRenderTargetTexture);
+	hr = device->CreateTexture2D(&textureDesc, NULL, &aDXRenderTargetTexture);
 	if (FAILED(hr))		return hr;
 
 	// Setup the description of the render target view.
@@ -47,7 +48,7 @@ HRESULT A2DTextureBuffer::CreateResources(void * xArgs[])
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the render target view.
-	hr = aBackBuffer->aDXDevice->CreateRenderTargetView(aDXRenderTargetTexture, &renderTargetViewDesc, &aDXRenderTargetView);
+	hr = device->CreateRenderTargetView(aDXRenderTargetTexture, &renderTargetViewDesc, &aDXRenderTargetView);
 	if (FAILED(hr))		return hr;
 
 	// Setup the description of the shader resource view.
@@ -57,38 +58,29 @@ HRESULT A2DTextureBuffer::CreateResources(void * xArgs[])
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 	
 	// Create the shader resource view.
-	hr = aBackBuffer->aDXDevice->CreateShaderResourceView(aDXRenderTargetTexture, &shaderResourceViewDesc, &aResource);
+	hr = device->CreateShaderResourceView(aDXRenderTargetTexture, &shaderResourceViewDesc, &aResource);
 	if (FAILED(hr))		return hr;
 
 	return hr;
 }
 
-void A2DTextureBuffer::Update(void * xArgs[])
-{
-	// Change size and stuff here	
-}
-
-void A2DTextureBuffer::Render()
-{
-	// No real rendering for textures to do. They just act as containers in the pipeline.
-}
-
 void A2DTextureBuffer::SetActive()
 {
+	ID3D10Device * device = *aDXDevice;
+
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
-	aBackBuffer->aDXDevice->OMSetRenderTargets(1, &aDXRenderTargetView, aBackBuffer->aDXDepthStencilView);
+	device->OMSetRenderTargets(1, &aDXRenderTargetView, *aBackBufferaDXDepthStencilView);
 }
 
-void A2DTextureBuffer::DestroyResources()
+void * A2DTextureBuffer::getPlatformCompatibleResource()
 {
-	A2DAbstractTexture::DestroyResources();
-	
-	// Delete all the other global variables created for a texture except for ones like A2DDim and A2DRect
+	return aResource;
 }
 
 void A2DTextureBuffer::Clear()
 {
 	float color[4];
+	ID3D10Device * device = *aDXDevice;
 	
 	// Setup the color to clear the buffer to.
 	color[0] = 1.0f;
@@ -97,15 +89,47 @@ void A2DTextureBuffer::Clear()
 	color[3] = 1.0f;
 
 	// Clear the back buffer.
-	aBackBuffer->aDXDevice->ClearRenderTargetView(aDXRenderTargetView, color);
+	device->ClearRenderTargetView(aDXRenderTargetView, color);
 
 	// Clear the depth buffer.
-	aBackBuffer->aDXDevice->ClearDepthStencilView(aBackBuffer->aDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
+	device->ClearDepthStencilView(*aBackBufferaDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY A2D_ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
+
+void A2DTextureBuffer::Deinitialize()
+{
+	if (aDXRenderTargetTexture)
+	{
+		aDXRenderTargetTexture->Release();
+		delete aDXRenderTargetTexture;
+		aDXRenderTargetTexture = 0;
+	}
+
+	if (aDXRenderTargetView)
+	{
+		aDXRenderTargetView->Release();
+		delete aDXRenderTargetView;
+		aDXRenderTargetView = 0;
+	}
+
+	if (aDXDepthStencilState)
+	{
+		aDXDepthStencilState->Release();
+		delete aDXDepthStencilState;
+		aDXDepthStencilState = 0;
+	}
+
+	if (aResource)
+	{
+		aResource->Release();
+		delete aResource;
+		aResource = 0;
+	}
+
+}
 
 LPCWSTR A2DTextureBuffer::GetClass()
 {

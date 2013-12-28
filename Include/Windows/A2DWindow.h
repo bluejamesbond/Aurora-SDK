@@ -179,7 +179,7 @@ protected:
 
 	virtual void                    render();
 	virtual void					validate();
-
+	HRESULT							onSize(HWND hwnd);
 public:
 
 	virtual void              *     getPlatformCompatibleWindowHandle();

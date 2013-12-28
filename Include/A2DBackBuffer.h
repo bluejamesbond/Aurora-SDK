@@ -80,6 +80,7 @@ private:
 public:
     // Accessors
     ID3D10Device              *     GetDevice();
+	void							validate();
 
 public:
     // Mutators

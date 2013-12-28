@@ -2,13 +2,13 @@
 // GUARDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DQUAD_H__
-#define __A2DQUAD_H__
+#ifndef __A2DQUADFACTORY_H__
+#define __A2DQUADFACTORY_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      A2DQUAD
+//      A2DQUADFACTORY
 //
 //  Synopsis:
 //      Quad class to be rendered.
@@ -20,9 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "A2DExtLibs.h"
-#include "A2DAbstractShape.h"
+#include "A2DDXShapeUtils.h"
 #include "A2DTexture.h"
 #include "A2DRect.h"
+#include "A2DQuadData.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -30,7 +31,7 @@
 
 class A2D;
 class A2DAbstract;
-class A2DAbstractShape;
+class A2DDXShapeUtils;
 class A2DTexture;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,69 +42,41 @@ class A2DTexture;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DQuad : public A2DAbstractShape
+class A2DQuadFactory
 {
 public:
 
-	A2DQuad(A2DBackBuffer * xBackBuffer, A2DRect xConstraints);
-	~A2DQuad();
+	A2DQuadFactory(ID3D10Device ** xDXDevice, A2DDims * xWindowDims);
+	~A2DQuadFactory();
+
+	ID3D10Buffer	*	aIndexBuffer;
+	ID3D10Buffer	*	aVertexBuffer;
+
+	static unsigned int aStride;
+	static unsigned int aOffset;
 
 	///////////////////////////////////////////////////////////
 
-	A2DTexture			*			aTexture;
-	A2DDims				*			aWindowDims;
+	A2DRect				aConstraints;
+	A2DDims			*	aWindowDims;
+	ID3D10Device	**	aDXDevice;
 	
 	///////////////////////////////////////////////////////////
 
-	A2DRect				*			aRect;
-	A2DRect							aConstraints;
+	bool						aContraintsChanged;
+
+	// A2DRect				*			aRect;
 	A2DVertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
-
-	float							aInQuadWidth;
-	float							aInQuadHeight;
-	float							aInQuadX;
-	float							aInQuadY;
-
+	
+	void							x_aligned_memcpy_sse2(void* dest, const void* src, const unsigned long size_t);
+	
 	float							aPrevPosX;
 	float							aPrevPosY;
 
-	float							aLeft;
-	float							aRight;
-	float							aTop;
-	float							aBottom;
-	float							aLeftTex;
-	float							aRightTex;
-	float							aTopTex;
-	float							aBottomTex;
-
-	int								aIndex = 0;
-	int								aIncrement = 0;
-	int								aRealIncrement = 0;
-
-	bool							aCONSTRAINT_CHANGED;
-
-	///////////////////////////////////////////////////////////
-
-	virtual void					Update(void* xArgs[]);
-	virtual HRESULT					Map();
-
-	////////////////////////////////////////////////////////////
-
-public:
-
-	virtual void					SetConstraints(A2DRect * xRect);
-
-	////////////////////////////////////////////////////////////
-
-protected:
-
-	virtual void					CalculateCoords(A2DRect * xTexRect);
-	virtual HRESULT					MapCoords();
-
-	////////////////////////////////////////////////////////////
-
-	virtual void					DestroyResources();
-
+	HRESULT							updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xRect, A2DRect * xTextureClip, A2DDims * xTextureDims, A2DImageProperties * xImageProperties);
+	void							RenderQuad(A2DQuadData * aQuadData);
+	bool							setConstraints(A2DQuadData * aQuadData, A2DRect * xContraints);
+	
 public:
 
 	//////////////////////////////////////////////////////////

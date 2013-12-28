@@ -46,51 +46,19 @@ class A2DTextureBuffer;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DRenderData : public A2DAbstract
-{
-
-public:
-
-    // Constructor
-	A2DRenderData();
-	A2DRenderData(A2DRenderData * xRenderData);
-
-    // Deconstructor
-    // { NONE }
-
+struct A2DRenderData
+{	
     // Variables
-    D3DXMATRIX                *     aViewMatrix;
-    D3DXMATRIX                *     aWorldMatrix;
-    D3DXMATRIX                *     aOrthogonalMatrix;
-    D3DXMATRIX                *     aProjectionMatrix;
+	float                *     aViewMatrix;
+	float                *     aWorldMatrix;
+	float                *     aProjection2DMatrix;
+    float                *     aProjection3DMatrix;
 
-	A2DAbstractWindow		  *		aWindow;
+	A2DDims					  *		aWindowDims;
     A2DCamera				  *     aCamera;
     A2DBackBuffer             *     aBackBuffer;
 	A2DTextureBuffer          *     aTextureBuffer;
 	A2DTextureBuffer          *     aBlurBuffer;
-
-    // Accessors
-    // { NONE }
-
-    // Mutators
-    // { NONE }
-
-    // Additional
-    // { NONE }
-
-public:
-
-    //////////////////////////////////////////////////////////
-    // A2DABSTRACT IMPLEMENTATION
-    //////////////////////////////////////////////////////////
-
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
-
 };
 
 

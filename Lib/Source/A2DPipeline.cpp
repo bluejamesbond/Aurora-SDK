@@ -44,6 +44,7 @@ void A2DPipeline::Deinitialize()
 		if (aPipelineComps[i])
 		{
 			aPipelineComps[i]->Deinitialize();
+			delete aPipelineComps[i];
 			aPipelineComps[i] = 0;
 		}
 	}

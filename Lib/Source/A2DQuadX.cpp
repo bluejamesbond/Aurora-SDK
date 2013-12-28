@@ -14,7 +14,7 @@ HRESULT A2DQuadX::CreateResources(void * xArgs[])
 	// Initialize buffers depending on the amount of quads we are going to render.
 	aVertexCount = aQuadCount * 6;
 	aIndexCount = aQuadCount * 6;
-	return A2DAbstractShape::CreateResources(xArgs);
+	return A2DDXShapeUtils::CreateResources(xArgs);
 }
 
 // 0: a2drect

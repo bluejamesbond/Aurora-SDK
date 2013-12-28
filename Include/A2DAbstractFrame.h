@@ -68,21 +68,29 @@ private:
 	A2DTextureBuffer          *     aTextureBuffer;
 	A2DTextureBuffer          *     aBlurBuffer;
     A2DCamera                 *     aCamera;
-    A2DRenderData             *     aRenderData;
 	A2DGXSettings			  		aGXSettings;
 	A2DAbstractWindow	  	  * 	aWindow;
 	A2DAbstractEventQueue	  *		aEventQueue = NULL;
+	A2DGraphics				  *		aGraphics;
 
 	int								aId;
 	static int						aClassInstances;
 
+	bool							aValidatedContents;
 public:
 
 	A2DRootPane               *     GetRootPane();
 	HRESULT                         CreateResources();
 	void                            Update();
 	void							dispose();
+	void							invalidate();
+	// void							revalidate(); --- Unsafe for A2DAbstractFrame!!!
 
+protected:
+	void							validated();
+	void							validate();
+
+public:
 	int								id();
 	void							setBackground(byte xRed, byte xGreen, byte xBlue);
 	void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);

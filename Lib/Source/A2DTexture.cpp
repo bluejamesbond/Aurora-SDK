@@ -2,58 +2,89 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DTexture.h"
 
-A2DTexture::A2DTexture(A2DBackBuffer * xBackBuffer, LPCWSTR * xSrc) :
-A2DAbstractTexture(xBackBuffer)
+A2DTexture::A2DTexture(ID3D10Device ** xDXDevice, LPCWSTR * xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
 {
 	aResource = NULL;
-	aSrc = xSrc;
 }
 
 A2DTexture::~A2DTexture(){}
 
-bool A2DTexture::HasAlpha()
+bool A2DTexture::hasAlpha()
 {
 	// Force to be true
 	return true;
 }
 
-HRESULT A2DTexture::CreateResources(void * xArgs[])
+void * A2DTexture::getPlatformCompatibleResource()
 {
-	HRESULT hr;
-	D3DX10_IMAGE_LOAD_INFO loadInfo;
-	D3DX10_IMAGE_INFO srcInfo;
-
-	loadInfo.pSrcInfo = &srcInfo;
-
-	// Load the texture in.
-	hr = D3DX10CreateShaderResourceViewFromFile(aBackBuffer->aDXDevice, *aSrc, &loadInfo, NULL, &aResource, NULL);
-	if (FAILED(hr))		return hr;
-
-	// Store the texture properties
-
-	aClip.aX = 0;
-	aClip.aY = 0;
-	aClip.aWidth = aDims.aWidth = (float)srcInfo.Width;
-	aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
-
-	return hr;
+	return aResource;
 }
 
-void A2DTexture::Update(void * xArgs[])
+HRESULT A2DTexture::changeTexture(LPCWSTR * xSrc)
 {
-	if (static_cast<LPCWSTR*>(xArgs[0]) == aSrc)
-	{
-		return;
-	}
+	aSrc = xSrc;
+
+	Deinitialize();
 
 	// Can't catch error here!!!! NOTE: FIX
-	// Remind @Mathew if you see this.
-	CreateResources(xArgs);
+	// Remind Mathew if you see this.
+	return Initialize();
 }
+ 
 
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY A2D_ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
+
+void A2DTexture::Deinitialize()
+{
+	if (aResource)
+	{
+		delete aResource;
+		aResource = 0;
+	}
+}
+
+ID3D10ShaderResourceView* A2DTexture::aStaticResource;
+
+HRESULT A2DTexture::Initialize()
+{
+	HRESULT hr = S_OK;
+	D3DX10_IMAGE_LOAD_INFO loadInfo;
+
+
+	if (aStaticResource == NULL)
+	{
+		D3DX10_IMAGE_INFO srcInfo;
+		loadInfo.pSrcInfo = &srcInfo;
+
+		hr = D3DX10CreateShaderResourceViewFromFile(*aDXDevice, *aSrc, &loadInfo, NULL, &aStaticResource, NULL);
+		if (FAILED(hr))		return hr;
+
+		aResource = aStaticResource;
+
+		// Load the texture in.
+		// Store the texture properties
+		aClip.aX = 0;
+		aClip.aY = 0;
+		aClip.aWidth = aDims.aWidth = (float)srcInfo.Width;
+		aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
+
+	}
+	 else
+	 {
+		 D3DXIMAGE_INFO srcInfoFromFile;
+		 D3DXGetImageInfoFromFile(*aSrc, &srcInfoFromFile);
+		 aResource = aStaticResource;
+
+		 aClip.aX = 0;
+		 aClip.aY = 0;
+		 aClip.aWidth = aDims.aWidth = (float)srcInfoFromFile.Width;
+		 aClip.aHeight = aDims.aHeight = (float)srcInfoFromFile.Height;
+	 }
+
+	return hr;
+}
 
 LPCWSTR A2DTexture::GetClass()
 {

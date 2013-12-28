@@ -9,19 +9,34 @@ aGraphics(NULL) {}
 
 A2DAbstractComponent::~A2DAbstractComponent(){}
 
-void A2DAbstractComponent::Update()
+void A2DAbstractComponent::invalidate()
 {
-	A2DGraphics * graphics = this->GetGraphics();
+	aValidatedContents = false;
+}
 
-	// Create resources must be called first!!!
-	if (graphics == NULL)	return;
+void A2DAbstractComponent::validated()
+{
+	aValidatedContents = true;
+}
+
+void A2DAbstractComponent::revalidate()
+{
+	validate();
+}
+
+void A2DAbstractComponent::Update(A2DRenderData * xRenderData)
+{
+	if (!aValidatedContents)
+	{
+		validate();
+	}
 
 	// Calling the render algorithm
 	// -> Render component
 	// -> Render its children on top
 	// -> Render the border that overlays
 	//    both of the previous renders.
-	Render(graphics);
+	Render(xRenderData);
 }
 
 A2DGraphics * A2DAbstractComponent::GetGraphics()
@@ -45,10 +60,24 @@ void A2DAbstractComponent::SetBounds(A2DRect * xRect)
 	aOptBackgroundRegion.aWidth = xRect->aWidth;
 	aOptBackgroundRegion.aHeight = xRect->aHeight;
 
-	if (graphics)
-	{
-		graphics->Recalculate();
-	}
+	invalidate();
+}
+
+void A2DAbstractComponent::validate()
+{
+	A2DAbstractComponent * parentComp = aParentComp;
+	bool hasParent = parentComp != NULL;
+	
+	A2DRect& compRect = aOptRegion;
+	A2DRect * parentRect = hasParent ? &parentComp->aOptRegion : NULL;
+	A2DRect * parentGraphicsClip = hasParent ? &parentComp->aCalculatedRegion : NULL;
+
+	aCalculatedRegion.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect.aX;
+	aCalculatedRegion.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect.aY;
+	aCalculatedRegion.aWidth = min(compRect.aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
+	aCalculatedRegion.aHeight = min(compRect.aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
+
+	aValidatedContents = true;
 }
 
 void A2DAbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHeight)
@@ -63,20 +92,23 @@ void A2DAbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHe
 	aOptBackgroundRegion.aWidth = xWidth;
 	aOptBackgroundRegion.aHeight = xHeight;
 
-	if (graphics)
-	{
-		graphics->Recalculate();
-	}
+	invalidate();
 }
 
 void A2DAbstractComponent::Render(A2DRenderData * xRenderData)
 {
+	// Force region
+	static_cast<A2DGraphics*>(xRenderData)->setClip(&aCalculatedRegion);
+
 	// Render the current component
 	RenderComponent(xRenderData);
 
 	// This will call children updates
 	// This is sort of saying: (Render <==> Update)
 	RenderChildren(xRenderData);
+
+	// Force region
+	static_cast<A2DGraphics*>(xRenderData)->setClip(&aCalculatedRegion);
 
 	// Render the currect component border
 	RenderComponentBorder(xRenderData);
@@ -90,7 +122,7 @@ void A2DAbstractComponent::RenderChildren(A2DRenderData * xRenderData)
 		// update! This shows to update you have to call its
 		// render and to render you are callings its update method.
 		// A bit confusing but it's the best solution.
-		aChildrenComps[i]->Update();
+		aChildrenComps[i]->Update(xRenderData);
 	}
 }
 
@@ -98,21 +130,17 @@ void A2DAbstractComponent::AddComponent(A2DAbstractComponent * xAbstractComponen
 {
 	A2DAbstractComponent **	newComponents;
 
-	if (aChildrenCompsIndex >= aChildrenCompsIndex)
+	if (aChildrenCompsIndex >= aChildrenCompsLength)
 	{
 		newComponents = CreateAmmoritizedComponentArray();
-	//	delete[] aChildrenComps;
+		delete aChildrenComps;
 		aChildrenComps = newComponents;
 	}
 
 	aChildrenComps[aChildrenCompsIndex++] = xAbstractComponent;
 
 	// Set the current component as the parent of the next
-	xAbstractComponent->SetParent(this); 
-
-	// Create Component resources
-	xAbstractComponent->CreateResources(aGraphics);
-
+	xAbstractComponent->SetParent(this); 	
 }
 
 void A2DAbstractComponent::SetParent(A2DAbstractComponent * xComponent)
@@ -136,48 +164,12 @@ A2DAbstractComponent** A2DAbstractComponent::CreateAmmoritizedComponentArray()
 	return newComponents;
 }
 
-LPCWSTR A2DAbstractComponent::GetClass()
-{
-	return L"A2DAbstractComponent";
-}
-
-LPCWSTR A2DAbstractComponent::ToString()
-{
-	return L"A2DAbstractComponent";
-}
-
-bool A2DAbstractComponent::operator==(A2DAbstract * xAbstract)
-{
-	return false;
-}
-
-/*
-HRESULT A2DAbstractComponent::InitializeChildren()
-{
-	HRESULT hr = S_OK;
-
-	for (int i = 0; i < aChildrenCompsIndex; i++)
-	{
-		if (aChildrenComps[i])
-		{
-			hr = aChildrenComps[i]->Initialize();
-		}
-
-		if (FAILED(hr)) return hr;
-	}
-
-	return hr;
-}
-*/
-
 HRESULT A2DAbstractComponent::Initialize()
 {
 	HRESULT hr = S_OK;
 
 	aChildrenComps = new A2DAbstractComponent *[aChildrenCompsLength = 5];
-
-	// InitializeChildren();  // This will never do anything!!
-
+	
 	return hr;
 }
 
@@ -196,94 +188,9 @@ void A2DAbstractComponent::DeinitializeChildren()
 	}
 }
 
-// This will be a raw A2DRenderData. You can cast it to whatever you want!
-HRESULT A2DAbstractComponent::CreateResources(A2DRenderData * xRenderData)
-{
-	HRESULT hr = S_OK;
-	A2DGraphics * graphics;
-
-	// Basic null check. If this pointer is null, then fail the
-	// resources. The program must throw an exception and halt.
-	if (xRenderData == NULL)	return E_FAIL;
-
-	// This might be A2DRenderData or A2DGraphics. But we still have to make 
-	// a new instance of it. But it will always be A2DGraphics from now on.
-	graphics = (aGraphics = new A2DGraphics(this, xRenderData));
-
-	// Initialize the unit
-	hr = graphics->Initialize();
-
-	if (FAILED(hr)) return hr;
-
-	hr = CreateComponentResources(graphics); // These have to be type of A2DGraphics
-
-	if (FAILED(hr)) return hr;
-
-	hr = CreateChildrenResources(graphics); // These have to be type of A2DGraphics
-
-	return hr;
-}
-
-void A2DAbstractComponent::DestroyResources()
-{
-	DestroyComponentResources();
-	DestroyChildrenResources();
-}
-
-HRESULT A2DAbstractComponent::CreateComponentResources(A2DRenderData * xRenderData)
-{
-	HRESULT hr = S_OK;
-	A2DGraphics * graphics;
-
-	// This is an example when of when I used A2DAbstract
-	// Here, I have no need to do a dynamic typecast.
-	// The method isClass is actually defined in the A2DAbstract
-	// In fact, I just added this method recently, and I have it for
-	// all objects instantly. No need to override it in any methods
-	// in classes that extend A2DAbstract
-	if (!xRenderData->isClass(L"A2DGraphics"))	return E_FAIL;
-
-	// Cast to A2DGraphics.
-	// Similar to java.awt.Graphics to java.awt.Graphics2D
-	graphics = (A2DGraphics *) xRenderData;
-
-	// Tell graphics to call the render method once in order to
-	// set aside only those resources.
-	// graphics->SetMode(A2D_GRAPHICS_MODE_CREATE);
-
-	// A2DGraphics will call the parent Render method once
-	// hr = graphics->CreateResources();
-
-	return hr;
-}
-
 A2DRect * A2DAbstractComponent::GetBounds()
 {
 	return &aOptRegion;
-}
-
-void A2DAbstractComponent::DestroyComponentResources(){}
-
-void A2DAbstractComponent::DestroyChildrenResources()
-{
-	for (int i = 0; i < aChildrenCompsIndex; i++)
-	{
-		aChildrenComps[i]->DestroyResources();
-	}
-}
-
-HRESULT A2DAbstractComponent::CreateChildrenResources(A2DRenderData * xRenderData)
-{
-	HRESULT hr = NULL;
-
-	for (int i = 0; i < aChildrenCompsIndex; i++)
-	{
-		hr = aChildrenComps[i]->CreateResources(xRenderData);
-
-		if (FAILED(hr)) return hr;
-	}
-
-	return hr;
 }
 
 void A2DAbstractComponent::Add(A2DAbstractComponent * xAbstractComponent)
@@ -303,3 +210,17 @@ LRESULT A2DAbstractComponent::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * 
 	return NULL;
 }
 
+LPCWSTR A2DAbstractComponent::GetClass()
+{
+	return L"A2DAbstractComponent";
+}
+
+LPCWSTR A2DAbstractComponent::ToString()
+{
+	return L"A2DAbstractComponent";
+}
+
+bool A2DAbstractComponent::operator==(A2DAbstract * xAbstract)
+{
+	return false;
+}

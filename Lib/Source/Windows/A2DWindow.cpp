@@ -46,6 +46,12 @@ LRESULT CALLBACK A2DWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 				DestroyWindow(xHwnd);
 				return S_OK;
 		}
+		case WM_SIZE:
+		{
+				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				return aWindow->onSize(xHwnd);
+
+		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
 
@@ -321,12 +327,21 @@ HRESULT A2DWindow::updateOnMouseMove(HWND xHwnd)
 		}
 		// DEFER REGION //
 
-		update();
+
+		render(); // For performance
 
 		// DEFER REGION //
 
 		aLastDraggedPoint = p;
 	}
+	return S_OK;
+}
+
+HRESULT A2DWindow::onSize(HWND hwnd)
+{
+	if (hwnd == aChildHWnd)
+		aFrame->invalidate();
+
 	return S_OK;
 }
 
@@ -1036,6 +1051,7 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 			DispatchMessage(&msg);
 		}
 
+
 		if (visible)
 		{
 			// Forced updating of rendering for now
@@ -1045,14 +1061,20 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 			}
 			else if (currentAnimationFrame > 0)
 			{
+				clock_t tStart = clock();
 				currentAnimationFrame--;
 				frame.Update();
+				SYSOUT_F("FPS %.5f\n", 1 / ((double)(clock() - tStart) / CLOCKS_PER_SEC));
 			}
 			else if (resizing)
 			{
+				clock_t tStart = clock();
 				frame.Update();
+				SYSOUT_F("FPS %.5f\n", 1 / ((double)(clock() - tStart) / CLOCKS_PER_SEC));
 			}
-		}
+		}	
+
+
 	}
 }
 

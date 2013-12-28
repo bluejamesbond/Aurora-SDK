@@ -419,3 +419,33 @@ bool A2DBackBuffer::operator==(A2DAbstract * xAbstract)
 {
 	return false;
 }
+
+void A2DBackBuffer::validate()
+{
+
+	A2DDims& aDim = aWindow->getSize();
+
+	// Release all outstanding references to 
+	// the swap chain's buffers.
+	aDXDevice->Release();
+
+	HRESULT hr;
+
+	// Preserve the existing buffer count and format.
+	// Automatically choose the width and height to 
+	// match the client rect for HWNDs.
+	hr = aDXGISwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+	if (hr) SYSOUT_STR("Goodddddddddddddddddddd");
+	
+	// Get buffer and create a render-target-view.
+	ID3D10Texture2D* backBufferPtr;
+	hr = aDXGISwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**) &backBufferPtr);
+	
+	hr = aDXDevice->CreateRenderTargetView(backBufferPtr, NULL, &aDXRenderTargetView);
+
+	backBufferPtr->Release();
+	backBufferPtr = 0;
+
+	SetActive();
+
+}

@@ -44,10 +44,15 @@ class A2DTexture : public A2DAbstractTexture
 {
 public:
 	// Constructor
-	A2DTexture(A2DBackBuffer * xBackBuffer, LPCWSTR * xFilename);
+	A2DTexture(ID3D10Device ** xDXDevice, LPCWSTR * xFilename);
 
 	// Deconstructor
 	~A2DTexture();
+
+	ID3D10Device			**		aDXDevice;
+	ID3D10ShaderResourceView*		aResource;
+
+	static			ID3D10ShaderResourceView* aStaticResource;
 
 	// Variables
 	LPCTSTR					*		aSrc;
@@ -55,34 +60,18 @@ public:
 	// Accessors
 	LPCTSTR					*		GetSrc();
 
-	// Mutators
-	// { NONE }
-
-	// Builders
-	// { NONE }
-
-	// Factory
-	// { NONE }
-
-	// Additional
-
-	// Pure Virtual
-	// { NONE }
+	// Virtual
+	HRESULT							changeTexture(LPCWSTR * xSrc);
 
 	// Virtual
-	virtual	bool					HasAlpha();
-
-public:
-
-	// Implementation
-	// { A2DABSTRACTTEXTURE }
-	virtual HRESULT					CreateResources(void * xArgs[]);
-	virtual void					Update(void * xArgs[]);
-	virtual void					DestroyResources() {};
-
+	virtual	bool					hasAlpha();
+	virtual void			*		getPlatformCompatibleResource();
+	
 public:
 	// Implementation
 	// { A2DABSTRACT }
+	virtual HRESULT                 Initialize();
+	virtual void	                Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
 	virtual bool                    operator==(A2DAbstract * xAbstract);

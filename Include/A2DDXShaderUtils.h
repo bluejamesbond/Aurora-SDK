@@ -2,16 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACTTEXTURE_H__
-#define __A2DABSTRACTTEXTURE_H__
+#ifndef __A2DDXSHADERUTILS_H__
+#define __A2DDXSHADERUTILS_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:  
-//      A2DABSTRACTTEXTURE
+//  Class: 
+//      A2DDXSHADERUTILS
 //
 //  Synopsis:
-//      Texture container class.
+//      Texture quad.
 //
 //------------------------------------------------------------------------------
 
@@ -19,8 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DRect.h"
-#include "A2DPipelineable.h"
+#include "A2DExtLibs.h"
+#include "A2DBackBuffer.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -28,43 +28,25 @@
 
 class A2D;
 class A2DAbstract;
-class A2DAbstractTexture;
+class A2DPipelineable;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractTexture : public A2DPipelineable
+class A2DDXShaderUtils
 {
 
-protected:
-
-	// Variables
-	A2DDims							aDims;
-	A2DRect							aClip;
-
 public:
 
-	// Accessors
-	A2DDims			*		GetSize();
-	A2DRect			*		GetClip(int xIndex = 0);
+	// Load a shader from file
+	static HRESULT					LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * xDXDevice, ID3D10Effect ** xEffect);
 
-	// Mutators
-	void					SetClip(A2DRect * xClip, int xIndex = 0);
-	
-	// Virtual
-	virtual void			*		getPlatformCompatibleResource() = 0;
-	virtual	bool					hasAlpha() = 0;
-	
-public:
+	// Create Alpha transpareny supportable PNG
+	static HRESULT					CreatePNGCompatibleBlendStates(ID3D10Device * aDXDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState);
 
-	// Implementation
-	// { A2DABSTRACT }
-	virtual HRESULT                 Initialize() = 0;
-	virtual void                    Deinitialize() = 0;
-	virtual LPCWSTR                 GetClass() = 0;
-	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
+	// Output Error - Use SYSOUT in the future
+	static void						SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename);
 
 };
 

@@ -2,75 +2,50 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DGraphics.h"
 
-A2DGraphics::A2DGraphics(A2DAbstractComponent * xComponent, A2DRenderData * xRenderData) :
-aComponent(xComponent),
-A2DRenderData(xRenderData)
-{}
+void A2DGraphics::setClip(A2DRect * xClip)
+{
+	aQuadFactory->setConstraints(NULL, aClip = xClip);
+}
 
-A2DTextureShader * A2DGraphics::aTextureShader = NULL;
+void A2DGraphics::validate()
+{
+	aTextureShader->loadMatrices();
+}
 
 void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
 {
-	A2DPipelineable * texture;
-	A2DPipelineable * quad;
-	A2DPipelineable * textureShader;
+	A2DTexture * texture;
+	A2DQuadData * quadData;
 
 	// Pipeline not initalized
 	if (*xPipeline == NULL)
 	{
 		*xPipeline = new A2DPipeline();
 
-		texture = new A2DTexture(aBackBuffer, xSrc);
-		quad = new A2DQuad(aBackBuffer, aClip);
-		textureShader = aTextureShader == NULL ? aTextureShader = new A2DTextureShader(aBackBuffer) : aTextureShader;
+		texture = new A2DTexture(aDXDevice, xSrc);
+		quadData = new A2DQuadData();
+		
+		A2DDXShapeUtils::CreateDefaultDynamicVertexBuffer<A2DVertexData>(*aDXDevice, &quadData->aVertexBuffer, 6);
 
-		// Catch the failure here itself
-		quad->Initialize();
 		texture->Initialize();
-		textureShader->Initialize();
 
 		(*xPipeline)->aPipelineComps[0] = texture;
-		(*xPipeline)->aPipelineComps[1] = quad;
-		(*xPipeline)->aPipelineComps[2] = textureShader;
+		(*xPipeline)->aPipelineComps[1] = quadData;
 
-		(*xPipeline)->aLength = 3;
-
-		return;
-	}
-
-	texture = (*xPipeline)->aPipelineComps[0];
-	quad = (*xPipeline)->aPipelineComps[1];
-	textureShader = (*xPipeline)->aPipelineComps[2];
-
-	// Pipeline requires a hard reset
-	// A2DPipeline::nextLifeCycle();
-	//   - Use during window resize
-	if ((*xPipeline)->aGlobalLifeCycle > (*xPipeline)->aLifeCycle)
-	{
-		void * textureArgs[] = { xSrc };
-		void * quadArgs[] = { texture };
-		void * textureShaderArgs[] = { aWorldMatrix, aViewMatrix, aOrthogonalMatrix, texture };
-
-		texture->CreateResources(textureArgs);
-		quad->CreateResources(quadArgs);
-		textureShader->CreateResources(textureShaderArgs);
-
-		(*xPipeline)->aLifeCycle++;
+		(*xPipeline)->aLength = 2;
 
 		return;
 	}
 
-	// Pipeline needs to be updated and rendered
-	void * textureArgs[] = { xSrc };
-	void * quadArgs[] = { aRect, texture, &aWindow->getBounds() };
-	void * textureShaderArgs[] = { texture };
-
-	texture->Update(textureArgs);
-	quad->Update(quadArgs);
-	textureShader->Update(textureShaderArgs);
+	texture = static_cast<A2DTexture*>((*xPipeline)->aPipelineComps[0]);
+	quadData = static_cast<A2DQuadData*>((*xPipeline)->aPipelineComps[1]);
+	
+	// texture->Update(textureArgs); <<<<+++ ADD LATER
+	aQuadFactory->updateVertexBuffer(quadData, aRect, texture->GetClip(), texture->GetSize(), xImageProps);
+	aTextureShader->setTexture(texture);
 				
-	quad->Render();
-	textureShader->Render();
+	aQuadFactory->RenderQuad(quadData);
+	aTextureShader->renderTexture();
 }
 
 void A2DGraphics::DrawImage(A2DPipeline * xPipeline,  A2DTexture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, A2DImageProperties * xImageProps, int xBlur)
@@ -95,37 +70,36 @@ bool A2DGraphics::operator==(A2DAbstract * xAbstract)
 	return false;
 }
 
-void A2DGraphics::CalculateBounds()
-{
-	A2DRect * compRect, * parentRect, * parentGraphicsClip;
-	A2DAbstractComponent * parentComp;
-	bool hasParent;
-
-	parentComp = aComponent->GetParent();
-	hasParent = parentComp != NULL;
-	parentRect = hasParent ? parentComp->GetBounds() : NULL;
-	parentGraphicsClip = hasParent ? &parentComp->GetGraphics()->aClip : NULL;
-
-	compRect = aComponent->GetBounds();
-
-	aClip.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect->aX;
-	aClip.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect->aY;
-	aClip.aWidth = min(compRect->aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
-	aClip.aHeight = min(compRect->aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
-}
-
-void A2DGraphics::Recalculate()
-{
-	CalculateBounds();
-}
 
 HRESULT A2DGraphics::Initialize()
 {
 	HRESULT hr = S_OK;
+	
+	aDXDevice = &aBackBuffer->aDXDevice;
 
-	CalculateBounds();
+	aQuadFactory = new A2DQuadFactory(aDXDevice, aWindowDims);
+	aQuadFactory->Initialize();
+	if (FAILED(hr))	return hr;
+
+	aTextureShader = new A2DTextureShader(aDXDevice, &aWorldMatrix, &aViewMatrix, &aProjection2DMatrix);
+	aTextureShader->Initialize();
 
 	return hr;
 }
 
-void A2DGraphics::Deinitialize(){}
+void A2DGraphics::Deinitialize()
+{
+	if (aQuadFactory)
+	{
+		aQuadFactory->Deinitialize();
+		delete aQuadFactory;
+		aQuadFactory = 0;
+	}
+
+	if (aQuadFactory)
+	{
+		aTextureShader->Deinitialize();
+		delete aTextureShader;
+		aTextureShader = 0;
+	}
+}

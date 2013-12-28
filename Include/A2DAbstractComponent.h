@@ -74,6 +74,8 @@ protected:
 	A2DRect							aOptRegion;
 	A2DRect							aOptBackgroundRegion;
 
+	A2DRect							aCalculatedRegion;
+
 public:
 	// Accessors
 	A2DAbstractComponent      *		GetParent();
@@ -86,6 +88,20 @@ public:
 
 	// Mutators
 	// { NONE }
+
+
+private:
+
+	bool							aValidatedContents;
+
+protected:
+
+	void							validated();
+
+public:
+
+	void							invalidate();
+	void							revalidate();
 
 private:
 
@@ -129,26 +145,18 @@ protected:
 	// Virtual
 	virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
 	virtual void                    RenderChildren(A2DRenderData * xRenderData);
-	virtual HRESULT                 CreateChildrenResources(A2DRenderData * xRenderData) final;
-//  virtual HRESULT                 InitializeChildren() final;
 	virtual void                    DeinitializeChildren() final;
-	virtual void					DestroyChildrenResources() final;
+	virtual void					validate();
 
 public:
 
-	// Virtual
-	virtual HRESULT                 CreateComponentResources(A2DRenderData * xRenderData) final;
-	virtual void                    DestroyComponentResources() final;
 	virtual void                    Render(A2DRenderData * xRenderData);
-
-
+	
 public:
 
 	// Virtual
 	// { A2DRENDERABLE }
-	virtual void                    Update() final;
-	virtual HRESULT                 CreateResources(A2DRenderData * xRenderData) final;
-	virtual void                    DestroyResources() final;
+	virtual void                    Update(A2DRenderData * xRenderData) final;
 
 public:
 

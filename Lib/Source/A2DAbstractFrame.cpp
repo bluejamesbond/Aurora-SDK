@@ -19,7 +19,11 @@ void A2DAbstractFrame::SetBounds(A2DRect * xRect)
 	aWindow->setBounds(xRect);
 
 	aWindow->invalidate();
-	aWindow->update();
+	
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xHeight)
@@ -27,7 +31,11 @@ void A2DAbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xH
 	aWindow->setBounds(xLeft, xTop, xWidth, xHeight);
 
 	aWindow->invalidate();
-	aWindow->update();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::SetSize(float xWidth, float xHeight)
@@ -35,7 +43,11 @@ void A2DAbstractFrame::SetSize(float xWidth, float xHeight)
 	aWindow->setSize(xWidth, xHeight);
 
 	aWindow->invalidate();
-	aWindow->update();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::SetSize(A2DDims * xDims)
@@ -43,7 +55,11 @@ void A2DAbstractFrame::SetSize(A2DDims * xDims)
 	aWindow->setSize(xDims);
 
 	aWindow->invalidate();
-	aWindow->update();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::SetUndecorated(bool xDecorated)
@@ -51,7 +67,11 @@ void A2DAbstractFrame::SetUndecorated(bool xDecorated)
 	aWindow->setUndecorated(xDecorated);
 
 	aWindow->invalidate();
-	aWindow->update();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::SetLocationRelativeTo(A2DAbstractFrame * xFrame)
@@ -59,7 +79,11 @@ void A2DAbstractFrame::SetLocationRelativeTo(A2DAbstractFrame * xFrame)
 	aWindow->setLocationRelativeTo(xFrame ? xFrame->aWindow : NULL); //        WTF IS THIS INPUT FRAME BUT NEED WINDOW WTF
 
 	aWindow->invalidate();
-	aWindow->update();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::setBackground(byte xRed, byte xGreen, byte xBlue)
@@ -72,6 +96,13 @@ void A2DAbstractFrame::setBackground(byte xRed, byte xGreen, byte xBlue)
 	color.aBlue = xBlue;
 
 	aWindow->setBackgroundColor(&color);
+
+	aWindow->invalidate();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth)
@@ -84,6 +115,14 @@ void A2DAbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue
 	color.aBlue = xBlue;
 
 	aWindow->setBorder(&color, xWidth);
+
+
+	aWindow->invalidate();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius)
@@ -96,6 +135,13 @@ void A2DAbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue
 	color.aBlue = xBlue;
 
 	aWindow->setShadow(&color, xRadius);
+
+	aWindow->invalidate();
+
+	if (aWindow->isVisible())
+	{
+		aWindow->update();
+	}
 }
 
 void A2DAbstractFrame::SetVsync(bool xVsync)
@@ -187,13 +233,6 @@ HRESULT A2DAbstractFrame::Initialize()
 	
 	// -----------------------------------------------------
 
-	aRenderData = new A2DRenderData();
-
-	hr = aRenderData->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
 	aRootPane = new A2DRootPane;
 
 	hr = aRootPane->Initialize();
@@ -267,11 +306,11 @@ void A2DAbstractFrame::Deinitialize()
 	}
 
 	// Release the RenderData object.
-	if (aRenderData)
+	if (aGraphics)
 	{
-		aRenderData->Deinitialize();
-		delete aRenderData;
-		aRenderData = 0;
+		aGraphics->Deinitialize();
+		delete aGraphics;
+		aGraphics = 0;
 	}
 }
 
@@ -307,21 +346,7 @@ HRESULT A2DAbstractFrame::CreateResources()
 	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
-
-	aTextureBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(&aWindow->getBounds()));
-
-	hr = aTextureBuffer->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aBlurBuffer = new A2DTextureBuffer(aBackBuffer, static_cast<A2DDims *>(&aWindow->getBounds()));
-
-	hr = aBlurBuffer->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
+	
 	// Adjust camera settings and then create its resources.
 	A2DCameraProperties * cameraProperties = aCamera->GetProperties();
 
@@ -332,33 +357,62 @@ HRESULT A2DAbstractFrame::CreateResources()
 	// Create properties once the properties have been set
 	aCamera->CreateResources();
 
+	// Create graphics
+	aGraphics = new A2DGraphics();
+
 	// Set the RenderData and pass it into RootPane to inialize the render process.
-	aRenderData->aBackBuffer = aBackBuffer;
-	aRenderData->aTextureBuffer = aTextureBuffer;
-	aRenderData->aBlurBuffer = aBlurBuffer;
-	aRenderData->aWindow = aWindow;
-	aRenderData->aCamera = aCamera;
-	aRenderData->aViewMatrix = aCamera->GetViewMatrix();
-	aRenderData->aWorldMatrix = A2DMatrixFactory::createDefaultWorldMatrix();
-	aRenderData->aProjectionMatrix = A2DMatrixFactory::createDefaultProjectionMatrix(static_cast<A2DDims *>(&aWindow->getBounds()), &aGXSettings);
-	aRenderData->aOrthogonalMatrix = A2DMatrixFactory::createDefaultOrthogonalMatrix(static_cast<A2DDims *>(&aWindow->getBounds()), &aGXSettings);
+	aGraphics->aBackBuffer = aBackBuffer;
+	aGraphics->aBlurBuffer = aBlurBuffer;
+	aGraphics->aWindowDims = aWindow->_getSize();
+	aGraphics->aCamera = aCamera;
+	aGraphics->aViewMatrix = reinterpret_cast<float*>(aCamera->GetViewMatrix());
+	aGraphics->aWorldMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultWorldMatrix());
+	aGraphics->aProjection3DMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultProjectionMatrix(&aWindow->getSize(), &aGXSettings));
+	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
 
 	aRootPane->SetBounds(0, 0, aWindow->getBounds().aWidth, aWindow->getBounds().aHeight);
 
-	// Create children resources; This also calls all subsequent children and
-	// creates their resources.
-	hr = aRootPane->CreateResources(aRenderData);
+	// Create graphics
+	aGraphics->Initialize();
 
 	return hr;
 }
 
+void A2DAbstractFrame::validate()
+{
+	// aBackBuffer->validate();
+
+	delete aGraphics->aProjection2DMatrix;
+
+	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
+
+	aGraphics->validate();
+
+	aValidatedContents = true;
+}
+
+void A2DAbstractFrame::invalidate()
+{
+	aValidatedContents = false;
+}
+
+void A2DAbstractFrame::validated()
+{
+	aValidatedContents = true;
+}
+
 void A2DAbstractFrame::Update()
 {
+	if (!aValidatedContents)
+	{
+		validate();
+	}
+
 	aBackBuffer->SetActive();
 	aBackBuffer->Clear();
 	aBackBuffer->SetZBuffer(false);
 
-	aRootPane->Update();
+	aRootPane->Update(aGraphics);
 
 	aBackBuffer->SetZBuffer(true);
 	aBackBuffer->Swap();

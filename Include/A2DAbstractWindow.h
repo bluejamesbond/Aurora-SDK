@@ -77,9 +77,15 @@ public:
 
 	void                            update();
 	void							invalidate();
-	void							validated();
 	void							revalidate();
 
+protected:
+
+	void							validated();
+
+public:
+
+	A2DDims					  *		_getSize(); // internal use only
 	A2DDims                         getMinimumSize();
 	A2DDims                         getMaximumSize();
 	A2DRect                         getBounds();

@@ -2,40 +2,20 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DAbstractTexture.h"
 
-A2DAbstractTexture::A2DAbstractTexture(A2DBackBuffer * xBackBuffer) :
-aBackBuffer(xBackBuffer),
-aResource(NULL) {}
-
-A2DAbstractTexture::~A2DAbstractTexture(){}
-
-ID3D10ShaderResourceView * A2DAbstractTexture::GetResource()
-{
-	return aResource;
-}
-
 bool A2DAbstractTexture::hasAlpha()
 {
 	// Force to be true
 	return true;
 }
 
-A2DDims * A2DAbstractTexture::GetSize()
+A2DDims* A2DAbstractTexture::GetSize()
 {
 	return &aDims;
 }
 
-A2DRect * A2DAbstractTexture::GetClip(int xIndex)
+A2DRect* A2DAbstractTexture::GetClip(int xIndex)
 {
 	return &aClip;
-}
-
-void A2DAbstractTexture::DestroyResources()
-{
-	if (aResource)
-	{
-		aResource->Release();
-		aResource = 0;
-	}
 }
 
 void A2DAbstractTexture::SetClip(A2DRect * xClip, int xIndex)
@@ -60,27 +40,6 @@ void A2DAbstractTexture::SetClip(A2DRect * xClip, int xIndex)
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY A2D_ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
-
-LPCWSTR A2DAbstractTexture::GetClass()
-{
-	return L"A2DAbstractTexture";
-}
-
-LPCWSTR A2DAbstractTexture::ToString()
-{
-	return L"A2DAbstractTexture";
-}
-
-bool A2DAbstractTexture::operator==(A2DAbstract * xAbstract)
-{
-	return false;
-}
-
-void A2DAbstractTexture::Deinitialize()
-{
-	delete &aDims;
-	delete &aClip;
-}
 
 HRESULT A2DAbstractTexture::Initialize()
 {

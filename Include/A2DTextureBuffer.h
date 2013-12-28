@@ -35,10 +35,7 @@
 class A2D;
 class A2DTexture;
 class A2DAbstractTexture;
-
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////                               
+                              
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -50,15 +47,19 @@ class A2DTextureBuffer : public A2DAbstractTexture
 public:
 
 	// Constructor
-	A2DTextureBuffer(A2DBackBuffer * xBackBuffer, A2DDims * xSize);
+	A2DTextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, A2DDims * xSize);
 
 	// Deconstructor
 	~A2DTextureBuffer();
 	
 	// Variables
+	ID3D10Device				**	aDXDevice;
+	ID3D10DepthStencilView		**	aBackBufferaDXDepthStencilView;
+
 	ID3D10Texture2D				*	aDXRenderTargetTexture;
 	ID3D10RenderTargetView		*	aDXRenderTargetView;
 	ID3D10DepthStencilState		*   aDXDepthStencilState;
+	ID3D10ShaderResourceView*		aResource;
 
 	// Accessors
 	virtual	bool					hasAlpha();
@@ -68,19 +69,14 @@ public:
 
 	// Additional
 	void							Clear();
-
+	virtual void			   *	getPlatformCompatibleResource();
+		
 public:
 
-	// Implementation
-	// { A2DABSTRACTTEXTURE }
-	virtual HRESULT					CreateResources(void * xArgs[]);
-	virtual void					Update(void * xArgs[]);
-	virtual void					Render(); // Render should be defined seperately but called inside Update
-	virtual void					DestroyResources();
-	
-public:
 	// Implementation
 	// { A2DABSTRACT }
+	virtual HRESULT                 Initialize();
+	virtual void	                Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
 	virtual bool                    operator==(A2DAbstract * xAbstract);
