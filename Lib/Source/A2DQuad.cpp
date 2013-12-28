@@ -2,31 +2,31 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DQuad.h"
 
-A2DQuad::A2DQuad(A2DBackBuffer * xBackBuffer, A2DRect * xRect) :
-A2DAbstractShape(xBackBuffer, 6), aQuadWidth(xRect->aWidth), aQuadHeight(xRect->aHeight),
-aTexture(0){}
+A2DQuad::A2DQuad(A2DBackBuffer * xBackBuffer, A2DRect xConstraints) :
+A2DAbstractShape(xBackBuffer, 6), aConstraints(xConstraints), aTexture(0){}
 
 A2DQuad::~A2DQuad(){}
 
 HRESULT A2DQuad::Map()
-{	
+{
 	HRESULT hr;
-	
+
 	// Calculate vertex and texture coordinates.
 	CalculateCoords(aTexture->GetClip());
 
 	// Map coordinates to vertex buffer.
 	hr = MapCoords();
-	
+
 	return hr;
-	
+
 }
 
-// NOTE: Cross platform - via skype message -Mathew K.
+
+
 void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 {
 
-	if (aConstraints->aX >= aRect->aWidth || aConstraints->aY >= aRect->aHeight)
+	if (aRect->aX >= aConstraints.aWidth || aRect->aY >= aConstraints.aHeight)
 	{
 		// Render nothing.
 		aLeft = aRight = aTop = aBottom = 0.0f;
@@ -37,8 +37,8 @@ void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 		float realX, realY;
 
 		// Bitmap mapping calculations.
-		realX = aConstraints->aX < 0 ? aRect->aX : aRect->aX + aConstraints->aX;
-		realY = aConstraints->aY < 0 ? aRect->aY : aRect->aY + aConstraints->aY;
+		realX = aRect->aX < 0 ? aConstraints.aX : aConstraints.aX + aRect->aX;
+		realY = aRect->aY < 0 ? aConstraints.aY : aConstraints.aY + aRect->aY;
 
 		// If the position we are rendering this bitmap to has not changed then don't update the vertex buffer since it
 		// currently has the correct parameters.
@@ -52,92 +52,83 @@ void A2DQuad::CalculateCoords(A2DRect * xTexRect)
 		float realTWidth, realTHeight, calcTX, calcTY;
 		float tWidthOffset, tHeightOffset;
 
-		calcWidth = aConstraints->aWidth < 0 ? aConstraints->aWidth - abs(aConstraints->aX) : aConstraints->aWidth;
-		calcHeight = aConstraints->aHeight < 0 ? aConstraints->aHeight - abs(aConstraints->aY) : aConstraints->aHeight;
+		calcWidth = aRect->aX < 0 ? aRect->aWidth - abs(aRect->aX) : aRect->aWidth;
+		calcHeight = aRect->aY < 0 ? aRect->aHeight - abs(aRect->aY) : aRect->aHeight;
 
-		consOffsetX = aConstraints->aX < 0 ? 0 : aConstraints->aX;
-		consOffsetY = aConstraints->aY < 0 ? 0 : aConstraints->aY;
+		consOffsetX = aRect->aX < 0 ? 0 : aRect->aX;
+		consOffsetY = aRect->aY < 0 ? 0 : aRect->aY;
 
-		realWidth = aConstraints->aX + calcWidth > aRect->aWidth ? aRect->aWidth - consOffsetX : calcWidth;
-		realHeight = aConstraints->aY + calcHeight > aRect->aHeight ? aRect->aHeight - consOffsetY : calcHeight;
+		realWidth = aRect->aX + calcWidth > aConstraints.aWidth ? aConstraints.aWidth - consOffsetX : calcWidth;
+		realHeight = aRect->aY + calcHeight > aConstraints.aHeight ? aConstraints.aHeight - consOffsetY : calcHeight;
 
 		// Handle negative constraint dimensions.
-
 		if (realWidth < 0)
 		{
-			realWidth = realWidth + aConstraints->aX > 0 ? realWidth + aConstraints->aX : 0;
+			realWidth = realWidth + aRect->aX > 0 ? realWidth + aRect->aX : 0;
 		}
 		if (realHeight < 0)
 		{
-			realHeight = realHeight + aConstraints->aY > 0 ? realHeight + aConstraints->aY : 0;
+			realHeight = realHeight + aRect->aY > 0 ? realHeight + aRect->aY : 0;
 		}
 
 		// Texture mapping calculations.
-		calcTX = aConstraints->aX < 0 ? xTexRect->aX + (xTexRect->aWidth * abs(aConstraints->aX)) / aRect->aWidth : xTexRect->aX;
-		calcTY = aConstraints->aY < 0 ? xTexRect->aY + (xTexRect->aHeight * abs(aConstraints->aY)) / aRect->aHeight : xTexRect->aY;
+		calcTX = aRect->aX < 0 ? aRect->aX + (aRect->aWidth * abs(aRect->aX)) / aConstraints.aWidth : aRect->aX;
+		calcTY = aRect->aX < 0 ? aRect->aY + (aRect->aHeight * abs(aRect->aY)) / aConstraints.aHeight : aRect->aY;
+
+		calcTX += xTexRect->aX;
+		calcTY += xTexRect->aY;
 
 		// Calculate offset for x and y constraints.
-		tWidthOffset = aConstraints->aX + calcWidth > aRect->aWidth || aConstraints->aX < 0 ? (xTexRect->aWidth * abs(aConstraints->aX)) / aRect->aWidth : 0;
-		realTWidth = xTexRect->aWidth - tWidthOffset;
+		tWidthOffset = aRect->aX + calcWidth > aConstraints.aWidth || aRect->aX < 0 ? (aRect->aWidth * abs(aRect->aX)) / aConstraints.aWidth : 0;
+		realTWidth = aRect->aWidth - tWidthOffset;
 
-		tHeightOffset = aConstraints->aY + calcWidth > aRect->aHeight || aConstraints->aY < 0 ? (xTexRect->aHeight * abs(aConstraints->aY)) / aRect->aHeight : 0;
-		realTHeight = xTexRect->aHeight - tHeightOffset;
+		realTWidth = xTexRect->aWidth - realTWidth < 0 ? xTexRect->aWidth : realTWidth;
+
+		tHeightOffset = aRect->aY + calcHeight > aConstraints.aHeight || aRect->aY < 0 ? (aRect->aHeight * abs(aRect->aY)) / aConstraints.aHeight : 0;
+		realTHeight = aRect->aHeight - tHeightOffset;
+
+		realTHeight = xTexRect->aHeight - realTHeight < 0 ? xTexRect->aHeight : realTHeight;
 
 		// Calculate offset for dimension constraints.
-		realTWidth -= aConstraints->aWidth < aRect->aWidth ? (xTexRect->aWidth * (aRect->aWidth - aConstraints->aWidth)) / aRect->aWidth : 0;
-		realTHeight -= aConstraints->aHeight < aRect->aHeight ? (xTexRect->aHeight * (aRect->aHeight - aConstraints->aHeight)) / aRect->aHeight : 0;
+		realTWidth -= aRect->aWidth < aConstraints.aWidth ? (aRect->aWidth * (aConstraints.aWidth - aRect->aWidth)) / aConstraints.aWidth : 0;
+		realTHeight -= aRect->aHeight < aConstraints.aHeight ? (aRect->aHeight * (aConstraints.aHeight - aRect->aHeight)) / aConstraints.aHeight : 0;
 
 		// Reset constraint changed flag.
 		aCONSTRAINT_CHANGED = false;
 
 		// If it has changed then update the position it is being rendered to.
-		aPrevPosX = aRect->aX;
-		aPrevPosY = aRect->aY;
+		aPrevPosX = aConstraints.aX;
+		aPrevPosY = aConstraints.aY;
 
-		/////////////////// HARD CODED //////////////////////////////
-		/////////////////// HARD CODED //////////////////////////////
-		/////////////////// HARD CODED //////////////////////////////
-		/////////////////// HARD CODED //////////////////////////////
 
 		// Calculate the screen coordinates of the left side of the bitmap.
-		//aLeft = -250;
 		aLeft = ((aWindowDims->aWidth / 2) * -1) + realX;
-		
+
 		// Calculate the screen coordinates of the right side of the bitmap.
-		//aRight = 250;
 		aRight = aLeft + realWidth;
 
 		// Calculate the screen coordinates of the top of the bitmap.
-		//aTop = 482.0f;
 		aTop = (aWindowDims->aHeight / 2) - realY;
 
 		// Calculate the screen coordinates of the bottom of the bitmap.
-		//aBottom = -282.0f;
 		aBottom = aTop - realHeight;
 
 		// Calculate desired texture mapping.
-		//aLeftTex = 0;
-		//aRightTex = 1;
-		//aTopTex = 0;
-		//aBottomTex = 1;
-
-		aLeftTex = calcTX / xTexRect->aWidth;
-		aRightTex = (calcTX + realTWidth) / xTexRect->aWidth;
-		aTopTex = calcTY / xTexRect->aHeight;
-		aBottomTex = (calcTY + realTHeight) / xTexRect->aHeight;
-
-		/////////////////// HARD CODED //////////////////////////////
-		/////////////////// HARD CODED //////////////////////////////
-		/////////////////// HARD CODED //////////////////////////////
-		/////////////////// HARD CODED //////////////////////////////
-
+		aLeftTex = calcTX / aTexture->GetSize()->aWidth;
+		aRightTex = (calcTX + realTWidth) / aTexture->GetSize()->aWidth;;
+		aTopTex = calcTY / aTexture->GetSize()->aHeight;;
+		aBottomTex = (calcTY + realTHeight) / aTexture->GetSize()->aHeight;;
 	}
 }
+
+
+
+
 
 HRESULT A2DQuad::MapCoords()
 {
 	HRESULT result;
-	
+
 	void* verticesPtr;
 
 	// Create the vertex array.
@@ -147,29 +138,29 @@ HRESULT A2DQuad::MapCoords()
 		// If aVertexCount does not contain a proper quad vertex count
 		return false;
 	}
-	
-	while(aVertexCount != aIndex)
+
+	while (aVertexCount != aIndex)
 	{
 
-	// Load the vertex array with data.
-	aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
-	aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
+		// Load the vertex array with data.
+		aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
+		aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
 
-	aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
-	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);
+		aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
+		aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);
 
-	aVertices[aIndex].position = D3DXVECTOR3(aLeft, aBottom, 0.0f);  // Bottom left.
-	aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aBottomTex);
+		aVertices[aIndex].position = D3DXVECTOR3(aLeft, aBottom, 0.0f);  // Bottom left.
+		aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aBottomTex);
 
-	// Second triangle.
-	aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
-	aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
+		// Second triangle.
+		aVertices[aIndex].position = D3DXVECTOR3(aLeft, aTop, 0.0f);  // Top left.
+		aVertices[aIndex++].texture = D3DXVECTOR2(aLeftTex, aTopTex);
 
-	aVertices[aIndex].position = D3DXVECTOR3(aRight, aTop, 0.0f);  // Top right.
-	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aTopTex);
+		aVertices[aIndex].position = D3DXVECTOR3(aRight, aTop, 0.0f);  // Top right.
+		aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aTopTex);
 
-	aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
-	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);
+		aVertices[aIndex].position = D3DXVECTOR3(aRight, aBottom, 0.0f);  // Bottom right.
+		aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);
 
 	}
 
@@ -207,8 +198,26 @@ void A2DQuad::Update(void* xArgs[])
 	aRect = static_cast<A2DRect*>(xArgs[0]);
 	aTexture = static_cast<A2DTexture*>(xArgs[1]);
 	aWindowDims = static_cast<A2DDims*>(xArgs[2]);
-	
+
 	HRESULT hr;
+
+	//aConstraints.aHeight = 500;
+	//aConstraints.aWidth = 400;
+	//aConstraints.aX = 0;
+	//aConstraints.aY = 0;
+
+	//aRect->aHeight = 300;
+	//aRect->aWidth = 500;
+	//aRect->aX = 0;
+	//aRect->aY = 0;
+
+	//aTexture->GetClip()->aX = 0;
+	//aTexture->GetClip()->aY = 400;
+	//aTexture->GetClip()->aWidth = 500;
+	//aTexture->GetClip()->aHeight = 300;
+
+	//aTexture->GetClip()->aHeight = 3;
+	//aTexture->GetClip()->aWidth = 3;
 
 	// Map vertices.
 	hr = Map();
@@ -220,22 +229,22 @@ void A2DQuad::Update(void* xArgs[])
 
 	// Render vertices to back buffer.
 	Render();
-	
+
 	return;
 }
 
 
 void A2DQuad::SetConstraints(A2DRect * xRect)
 {
-	if (xRect->aX != aConstraints->aX ||
-		xRect->aY != aConstraints->aY ||
-		xRect->aWidth != aConstraints->aWidth ||
-		xRect->aHeight != aConstraints->aHeight)
+	if (xRect->aX != aConstraints.aX ||
+		xRect->aY != aConstraints.aY ||
+		xRect->aWidth != aConstraints.aWidth ||
+		xRect->aHeight != aConstraints.aHeight)
 	{
-		aConstraints->aX = xRect->aX;
-		aConstraints->aY = xRect->aY;
-		aConstraints->aWidth = xRect->aWidth;
-		aConstraints->aHeight = xRect->aHeight;
+		aConstraints.aX = xRect->aX;
+		aConstraints.aY = xRect->aY;
+		aConstraints.aWidth = xRect->aWidth;
+		aConstraints.aHeight = xRect->aHeight;
 		aCONSTRAINT_CHANGED = true;
 	}
 }
@@ -247,18 +256,8 @@ void A2DQuad::SetConstraints(A2DRect * xRect)
 HRESULT A2DQuad::Initialize()
 {
 	HRESULT hr = S_OK;
-	
-	aConstraints = new A2DRect();
 
-	// Default point of constraint is NULL relative to location of quad.
-	aConstraints->aX = 0;
-	aConstraints->aY = 0;
-
-	// Default dimensions of constraints is original width/height of quad.
-	aConstraints->aWidth = aQuadWidth;
-	aConstraints->aHeight = aQuadHeight;
-
-	aCONSTRAINT_CHANGED = false; 
+	aCONSTRAINT_CHANGED = false;
 
 	// Initialize the previous rendering position to negative one.
 	aPrevPosX = -1;
@@ -273,12 +272,6 @@ void A2DQuad::DestroyResources()
 	{
 		delete aRect;
 		aRect = 0;
-	}
-
-	if (aConstraints)
-	{
-		delete aConstraints;
-		aConstraints = 0;
 	}
 
 	if (aVertices)

@@ -45,7 +45,7 @@ class A2DAbstract;
 class A2DQuadX : public A2DQuad
 {
 public:
-	A2DQuadX(A2DBackBuffer * xBuffer, A2DRect * xRect, int xQuadCount);
+	A2DQuadX(A2DBackBuffer * xBuffer, A2DRect xConstraints, int xQuadCount);
 	~A2DQuadX();
 
 	int								aQuadCount; // number of quads

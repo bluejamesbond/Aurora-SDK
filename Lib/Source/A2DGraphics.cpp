@@ -21,7 +21,7 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 		*xPipeline = new A2DPipeline();
 
 		texture = new A2DTexture(aBackBuffer, xSrc);
-		quad = new A2DQuad(aBackBuffer, aRect);
+		quad = new A2DQuad(aBackBuffer, aClip);
 		textureShader = aTextureShader == NULL ? aTextureShader = new A2DTextureShader(aBackBuffer) : aTextureShader;
 
 		// Catch the failure here itself
@@ -54,8 +54,6 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 		texture->CreateResources(textureArgs);
 		quad->CreateResources(quadArgs);
 		textureShader->CreateResources(textureShaderArgs);
-
-		static_cast<A2DQuad *>(quad)->SetConstraints(&aClip);
 
 		(*xPipeline)->aLifeCycle++;
 

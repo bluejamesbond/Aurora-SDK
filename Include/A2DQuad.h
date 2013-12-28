@@ -45,7 +45,7 @@ class A2DQuad : public A2DAbstractShape
 {
 public:
 
-	A2DQuad(A2DBackBuffer * xBackBuffer, A2DRect * xRect);
+	A2DQuad(A2DBackBuffer * xBackBuffer, A2DRect xConstraints);
 	~A2DQuad();
 
 	///////////////////////////////////////////////////////////
@@ -56,11 +56,13 @@ public:
 	///////////////////////////////////////////////////////////
 
 	A2DRect				*			aRect;
-	A2DRect				*			aConstraints;
+	A2DRect							aConstraints;
 	A2DVertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
 
-	float							aQuadWidth;
-	float							aQuadHeight;
+	float							aInQuadWidth;
+	float							aInQuadHeight;
+	float							aInQuadX;
+	float							aInQuadY;
 
 	float							aPrevPosX;
 	float							aPrevPosY;

@@ -4,8 +4,8 @@
 
 
 
-A2DQuadX::A2DQuadX(A2DBackBuffer * xBuffer, A2DRect * xRect, int xQuadCount) :
-A2DQuad(xBuffer, xRect), aQuadCount(xQuadCount){}
+A2DQuadX::A2DQuadX(A2DBackBuffer * xBuffer, A2DRect xConstraints, int xQuadCount) :
+A2DQuad(xBuffer, xConstraints), aQuadCount(xQuadCount){}
 
 A2DQuadX::~A2DQuadX(){}
 
