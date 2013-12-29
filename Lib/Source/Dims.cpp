@@ -1,10 +1,10 @@
 
 #include "../../include/ExtLibs.h"
-#include "../../include/RootPane.h"
+#include "../../include/Dims.h"
 
 using namespace A2D;
 
-void  ImageProperties::memcpySSE2(ImageProperties * xDest, const ImageProperties * xSrc)
+void  Dims::memcpySSE2(Dims * xDest, const Dims * xSrc)
 {
 	// Memcpy built just for Rect and is optimized for
 	// 64 bit architecture with use of 128 bit registers.
@@ -15,7 +15,7 @@ void  ImageProperties::memcpySSE2(ImageProperties * xDest, const ImageProperties
 		mov esi, xSrc;
 		mov edi, xDest;
 
-		movdqu xmm1, [esi];
-		movdqu[edi], xmm1;
+		movlpd xmm0, 0[ESI]; // 64 bits
+		movlpd[edi], xmm1;   // 64 bits
 	}
 }

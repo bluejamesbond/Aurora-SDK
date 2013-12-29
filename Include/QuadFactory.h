@@ -60,7 +60,6 @@ namespace A2D {
 
 		///////////////////////////////////////////////////////////
 				
-		static void						memcpySSE2VertexData(void * xDest, const void * xSrc);
 		HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
 		void							RenderQuad(QuadData * aQuadData);
 		bool							setConstraints(QuadData * aQuadData, Rect * xContraints);

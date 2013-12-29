@@ -52,6 +52,10 @@ namespace A2D {
 		// Variables
 		D3DXVECTOR3 position;
 		D3DXVECTOR2 texture;
+
+
+		static void  memcpySSE2(VertexData * xDest, const VertexData * xSrc);
+
 	};
 }
 #endif
