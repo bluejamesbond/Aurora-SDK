@@ -6,22 +6,10 @@ A2DQuadFactory::A2DQuadFactory(ID3D10Device ** xDXDevice, A2DDims * xWindowDims)
 
 A2DQuadFactory::~A2DQuadFactory(){}
 
-void  A2DQuadFactory::x_aligned_memcpy_sse2(void* dest, const void* src, const unsigned long size_t)
-{
-	__asm
-	{
-		mov esi, src;
-		mov edi, dest;
-
-		movdqu xmm1, [ESI];
-		movdqu[EDI], xmm1;
-	}
-}
-
 bool A2DQuadFactory::setConstraints(A2DQuadData * aQuadData, A2DRect * xContraints)
 {
 
-	x_aligned_memcpy_sse2(&aConstraints, xContraints, sizeof(A2DRect));
+	A2DRect::memcpySSE2(&aConstraints, xContraints);
 
 	// WHy store contraints into every QuadData
 //	if (memcmp(&aQuadData->aPreviousContraints, xContraints, sizeof(A2DRect)) != 0)

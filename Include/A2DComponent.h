@@ -58,15 +58,7 @@ class A2DComponent : public A2DAbstractComponent
 public:
 
 	// Variables
-	double translationX = 0;
-	double translationXG1 = 10;
-	double translationYG1 = 10;
-	double translationY = 0;
 	bool blurred = false;
-	double translationYDirection = 1;
-	double translationXDirection = 1;
-	double translationXDirectionG1 = 1;
-	double translationYDirectionG1 = 1;
 	A2DTextureBuffer		  *     aTextureBuffer;
 	bool aDoubleBuffer = false;
 	//Public Methods
