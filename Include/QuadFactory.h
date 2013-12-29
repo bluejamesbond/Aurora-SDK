@@ -65,7 +65,7 @@ namespace A2D {
 		// Rect				*			aRect;
 		VertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
 
-		void							x_aligned_memcpy_sse2(void* dest, const void* src, const unsigned long size_t);
+		static void					memcpySSE2VertexData(void * xDest, const void * xSrc);
 
 		float							aPrevPosX;
 		float							aPrevPosY;

@@ -27,6 +27,42 @@ bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
 	return true;
 }
 
+void  QuadFactory::memcpySSE2VertexData(void * xDest, const void * xSrc)
+{
+	// Memcopy built specifically for VertexData (120 bytes)
+	// Based on William Chan and Google
+	// Unaligned data
+	// SSE2 Regisers with 64 bytes at time
+
+	__asm
+	{
+		mov esi, xSrc;
+		mov edi, xDest;
+
+		prefetchnta 64[ESI]; // SSE2 prefetch
+		prefetchnta 96[ESI]; // SSE2 prefetch
+
+		movdqu xmm0, 0[ESI];	
+		movdqu xmm1, 16[ESI];	
+		movdqu xmm2, 32[ESI];   
+		movdqu xmm3, 48[ESI];   
+		movdqu xmm4, 64[ESI];   
+		movdqu xmm5, 80[ESI];
+		movdqu xmm6, 96[ESI];	// 8 byes left
+		movq   mm0, 112[ESI];	// 8 byes left
+
+		movdqu 0[EDI], xmm0; 
+		movdqu 16[EDI], xmm1;
+		movdqu 32[EDI], xmm2;
+		movdqu 48[EDI], xmm3;
+		movdqu 64[EDI], xmm4;
+		movdqu 80[EDI], xmm5;
+		movdqu 96[EDI], xmm6;
+		movq   112[EDI], mm0;
+	}
+}
+
+
 HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip,
 					Dims * xTextureDims, ImageProperties * xImageProperties)
 {
@@ -143,7 +179,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	// Calculate the screen coordinates of the bottom of the bitmap.
 	bottom = top - realHeight;
 
-	// Calculate desired texture mapping.
+	// Calculate dESIred texture mapping.
 	leftTex = calcTX / xTextureDims->aWidth;
 	rightTex = (calcTX + realTWidth) / xTextureDims->aWidth;;
 	topTex = calcTY / xTextureDims->aWidth;
@@ -174,7 +210,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	if (FAILED(hr))	return hr;
 
 	// Copy the data into the vertex buffer.
-	memcpy(mappedVertices, (void*)vertices, (sizeof(VertexData)* 6));
+	memcpySSE2VertexData(mappedVertices, (void*)vertices);
 
 	// Unlock the vertex buffer.
 	aQuadData->aVertexBuffer->Unmap();
