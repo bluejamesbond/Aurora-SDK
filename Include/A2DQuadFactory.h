@@ -2,13 +2,13 @@
 // GUARDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DQUADFACTORY_H__
-#define __A2DQUADFACTORY_H__
+#ifndef __QUADFACTORY_H__
+#define __QUADFACTORY_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      A2DQUADFACTORY
+//      QUADFACTORY
 //
 //  Synopsis:
 //      Quad class to be rendered.
@@ -19,20 +19,20 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DDXShapeUtils.h"
-#include "A2DTexture.h"
-#include "A2DRect.h"
-#include "A2DQuadData.h"
+#include "ExtLibs.h"
+#include "DXShapeUtils.h"
+#include "Texture.h"
+#include "Rect.h"
+#include "QuadData.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DDXShapeUtils;
-class A2DTexture;
+class ;
+class Abstract;
+class DXShapeUtils;
+class Texture;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -42,12 +42,12 @@ class A2DTexture;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DQuadFactory
+class QuadFactory
 {
 public:
 
-	A2DQuadFactory(ID3D10Device ** xDXDevice, A2DDims * xWindowDims);
-	~A2DQuadFactory();
+	QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims);
+	~QuadFactory();
 
 	ID3D10Buffer	*	aIndexBuffer;
 	ID3D10Buffer	*	aVertexBuffer;
@@ -57,37 +57,37 @@ public:
 
 	///////////////////////////////////////////////////////////
 
-	A2DRect				aConstraints;
-	A2DDims			*	aWindowDims;
+	Rect				aConstraints;
+	Dims			*	aWindowDims;
 	ID3D10Device	**	aDXDevice;
 	
 	///////////////////////////////////////////////////////////
 
 	bool						aContraintsChanged;
 
-	// A2DRect				*			aRect;
-	A2DVertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
+	// Rect				*			aRect;
+	VertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
 	
 	void							x_aligned_memcpy_sse2(void* dest, const void* src, const unsigned long size_t);
 	
 	float							aPrevPosX;
 	float							aPrevPosY;
 
-	HRESULT							updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xRect, A2DRect * xTextureClip, A2DDims * xTextureDims, A2DImageProperties * xImageProperties);
-	void							RenderQuad(A2DQuadData * aQuadData);
-	bool							setConstraints(A2DQuadData * aQuadData, A2DRect * xContraints);
+	HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
+	void							RenderQuad(QuadData * aQuadData);
+	bool							setConstraints(QuadData * aQuadData, Rect * xContraints);
 	
 public:
 
 	//////////////////////////////////////////////////////////
-	// A2DABSTRACT IMPLEMENTATION
+	// ABSTRACT IMPLEMENTATION
 	//////////////////////////////////////////////////////////
 
 	virtual HRESULT                 Initialize();
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract); // Don't campare against quad but against any Object
+	virtual bool                    operator==(Abstract * xAbstract); // Don't campare against quad but against any Object
 };
 
 

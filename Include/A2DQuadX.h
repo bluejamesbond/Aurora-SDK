@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DQUADX_H__
-#define __A2DQUADX_H__
+#ifndef __QUADX_H__
+#define __QUADX_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      A2DQUADX
+//      QUADX
 //
 //  Synopsis:
 //      Class for multiple quads.
@@ -19,20 +19,20 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DAbstract.h"
-#include "A2DPipelineable.h"
-#include "A2DRect.h"
-#include "A2DVertexData.h"
-#include "A2DBackBuffer.h"
-#include "A2DQuad.h"
+#include "ExtLibs.h"
+#include "Abstract.h"
+#include "Pipelineable.h"
+#include "Rect.h"
+#include "VertexData.h"
+#include "BackBuffer.h"
+#include "Quad.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
+class ;
+class Abstract;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -42,16 +42,16 @@ class A2DAbstract;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DQuadX : public A2DQuad
+class QuadX : public Quad
 {
 public:
-	A2DQuadX(A2DBackBuffer * xBuffer, A2DRect xConstraints, int xQuadCount);
-	~A2DQuadX();
+	QuadX(BackBuffer * xBuffer, Rect xConstraints, int xQuadCount);
+	~QuadX();
 
 	int								aQuadCount; // number of quads
 
-	const int						A2DQUADX_HORIZONTAL_MODE = 0x04215; // horizontal quad
-	const int						A2DQUADX_VERTICAL_MODE = 0x02414;
+	const int						QUADX_HORIZONTAL_MODE = 0x04215; // horizontal quad
+	const int						QUADX_VERTICAL_MODE = 0x02414;
 
 	///////////////////////////////////////////
 
@@ -82,14 +82,14 @@ protected:
 public:
 
 	//////////////////////////////////////////////////////////
-	// A2DABSTRACT IMPLEMENTATION
+	// ABSTRACT IMPLEMENTATION
 	//////////////////////////////////////////////////////////
 
 	virtual HRESULT                 Initialize() = 0;
 	virtual void                    Deinitialize() = 0;
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * A2DAbstract);
+	virtual bool                    operator==(Abstract * Abstract);
 	
 };
 

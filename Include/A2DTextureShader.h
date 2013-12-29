@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTEXTURESHADER_H__
-#define __A2DTEXTURESHADER_H__
+#ifndef __TEXTURESHADER_H__
+#define __TEXTURESHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      A2DTEXTURESHADER
+//      TEXTURESHADER
 //
 //  Synopsis:
 //      Texture quad.
@@ -19,26 +19,26 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DDXShaderUtils.h"
-#include "A2DTexture.h"
+#include "ExtLibs.h"
+#include "DXShaderUtils.h"
+#include "Texture.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
+class ;
+class Abstract;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DTextureShader : public A2DDXShaderUtils
+class TextureShader : public DXShaderUtils
 {
 public:
-	A2DTextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrixPtr, float ** xViewMatrix, float ** xProjectionMatrix);
-	~A2DTextureShader();
+	TextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrixPtr, float ** xViewMatrix, float ** xProjectionMatrix);
+	~TextureShader();
 
 private:
 
@@ -60,25 +60,25 @@ private:
 	ID3D10BlendState			*	aBlendState;
 	ID3D10BlendState			*	aBlendDisabledState;
 
-	A2DTexture					*	aTexture;
+	Texture					*	aTexture;
 
 public:
 
-	void							setTexture(A2DTexture * xTexture);
+	void							setTexture(Texture * xTexture);
 	void							loadMatrices();
 	void							renderTexture();
 
 public:
 
 	//////////////////////////////////////////////////////////
-	// A2DABSTRACT IMPLEMENTATION
+	// ABSTRACT IMPLEMENTATION
 	//////////////////////////////////////////////////////////
 
 	virtual HRESULT	                Initialize();
 	virtual void	                Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 };
 
 

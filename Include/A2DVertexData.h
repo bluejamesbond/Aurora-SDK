@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DVERTEXDATA_H__
-#define __A2DVERTEXDATA_H__
+#ifndef __VERTEXDATA_H__
+#define __VERTEXDATA_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DVERTEXDATA
+//      VERTEXDATA
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -24,33 +24,33 @@
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class   A2D;
-class   A2DAbstract;
-class   A2DRenderable;
-class   A2DAbstractComponent;
-class   A2DCamera;
-struct  A2DCameraProperties;
-struct  A2DRenderData;
-class   A2DMatrixFactory;
-class   A2DBackBuffer;
-class   A2DMatrixFactory;
-class   A2DModelFactory;
-class   A2DRootPane;
-struct  A2DWindowProperties;
-class   A2DWindow;
-class	A2DImagePanel;
+class   ;
+class   Abstract;
+class   Renderable;
+class   AbstractComponent;
+class   Camera;
+struct  CameraProperties;
+struct  RenderData;
+class   MatrixFactory;
+class   BackBuffer;
+class   MatrixFactory;
+class   ModelFactory;
+class   RootPane;
+struct  WindowProperties;
+class   Window;
+class	ImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DVERTEXDATA_LL(str1, str2)                 str1 str2
+#define VERTEXDATA_LL(str1, str2)                 str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DVertexData
+struct VertexData
 {
     // Constructor
     // { NONE }
@@ -86,12 +86,12 @@ struct A2DVertexData
 //public:
 //
 //    // Implementation
-//    // { A2DABSTRACT }
+//    // { ABSTRACT }
 //    virtual HRESULT                 Initialize();
 //    virtual void                    Deinitialize();
 //    virtual LPCWSTR                 GetClass();
 //    virtual LPCWSTR                 ToString();
-//    virtual bool                    operator==(A2DAbstract * xAbstract);
+//    virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

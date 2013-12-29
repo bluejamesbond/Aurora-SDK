@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DCAMERAPROPERTIES_H__
-#define __A2DCAMERAPROPERTIES_H__
+#ifndef __CAMERAPROPERTIES_H__
+#define __CAMERAPROPERTIES_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Struct:
-//      A2DCAMERAPROPERTIES
+//      CAMERAPROPERTIES
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,42 +20,42 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
+#include "Abstract.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
-class A2DImagePanel;
+class Window;
+class ImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DCAMERAPROPERTIES_LL(str1, str2)                    str1 str2
+#define CAMERAPROPERTIES_LL(str1, str2)                    str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DCameraProperties : public A2DAbstract
+struct CameraProperties : public Abstract
 {
 public:
     // Constructor
-    A2DCameraProperties() :                                   // default values for camera properties
+    CameraProperties() :                                   // default values for camera properties
         aPositionX(0.0f),
         aPositionY(0.0f),
         aPositionZ(0.0f),
@@ -66,7 +66,7 @@ public:
         aLookAtY(0.0f),
         aLookAtZ(1.0f){}
 
-    A2DCameraProperties(float xPositionX, float xPositionY, float xPositionZ, float xRotationX, float xRotationY, float xRotationZ):
+    CameraProperties(float xPositionX, float xPositionY, float xPositionZ, float xRotationX, float xRotationY, float xRotationZ):
         aPositionX(xPositionX),
         aPositionY(xPositionY),
         aPositionZ(xPositionZ),
@@ -119,12 +119,12 @@ public:
 public:
 
     // Implementation
-    // { A2DABSTRACT }
+    // { ABSTRACT }
     virtual HRESULT                 Initialize();
     virtual void                    Deinitialize();
     virtual LPCWSTR                 GetClass();
     virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
+    virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

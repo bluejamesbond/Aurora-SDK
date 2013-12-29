@@ -1,21 +1,21 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DCamera.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Camera.h"
 
-A2DCamera::A2DCamera() :
+Camera::Camera() :
 aCameraProps(NULL){}
 
-A2DCamera::A2DCamera(A2DCameraProperties * xCameraProps) :
+Camera::Camera(CameraProperties * xCameraProps) :
 aCameraProps(xCameraProps){}
 
-A2DCamera::~A2DCamera(){}
+Camera::~Camera(){}
 
-A2DCameraProperties * A2DCamera::GetProperties()
+CameraProperties * Camera::GetProperties()
 {
 	return aCameraProps;
 }
 
-D3DXMATRIX* A2DCamera::GetViewMatrix()
+D3DXMATRIX* Camera::GetViewMatrix()
 {
 	return aViewMatrix;
 }
@@ -24,26 +24,26 @@ D3DXMATRIX* A2DCamera::GetViewMatrix()
 // REQUIRED BY ABSTRACT_AURORA
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DCamera::GetClass()
+LPCWSTR Camera::GetClass()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-LPCWSTR A2DCamera::ToString()
+LPCWSTR Camera::ToString()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-bool A2DCamera::operator==(A2DAbstract * xAbstract)
+bool Camera::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-HRESULT A2DCamera::Initialize()
+HRESULT Camera::Initialize()
 {
 	// -----------------------------------------------------
 
-	aCameraProps = aCameraProps == NULL ? new A2DCameraProperties() : aCameraProps;
+	aCameraProps = aCameraProps == NULL ? new CameraProperties() : aCameraProps;
 	aViewMatrix = new D3DXMATRIX();
 
 	// -----------------------------------------------------
@@ -51,7 +51,7 @@ HRESULT A2DCamera::Initialize()
 	return S_OK;
 }
 
-void A2DCamera::CreateResources()
+void Camera::CreateResources()
 {
 
 	D3DXVECTOR3 up, position, lookAt;
@@ -92,7 +92,7 @@ void A2DCamera::CreateResources()
 	D3DXMatrixLookAtLH(aViewMatrix, &position, &lookAt, &up);
 }
 
-void A2DCamera::Deinitialize()
+void Camera::Deinitialize()
 {
 	// Release the CameraProperties object.
 	if (aCameraProps)

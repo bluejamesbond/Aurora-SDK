@@ -1,28 +1,28 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DVertexData.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/VertexData.h"
 
-//LPCWSTR A2DVertexData::GetClass()
+//LPCWSTR VertexData::GetClass()
 //{
-//    return L"A2DVertexType";
+//    return L"VertexType";
 //}
 //
-//LPCWSTR A2DVertexData::ToString()
+//LPCWSTR VertexData::ToString()
 //{
-//    return L"A2DVertexType";
+//    return L"VertexType";
 //}
 //
-//bool A2DVertexData::operator==(A2DAbstract * xAbstract)
+//bool VertexData::operator==(Abstract * xAbstract)
 //{
 //    return false;
 //}
 //
-//HRESULT A2DVertexData::Initialize()
+//HRESULT VertexData::Initialize()
 //{ 
 //    return NULL;
 //}
 //
-//void A2DVertexData::Deinitialize()
+//void VertexData::Deinitialize()
 //{
 //	if (texture)
 //    {

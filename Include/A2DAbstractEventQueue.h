@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACTEVENTQUEUE_H__
-#define __A2DABSTRACTEVENTQUEUE_H__
+#ifndef __ABSTRACTEVENTQUEUE_H__
+#define __ABSTRACTEVENTQUEUE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DABSTRACTEVENTQUEUE
+//      ABSTRACTEVENTQUEUE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,55 +20,55 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
-#include "A2DRenderable.h"
-#include "A2DAbstractThread.h"
-#include "A2DToolkit.h"
-#include "A2DRunnable.h"
-#include "A2DRect.h"
+#include "Abstract.h"
+#include "Renderable.h"
+#include "AbstractThread.h"
+#include "Toolkit.h"
+#include "Runnable.h"
+#include "Rect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractFrame;
-class A2DAbstractWindow;
-class A2DWindow;
+class AbstractFrame;
+class AbstractWindow;
+class Window;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
 
-class A2DAbstractEventQueue : public A2DRunnable, public A2DAbstract
+class AbstractEventQueue : public Runnable, public Abstract
 {
 public:
 
-	A2DAbstractEventQueue(A2DAbstractFrame * xFrame);
+	AbstractEventQueue(AbstractFrame * xFrame);
 
 private:
 
-    A2DRunnable               *     aImmediateRunnable = NULL;
-	A2DAbstractThread		  *		aThread = NULL;
+    Runnable               *     aImmediateRunnable = NULL;
+	AbstractThread		  *		aThread = NULL;
 
 protected:
 
-	A2DAbstractFrame		  *		aFrame;
+	AbstractFrame		  *		aFrame;
 
 public:
 
-    void                            invokeLater(A2DRunnable * xRunnable);
-    void                            invokeAndWait(A2DRunnable * xRunnable);
+    void                            invokeLater(Runnable * xRunnable);
+    void                            invokeAndWait(Runnable * xRunnable);
     void                            clearQueue();
 	bool							dispatchNextEvent();
-	A2DAbstractThread		 *		getDispatchingThread();
+	AbstractThread		 *		getDispatchingThread();
 
 	static bool						isDispatchingThread(int xFrameId);
     void							invokeRerender();
     void							invokeRevalidate();
     void							invokeReset();
 
-    void                            invokeAnimationFrame(int xTime, A2DRunnable * xRunnable);
+    void                            invokeAnimationFrame(int xTime, Runnable * xRunnable);
 	
 	int		 						waitForAllDispatchingThreads();
 
@@ -77,8 +77,8 @@ public:
 	void							interruptDispatchingThread();
 	void							resumeDispatchingThread();
 
-	static A2DAbstractEventQueue*	aClassInstance;
-	static A2DAbstractEventQueue*	getInstance();
+	static AbstractEventQueue*	aClassInstance;
+	static AbstractEventQueue*	getInstance();
 
     // Queue
 
@@ -86,21 +86,21 @@ public:
 
     virtual bool                    getQueueLock() = 0;
 	virtual void                    releaseQueueLock() = 0;
-	virtual A2DRunnable *           peekEvent() = 0;
+	virtual Runnable *           peekEvent() = 0;
 	virtual void					popEvent() = 0;
 	virtual bool                    hasEvent() = 0;
 
 protected:
 
-    virtual void                    pushEvent(A2DRunnable * xRunnable) = 0;
+    virtual void                    pushEvent(Runnable * xRunnable) = 0;
 	virtual void                    removeAllEvents() = 0;
 	virtual void					run(int xThreadId);
 
 	// Creators
-	virtual A2DAbstractThread*		createPlatformCompatibleThread(A2DRunnable * xRunnable) = 0;
+	virtual AbstractThread*		createPlatformCompatibleThread(Runnable * xRunnable) = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
 public:
@@ -109,7 +109,7 @@ public:
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass() = 0;
 	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
+	virtual bool                    operator==(Abstract * xAbstract) = 0;
 
 };
 

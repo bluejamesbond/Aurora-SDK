@@ -1,13 +1,13 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DTextureShader.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/TextureShader.h"
 
-A2DTextureShader::A2DTextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrix, float ** xViewMatrix, float ** xProjectionMatrix) : 
+TextureShader::TextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrix, float ** xViewMatrix, float ** xProjectionMatrix) : 
 aDXDevice(xDXDevice), aWorldMatrix(xWorldMatrix), aViewMatrix(xViewMatrix), aProjectionMatrix(xProjectionMatrix) {}
 
-A2DTextureShader::~A2DTextureShader(){}
+TextureShader::~TextureShader(){}
 
-HRESULT A2DTextureShader::Initialize()
+HRESULT TextureShader::Initialize()
 {
 	HRESULT hr = S_OK;
 
@@ -18,14 +18,14 @@ HRESULT A2DTextureShader::Initialize()
 	// Cache the device onto L1 CPU cache for speed
 	ID3D10Device * device = *aDXDevice;
 
-	// Use the A2DDXShaderUtils to create a shader
+	// Use the DXShaderUtils to create a shader
 	// and cache it.
-	hr = A2DDXShaderUtils::LoadShaderFromFile(L"../../../Aurora-SDK/Lib/Assets/Shaders/texture.fx", device, &aEffect);
+	hr = DXShaderUtils::LoadShaderFromFile(L"../../../Aurora-SDK/Lib/Assets/Shaders/texture.fx", device, &aEffect);
 	if (FAILED(hr))			return hr;
 
 	// Create alpha channel supported blend states
 	// and cache it for reuse.
-	hr = A2DDXShaderUtils::CreatePNGCompatibleBlendStates(device, &aBlendState, &aBlendDisabledState);
+	hr = DXShaderUtils::CreatePNGCompatibleBlendStates(device, &aBlendState, &aBlendDisabledState);
 	if (FAILED(hr))			return hr;
 
 	// Get a pointer to the technique inside the shader.
@@ -33,9 +33,9 @@ HRESULT A2DTextureShader::Initialize()
 	if (!aTechnique)		return E_FAIL;
 
 	// Now setup the layout of the data that goes into the shader.
-	// This setup needs to match the A2DVertexData stucture.
-	// This is based on A2DQuad input data which in this case is
-	// A2DVertexData
+	// This setup needs to match the VertexData stucture.
+	// This is based on Quad input data which in this case is
+	// VertexData
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -76,7 +76,7 @@ HRESULT A2DTextureShader::Initialize()
 	return hr;
 }
 
-void A2DTextureShader::loadMatrices()
+void TextureShader::loadMatrices()
 {
 	// Set the world matrix variable 
 	// inside the shader.
@@ -91,7 +91,7 @@ void A2DTextureShader::loadMatrices()
 	aProjectionMatrixPtr->SetMatrix(*aProjectionMatrix);
 }
 
-void A2DTextureShader::setTexture(A2DTexture * xTexture)
+void TextureShader::setTexture(Texture * xTexture)
 {
 	aTexture = xTexture;
 
@@ -100,7 +100,7 @@ void A2DTextureShader::setTexture(A2DTexture * xTexture)
 	aTexturePtr->SetResource(static_cast<ID3D10ShaderResourceView*>(xTexture->getPlatformCompatibleResource()));
 }
 
-void A2DTextureShader::renderTexture()
+void TextureShader::renderTexture()
 {
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	unsigned int i;
@@ -138,22 +138,22 @@ void A2DTextureShader::renderTexture()
 	}
 }
 
-LPCWSTR A2DTextureShader::ToString()
+LPCWSTR TextureShader::ToString()
 {
-	return L"A2DTextureShader";
+	return L"TextureShader";
 }
 
-LPCWSTR A2DTextureShader::GetClass()
+LPCWSTR TextureShader::GetClass()
 {
-	return L"A2DTextureShader";
+	return L"TextureShader";
 }
 
-void A2DTextureShader::Deinitialize()
+void TextureShader::Deinitialize()
 {
 	// Please add all the destroy data
 }
 
-bool A2DTextureShader::operator==(A2DAbstract * xAbstract)
+bool TextureShader::operator==(Abstract * xAbstract)
 {
 	return false;
 }

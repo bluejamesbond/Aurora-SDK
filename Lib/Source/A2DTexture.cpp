@@ -1,26 +1,26 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DTexture.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Texture.h"
 
-A2DTexture::A2DTexture(ID3D10Device ** xDXDevice, LPCWSTR * xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
+Texture::Texture(ID3D10Device ** xDXDevice, LPCWSTR * xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
 {
 	aResource = NULL;
 }
 
-A2DTexture::~A2DTexture(){}
+Texture::~Texture(){}
 
-bool A2DTexture::hasAlpha()
+bool Texture::hasAlpha()
 {
 	// Force to be true
 	return true;
 }
 
-void * A2DTexture::getPlatformCompatibleResource()
+void * Texture::getPlatformCompatibleResource()
 {
 	return aResource;
 }
 
-HRESULT A2DTexture::changeTexture(LPCWSTR * xSrc)
+HRESULT Texture::changeTexture(LPCWSTR * xSrc)
 {
 	aSrc = xSrc;
 
@@ -33,10 +33,10 @@ HRESULT A2DTexture::changeTexture(LPCWSTR * xSrc)
  
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-void A2DTexture::Deinitialize()
+void Texture::Deinitialize()
 {
 	if (aResource)
 	{
@@ -45,9 +45,9 @@ void A2DTexture::Deinitialize()
 	}
 }
 
-ID3D10ShaderResourceView* A2DTexture::aStaticResource;
+ID3D10ShaderResourceView* Texture::aStaticResource;
 
-HRESULT A2DTexture::Initialize()
+HRESULT Texture::Initialize()
 {
 	HRESULT hr = S_OK;
 	D3DX10_IMAGE_LOAD_INFO loadInfo;
@@ -86,17 +86,17 @@ HRESULT A2DTexture::Initialize()
 	return hr;
 }
 
-LPCWSTR A2DTexture::GetClass()
+LPCWSTR Texture::GetClass()
 {
-	return L"A2DTexture";
+	return L"Texture";
 }
 
-LPCWSTR A2DTexture::ToString()
+LPCWSTR Texture::ToString()
 {
-	return L"A2DTexture";
+	return L"Texture";
 }
 
-bool A2DTexture::operator==(A2DAbstract * xAbstract)
+bool Texture::operator==(Abstract * xAbstract)
 {
 	return false;
 }

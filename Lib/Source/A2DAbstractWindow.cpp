@@ -1,10 +1,10 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DAbstractWindow.h"
-#include "../../include/A2DAbstractFrame.h"
-#include "../../include/A2DAbstractEventQueue.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/AbstractWindow.h"
+#include "../../include/AbstractFrame.h"
+#include "../../include/AbstractEventQueue.h"
 
-A2DAbstractWindow::A2DAbstractWindow(A2DAbstractFrame * xFrame) : aFrame(xFrame) {}
+AbstractWindow::AbstractWindow(AbstractFrame * xFrame) : aFrame(xFrame) {}
 
 /**
 * Notifies the user whether the window object being referenced
@@ -14,7 +14,7 @@ A2DAbstractWindow::A2DAbstractWindow(A2DAbstractFrame * xFrame) : aFrame(xFrame)
 * @return bool
 *			the boolean indicating whether window is shadowed
 */
-bool A2DAbstractWindow::isShadowed()
+bool AbstractWindow::isShadowed()
 {
 	return aShadowed;
 }
@@ -26,7 +26,7 @@ bool A2DAbstractWindow::isShadowed()
 * @return bool
 *			the boolean indicating whether window is undecorated
 */
-bool A2DAbstractWindow::isUndecorated()
+bool AbstractWindow::isUndecorated()
 {
 	return aUndecorated;
 }
@@ -39,7 +39,7 @@ bool A2DAbstractWindow::isUndecorated()
 *			the boolean indicating whether window is set
 *			as visible
 */
-bool A2DAbstractWindow::isVisible()
+bool AbstractWindow::isVisible()
 {
 	return aVisible;
 }
@@ -51,7 +51,7 @@ bool A2DAbstractWindow::isVisible()
 * @return Color
 *			The Color object of border
 */
-A2DColor A2DAbstractWindow::getBorderColor()
+Color AbstractWindow::getBorderColor()
 {
 	return aOptBorderColor;
 }
@@ -63,7 +63,7 @@ A2DColor A2DAbstractWindow::getBorderColor()
 * @return LPCWSTR
 *			Long string representation of the name
 */
-LPCWSTR A2DAbstractWindow::getName()
+LPCWSTR AbstractWindow::getName()
 {
 	return aName;
 }
@@ -72,36 +72,36 @@ LPCWSTR A2DAbstractWindow::getName()
 * returns the reference Frame of the specified Window object
 *
 * @param void
-* @return A2DAbstractFrame
+* @return AbstractFrame
 the Frame that is associated with the window
 */
-A2DAbstractFrame *  A2DAbstractWindow::getFrame()
+AbstractFrame *  AbstractWindow::getFrame()
 {
 	return aFrame;
 }
 
 /**
-* returns a pointer to the A2DRect object associated with
-* the A2DAbstractWindow object referenced
+* returns a pointer to the Rect object associated with
+* the AbstractWindow object referenced
 *
 * @param void
-* @return A2DRect*
+* @return Rect*
 the Frame that is associated with the window
 */
-A2DRect A2DAbstractWindow::getBounds()
+Rect AbstractWindow::getBounds()
 {
 	return aRect;
 }
 
-A2DDims * A2DAbstractWindow::_getSize()
+Dims * AbstractWindow::_getSize()
 {
-	return static_cast<A2DDims*>(&aRect);
+	return static_cast<Dims*>(&aRect);
 }
 
 
-A2DDims A2DAbstractWindow::getSize()
+Dims AbstractWindow::getSize()
 {
-	return static_cast<A2DDims>(aRect);
+	return static_cast<Dims>(aRect);
 }
 
 /**
@@ -112,7 +112,7 @@ A2DDims A2DAbstractWindow::getSize()
 * @return Color
 *			The Color object of the Shadow
 */
-A2DColor A2DAbstractWindow::getShadowColor()
+Color AbstractWindow::getShadowColor()
 {
 	return aOptShadowColor;
 }
@@ -125,7 +125,7 @@ A2DColor A2DAbstractWindow::getShadowColor()
 * @return Color
 *			The Color object of the Background
 */
-A2DColor A2DAbstractWindow::getBackgroundColor()
+Color AbstractWindow::getBackgroundColor()
 {
 	return aOptBackgroundColor;
 }
@@ -138,7 +138,7 @@ A2DColor A2DAbstractWindow::getBackgroundColor()
 * @return int
 *			Value of the Close Operation
 */
-int A2DAbstractWindow::getDefaultCloseOperation()
+int AbstractWindow::getDefaultCloseOperation()
 {
 	return aDefaultCloseOperation;
 }
@@ -151,33 +151,33 @@ int A2DAbstractWindow::getDefaultCloseOperation()
 * @return float
 *			width of the border
 */
-float A2DAbstractWindow::getBorderWidth()
+float AbstractWindow::getBorderWidth()
 {
 	return aOptBorderWidth;
 }
 
 /**
 * Returns the minimum size dimensions of the referenced
-* A2DAbstractWindow object
+* AbstractWindow object
 *
 * @param void
-* @return A2DDims*
-*			A2Dim of min. size
+* @return Dims*
+*			im of min. size
 */
-A2DDims A2DAbstractWindow::getMinimumSize()
+Dims AbstractWindow::getMinimumSize()
 {
 	return aMinDims;
 }
 
 /**
 * Returns the minimum size dimensions of the referenced
-* A2DAbstractWindow object
+* AbstractWindow object
 *
 * @param void
-* @return A2DDims*
-*			Pointer to A2Dim of max. size
+* @return Dims*
+*			Pointer to im of max. size
 */
-A2DDims A2DAbstractWindow::getMaximumSize()
+Dims AbstractWindow::getMaximumSize()
 {
 	return aMaxDims;
 }
@@ -190,18 +190,18 @@ A2DDims A2DAbstractWindow::getMaximumSize()
 * @return float
 *			radius of the shadow
 */
-float A2DAbstractWindow::getShadowRadius()
+float AbstractWindow::getShadowRadius()
 {
 	return aOptShadowRadius;
 }
 
 /**
-* Update and re-renders the A2DAbstractWindow object
+* Update and re-renders the AbstractWindow object
 *
 * @param void
 * @return void
 */
-void A2DAbstractWindow::update()
+void AbstractWindow::update()
 {
 	if (!aValidatedContents)
 	{
@@ -211,27 +211,27 @@ void A2DAbstractWindow::update()
 	render();
 }
 
-void A2DAbstractWindow::invalidate()
+void AbstractWindow::invalidate()
 {
 	aValidatedContents = false;
 }
 
-void A2DAbstractWindow::validated()
+void AbstractWindow::validated()
 {
 	aValidatedContents = true;
 }
 
-void A2DAbstractWindow::revalidate()
+void AbstractWindow::revalidate()
 {
 	validate();
 }
 
-HRESULT A2DAbstractWindow::Initialize()
+HRESULT AbstractWindow::Initialize()
 {
 	HRESULT hr = S_OK;
 	
 	//------------------------------------------------------------
-	// A2DABSTRACTWINDOW DEFAULTS
+	// ABSTRACTWINDOW DEFAULTS
 	//------------------------------------------------------------
 
 	// Default name

@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTOOLKIT_H__
-#define __A2DTOOLKIT_H__
+#ifndef __TOOLKIT_H__
+#define __TOOLKIT_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DTOOLKIT
+//      TOOLKIT
 //
 //  Synopsis:
 //      Texture container class.
@@ -23,23 +23,23 @@
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractEventQueue;
+class AbstractEventQueue;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DToolkit
+class Toolkit
 {
 public:
 
 	static int					  waitForBackgroundThreads();
-	static A2DAbstractEventQueue* getSystemEventQueue(int xFrameInstanceIndex);
-	static void					  addSystemEventQueue(A2DAbstractEventQueue * xEventQueue);
+	static AbstractEventQueue* getSystemEventQueue(int xFrameInstanceIndex);
+	static void					  addSystemEventQueue(AbstractEventQueue * xEventQueue);
 
 private:
 
-	static A2DAbstractEventQueue* aEventQueues[20];
+	static AbstractEventQueue* aEventQueues[20];
 	static int					  aEventQueuesLength;
 	static int					  aEventQueuesIndex;
 };

@@ -1,99 +1,99 @@
-int A2DTween::Swing ( int x, int t, int b, int c, int d) 
+int Tween::Swing ( int x, int t, int b, int c, int d) 
 {
     //alert(jQuery.easing.default);
     return jQuery.easing[jQuery.easing.def](x, t, b, c, d);
 }
 
-int A2DTween::EaseInQuad ( int x, int t, int b, int c, int d) 
+int Tween::EaseInQuad ( int x, int t, int b, int c, int d) 
 {
     return c*(t/=d)*t + b;
 }
 
-int A2DTween::EaseOutQuad ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutQuad ( int x, int t, int b, int c, int d) 
 {
     return -c *(t/=d)*(t-2) + b;
 }
 
-int A2DTween::EaseInOutQuad ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutQuad ( int x, int t, int b, int c, int d) 
 {
     if ((t/=d/2) < 1) return c/2*t*t + b;
     return -c/2 * ((--t)*(t-2) - 1) + b;
 }
 
-int A2DTween::EaseInCubic ( int x, int t, int b, int c, int d) 
+int Tween::EaseInCubic ( int x, int t, int b, int c, int d) 
 {
     return c*(t/=d)*t*t + b;
 }
 
-int A2DTween::EaseOutCubic ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutCubic ( int x, int t, int b, int c, int d) 
 {
     return c*((t=t/d-1)*t*t + 1) + b;
 }
 
-int A2DTween::EaseInOutCubic ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutCubic ( int x, int t, int b, int c, int d) 
 {
     if ((t/=d/2) < 1) return c/2*t*t*t + b;
     return c/2*((t-=2)*t*t + 2) + b;
 }
 
-int A2DTween::EaseInQuart ( int x, int t, int b, int c, int d) 
+int Tween::EaseInQuart ( int x, int t, int b, int c, int d) 
 {
     return c*(t/=d)*t*t*t + b;
 }
 
-int A2DTween::EaseOutQuart ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutQuart ( int x, int t, int b, int c, int d) 
 {
     return -c * ((t=t/d-1)*t*t*t - 1) + b;
 }
 
-int A2DTween::EaseInOutQuart ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutQuart ( int x, int t, int b, int c, int d) 
 {
     if ((t/=d/2) < 1) return c/2*t*t*t*t + b;
     return -c/2 * ((t-=2)*t*t*t - 2) + b;
 }
 
-int A2DTween::EaseInQuint ( int x, int t, int b, int c, int d) 
+int Tween::EaseInQuint ( int x, int t, int b, int c, int d) 
 {
     return c*(t/=d)*t*t*t*t + b;
 }
 
-int A2DTween::EaseOutQuint ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutQuint ( int x, int t, int b, int c, int d) 
 {
     return c*((t=t/d-1)*t*t*t*t + 1) + b;
 }
 
-int A2DTween::EaseInOutQuint ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutQuint ( int x, int t, int b, int c, int d) 
 {
     if ((t/=d/2) < 1) return c/2*t*t*t*t*t + b;
     return c/2*((t-=2)*t*t*t*t + 2) + b;
 }
 
-int A2DTween::EaseInSine ( int x, int t, int b, int c, int d) 
+int Tween::EaseInSine ( int x, int t, int b, int c, int d) 
 {
     return -c * cos(t/d * (PI/2)) + c + b;
 }
 
-int A2DTween::EaseOutSine ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutSine ( int x, int t, int b, int c, int d) 
 {
     return c * sin(t/d * (PI/2)) + b;
 }
 
-int A2DTween::EaseInOutSine ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutSine ( int x, int t, int b, int c, int d) 
 {
     return -c/2 * (cos(PI*t/d) - 1) + b;
 }
 
-int A2DTween::EaseInExpo ( int x, int t, int b, int c, int d) 
+int Tween::EaseInExpo ( int x, int t, int b, int c, int d) 
 {
-    return (t==0) ? b  A2DEasing::.pow(2, 10 * (t/d - 1)) + b;
+    return (t==0) ? b  Easing::.pow(2, 10 * (t/d - 1)) + b;
 }
 
-int A2DTween::EaseOutExpo ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutExpo ( int x, int t, int b, int c, int d) 
 {
-    return (t==d) ? b+c  A2DEasing::th.pow(2, -10 * t/d) + 1) + b;
+    return (t==d) ? b+c  Easing::th.pow(2, -10 * t/d) + 1) + b;
 }
 
-int A2DTween::EaseInOutExpo ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutExpo ( int x, int t, int b, int c, int d) 
 {
     if (t==0) return b;
     if (t==d) return b+c;
@@ -101,23 +101,23 @@ int A2DTween::EaseInOutExpo ( int x, int t, int b, int c, int d)
     return c/2 * (-pow(2, -10 * --t) + 2) + b;
 }
 
-int A2DTween::EaseInCirc ( int x, int t, int b, int c, int d) 
+int Tween::EaseInCirc ( int x, int t, int b, int c, int d) 
 {
     return -c * (sqrt(1 - (t/=d)*t) - 1) + b;
 }
 
-int A2DTween::EaseOutCirc ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutCirc ( int x, int t, int b, int c, int d) 
 {
     return c * sqrt(1 - (t=t/d-1)*t) + b;
 }
 
-int A2DTween::EaseInOutCirc ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutCirc ( int x, int t, int b, int c, int d) 
 {
     if ((t/=d/2) < 1) return -c/2 * (sqrt(1 - t*t) - 1) + b;
     return c/2 * (sqrt(1 - (t-=2)*t) + 1) + b;
 }
 
-int A2DTween::EaseInElastic ( int x, int t, int b, int c, int d) 
+int Tween::EaseInElastic ( int x, int t, int b, int c, int d) 
 {
     var s=1.70158;var p=0;var a=c;
     if (t==0) return b;  if ((t/=d)==1) return b+c;  
@@ -128,7 +128,7 @@ int A2DTween::EaseInElastic ( int x, int t, int b, int c, int d)
     return -(a*pow(2,10*(t-=1)) * sin( (t*d-s)*(2*PI)/p )) + b;
 }
 
-int A2DTween::EaseOutElastic ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutElastic ( int x, int t, int b, int c, int d) 
 {
     var s=1.70158;var p=0;var a=c;
     if (t==0) return b;  if ((t/=d)==1) return b+c;  
@@ -139,7 +139,7 @@ int A2DTween::EaseOutElastic ( int x, int t, int b, int c, int d)
     return a*pow(2,-10*t) * sin( (t*d-s)*(2*PI)/p ) + c + b;
 }
 
-int A2DTween::EaseInOutElastic ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutElastic ( int x, int t, int b, int c, int d) 
 {
     var s=1.70158;var p=0;var a=c;
     if (t==0) return b;  if ((t/=d/2)==2) return b+c;  
@@ -151,31 +151,31 @@ int A2DTween::EaseInOutElastic ( int x, int t, int b, int c, int d)
     return a*pow(2,-10*(t-=1)) * sin( (t*d-s)*(2*PI)/p )*.5 + c + b;
 }
 
-int A2DTween::EaseInBack ( int x, int t, int b, int c, int d) 
+int Tween::EaseInBack ( int x, int t, int b, int c, int d) 
 {
     int s = 1.70158;
     return c*(t/=d)*t*((s+1)*t - s) + b;
 }
 
-int A2DTween::EaseOutBack ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutBack ( int x, int t, int b, int c, int d) 
 {
     int s = 1.70158;
     return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
 }
 
-int A2DTween::EaseInOutBack ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutBack ( int x, int t, int b, int c, int d) 
 {
     int s = 1.70158; 
     if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
     return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
 }
 
-int A2DTween::EaseInBounce ( int x, int t, int b, int c, int d) 
+int Tween::EaseInBounce ( int x, int t, int b, int c, int d) 
 {
     return c - jQuery.easing.easeOutBounce (x, d-t, 0, c, d) + b;
 }
 
-int A2DTween::EaseOutBounce ( int x, int t, int b, int c, int d) 
+int Tween::EaseOutBounce ( int x, int t, int b, int c, int d) 
 {
     if ((t/=d) < (1/2.75)) 
     {
@@ -195,8 +195,8 @@ int A2DTween::EaseOutBounce ( int x, int t, int b, int c, int d)
     }
 }
 
-int A2DTween::EaseInOutBounce ( int x, int t, int b, int c, int d) 
+int Tween::EaseInOutBounce ( int x, int t, int b, int c, int d) 
 {
-    if (t < d/2) return A2DTween::EaseInBounce (x, t*2, 0, c, d) * .5 + b;
-    return A2DTween::EaseOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+    if (t < d/2) return Tween::EaseInBounce (x, t*2, 0, c, d) * .5 + b;
+    return Tween::EaseOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
 }

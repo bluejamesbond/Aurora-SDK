@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DMATRIXFACTORY_H__
-#define __A2DMATRIXFACTORY_H__
+#ifndef __MATRIXFACTORY_H__
+#define __MATRIXFACTORY_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DMATRIXFACTORY
+//      MATRIXFACTORY
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,44 +20,44 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DDims.h"
-#include "A2DGXSettings.h"
+#include "Dims.h"
+#include "GXSettings.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
-class A2DWindow;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
+class Window;
 
 ////////////////////////////////////////////////////////////////////////////////The 
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DMATRIXFACTORY_LL(str1, str2)                       str1 str2
+#define MATRIXFACTORY_LL(str1, str2)                       str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DMatrixFactory
+class MatrixFactory
 {
 
 public:
 
     // Factory
     static D3DXMATRIX         *     createDefaultWorldMatrix();
-	static D3DXMATRIX         *     createDefaultProjectionMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings);
-	static D3DXMATRIX         *     createDefaultOrthogonalMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings);
+	static D3DXMATRIX         *     createDefaultProjectionMatrix(Dims * xWindowSize, GXSettings * xSettings);
+	static D3DXMATRIX         *     createDefaultOrthogonalMatrix(Dims * xWindowSize, GXSettings * xSettings);
     
 
 };

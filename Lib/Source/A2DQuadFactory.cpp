@@ -1,20 +1,20 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DQuadFactory.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/QuadFactory.h"
 
-A2DQuadFactory::A2DQuadFactory(ID3D10Device ** xDXDevice, A2DDims * xWindowDims) : aDXDevice(xDXDevice), aWindowDims(xWindowDims){}
+QuadFactory::QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims) : aDXDevice(xDXDevice), aWindowDims(xWindowDims){}
 
-A2DQuadFactory::~A2DQuadFactory(){}
+QuadFactory::~QuadFactory(){}
 
-bool A2DQuadFactory::setConstraints(A2DQuadData * aQuadData, A2DRect * xContraints)
+bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
 {
 
-	A2DRect::memcpySSE2(&aConstraints, xContraints);
+	Rect::memcpySSE2(&aConstraints, xContraints);
 
 	// WHy store contraints into every QuadData
-//	if (memcmp(&aQuadData->aPreviousContraints, xContraints, sizeof(A2DRect)) != 0)
+//	if (memcmp(&aQuadData->aPreviousContraints, xContraints, sizeof(Rect)) != 0)
 //	{
-//		x_aligned_memcpy_sse2(&aQuadData->aPreviousContraints, xContraints, sizeof(A2DRect));
+//		x_aligned_memcpy_sse2(&aQuadData->aPreviousContraints, xContraints, sizeof(Rect));
 //		return aContraintsChanged = true;
 //	}
 //	else
@@ -25,13 +25,13 @@ bool A2DQuadFactory::setConstraints(A2DQuadData * aQuadData, A2DRect * xContrain
 	return true;
 }
 
-HRESULT A2DQuadFactory::updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xRect, A2DRect * xTextureClip,
-					A2DDims * xTextureDims, A2DImageProperties * xImageProperties)
+HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip,
+					Dims * xTextureDims, ImageProperties * xImageProperties)
 {
 	HRESULT hr = S_OK;
 
 
-	A2DRect& contraints = aConstraints;
+	Rect& contraints = aConstraints;
 
 	int textureDimsChange = 0;
 	int textureClipChange = 0;
@@ -48,16 +48,16 @@ HRESULT A2DQuadFactory::updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xR
 	
 	/*
 	// Compare using built in accelerated-function
-	rectChange = memcmp(&aQuadData->aPreviousRect, xRect, sizeof(A2DRect));
-	imagePropertiesChange = memcmp(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(A2DImageProperties));
-	imagePropertiesChange = memcmp(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(A2DImageProperties));
+	rectChange = memcmp(&aQuadData->aPreviousRect, xRect, sizeof(Rect));
+	imagePropertiesChange = memcmp(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
+	imagePropertiesChange = memcmp(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
 
 	if (!(rectChange | imagePropertiesChange) && !aContraintsChanged)	return hr;
 
 	// Transfer all previous contraints over using accelerated functions
-	x_aligned_memcpy_sse2(&aQuadData->aPreviousRect, xRect, sizeof(A2DRect));
-	x_aligned_memcpy_sse2(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(A2DRect));
-	x_aligned_memcpy_sse2(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(A2DRect));
+	x_aligned_memcpy_sse2(&aQuadData->aPreviousRect, xRect, sizeof(Rect));
+	x_aligned_memcpy_sse2(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
+	x_aligned_memcpy_sse2(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
 		*/
 
 	float realX, realY;	
@@ -81,7 +81,7 @@ HRESULT A2DQuadFactory::updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xR
 	float bottomTex;
 
 	byte index = 0;
-	A2DVertexData * vertices = aQuadData->aVertices;
+	VertexData * vertices = aQuadData->aVertices;
 	void * mappedVertices = 0;
 	
 	// Bitmap mapping calculations.
@@ -172,7 +172,7 @@ HRESULT A2DQuadFactory::updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xR
 	if (FAILED(hr))	return hr;
 
 	// Copy the data into the vertex buffer.
-	memcpy(mappedVertices, (void*)vertices, (sizeof(A2DVertexData)* 6));
+	memcpy(mappedVertices, (void*)vertices, (sizeof(VertexData)* 6));
 
 	// Unlock the vertex buffer.
 	aQuadData->aVertexBuffer->Unmap();
@@ -181,12 +181,12 @@ HRESULT A2DQuadFactory::updateVertexBuffer(A2DQuadData * aQuadData, A2DRect * xR
 
 }
 
-unsigned int A2DQuadFactory::aStride = sizeof(A2DVertexData);
-unsigned int A2DQuadFactory::aOffset = 0;
+unsigned int QuadFactory::aStride = sizeof(VertexData);
+unsigned int QuadFactory::aOffset = 0;
 
 
 
-void A2DQuadFactory::RenderQuad(A2DQuadData * aQuadData)
+void QuadFactory::RenderQuad(QuadData * aQuadData)
 {
 	ID3D10Device  *	device = *aDXDevice;
 
@@ -205,20 +205,20 @@ void A2DQuadFactory::RenderQuad(A2DQuadData * aQuadData)
 	return;
 }
 
-HRESULT A2DQuadFactory::Initialize()
+HRESULT QuadFactory::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	hr = A2DDXShapeUtils::CreateDefaultDynamicVertexBuffer<A2DVertexData>(*aDXDevice, &aVertexBuffer, 6);
+	hr = DXShapeUtils::CreateDefaultDynamicVertexBuffer<VertexData>(*aDXDevice, &aVertexBuffer, 6);
 	if (FAILED(hr))	return hr;
 
-	hr = A2DDXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6);
+	hr = DXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6);
 	if (FAILED(hr))	return hr;
 
 	return hr;
 }
 
-void A2DQuadFactory::Deinitialize()
+void QuadFactory::Deinitialize()
 {
 	if (aVertexBuffer)
 	{
@@ -235,17 +235,17 @@ void A2DQuadFactory::Deinitialize()
 	}
 }
 
-LPCWSTR A2DQuadFactory::GetClass()
+LPCWSTR QuadFactory::GetClass()
 {
-	return L"A2DQuadFactory";
+	return L"QuadFactory";
 }
 
-LPCWSTR A2DQuadFactory::ToString()
+LPCWSTR QuadFactory::ToString()
 {
-	return L"A2DQuadFactory";
+	return L"QuadFactory";
 }
 
-bool A2DQuadFactory::operator==(A2DAbstract * A2DAbstract)
+bool QuadFactory::operator==(Abstract * Abstract)
 {
 	return false;
 }

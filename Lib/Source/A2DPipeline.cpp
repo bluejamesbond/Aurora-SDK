@@ -1,43 +1,43 @@
 
-#include "../../include/A2DPipeline.h"
+#include "../../include/Pipeline.h"
 
-A2DPipeline::A2DPipeline() : aLifeCycle(A2DPipeline::aGlobalLifeCycle - 1) {} // Offset by 1
+Pipeline::Pipeline() : aLifeCycle(Pipeline::aGlobalLifeCycle - 1) {} // Offset by 1
 
-A2DPipeline::A2DPipeline(A2DPipeline * xPipeline){}
+Pipeline::Pipeline(Pipeline * xPipeline){}
 
 // Initialize to value
-int A2DPipeline::aGlobalLifeCycle = 0;
+int Pipeline::aGlobalLifeCycle = 0;
 
-void A2DPipeline::nextLifeCycle()
+void Pipeline::nextLifeCycle()
 {
 	aGlobalLifeCycle++;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DPipeline::GetClass()
+LPCWSTR Pipeline::GetClass()
 {
-	return L"A2DPipeline";
+	return L"Pipeline";
 }
 
-LPCWSTR A2DPipeline::ToString()
+LPCWSTR Pipeline::ToString()
 {
-	return L"A2DPipeline";
+	return L"Pipeline";
 }
 
-bool A2DPipeline::operator==(A2DAbstract * xAbstract)
+bool Pipeline::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-HRESULT A2DPipeline::Initialize()
+HRESULT Pipeline::Initialize()
 {
 	return NULL;
 }
 
-void A2DPipeline::Deinitialize()
+void Pipeline::Deinitialize()
 {
 	for (int i = 0; i < aLength; i++)
 	{

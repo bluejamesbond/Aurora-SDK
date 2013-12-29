@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACTTEXTURE_H__
-#define __A2DABSTRACTTEXTURE_H__
+#ifndef __ABSTRACTTEXTURE_H__
+#define __ABSTRACTTEXTURE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DABSTRACTTEXTURE
+//      ABSTRACTTEXTURE
 //
 //  Synopsis:
 //      Texture container class.
@@ -19,38 +19,38 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DRect.h"
-#include "A2DPipelineable.h"
+#include "Rect.h"
+#include "Pipelineable.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DAbstractTexture;
+class ;
+class Abstract;
+class AbstractTexture;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractTexture : public A2DPipelineable
+class AbstractTexture : public Pipelineable
 {
 
 protected:
 
 	// Variables
-	A2DDims							aDims;
-	A2DRect							aClip;
+	Dims							aDims;
+	Rect							aClip;
 
 public:
 
 	// Accessors
-	A2DDims			*		GetSize();
-	A2DRect			*		GetClip(int xIndex = 0);
+	Dims			*		GetSize();
+	Rect			*		GetClip(int xIndex = 0);
 
 	// Mutators
-	void					SetClip(A2DRect * xClip, int xIndex = 0);
+	void					SetClip(Rect * xClip, int xIndex = 0);
 	
 	// Virtual
 	virtual void			*		getPlatformCompatibleResource() = 0;
@@ -59,12 +59,12 @@ public:
 public:
 
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual HRESULT                 Initialize() = 0;
 	virtual void                    Deinitialize() = 0;
 	virtual LPCWSTR                 GetClass() = 0;
 	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
+	virtual bool                    operator==(Abstract * xAbstract) = 0;
 
 };
 

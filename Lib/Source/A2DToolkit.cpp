@@ -1,25 +1,25 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DToolkit.h"
-#include "../../include/A2DAbstractEventQueue.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Toolkit.h"
+#include "../../include/AbstractEventQueue.h"
 
-int A2DToolkit::waitForBackgroundThreads()
+int Toolkit::waitForBackgroundThreads()
 {
 	// DO null check here!
-	return A2DAbstractEventQueue::getInstance()->waitForAllDispatchingThreads();
+	return AbstractEventQueue::getInstance()->waitForAllDispatchingThreads();
 }
 
-A2DAbstractEventQueue * A2DToolkit::aEventQueues[20];
+AbstractEventQueue * Toolkit::aEventQueues[20];
 
-int A2DToolkit::aEventQueuesIndex = -1;
-int A2DToolkit::aEventQueuesLength = 20;
+int Toolkit::aEventQueuesIndex = -1;
+int Toolkit::aEventQueuesLength = 20;
 
-void A2DToolkit::addSystemEventQueue(A2DAbstractEventQueue * xEventQueue)
+void Toolkit::addSystemEventQueue(AbstractEventQueue * xEventQueue)
 {
 	aEventQueues[++aEventQueuesIndex] = xEventQueue;
 }
 
-A2DAbstractEventQueue* A2DToolkit::getSystemEventQueue(int xFrameInstanceIndex)
+AbstractEventQueue* Toolkit::getSystemEventQueue(int xFrameInstanceIndex)
 {
 	return aEventQueues[xFrameInstanceIndex];
 }

@@ -1,8 +1,8 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DDXShaderUtils.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/DXShaderUtils.h"
 
-HRESULT A2DDXShaderUtils::LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * aDXDevice, ID3D10Effect ** xEffect)
+HRESULT DXShaderUtils::LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * aDXDevice, ID3D10Effect ** xEffect)
 {
 	HRESULT hr;
 	ID3D10Blob* errorMessage;
@@ -33,9 +33,9 @@ HRESULT A2DDXShaderUtils::LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * a
 	return hr;
 }
 
-void A2DDXShaderUtils::SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename){}
+void DXShaderUtils::SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename){}
 
-HRESULT A2DDXShaderUtils::CreatePNGCompatibleBlendStates(ID3D10Device * aDXDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState)
+HRESULT DXShaderUtils::CreatePNGCompatibleBlendStates(ID3D10Device * aDXDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState)
 {
 	HRESULT hr = S_OK;
 	D3D10_BLEND_DESC blendDesc;

@@ -1,58 +1,58 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DFileInfo.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/FileInfo.h"
 
-A2DFileInfo::A2DFileInfo(LPCWSTR * xFileName) :
+FileInfo::FileInfo(LPCWSTR * xFileName) :
 aFileName(xFileName),
 aFileInfo(NULL){}
 
-A2DFileInfo::~A2DFileInfo(){}
+FileInfo::~FileInfo(){}
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DFileInfo::GetClass()
+LPCWSTR FileInfo::GetClass()
 {
-	return L"A2DFileInfo";
+	return L"FileInfo";
 }
 
-LPCWSTR A2DFileInfo::ToString()
+LPCWSTR FileInfo::ToString()
 {
-	return L"A2DFileInfo";
+	return L"FileInfo";
 }
 
-bool A2DFileInfo::operator==(A2DAbstract * xAbstract)
+bool FileInfo::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-float A2DFileInfo::GetHeight()
+float FileInfo::GetHeight()
 {
 	return (float) aFileInfo->Height;
 }
 
-float A2DFileInfo::GetWidth()
+float FileInfo::GetWidth()
 {
 	return (float) aFileInfo->Width;
 }
 
-int A2DFileInfo::GetDepth()
+int FileInfo::GetDepth()
 {
 	return aFileInfo->Height;
 }
 
-int A2DFileInfo::GetMipLevels()
+int FileInfo::GetMipLevels()
 {
 	return aFileInfo->Height;
 }
 
-D3DXIMAGE_INFO * A2DFileInfo::GetInfo()
+D3DXIMAGE_INFO * FileInfo::GetInfo()
 {
 	return aFileInfo;
 }
 
-HRESULT A2DFileInfo::Initialize()
+HRESULT FileInfo::Initialize()
 {
 	HRESULT hr = S_OK;
 
@@ -69,7 +69,7 @@ HRESULT A2DFileInfo::Initialize()
 	return hr;
 }
 
-void A2DFileInfo::Deinitialize()
+void FileInfo::Deinitialize()
 {
 	// Release the D3D object.
 	if (aFileName)

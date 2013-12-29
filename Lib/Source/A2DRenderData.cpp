@@ -1,3 +1,3 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DRenderData.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/RenderData.h"

@@ -1,9 +1,9 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DDXShapeUtils.h"
-#include "../../include/A2DBackBuffer.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/DXShapeUtils.h"
+#include "../../include/BackBuffer.h"
 
-HRESULT A2DDXShapeUtils::CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
+HRESULT DXShapeUtils::CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
 {
 	HRESULT hr;
 	D3D10_BUFFER_DESC indexBufferDesc;

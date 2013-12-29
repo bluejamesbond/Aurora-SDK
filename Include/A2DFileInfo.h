@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DFILEINFO_H__
-#define __A2DFILEINFO_H__
+#ifndef __FILEINFO_H__
+#define __FILEINFO_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DFILEINFO
+//      FILEINFO
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,15 +20,15 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DCommon.h"
-#include "A2DAbstract.h"
+#include "ExtLibs.h"
+#include "Common.h"
+#include "Abstract.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class	A2DAbstract;
+class	Abstract;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -38,16 +38,16 @@ class	A2DAbstract;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DFileInfo : public A2DAbstract
+class FileInfo : public Abstract
 {
 
 public:
 
 	// Constructor
-	A2DFileInfo(LPCWSTR * xFileName);
+	FileInfo(LPCWSTR * xFileName);
 
 	// Deconstructor
-	~A2DFileInfo();
+	~FileInfo();
 
 private:
 
@@ -88,12 +88,12 @@ public:
 public:
 
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual HRESULT                 Initialize();
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

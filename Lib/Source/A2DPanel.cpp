@@ -1,25 +1,25 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DPanel.h"
-#include "../../include/A2DGraphics.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Panel.h"
+#include "../../include/Graphics.h"
 
-void A2DPanel::RenderComponent(A2DRenderData * xRenderData)
+void Panel::RenderComponent(RenderData * xRenderData)
 {
-	A2DGraphics * graphics = (A2DGraphics *)xRenderData;
+	Graphics * graphics = (Graphics *)xRenderData;
 	
-	A2DComponent::RenderComponent(xRenderData);
+	Component::RenderComponent(xRenderData);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DPanel::GetClass()
+LPCWSTR Panel::GetClass()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-LPCWSTR A2DPanel::ToString()
+LPCWSTR Panel::ToString()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }

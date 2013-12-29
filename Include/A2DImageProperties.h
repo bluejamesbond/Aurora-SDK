@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DIMAGEPROPERTIES_H__
-#define __A2DIMAGEPROPERTIES_H__
+#ifndef __IMAGEPROPERTIES_H__
+#define __IMAGEPROPERTIES_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DIMAGEPROPERTIES
+//      IMAGEPROPERTIES
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,28 +20,28 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DAbstract.h"
-#include "A2DFileInfo.h"
-#include "A2DCommon.h"
+#include "ExtLibs.h"
+#include "Abstract.h"
+#include "FileInfo.h"
+#include "Common.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DGraphics;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class Graphics;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
+class Window;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -52,27 +52,27 @@ class A2DWindow;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-struct A2DImageProperties : public A2DAbstract
+struct ImageProperties : public Abstract
 {
-	A2DImageProperties(){};
-	~A2DImageProperties(){};
-	A2DImageProperties(A2DImageProperties * xImageProps);
+	ImageProperties(){};
+	~ImageProperties(){};
+	ImageProperties(ImageProperties * xImageProps);
 
-	int								aOptRepeat    = A2D_OPT_BACKGROUND_REPEAT_REPEAT_X | A2D_OPT_BACKGROUND_REPEAT_REPEAT_Y;      // background-repeat (CSS)
-	int								aOptSizeX     = A2D_OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
-	int								aOptSizeY     = A2D_OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
+	int								aOptRepeat    = _OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y;      // background-repeat (CSS)
+	int								aOptSizeX     = _OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
+	int								aOptSizeY     = _OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
 
 public:
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
 	virtual HRESULT                 Initialize();
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 };
 
 #endif

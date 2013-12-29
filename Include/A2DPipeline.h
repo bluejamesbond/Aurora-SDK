@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DPIPELINE_H__
-#define __A2DPIPELINE_H__
+#ifndef __PIPELINE_H__
+#define __PIPELINE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DPIPELINE
+//      PIPELINE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,17 +20,17 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DAbstract.h"
-#include "A2DPipelineable.h"
+#include "ExtLibs.h"
+#include "Abstract.h"
+#include "Pipelineable.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DPipelineable;
+class ;
+class Abstract;
+class Pipelineable;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -40,16 +40,16 @@ class A2DPipelineable;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DPipeline : public A2DAbstract
+class Pipeline : public Abstract
 {
 
 public:
 
-	A2DPipeline();
+	Pipeline();
 
-	A2DPipeline(A2DPipeline * xRenderData);
+	Pipeline(Pipeline * xRenderData);
 
-	A2DPipelineable		  * aPipelineComps[8];
+	Pipelineable		  * aPipelineComps[8];
 
 	int							    aLength = 0;
 	int								aLifeCycle = 0;
@@ -64,7 +64,7 @@ public:
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

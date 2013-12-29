@@ -1,44 +1,44 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DRootPane.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/RootPane.h"
 
-void A2DRootPane::RenderComponent(A2DRenderData * xRenderData)
+void RootPane::RenderComponent(RenderData * xRenderData)
 {
-	A2DComponent::RenderComponent(xRenderData);
+	Component::RenderComponent(xRenderData);
 }
 
-void A2DRootPane::RenderComponentBorder(A2DRenderData * xRenderData){}
+void RootPane::RenderComponentBorder(RenderData * xRenderData){}
 
-void A2DRootPane::SetBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight)
+void RootPane::SetBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight)
 {
 	if (!aLockDimensions)
 	{
-		A2DComponent::SetBounds(xOptLeft, xOptTop, xOptWidth, xOptHeight);
+		Component::SetBounds(xOptLeft, xOptTop, xOptWidth, xOptHeight);
 		aLockDimensions = true;
 	}
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DRootPane::GetClass()
+LPCWSTR RootPane::GetClass()
 {
-	return L"A2DRootPane";
+	return L"RootPane";
 }
 
-LPCWSTR A2DRootPane::ToString()
+LPCWSTR RootPane::ToString()
 {
-	return L"A2DRootPane";
+	return L"RootPane";
 }
 
-bool A2DRootPane::operator==(A2DAbstract * xAbstract)
+bool RootPane::operator==(Abstract * xAbstract)
 {
 	return this == xAbstract;
 }
 
-LRESULT A2DRootPane::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
+LRESULT RootPane::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
 { 
 	return DefWindowProc(*xHwnd, *xMessage, *xWParam, *xLParam); 
 }

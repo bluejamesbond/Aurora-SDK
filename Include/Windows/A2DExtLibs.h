@@ -2,7 +2,7 @@
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DEXTLIBS
+//      EXTLIBS
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -14,7 +14,7 @@
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2DExtLibs.h"
+#include "../ExtLibs.h"
 
 #include <sstream>
 #include <thread>

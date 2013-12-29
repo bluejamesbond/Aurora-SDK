@@ -1,30 +1,30 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DAbstractComponent.h"
-#include "../../include/A2DGraphics.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/AbstractComponent.h"
+#include "../../include/Graphics.h"
 
-A2DAbstractComponent::A2DAbstractComponent() : 
+AbstractComponent::AbstractComponent() : 
 aParentComp(NULL),
 aGraphics(NULL) {}
 
-A2DAbstractComponent::~A2DAbstractComponent(){}
+AbstractComponent::~AbstractComponent(){}
 
-void A2DAbstractComponent::invalidate()
+void AbstractComponent::invalidate()
 {
 	aValidatedContents = false;
 }
 
-void A2DAbstractComponent::validated()
+void AbstractComponent::validated()
 {
 	aValidatedContents = true;
 }
 
-void A2DAbstractComponent::revalidate()
+void AbstractComponent::revalidate()
 {
 	validate();
 }
 
-void A2DAbstractComponent::Update(A2DRenderData * xRenderData)
+void AbstractComponent::Update(RenderData * xRenderData)
 {
 	if (!aValidatedContents)
 	{
@@ -39,18 +39,18 @@ void A2DAbstractComponent::Update(A2DRenderData * xRenderData)
 	Render(xRenderData);
 }
 
-A2DGraphics * A2DAbstractComponent::GetGraphics()
+Graphics * AbstractComponent::GetGraphics()
 {
 	return aGraphics;
 }
-A2DAbstractComponent * A2DAbstractComponent::GetParent()
+AbstractComponent * AbstractComponent::GetParent()
 {
 	return aParentComp;
 }
 
-void A2DAbstractComponent::SetBounds(A2DRect * xRect)
+void AbstractComponent::SetBounds(Rect * xRect)
 {
-	A2DGraphics * graphics = GetGraphics();
+	Graphics * graphics = GetGraphics();
 	
 	aOptRegion.aWidth = xRect->aWidth;
 	aOptRegion.aHeight = xRect->aHeight;
@@ -63,14 +63,14 @@ void A2DAbstractComponent::SetBounds(A2DRect * xRect)
 	invalidate();
 }
 
-void A2DAbstractComponent::validate()
+void AbstractComponent::validate()
 {
-	A2DAbstractComponent * parentComp = aParentComp;
+	AbstractComponent * parentComp = aParentComp;
 	bool hasParent = parentComp != NULL;
 	
-	A2DRect& compRect = aOptRegion;
-	A2DRect * parentRect = hasParent ? &parentComp->aOptRegion : NULL;
-	A2DRect * parentGraphicsClip = hasParent ? &parentComp->aCalculatedRegion : NULL;
+	Rect& compRect = aOptRegion;
+	Rect * parentRect = hasParent ? &parentComp->aOptRegion : NULL;
+	Rect * parentGraphicsClip = hasParent ? &parentComp->aCalculatedRegion : NULL;
 
 	aCalculatedRegion.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect.aX;
 	aCalculatedRegion.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect.aY;
@@ -80,9 +80,9 @@ void A2DAbstractComponent::validate()
 	aValidatedContents = true;
 }
 
-void A2DAbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHeight)
+void AbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHeight)
 {
-	A2DGraphics * graphics = GetGraphics();
+	Graphics * graphics = GetGraphics();
 
 	aOptRegion.aWidth = xWidth;
 	aOptRegion.aHeight = xHeight;
@@ -95,10 +95,10 @@ void A2DAbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHe
 	invalidate();
 }
 
-void A2DAbstractComponent::Render(A2DRenderData * xRenderData)
+void AbstractComponent::Render(RenderData * xRenderData)
 {
 	// Force region
-	static_cast<A2DGraphics*>(xRenderData)->setClip(&aCalculatedRegion);
+	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);
 
 	// Render the current component
 	RenderComponent(xRenderData);
@@ -108,13 +108,13 @@ void A2DAbstractComponent::Render(A2DRenderData * xRenderData)
 	RenderChildren(xRenderData);
 
 	// Force region
-	static_cast<A2DGraphics*>(xRenderData)->setClip(&aCalculatedRegion);
+	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);
 
 	// Render the currect component border
 	RenderComponentBorder(xRenderData);
 }
 
-void A2DAbstractComponent::RenderChildren(A2DRenderData * xRenderData)
+void AbstractComponent::RenderChildren(RenderData * xRenderData)
 {
 	for (int i = 0; i < aChildrenCompsIndex; i++)
 	{
@@ -126,9 +126,9 @@ void A2DAbstractComponent::RenderChildren(A2DRenderData * xRenderData)
 	}
 }
 
-void A2DAbstractComponent::AddComponent(A2DAbstractComponent * xAbstractComponent)
+void AbstractComponent::AddComponent(AbstractComponent * xAbstractComponent)
 {
-	A2DAbstractComponent **	newComponents;
+	AbstractComponent **	newComponents;
 
 	if (aChildrenCompsIndex >= aChildrenCompsLength)
 	{
@@ -143,16 +143,16 @@ void A2DAbstractComponent::AddComponent(A2DAbstractComponent * xAbstractComponen
 	xAbstractComponent->SetParent(this); 	
 }
 
-void A2DAbstractComponent::SetParent(A2DAbstractComponent * xComponent)
+void AbstractComponent::SetParent(AbstractComponent * xComponent)
 {
 	aParentComp = xComponent;
 }
 
-A2DAbstractComponent** A2DAbstractComponent::CreateAmmoritizedComponentArray()
+AbstractComponent** AbstractComponent::CreateAmmoritizedComponentArray()
 {
-	A2DAbstractComponent **	newComponents;
+	AbstractComponent **	newComponents;
 
-	newComponents = new A2DAbstractComponent *[aChildrenCompsLength * 2];
+	newComponents = new AbstractComponent *[aChildrenCompsLength * 2];
 
 	for (int i = 0; i < aChildrenCompsIndex; i++)
 	{
@@ -164,23 +164,23 @@ A2DAbstractComponent** A2DAbstractComponent::CreateAmmoritizedComponentArray()
 	return newComponents;
 }
 
-HRESULT A2DAbstractComponent::Initialize()
+HRESULT AbstractComponent::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	aChildrenComps = new A2DAbstractComponent *[aChildrenCompsLength = 5];
+	aChildrenComps = new AbstractComponent *[aChildrenCompsLength = 5];
 	
 	return hr;
 }
 
-void A2DAbstractComponent::Deinitialize()
+void AbstractComponent::Deinitialize()
 {
 	DeinitializeChildren();
 
 	delete [] aChildrenComps;
 }
 
-void A2DAbstractComponent::DeinitializeChildren()
+void AbstractComponent::DeinitializeChildren()
 {
 	for (int i = 0; i < aChildrenCompsIndex; i++)
 	{
@@ -188,39 +188,39 @@ void A2DAbstractComponent::DeinitializeChildren()
 	}
 }
 
-A2DRect * A2DAbstractComponent::GetBounds()
+Rect * AbstractComponent::GetBounds()
 {
 	return &aOptRegion;
 }
 
-void A2DAbstractComponent::Add(A2DAbstractComponent * xAbstractComponent)
+void AbstractComponent::Add(AbstractComponent * xAbstractComponent)
 {
 	AddComponent(xAbstractComponent);
 }
 
-void A2DAbstractComponent::RemoveComponent(A2DAbstractComponent * xAbstractComponent)
+void AbstractComponent::RemoveComponent(AbstractComponent * xAbstractComponent)
 {
 	// Fix later
 }
 
-LRESULT A2DAbstractComponent::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
+LRESULT AbstractComponent::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
 {
 	// Fix later
 	// Pass it all the children based on location!
 	return NULL;
 }
 
-LPCWSTR A2DAbstractComponent::GetClass()
+LPCWSTR AbstractComponent::GetClass()
 {
-	return L"A2DAbstractComponent";
+	return L"AbstractComponent";
 }
 
-LPCWSTR A2DAbstractComponent::ToString()
+LPCWSTR AbstractComponent::ToString()
 {
-	return L"A2DAbstractComponent";
+	return L"AbstractComponent";
 }
 
-bool A2DAbstractComponent::operator==(A2DAbstract * xAbstract)
+bool AbstractComponent::operator==(Abstract * xAbstract)
 {
 	return false;
 }

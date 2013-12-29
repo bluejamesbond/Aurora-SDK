@@ -1,12 +1,12 @@
 
-#include "../../Include/A2DExtLibs.h"
-#include "../../Include/A2DAbstractThread.h"
+#include "../../Include/ExtLibs.h"
+#include "../../Include/AbstractThread.h"
 
-A2DAbstractThread::A2DAbstractThread(A2DRunnable * xRunnable) : aRunnable (xRunnable) {}
+AbstractThread::AbstractThread(Runnable * xRunnable) : aRunnable (xRunnable) {}
 
-A2DAbstractThread::~A2DAbstractThread(){}
+AbstractThread::~AbstractThread(){}
 
-void A2DAbstractThread::fire()
+void AbstractThread::fire()
 {
 	if (aRunnable)
 	{
@@ -14,21 +14,21 @@ void A2DAbstractThread::fire()
 	}
 }
 
-int A2DAbstractThread::aClassInstances = -1;
+int AbstractThread::aClassInstances = -1;
 
-A2DAbstractThread* A2DAbstractThread::aClassInstance = NULL;
+AbstractThread* AbstractThread::aClassInstance = NULL;
 
-int A2DAbstractThread::getClassInstances()
+int AbstractThread::getClassInstances()
 {
 	return aClassInstances + 1;
 }
 
-A2DAbstractThread* A2DAbstractThread::getInstance()
+AbstractThread* AbstractThread::getInstance()
 {
 	return aClassInstance;
 }
 
-HRESULT A2DAbstractThread::Initialize()
+HRESULT AbstractThread::Initialize()
 {
     if (aRunnable == NULL)
     {
@@ -42,12 +42,12 @@ HRESULT A2DAbstractThread::Initialize()
     return S_OK;
 }
 
-int A2DAbstractThread::id()
+int AbstractThread::id()
 {
 	return aId;
 }
 
-void A2DAbstractThread::Deinitialize()
+void AbstractThread::Deinitialize()
 {
     if (isAlive())
     {

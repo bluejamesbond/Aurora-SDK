@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTEXTURE_H__
-#define __A2DTEXTURE_H__
+#ifndef __TEXTURE_H__
+#define __TEXTURE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DTEXTURE
+//      TEXTURE
 //
 //  Synopsis:
 //      Texture container class.
@@ -19,18 +19,18 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DRenderData.h"
-#include "A2DBackBuffer.h"
-#include "A2DAbstractTexture.h"
-#include "A2DRect.h"
+#include "RenderData.h"
+#include "BackBuffer.h"
+#include "AbstractTexture.h"
+#include "Rect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DAbstractTexture;
+class ;
+class Abstract;
+class AbstractTexture;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -40,14 +40,14 @@ class A2DAbstractTexture;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DTexture : public A2DAbstractTexture
+class Texture : public AbstractTexture
 {
 public:
 	// Constructor
-	A2DTexture(ID3D10Device ** xDXDevice, LPCWSTR * xFilename);
+	Texture(ID3D10Device ** xDXDevice, LPCWSTR * xFilename);
 
 	// Deconstructor
-	~A2DTexture();
+	~Texture();
 
 	ID3D10Device			**		aDXDevice;
 	ID3D10ShaderResourceView*		aResource;
@@ -69,12 +69,12 @@ public:
 	
 public:
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual HRESULT                 Initialize();
 	virtual void	                Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

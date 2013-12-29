@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DCOLOR_H__
-#define __A2DCOLOR_H__
+#ifndef __COLOR_H__
+#define __COLOR_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DCOLOR
+//      COLOR
 //
 //  Synopsis:
 //      Texture container class.
@@ -31,16 +31,16 @@
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DColor
+struct Color
 {
 	byte			aRed = 0xFF;
 	byte			aBlue = 0xFF;
 	byte			aGreen = 0xFF;
 	byte			aAlpha = 0xFF;
 
-	A2DColor(){}
+	Color(){}
 
-	A2DColor(int xColor)
+	Color(int xColor)
 	{
 		aAlpha = (xColor << 24) && 0xFF;
 		aRed = (xColor << 16) && 0xFF;

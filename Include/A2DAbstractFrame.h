@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACTFRAME_H__
-#define __A2DABSTRACTFRAME_H__
+#ifndef __ABSTRACTFRAME_H__
+#define __ABSTRACTFRAME_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DABSTRACTFRAME
+//      ABSTRACTFRAME
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,58 +20,58 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
-#include "A2DGraphics.h"
-#include "A2DRenderable.h"
-#include "A2DAbstractComponent.h"
-#include "A2DPipelineable.h"
-#include "A2DAbstractTexture.h"
-#include "A2DComponent.h"
-#include "A2DPanel.h"
-#include "A2DCamera.h"
-#include "A2DCameraProperties.h"
-#include "A2DRenderData.h"
-#include "A2DBackBuffer.h"
-#include "A2DMatrixFactory.h"
-#include "A2DRootPane.h"
-#include "A2DAbstractWindow.h"
-#include "A2DGXSettings.h"
-#include "A2DRect.h"
+#include "Abstract.h"
+#include "Graphics.h"
+#include "Renderable.h"
+#include "AbstractComponent.h"
+#include "Pipelineable.h"
+#include "AbstractTexture.h"
+#include "Component.h"
+#include "Panel.h"
+#include "Camera.h"
+#include "CameraProperties.h"
+#include "RenderData.h"
+#include "BackBuffer.h"
+#include "MatrixFactory.h"
+#include "RootPane.h"
+#include "AbstractWindow.h"
+#include "GXSettings.h"
+#include "Rect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class	A2DAbstract;
-class	A2DRenderable;
-class	A2DAbstractComponent;
-class	A2DCamera;
-struct	A2DCameraProperties;
-struct	A2DRenderData;
-class	A2DMatrixFactory;
-class	A2DBackBuffer;
-struct	A2DBufferData;
-class	A2DMatrixFactory;
-class	A2DRootPane;
+class	Abstract;
+class	Renderable;
+class	AbstractComponent;
+class	Camera;
+struct	CameraProperties;
+struct	RenderData;
+class	MatrixFactory;
+class	BackBuffer;
+struct	BufferData;
+class	MatrixFactory;
+class	RootPane;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractFrame : public A2DAbstract, public A2DRunnable
+class AbstractFrame : public Abstract, public Runnable
 {
 	
 private:
 
-    A2DRootPane               *     aRootPane;
-	A2DBackBuffer             *     aBackBuffer;
-	A2DTextureBuffer          *     aTextureBuffer;
-	A2DTextureBuffer          *     aBlurBuffer;
-    A2DCamera                 *     aCamera;
-	A2DGXSettings			  		aGXSettings;
-	A2DAbstractWindow	  	  * 	aWindow;
-	A2DAbstractEventQueue	  *		aEventQueue = NULL;
-	A2DGraphics				  *		aGraphics;
+    RootPane               *     aRootPane;
+	BackBuffer             *     aBackBuffer;
+	TextureBuffer          *     aTextureBuffer;
+	TextureBuffer          *     aBlurBuffer;
+    Camera                 *     aCamera;
+	GXSettings			  		aGXSettings;
+	AbstractWindow	  	  * 	aWindow;
+	AbstractEventQueue	  *		aEventQueue = NULL;
+	Graphics				  *		aGraphics;
 
 	int								aId;
 	static int						aClassInstances;
@@ -79,12 +79,12 @@ private:
 	bool							aValidatedContents;
 public:
 
-	A2DRootPane               *     GetRootPane();
+	RootPane               *     GetRootPane();
 	HRESULT                         CreateResources();
 	void                            Update();
 	void							dispose();
 	void							invalidate();
-	// void							revalidate(); --- Unsafe for A2DAbstractFrame!!!
+	// void							revalidate(); --- Unsafe for AbstractFrame!!!
 
 protected:
 	void							validated();
@@ -97,15 +97,15 @@ public:
 	void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
 	void							SetVisible(bool xVisibility);
 	void							SetName(LPCWSTR  xName);
-	void							SetBounds(A2DRect * xRect);
+	void							SetBounds(Rect * xRect);
 	void							SetBounds(float xLeft, float xTop, float xWidth, float xHeight);
 	void							SetSize(float xWidth, float xHeight);
-	void							SetSize(A2DDims * xDims);
+	void							SetSize(Dims * xDims);
 	void							SetUndecorated(bool xDecorated);
-	void							SetLocationRelativeTo(A2DAbstractFrame * xFrame);
+	void							SetLocationRelativeTo(AbstractFrame * xFrame);
 	void							SetVsync(bool xVsync);
 	void							SetDefaultCloseOperation(int xOperation);
-	A2DAbstractWindow		  *		getWindow();
+	AbstractWindow		  *		getWindow();
 	void							run(int xThreadId);
 	
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,11 +114,11 @@ public:
 
 protected:
 
-	virtual A2DAbstractWindow *		createPlatformCompatibleWindow() = 0;
-	virtual A2DAbstractEventQueue*	createPlatformCompatibleEventQueue() = 0;
+	virtual AbstractWindow *		createPlatformCompatibleWindow() = 0;
+	virtual AbstractEventQueue*	createPlatformCompatibleEventQueue() = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
 public:
@@ -127,7 +127,7 @@ public:
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

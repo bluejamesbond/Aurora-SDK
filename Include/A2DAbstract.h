@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACT_H__
-#define __A2DABSTRACT_H__
+#ifndef __ABSTRACT_H__
+#define __ABSTRACT_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DABSTRACT
+//      ABSTRACT
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,13 +20,13 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
+#include "ExtLibs.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstract
+class Abstract
 {
 public:
 
@@ -36,7 +36,7 @@ public:
 
     // Virtual    
     virtual LPCWSTR                 GetClass();                                 // Class type    
-    virtual bool                    operator==(A2DAbstract * xAbstract);        // Class type       
+    virtual bool                    operator==(Abstract * xAbstract);        // Class type       
     virtual LPCWSTR                 ToString();                                 // Class type 
 
 	virtual bool					isClass(LPCWSTR xClass) final;

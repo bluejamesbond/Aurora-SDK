@@ -1,40 +1,40 @@
 
-#include "../../../Include/Windows/A2DExtLibs.h"
-#include "../../../Include/Windows/A2DEventQueue.h"
+#include "../../../Include/Windows/ExtLibs.h"
+#include "../../../Include/Windows/EventQueue.h"
 
-A2DEventQueue::A2DEventQueue(A2DAbstractFrame * xFrame) : A2DAbstractEventQueue(xFrame){}
+EventQueue::EventQueue(AbstractFrame * xFrame) : AbstractEventQueue(xFrame){}
 
-bool A2DEventQueue::getQueueLock()
+bool EventQueue::getQueueLock()
 {
 	return WaitForSingleObject(aEventQueueLock, INFINITE) != WAIT_ABANDONED;
 }
 
-void A2DEventQueue::releaseQueueLock()
+void EventQueue::releaseQueueLock()
 {
     ReleaseMutex(aEventQueueLock);
 }
 
-A2DRunnable * A2DEventQueue::peekEvent()
+Runnable * EventQueue::peekEvent()
 {
 	return aEventQueue->front();
 }
 
-void A2DEventQueue::popEvent()
+void EventQueue::popEvent()
 {
 	aEventQueue->pop();
 }
 
-void A2DEventQueue::pushEvent(A2DRunnable * xRunnable)
+void EventQueue::pushEvent(Runnable * xRunnable)
 {
     aEventQueue->push(xRunnable);
 }
 
-bool A2DEventQueue::hasEvent()
+bool EventQueue::hasEvent()
 {
     return !aEventQueue->empty();
 }
 
-void A2DEventQueue::removeAllEvents()
+void EventQueue::removeAllEvents()
 {
     if(aEventQueue)
     {
@@ -42,39 +42,39 @@ void A2DEventQueue::removeAllEvents()
         aEventQueue = 0;
     }
 
-	aEventQueue = new queue<A2DRunnable*>();
+	aEventQueue = new queue<Runnable*>();
 }
 
-HRESULT A2DEventQueue::Initialize()
+HRESULT EventQueue::Initialize()
 {
-	aEventQueue = new queue<A2DRunnable *>();
+	aEventQueue = new queue<Runnable *>();
 
-	return A2DAbstractEventQueue::Initialize();
+	return AbstractEventQueue::Initialize();
 }
 
-void A2DEventQueue::Deinitialize()
+void EventQueue::Deinitialize()
 {
-	A2DAbstractEventQueue::Deinitialize();
+	AbstractEventQueue::Deinitialize();
 
 	CloseHandle(aEventQueueLock);	
 }
 
-LPCWSTR A2DEventQueue::GetClass()
+LPCWSTR EventQueue::GetClass()
 {
-	return L"A2DEventQueue";
+	return L"EventQueue";
 }
 
-LPCWSTR A2DEventQueue::ToString()
+LPCWSTR EventQueue::ToString()
 {
-	return L"A2DEventQueue";
+	return L"EventQueue";
 }
 
-bool A2DEventQueue::operator==(A2DAbstract * xAbstract)
+bool EventQueue::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-A2DAbstractThread* A2DEventQueue::createPlatformCompatibleThread(A2DRunnable * xRunnable)
+AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)
 {
-	return new A2DThread(xRunnable);
+	return new Thread(xRunnable);
 }

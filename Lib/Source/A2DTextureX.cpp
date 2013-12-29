@@ -1,8 +1,8 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DTextureX.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/TextureX.h"
 
-void A2DTextureX::SetClip(A2DRect * xClip, int xIndex)
+void TextureX::SetClip(Rect * xClip, int xIndex)
 {
 	if (!xClip)
 	{
@@ -21,7 +21,7 @@ void A2DTextureX::SetClip(A2DRect * xClip, int xIndex)
 	aClips[xIndex].aHeight = min(max(xClip->aHeight, 0.0f), aDims.aHeight);
 }
 
-A2DRect * A2DTextureX::GetClip(int xIndex)
+Rect * TextureX::GetClip(int xIndex)
 {
 	return &aClips[xIndex];
 }

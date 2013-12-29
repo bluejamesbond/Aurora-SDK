@@ -1,23 +1,23 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DAbstract.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Abstract.h"
 
-LPCWSTR A2DAbstract::GetClass()
+LPCWSTR Abstract::GetClass()
 {
-	return L"A2DAbstract";
+	return L"Abstract";
 }
 
-LPCWSTR A2DAbstract::ToString()
+LPCWSTR Abstract::ToString()
 {
-	return L"A2DAbstract";
+	return L"Abstract";
 }
 
-bool A2DAbstract::operator==(A2DAbstract * xAbstract)
+bool Abstract::operator==(Abstract * xAbstract)
 {
 	return this == xAbstract;
 }
 
-bool A2DAbstract::isClass(LPCWSTR xClass)
+bool Abstract::isClass(LPCWSTR xClass)
 {
 	return wcscmp(GetClass(), xClass) == 0;
 }

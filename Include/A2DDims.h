@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DIMS_H__
-#define __A2DIMS_H__
+#ifndef __IMS_H__
+#define __IMS_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DIMS
+//      IMS
 //
 //  Synopsis:
 //      Texture container class.
@@ -31,7 +31,7 @@
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DDims
+struct Dims
 {
 	float			aWidth;
 	float			aHeight;

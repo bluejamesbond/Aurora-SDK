@@ -1,8 +1,8 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DMatrixFactory.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/MatrixFactory.h"
 
-D3DXMATRIX * A2DMatrixFactory::createDefaultWorldMatrix()
+D3DXMATRIX * MatrixFactory::createDefaultWorldMatrix()
 {
 	// Create
 	D3DXMATRIX * worldMatrix;
@@ -17,7 +17,7 @@ D3DXMATRIX * A2DMatrixFactory::createDefaultWorldMatrix()
 	return worldMatrix;
 }
 
-D3DXMATRIX * A2DMatrixFactory::createDefaultProjectionMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings)
+D3DXMATRIX * MatrixFactory::createDefaultProjectionMatrix(Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create
 	D3DXMATRIX * projectionMatrix;
@@ -35,7 +35,7 @@ D3DXMATRIX * A2DMatrixFactory::createDefaultProjectionMatrix(A2DDims * xWindowSi
 	return projectionMatrix;
 }
 
-D3DXMATRIX * A2DMatrixFactory::createDefaultOrthogonalMatrix(A2DDims * xWindowSize, A2DGXSettings * xSettings)
+D3DXMATRIX * MatrixFactory::createDefaultOrthogonalMatrix(Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create
 	D3DXMATRIX * orthogonalMatrix;

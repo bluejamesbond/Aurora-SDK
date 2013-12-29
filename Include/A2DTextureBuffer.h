@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTEXTUREBUFFER_H__
-#define __A2DTEXTUREBUFFER_H__
+#ifndef __TEXTUREBUFFER_H__
+#define __TEXTUREBUFFER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Struct:
-//      A2DTEXTUREBUFFER
+//      TEXTUREBUFFER
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,37 +20,37 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DCommon.h"
+#include "Common.h"
 
-#include "A2DVertexData.h"
-#include "A2DBackBuffer.h"
-#include "A2DAbstractTexture.h"
-#include "A2DImageProperties.h"
-#include "A2DRect.h"
+#include "VertexData.h"
+#include "BackBuffer.h"
+#include "AbstractTexture.h"
+#include "ImageProperties.h"
+#include "Rect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DTexture;
-class A2DAbstractTexture;
+class ;
+class Texture;
+class AbstractTexture;
                               
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DTextureBuffer : public A2DAbstractTexture
+class TextureBuffer : public AbstractTexture
 {
 
 public:
 
 	// Constructor
-	A2DTextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, A2DDims * xSize);
+	TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
 
 	// Deconstructor
-	~A2DTextureBuffer();
+	~TextureBuffer();
 	
 	// Variables
 	ID3D10Device				**	aDXDevice;
@@ -74,12 +74,12 @@ public:
 public:
 
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual HRESULT                 Initialize();
 	virtual void	                Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

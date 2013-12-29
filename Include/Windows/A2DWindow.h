@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DWINDOW_H__
-#define __A2DWINDOW_H__
+#ifndef __WINDOW_H__
+#define __WINDOW_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DWINDOW
+//      WINDOW
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,20 +20,20 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DEventQueue.h"
-#include "../A2DCommon.h"
-#include "../A2DAbstract.h"
-#include "../A2DRect.h"
-#include "../A2DDims.h"
-#include "../A2DAbstractWindow.h"
+#include "ExtLibs.h"
+#include "EventQueue.h"
+#include "../Common.h"
+#include "../Abstract.h"
+#include "../Rect.h"
+#include "../Dims.h"
+#include "../AbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DFrame;
-class A2DAbstract;
+class Frame;
+class Abstract;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -41,7 +41,7 @@ class A2DAbstract;
 
 using namespace Gdiplus;
 
-class A2DWindow : public A2DAbstractWindow
+class Window : public AbstractWindow
 {
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -50,9 +50,9 @@ class A2DWindow : public A2DAbstractWindow
 
 public:
 
-	A2DWindow(A2DAbstractFrame * xFrame, HINSTANCE  xHInstance);
+	Window(AbstractFrame * xFrame, HINSTANCE  xHInstance);
 
-	~A2DWindow();
+	~Window();
 
 private:
 
@@ -104,7 +104,7 @@ private:
 	HCURSOR                         aCurrentCursor;
 	POINT                           aLastDraggedPoint;
 
-	A2DDims                         aMinSafeDims;
+	Dims                         aMinSafeDims;
 
 	static int						aClassInstances;
 
@@ -148,32 +148,32 @@ private:
 	void							destroyResources();
 
 	////////////////////////////////////////////////////////////////////////////////
-	// A2DABSTRACTWINDOW
+	// ABSTRACTWINDOW
 	////////////////////////////////////////////////////////////////////////////////
 
 public:
 
-	virtual void                    setMinimumSize(A2DDims * xSize);
-	virtual void                    setMaximumSize(A2DDims * xSize);
+	virtual void                    setMinimumSize(Dims * xSize);
+	virtual void                    setMaximumSize(Dims * xSize);
 	virtual void                    setMinimumSize(float xWidth, float xHeight);
 	virtual void                    setMaximumSize(float xWidth, float xHeight);
 	virtual void					setSize(float xWidth, float xHeight);
-	virtual void					setSize(A2DDims * xSize);
-	virtual void					setBounds(A2DRect * xRect);
+	virtual void					setSize(Dims * xSize);
+	virtual void					setBounds(Rect * xRect);
 	virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight);
 	virtual void                    setName(LPCWSTR xName);
 	virtual void                    setUndecorated(bool xUndecoratedFlag);
 	virtual void                    setDefaultCloseOperation(int xCloseOperation);
-	virtual void                    setLocationRelativeTo(A2DAbstractWindow * xWindow);
+	virtual void                    setLocationRelativeTo(AbstractWindow * xWindow);
 	virtual void                    setVisible(bool xVisible);
-	virtual void                    setBorderColor(A2DColor * xBorderColor);
+	virtual void                    setBorderColor(Color * xBorderColor);
 	virtual void                    setBorderWidth(float xBorderWidth);
 	virtual void                    setShadowed(bool xShadowFlag);
 	virtual void                    setShadowRadius(float xShadowRadius);
-	virtual void                    setShadowColor(A2DColor * xShadowColor);
-	virtual void                    setBackgroundColor(A2DColor * xBackgroundColor);
-	virtual void					setBorder(A2DColor * xBorderColor, float xBorderWidth);
-	virtual void					setShadow(A2DColor * xShadowColor, float xShadowRadius);
+	virtual void                    setShadowColor(Color * xShadowColor);
+	virtual void                    setBackgroundColor(Color * xBackgroundColor);
+	virtual void					setBorder(Color * xBorderColor, float xBorderWidth);
+	virtual void					setShadow(Color * xShadowColor, float xShadowRadius);
 
 protected:
 
@@ -183,10 +183,10 @@ protected:
 public:
 
 	virtual void              *     getPlatformCompatibleWindowHandle();
-	virtual void			  		initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue);
+	virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue);
 	
 	////////////////////////////////////////////////////////////////////////////////
-	// A2DABSTRACT
+	// ABSTRACT
 	////////////////////////////////////////////////////////////////////////////////
 
 public:
@@ -195,7 +195,7 @@ public:
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

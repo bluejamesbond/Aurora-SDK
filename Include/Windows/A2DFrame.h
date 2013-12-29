@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DFRAME_H__
-#define __A2DFRAME_H__
+#ifndef __FRAME_H__
+#define __FRAME_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DFRAME
+//      FRAME
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,14 +20,14 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2DAbstractFrame.h"
-#include "A2DThread.h"
+#include "../AbstractFrame.h"
+#include "Thread.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DFrame : public A2DAbstractFrame
+class Frame : public AbstractFrame
 {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,22 +36,22 @@ class A2DFrame : public A2DAbstractFrame
 
 public:
 
-	A2DFrame(HINSTANCE xHInstance);
+	Frame(HINSTANCE xHInstance);
 
-	~A2DFrame();
+	~Frame();
 
 private:
 
 	HINSTANCE aHInstance;
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACTFRAME
+// ABSTRACTFRAME
 ////////////////////////////////////////////////////////////////////////////////
 
 protected:
 
-	virtual A2DAbstractWindow *		createPlatformCompatibleWindow();
-	virtual A2DAbstractEventQueue*	createPlatformCompatibleEventQueue();
+	virtual AbstractWindow *		createPlatformCompatibleWindow();
+	virtual AbstractEventQueue*	createPlatformCompatibleEventQueue();
 
 };
 

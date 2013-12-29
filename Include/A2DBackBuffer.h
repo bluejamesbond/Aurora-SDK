@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DBACKBUFFER_H__
-#define __A2DBACKBUFFER_H__
+#ifndef __BACKBUFFER_H__
+#define __BACKBUFFER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DBACKBUFFER
+//      BACKBUFFER
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,45 +20,45 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
-#include "A2DGXSettings.h"
-#include "A2DAbstractWindow.h"
+#include "Abstract.h"
+#include "GXSettings.h"
+#include "AbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
             
-#define A2DBACKBUFFER_LL(str1, str2)                              str1 str2
+#define BACKBUFFER_LL(str1, str2)                              str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DBackBuffer : public A2DAbstract
+class BackBuffer : public Abstract
 {
 
 public:
 
     // Constructor
-	A2DBackBuffer(A2DAbstractWindow * xWindow, A2DGXSettings * xGXSettings);
+	BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
 
     // Deconstructor
-    ~A2DBackBuffer();
+    ~BackBuffer();
 
     // Variables
     IDXGISwapChain            *     aDXGISwapChain;
@@ -74,8 +74,8 @@ public:
 
 private:
 	// Variables
-	A2DAbstractWindow		  *     aWindow;
-	A2DGXSettings			  *     aGXSettings;
+	AbstractWindow		  *     aWindow;
+	GXSettings			  *     aGXSettings;
 
 public:
     // Accessors
@@ -107,12 +107,12 @@ public:
 public:
 
     // Implementation
-    // { A2DABSTRACT }
+    // { ABSTRACT }
     virtual HRESULT                 Initialize();
     virtual void                    Deinitialize();
     virtual LPCWSTR                 GetClass();
     virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
+    virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

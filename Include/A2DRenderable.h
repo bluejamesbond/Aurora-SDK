@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DRENDERABLE_H__
-#define __A2DRENDERABLE_H__
+#ifndef __RENDERABLE_H__
+#define __RENDERABLE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DRENDERABLE
+//      RENDERABLE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,54 +20,54 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
+#include "Abstract.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
-class A2DImagePanel;
+class Window;
+class ImagePanel;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DRENDERABLE_LL(str1, str2)                          str1 str2
+#define RENDERABLE_LL(str1, str2)                          str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DRenderable : public A2DAbstract
+class Renderable : public Abstract
 {
 
 public:
 
 	// Pure Virtual
-	virtual void                    Update(A2DRenderData * xRenderData) = 0;
+	virtual void                    Update(RenderData * xRenderData) = 0;
 	
 public:
 
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual HRESULT                 Initialize() = 0;
 	virtual void                    Deinitialize() = 0;
 	virtual LPCWSTR                 GetClass() = 0;
 	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
+	virtual bool                    operator==(Abstract * xAbstract) = 0;
 
 };
 

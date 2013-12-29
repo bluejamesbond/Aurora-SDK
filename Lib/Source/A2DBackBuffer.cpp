@@ -1,8 +1,8 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DBackBuffer.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/BackBuffer.h"
 
-A2DBackBuffer::A2DBackBuffer(A2DAbstractWindow * xWindow, A2DGXSettings * xGXSettings) :
+BackBuffer::BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings) :
 aGXSettings(xGXSettings),
 aWindow(xWindow),
 aDXGISwapChain(0),
@@ -14,9 +14,9 @@ aDXDepthStencilView(0),
 aDXRasterState(0),
 aDXDepthDisabledStencilState(0) {}
 
-A2DBackBuffer::~A2DBackBuffer(){}
+BackBuffer::~BackBuffer(){}
 
-HRESULT A2DBackBuffer::Initialize()
+HRESULT BackBuffer::Initialize()
 {
 	HRESULT hr;
 
@@ -301,7 +301,7 @@ HRESULT A2DBackBuffer::Initialize()
 }
 
 
-void A2DBackBuffer::Deinitialize()
+void BackBuffer::Deinitialize()
 {
 	// Before shutting down set to windowed mode or when you release the 
 	// swap chain it will throw an exception.
@@ -362,14 +362,14 @@ void A2DBackBuffer::Deinitialize()
 	return;
 }
 
-void A2DBackBuffer::SetActive()
+void BackBuffer::SetActive()
 {		
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	aDXDevice->OMSetRenderTargets(1, &aDXRenderTargetView, aDXDepthStencilView);
 	return;
 }
 
-void A2DBackBuffer::Clear()
+void BackBuffer::Clear()
 {
 	float color[4];
 
@@ -385,7 +385,7 @@ void A2DBackBuffer::Clear()
 	aDXDevice->ClearDepthStencilView(aDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void A2DBackBuffer::Swap()
+void BackBuffer::Swap()
 {
 	// Present the back buffer to the screen since
 	// rendering is complete.
@@ -394,36 +394,36 @@ void A2DBackBuffer::Swap()
 	aDXGISwapChain->Present(aGXSettings->aVsync ? 1 : 0, 0);
 }
 
-ID3D10Device * A2DBackBuffer::GetDevice()
+ID3D10Device * BackBuffer::GetDevice()
 {
 	return aDXDevice;
 }
 
-void A2DBackBuffer::SetZBuffer(bool val)
+void BackBuffer::SetZBuffer(bool val)
 {
 	aDXDevice->OMSetDepthStencilState(val ? aDXDepthStencilState : aDXDepthDisabledStencilState, 1);
 	return;
 }
 
-LPCWSTR A2DBackBuffer::GetClass()
+LPCWSTR BackBuffer::GetClass()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-LPCWSTR A2DBackBuffer::ToString()
+LPCWSTR BackBuffer::ToString()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-bool A2DBackBuffer::operator==(A2DAbstract * xAbstract)
+bool BackBuffer::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-void A2DBackBuffer::validate()
+void BackBuffer::validate()
 {
 
-	A2DDims& aDim = aWindow->getSize();
+	Dims& aDim = aWindow->getSize();
 
 	// Release all outstanding references to 
 	// the swap chain's buffers.

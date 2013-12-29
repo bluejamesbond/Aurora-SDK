@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DCOMPONENT_H__
-#define __A2DCOMPONENT_H__
+#ifndef __COMPONENT_H__
+#define __COMPONENT_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Struct:
-//      A2DCOMPONENT
+//      COMPONENT
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,56 +20,56 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstractComponent.h"
-#include "A2DImageProperties.h"
-#include "A2DPipeline.h"
+#include "AbstractComponent.h"
+#include "ImageProperties.h"
+#include "Pipeline.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
-class A2DTextureBuffer;
+class Window;
+class TextureBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DCOMPONENT_LL(str1, str2)                           str1 str2
+#define COMPONENT_LL(str1, str2)                           str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DComponent : public A2DAbstractComponent
+class Component : public AbstractComponent
 {
 public:
 
 	// Variables
 	bool blurred = false;
-	A2DTextureBuffer		  *     aTextureBuffer;
+	TextureBuffer		  *     aTextureBuffer;
 	bool aDoubleBuffer = false;
 	//Public Methods
 	void SetDoubleBuffered(bool xDoubleBuffer);
 	bool IsDoubleBuffered();
-	A2DPipeline * pipeline = NULL;
+	Pipeline * pipeline = NULL;
 
 protected:
 
 	// Variables
-	A2DImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
+	ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
 	LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
 	int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
 	int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
@@ -85,7 +85,7 @@ public:
 	int								GetOptBackgroundSizeY()													{ return	aOptBackgroundProps->aOptSizeY; };
 	int								GetOptBackgroundColor()													{ return	aOptBackgroundColor; };
 	int								GetOptBackgroundRepeat()												{ return	aOptBackgroundProps->aOptRepeat; };
-	A2DImageProperties	*			GetOptBackgroundProperties()											{ return	aOptBackgroundProps; };
+	ImageProperties	*			GetOptBackgroundProperties()											{ return	aOptBackgroundProps; };
 
     // Mutators
 	void							SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
@@ -98,7 +98,7 @@ public:
 	void							SetOptBackgroundSizeY(int xOptSizeY)									{ aOptBackgroundProps->aOptSizeY = xOptSizeY; };
 	void							SetOptBackgroundColor(int xOptColor)									{ aOptBackgroundColor = xOptColor; };
 	void							SetOptBackgroundRepeat(int xOptRepeat)									{ aOptBackgroundProps->aOptRepeat = xOptRepeat; };
-	void							SetOptBackgroundProperties(A2DImageProperties * xOptBackgroundProps)	{ aOptBackgroundProps = xOptBackgroundProps; };
+	void							SetOptBackgroundProperties(ImageProperties * xOptBackgroundProps)	{ aOptBackgroundProps = xOptBackgroundProps; };
 
     // Builders
     // { NONE }
@@ -109,9 +109,9 @@ public:
 public:
 
     // Additional
-	virtual void                    RenderComponent(A2DRenderData * xRenderData);
-	virtual void                    RenderComponentBorder(A2DRenderData * xRenderData);
-	// virtual void					Render(A2DRenderData * xRenderData);
+	virtual void                    RenderComponent(RenderData * xRenderData);
+	virtual void                    RenderComponentBorder(RenderData * xRenderData);
+	// virtual void					Render(RenderData * xRenderData);
 
     // Pure Virtual
     // { NONE }
@@ -122,12 +122,12 @@ public:
 public:
 
     // Implementation
-    // { A2DABSTRACT }
+    // { ABSTRACT }
     virtual HRESULT                 Initialize();
     virtual void                    Deinitialize();
     virtual LPCWSTR                 GetClass();
     virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
+    virtual bool                    operator==(Abstract * xAbstract);
 };
 
 #endif

@@ -1,24 +1,24 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DAbstractTexture.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/AbstractTexture.h"
 
-bool A2DAbstractTexture::hasAlpha()
+bool AbstractTexture::hasAlpha()
 {
 	// Force to be true
 	return true;
 }
 
-A2DDims* A2DAbstractTexture::GetSize()
+Dims* AbstractTexture::GetSize()
 {
 	return &aDims;
 }
 
-A2DRect* A2DAbstractTexture::GetClip(int xIndex)
+Rect* AbstractTexture::GetClip(int xIndex)
 {
 	return &aClip;
 }
 
-void A2DAbstractTexture::SetClip(A2DRect * xClip, int xIndex)
+void AbstractTexture::SetClip(Rect * xClip, int xIndex)
 {
 	if (!xClip)
 	{
@@ -38,10 +38,10 @@ void A2DAbstractTexture::SetClip(A2DRect * xClip, int xIndex)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-HRESULT A2DAbstractTexture::Initialize()
+HRESULT AbstractTexture::Initialize()
 {
 	SetClip(NULL);
 

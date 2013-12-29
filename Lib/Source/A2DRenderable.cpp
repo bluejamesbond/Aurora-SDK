@@ -1,28 +1,28 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DRenderable.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Renderable.h"
 
-A2DRenderable::A2DRenderable(){}
-A2DRenderable::~A2DRenderable(){}
+Renderable::Renderable(){}
+Renderable::~Renderable(){}
 
-LPCWSTR A2DRenderable::GetClass()
+LPCWSTR Renderable::GetClass()
 {
-	return L"A2DRenderable";
+	return L"Renderable";
 }
 
-LPCWSTR A2DRenderable::ToString()
+LPCWSTR Renderable::ToString()
 {
-	return L"A2DRenderable";
+	return L"Renderable";
 }
 
-bool A2DRenderable::operator==(A2DAbstract * xAbstract)
+bool Renderable::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-HRESULT A2DRenderable::Initialize(){
+HRESULT Renderable::Initialize(){
 
 	return NULL;
 }
 
-void A2DRenderable::Deinitialize(){}
+void Renderable::Deinitialize(){}

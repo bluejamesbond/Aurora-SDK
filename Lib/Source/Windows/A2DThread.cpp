@@ -1,29 +1,29 @@
 
-#include "../../../Include/Windows/A2DExtLibs.h"
-#include "../../../Include/Windows/A2DThread.h"
+#include "../../../Include/Windows/ExtLibs.h"
+#include "../../../Include/Windows/Thread.h"
 
-A2DThread::A2DThread(A2DRunnable * xRunnable) : A2DAbstractThread(xRunnable), aThreadID (0) {}
+Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable), aThreadID (0) {}
 
-A2DThread::~A2DThread(){}
+Thread::~Thread(){}
 
-bool A2DThread::start()
+bool Thread::start()
 {
 	aHThread = CreateThread(NULL, 0, &initThread, this, 0, &aThreadID);
-	aHandles[A2DAbstractThread::id()] = aHThread;
+	aHandles[AbstractThread::id()] = aHThread;
     return (aHThread != NULL);
 }
 
-void A2DThread::interrupt()
+void Thread::interrupt()
 {
     SuspendThread(aHThread);
 }
 
-int A2DThread::id()
+int Thread::id()
 {
 	return static_cast<int>(aThreadID);
 }
 
-void A2DThread::resume()
+void Thread::resume()
 {
     int resumeCount = ResumeThread(aHThread);
   
@@ -33,37 +33,37 @@ void A2DThread::resume()
     }
 }
 
-HANDLE A2DThread::aHandles[50];
+HANDLE Thread::aHandles[50];
 
-void A2DThread::stop()
+void Thread::stop()
 {
     if (aHThread)
     {
 		TerminateThread( aHThread, 0 );
 		CloseHandle(aHThread);
-		aHandles[A2DAbstractThread::id()] = NULL;
+		aHandles[AbstractThread::id()] = NULL;
 		aHThread= NULL;
     }
 }
 
-bool A2DThread::isAlive()
+bool Thread::isAlive()
 {
     return ((aHThread != NULL) && (WaitForSingleObject(aHThread, 0) != WAIT_OBJECT_0));
 }
 
-void A2DThread::waitAll()
+void Thread::waitAll()
 {
-	WaitForMultipleObjects(A2DAbstractThread::getClassInstances(), aHandles, true, INFINITE);
+	WaitForMultipleObjects(AbstractThread::getClassInstances(), aHandles, true, INFINITE);
 }
 
-int A2DThread::getCurrentThreadId()
+int Thread::getCurrentThreadId()
 {
 	return static_cast<int>(GetCurrentThreadId());
 }
 
-DWORD WINAPI A2DThread::initThread(void * xParam)
+DWORD WINAPI Thread::initThread(void * xParam)
 {
-	A2DThread * thread = reinterpret_cast<A2DThread*>(xParam);
+	Thread * thread = reinterpret_cast<Thread*>(xParam);
 
 	if (thread)
     {   
@@ -75,17 +75,17 @@ DWORD WINAPI A2DThread::initThread(void * xParam)
     return -1;
 }
 
-LPCWSTR A2DThread::GetClass()
+LPCWSTR Thread::GetClass()
 {
-	return L"A2DThread";
+	return L"Thread";
 }
 
-LPCWSTR A2DThread::ToString()
+LPCWSTR Thread::ToString()
 {
-	return L"A2DThread";
+	return L"Thread";
 }
 
-bool A2DThread::operator==(A2DAbstract * xAbstract)
+bool Thread::operator==(Abstract * xAbstract)
 {
 	return false;
 }

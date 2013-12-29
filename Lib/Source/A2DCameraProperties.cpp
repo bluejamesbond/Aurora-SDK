@@ -1,29 +1,29 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DCameraProperties.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/CameraProperties.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY ABSTRACT_AURORA
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DCameraProperties::GetClass()
+LPCWSTR CameraProperties::GetClass()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-LPCWSTR A2DCameraProperties::ToString()
+LPCWSTR CameraProperties::ToString()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-bool A2DCameraProperties::operator==(A2DAbstract * xAbstract)
+bool CameraProperties::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-HRESULT A2DCameraProperties::Initialize(){
+HRESULT CameraProperties::Initialize(){
 
 	return NULL;
 }
 
-void A2DCameraProperties::Deinitialize(){}
+void CameraProperties::Deinitialize(){}

@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DRUNNABLE_H__
-#define __A2DRUNNABLE_H__
+#ifndef __RUNNABLE_H__
+#define __RUNNABLE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DRUNNABLE
+//      RUNNABLE
 //
 //  Synopsis:
 //      Texture container class.
@@ -19,7 +19,7 @@
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DRunnable
+class Runnable
 {
 
 public:

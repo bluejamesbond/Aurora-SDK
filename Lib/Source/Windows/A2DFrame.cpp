@@ -1,25 +1,25 @@
 
-#include "../../../Include/Windows/A2DFrame.h"
-#include "../../../Include/Windows/A2DWindow.h"
+#include "../../../Include/Windows/Frame.h"
+#include "../../../Include/Windows/Window.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
-A2DFrame::A2DFrame(HINSTANCE xHInstance) : aHInstance(xHInstance) {}
+Frame::Frame(HINSTANCE xHInstance) : aHInstance(xHInstance) {}
 
-A2DFrame::~A2DFrame(){}
+Frame::~Frame(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACTFRAME
+// ABSTRACTFRAME
 ////////////////////////////////////////////////////////////////////////////////
 
-A2DAbstractWindow *	A2DFrame::createPlatformCompatibleWindow()
+AbstractWindow *	Frame::createPlatformCompatibleWindow()
 {
-	return new A2DWindow(this, aHInstance);
+	return new Window(this, aHInstance);
 }
 
-A2DAbstractEventQueue * A2DFrame::createPlatformCompatibleEventQueue()
+AbstractEventQueue * Frame::createPlatformCompatibleEventQueue()
 {
-	return new A2DEventQueue(this);
+	return new EventQueue(this);
 }

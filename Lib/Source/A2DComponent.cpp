@@ -1,9 +1,9 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DComponent.h"
-#include "../../include/A2DGraphics.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Component.h"
+#include "../../include/Graphics.h"
 
-void A2DComponent::SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
+void Component::SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
 	int xOptBackroundSizeX,	int xOptBackroundSizeY,	int xOptBackgroundColor, int xOptBackgroundRepeat)
 {
 	aOptBackgroundSrc = xOptBackgroundImage;
@@ -15,9 +15,9 @@ void A2DComponent::SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackr
 	aOptBackgroundProps->aOptRepeat = xOptBackgroundRepeat;
 };
 
-void A2DComponent::RenderComponent(A2DRenderData * xRenderData)
+void Component::RenderComponent(RenderData * xRenderData)
 {
-	A2DGraphics * graphics = (A2DGraphics *) xRenderData;
+	Graphics * graphics = (Graphics *) xRenderData;
 
 	if (aOptBackgroundSrc != NULL)
 	{
@@ -25,45 +25,45 @@ void A2DComponent::RenderComponent(A2DRenderData * xRenderData)
 	}
 }
 
-void A2DComponent::SetDoubleBuffered(bool xDoubleBuffer)
+void Component::SetDoubleBuffered(bool xDoubleBuffer)
 {
 	aDoubleBuffer = xDoubleBuffer;
 }
 
-bool A2DComponent::IsDoubleBuffered()
+bool Component::IsDoubleBuffered()
 {
 	return aDoubleBuffer;
 }
 
-void A2DComponent::RenderComponentBorder(A2DRenderData * xRenderData){}
+void Component::RenderComponentBorder(RenderData * xRenderData){}
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DComponent::GetClass()
+LPCWSTR Component::GetClass()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-LPCWSTR A2DComponent::ToString()
+LPCWSTR Component::ToString()
 {
-	return L"A2DCamera";
+	return L"Camera";
 }
 
-bool A2DComponent::operator==(A2DAbstract * xAbstract)
+bool Component::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-HRESULT A2DComponent::Initialize()
+HRESULT Component::Initialize()
 {
-	aOptBackgroundProps = new A2DImageProperties;
+	aOptBackgroundProps = new ImageProperties;
 
-	return A2DAbstractComponent::Initialize();
+	return AbstractComponent::Initialize();
 }
 
-void A2DComponent::Deinitialize()
+void Component::Deinitialize()
 {
-	A2DAbstractComponent::Deinitialize();
+	AbstractComponent::Deinitialize();
 }

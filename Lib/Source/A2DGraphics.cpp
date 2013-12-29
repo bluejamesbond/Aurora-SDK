@@ -1,31 +1,31 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DGraphics.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/Graphics.h"
 
-void A2DGraphics::setClip(A2DRect * xClip)
+void Graphics::setClip(Rect * xClip)
 {
 	aQuadFactory->setConstraints(NULL, aClip = xClip);
 }
 
-void A2DGraphics::validate()
+void Graphics::validate()
 {
 	aTextureShader->loadMatrices();
 }
 
-void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * aRect, A2DImageProperties * xImageProps)
+void Graphics::DrawImage(Pipeline ** xPipeline, LPCWSTR * xSrc, Rect * aRect, ImageProperties * xImageProps)
 {
-	A2DTexture * texture;
-	A2DQuadData * quadData;
+	Texture * texture;
+	QuadData * quadData;
 
 	// Pipeline not initalized
 	if (*xPipeline == NULL)
 	{
-		*xPipeline = new A2DPipeline();
+		*xPipeline = new Pipeline();
 
-		texture = new A2DTexture(aDXDevice, xSrc);
-		quadData = new A2DQuadData();
+		texture = new Texture(aDXDevice, xSrc);
+		quadData = new QuadData();
 		
-		A2DDXShapeUtils::CreateDefaultDynamicVertexBuffer<A2DVertexData>(*aDXDevice, &quadData->aVertexBuffer, 6);
+		DXShapeUtils::CreateDefaultDynamicVertexBuffer<VertexData>(*aDXDevice, &quadData->aVertexBuffer, 6);
 
 		texture->Initialize();
 
@@ -37,8 +37,8 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 		return;
 	}
 
-	texture = static_cast<A2DTexture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<A2DQuadData*>((*xPipeline)->aPipelineComps[1]);
+	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
+	quadData = static_cast<QuadData*>((*xPipeline)->aPipelineComps[1]);
 	
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
 	aQuadFactory->updateVertexBuffer(quadData, aRect, texture->GetClip(), texture->GetSize(), xImageProps);
@@ -48,46 +48,46 @@ void A2DGraphics::DrawImage(A2DPipeline ** xPipeline, LPCWSTR * xSrc, A2DRect * 
 	aTextureShader->renderTexture();
 }
 
-void A2DGraphics::DrawImage(A2DPipeline * xPipeline,  A2DTexture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, A2DImageProperties * xImageProps, int xBlur)
+void Graphics::DrawImage(Pipeline * xPipeline,  Texture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, ImageProperties * xImageProps, int xBlur)
 {	}
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DGraphics::GetClass()
+LPCWSTR Graphics::GetClass()
 {
-	return L"A2DGraphics";
+	return L"Graphics";
 }
 
-LPCWSTR A2DGraphics::ToString()
+LPCWSTR Graphics::ToString()
 {
-	return L"A2DGraphics";
+	return L"Graphics";
 }
 
-bool A2DGraphics::operator==(A2DAbstract * xAbstract)
+bool Graphics::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
 
-HRESULT A2DGraphics::Initialize()
+HRESULT Graphics::Initialize()
 {
 	HRESULT hr = S_OK;
 	
 	aDXDevice = &aBackBuffer->aDXDevice;
 
-	aQuadFactory = new A2DQuadFactory(aDXDevice, aWindowDims);
+	aQuadFactory = new QuadFactory(aDXDevice, aWindowDims);
 	aQuadFactory->Initialize();
 	if (FAILED(hr))	return hr;
 
-	aTextureShader = new A2DTextureShader(aDXDevice, &aWorldMatrix, &aViewMatrix, &aProjection2DMatrix);
+	aTextureShader = new TextureShader(aDXDevice, &aWorldMatrix, &aViewMatrix, &aProjection2DMatrix);
 	aTextureShader->Initialize();
 
 	return hr;
 }
 
-void A2DGraphics::Deinitialize()
+void Graphics::Deinitialize()
 {
 	if (aQuadFactory)
 	{

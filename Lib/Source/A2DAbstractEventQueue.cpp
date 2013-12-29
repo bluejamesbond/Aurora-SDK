@@ -1,12 +1,12 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DAbstractEventQueue.h"
-#include "../../include/A2DAbstractFrame.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/AbstractEventQueue.h"
+#include "../../include/AbstractFrame.h"
 
-A2DAbstractEventQueue::A2DAbstractEventQueue(A2DAbstractFrame * xFrame) : aFrame(xFrame) {}
+AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) {}
 
 
-void A2DAbstractEventQueue::invokeLater(A2DRunnable * xRunnable)
+void AbstractEventQueue::invokeLater(Runnable * xRunnable)
 {
 	if (getQueueLock())
 	{
@@ -15,7 +15,7 @@ void A2DAbstractEventQueue::invokeLater(A2DRunnable * xRunnable)
 	}
 }
 
-void A2DAbstractEventQueue::invokeAndWait(A2DRunnable * xRunnable)
+void AbstractEventQueue::invokeAndWait(Runnable * xRunnable)
 {
 	if (getQueueLock())
 	{
@@ -24,17 +24,17 @@ void A2DAbstractEventQueue::invokeAndWait(A2DRunnable * xRunnable)
 	}
 }
 
-A2DAbstractThread * A2DAbstractEventQueue::getDispatchingThread()
+AbstractThread * AbstractEventQueue::getDispatchingThread()
 {
 	return aThread;
 }
 
-void A2DAbstractEventQueue::clearQueue()
+void AbstractEventQueue::clearQueue()
 {
 	removeAllEvents();
 }
 
-int A2DAbstractEventQueue::waitForAllDispatchingThreads()
+int AbstractEventQueue::waitForAllDispatchingThreads()
 {
 	if (!aThread)
 	{
@@ -47,41 +47,41 @@ int A2DAbstractEventQueue::waitForAllDispatchingThreads()
 	return 0;
 }
 
-void A2DAbstractEventQueue::invokeAnimationFrame(int xTime, A2DRunnable * xRunnable)
+void AbstractEventQueue::invokeAnimationFrame(int xTime, Runnable * xRunnable)
 {
 	// Yea right...
 }
 
-void A2DAbstractEventQueue::invokeReset()
+void AbstractEventQueue::invokeReset()
 {
 	// Yea right...
 }
 
-void A2DAbstractEventQueue::invokeRevalidate()
+void AbstractEventQueue::invokeRevalidate()
 {
 	// Yea right...
 }
 
-void A2DAbstractEventQueue::invokeRerender()
+void AbstractEventQueue::invokeRerender()
 {
 	// Yea right...
 }
 
-A2DAbstractEventQueue* A2DAbstractEventQueue::aClassInstance = NULL;
+AbstractEventQueue* AbstractEventQueue::aClassInstance = NULL;
 
-A2DAbstractEventQueue* A2DAbstractEventQueue::getInstance()
+AbstractEventQueue* AbstractEventQueue::getInstance()
 {
 	return aClassInstance;
 }
 
-HRESULT A2DAbstractEventQueue::Initialize()
+HRESULT AbstractEventQueue::Initialize()
 {
 	aClassInstance = this;
 
 	return S_OK;
 }
 
-void A2DAbstractEventQueue::Deinitialize()
+void AbstractEventQueue::Deinitialize()
 {
 	if (aThread)
 	{
@@ -92,7 +92,7 @@ void A2DAbstractEventQueue::Deinitialize()
 	}
 }
 
-void A2DAbstractEventQueue::startDispatchingThread()
+void AbstractEventQueue::startDispatchingThread()
 {
 	HRESULT hr;
 
@@ -104,7 +104,7 @@ void A2DAbstractEventQueue::startDispatchingThread()
 		aThread = 0;
 	}
 	
-	A2DToolkit::addSystemEventQueue(this); // added to A2DFrame index!
+	Toolkit::addSystemEventQueue(this); // added to Frame index!
 
 	aThread = createPlatformCompatibleThread(this);
 	
@@ -116,7 +116,7 @@ void A2DAbstractEventQueue::startDispatchingThread()
 	aThread->start();
 }
 
-void A2DAbstractEventQueue::interruptDispatchingThread()
+void AbstractEventQueue::interruptDispatchingThread()
 {
 	if (aThread)
 	{
@@ -124,7 +124,7 @@ void A2DAbstractEventQueue::interruptDispatchingThread()
 	}
 }
 
-void A2DAbstractEventQueue::resumeDispatchingThread()
+void AbstractEventQueue::resumeDispatchingThread()
 {
 	if (aThread)
 	{
@@ -132,7 +132,7 @@ void A2DAbstractEventQueue::resumeDispatchingThread()
 	}
 }
 
-void A2DAbstractEventQueue::stopDispatchingThread()
+void AbstractEventQueue::stopDispatchingThread()
 {
 	if (aThread)
 	{
@@ -143,7 +143,7 @@ void A2DAbstractEventQueue::stopDispatchingThread()
 }
 
 
-void A2DAbstractEventQueue::run(int xThreadId)
+void AbstractEventQueue::run(int xThreadId)
 {
 	// Create frame resources inside EDT
 	aFrame->CreateResources();
@@ -153,10 +153,10 @@ void A2DAbstractEventQueue::run(int xThreadId)
 	aFrame->getWindow()->initPlatformCompatibleEventDispatcher(this);
 }
 
-bool A2DAbstractEventQueue::isDispatchingThread(int xFrameId)
+bool AbstractEventQueue::isDispatchingThread(int xFrameId)
 {
-	A2DAbstractEventQueue* eventQueue = A2DToolkit::getSystemEventQueue(xFrameId);
-	A2DAbstractThread* thread = A2DAbstractThread::getInstance();
+	AbstractEventQueue* eventQueue = Toolkit::getSystemEventQueue(xFrameId);
+	AbstractThread* thread = AbstractThread::getInstance();
 
 	if (thread == NULL || eventQueue == NULL)
 	{
@@ -166,7 +166,7 @@ bool A2DAbstractEventQueue::isDispatchingThread(int xFrameId)
 	return eventQueue->getDispatchingThread()->id() == thread->getCurrentThreadId();
 }
 
-bool A2DAbstractEventQueue::dispatchNextEvent()
+bool AbstractEventQueue::dispatchNextEvent()
 {
 	if (hasEvent())
 	{

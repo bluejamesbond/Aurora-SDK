@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACTCOMPONENT_H__
-#define __A2DABSTRACTCOMPONENT_H__
+#ifndef __ABSTRACTCOMPONENT_H__
+#define __ABSTRACTCOMPONENT_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DABSTRACTCOMPONENT
+//      ABSTRACTCOMPONENT
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,71 +20,71 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DRenderable.h"
-#include "A2DRect.h"
+#include "Renderable.h"
+#include "Rect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DGraphics;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class Graphics;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
+class Window;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DABSTRACTCOMPONENT_LL(str1, str2)                   str1 str2
+#define ABSTRACTCOMPONENT_LL(str1, str2)                   str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
 
-class A2DAbstractComponent : public A2DRenderable
+class AbstractComponent : public Renderable
 {
 public:
 
 	// Constructor
-	A2DAbstractComponent();
+	AbstractComponent();
 
 	// Deconstructor
-	~A2DAbstractComponent();
+	~AbstractComponent();
 
 protected:
 
 	// Variables
-	A2DGraphics				  *     aGraphics;
-	A2DAbstractComponent      **    aChildrenComps;
-	A2DAbstractComponent	  *	    aParentComp;
+	Graphics				  *     aGraphics;
+	AbstractComponent      **    aChildrenComps;
+	AbstractComponent	  *	    aParentComp;
 	int                             aChildrenCompsLength = 0;
 	int                             aChildrenCompsIndex = 0;
 
-	A2DRect							aOptRegion;
-	A2DRect							aOptBackgroundRegion;
+	Rect							aOptRegion;
+	Rect							aOptBackgroundRegion;
 
-	A2DRect							aCalculatedRegion;
+	Rect							aCalculatedRegion;
 
 public:
 	// Accessors
-	A2DAbstractComponent      *		GetParent();
-	A2DGraphics				  *		GetGraphics();
+	AbstractComponent      *		GetParent();
+	Graphics				  *		GetGraphics();
 
 public:
 
 	// Accessors
-	A2DRect					  *		GetBounds();
+	Rect					  *		GetBounds();
 
 	// Mutators
 	// { NONE }
@@ -106,8 +106,8 @@ public:
 private:
 
 	// Builders
-	A2DAbstractComponent      **    CreateAmmoritizedComponentArray();
-	A2DGraphics               *		CreateGraphics();
+	AbstractComponent      **    CreateAmmoritizedComponentArray();
+	Graphics               *		CreateGraphics();
 
 	// Factory
 	// { NONE }
@@ -115,58 +115,58 @@ private:
 public:
 
 	// Additional
-	void                            Add(A2DAbstractComponent * xAbstractComponent);
+	void                            Add(AbstractComponent * xAbstractComponent);
 
 protected:
 
 	// Additional
-	void							SetParent(A2DAbstractComponent * xComponent);
+	void							SetParent(AbstractComponent * xComponent);
 
 private:
 
 	// Additional
-	void                            RemoveComponent(A2DAbstractComponent * xAbstractComponent);
-	void                            AddComponent(A2DAbstractComponent * xAbstractComponent);
+	void                            RemoveComponent(AbstractComponent * xAbstractComponent);
+	void                            AddComponent(AbstractComponent * xAbstractComponent);
 
 public:
 
 	// Pure Virtual
-	virtual void                    RenderComponent(A2DRenderData * xRenderData) = 0;
-	virtual void                    RenderComponentBorder(A2DRenderData * xRenderData) = 0;
+	virtual void                    RenderComponent(RenderData * xRenderData) = 0;
+	virtual void                    RenderComponentBorder(RenderData * xRenderData) = 0;
 
 public:
 
 	// Virtual
-	virtual void					SetBounds(A2DRect * xRect);
+	virtual void					SetBounds(Rect * xRect);
 	virtual void					SetBounds(float xX, float xY, float xWidth, float xHeight);
 
 protected:
 
 	// Virtual
 	virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
-	virtual void                    RenderChildren(A2DRenderData * xRenderData);
+	virtual void                    RenderChildren(RenderData * xRenderData);
 	virtual void                    DeinitializeChildren() final;
 	virtual void					validate();
 
 public:
 
-	virtual void                    Render(A2DRenderData * xRenderData);
+	virtual void                    Render(RenderData * xRenderData);
 	
 public:
 
 	// Virtual
-	// { A2DRENDERABLE }
-	virtual void                    Update(A2DRenderData * xRenderData) final;
+	// { RENDERABLE }
+	virtual void                    Update(RenderData * xRenderData) final;
 
 public:
 
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual HRESULT                 Initialize();
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

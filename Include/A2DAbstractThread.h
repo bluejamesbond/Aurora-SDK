@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DABSTRACTRHEAD_H__
-#define __A2DABSTRACTRHEAD_H__
+#ifndef __ABSTRACTRHEAD_H__
+#define __ABSTRACTRHEAD_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DABSTRACTRHEAD
+//      ABSTRACTRHEAD
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,28 +20,28 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
-#include "A2DRunnable.h"
+#include "Abstract.h"
+#include "Runnable.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DAbstractThread : public A2DAbstract
+class AbstractThread : public Abstract
 {
 
 public:
 
-	A2DAbstractThread(A2DRunnable * xRunnable);
-	~A2DAbstractThread();
+	AbstractThread(Runnable * xRunnable);
+	~AbstractThread();
 
 private:
 
-	A2DRunnable * aRunnable;
+	Runnable * aRunnable;
 
 	int aId;
 	static int aClassInstances;
-	static A2DAbstractThread * aClassInstance;
+	static AbstractThread * aClassInstance;
 
 protected:
 
@@ -50,7 +50,7 @@ protected:
 
 public:
 
-	static A2DAbstractThread* getInstance();
+	static AbstractThread* getInstance();
 
 	virtual int	 id();
 	virtual bool start() = 0;
@@ -62,7 +62,7 @@ public:
 	virtual int getCurrentThreadId() = 0;
 
 	////////////////////////////////////////////////////////////////////////////////
-	// A2DABSTRACT
+	// ABSTRACT
 	////////////////////////////////////////////////////////////////////////////////
 
 public:
@@ -71,7 +71,7 @@ public:
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass() = 0;
 	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(A2DAbstract * xAbstract) = 0;
+	virtual bool                    operator==(Abstract * xAbstract) = 0;
 
 };
 

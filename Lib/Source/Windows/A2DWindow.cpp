@@ -1,24 +1,24 @@
 
-#include "../../../Include/Windows/A2DExtLibs.h"
-#include "../../../Include/Windows/A2DWindow.h"
-#include "../../../Include/Windows/A2DFrame.h"
+#include "../../../Include/Windows/ExtLibs.h"
+#include "../../../Include/Windows/Window.h"
+#include "../../../Include/Windows/Frame.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
-A2DWindow::A2DWindow(A2DAbstractFrame * xFrame, HINSTANCE xHInstance) : A2DAbstractWindow(xFrame), aHInstance(xHInstance){}
+Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xFrame), aHInstance(xHInstance){}
 
-A2DWindow::~A2DWindow(){}
+Window::~Window(){}
 
-LRESULT CALLBACK A2DWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
+LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
-	A2DWindow * aWindow;
+	Window * aWindow;
 
 	if (xMessage == WM_CREATE)
 	{
 		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
-		aWindow = reinterpret_cast<A2DWindow*>(pCreate->lpCreateParams);
+		aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
 		SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
 		return S_OK;
 	}
@@ -28,17 +28,17 @@ LRESULT CALLBACK A2DWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 		{
 		case WM_LBUTTONDOWN:
 		{					
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				return aWindow->updateOnMouseDown(xHwnd);
 		}
 		case WM_MOUSEMOVE:
 		{
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				return aWindow->updateOnMouseMove(xHwnd);
 		}
 		case WM_LBUTTONUP:
 		{
-				 aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				 aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				 return aWindow->updateOnMouseUp(xHwnd);
 		}
 		case WM_CLOSE:
@@ -48,7 +48,7 @@ LRESULT CALLBACK A2DWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 		}
 		case WM_SIZE:
 		{
-				aWindow = reinterpret_cast<A2DWindow *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				return aWindow->onSize(xHwnd);
 
 		}
@@ -58,7 +58,7 @@ LRESULT CALLBACK A2DWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, L
 	}
 }
 
-HWND A2DWindow::createCompatibleWindow(bool isParent)
+HWND Window::createCompatibleWindow(bool isParent)
 {
 	HRESULT         hr = S_OK;
 	HWND            hWnd, hwndParent;
@@ -88,7 +88,7 @@ HWND A2DWindow::createCompatibleWindow(bool isParent)
 	return hWnd;
 }
 
-HRESULT A2DWindow::updateOnMouseDown(HWND xHwnd)
+HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
 	if (aHResizeWnd != xHwnd)
 	{
@@ -114,10 +114,10 @@ HRESULT A2DWindow::updateOnMouseDown(HWND xHwnd)
 	bottom = top + aRect.aHeight;
 	right = left + aRect.aWidth;
 
-	if ((x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
-		x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
-		y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
-		y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE) &&
+	if ((x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE ||
+		x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE ||
+		y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE ||
+		y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
 		!isResizing)
 	{
 		isResizing = true;
@@ -128,7 +128,7 @@ HRESULT A2DWindow::updateOnMouseDown(HWND xHwnd)
 	return S_OK;
 }
 
-HRESULT A2DWindow::updateOnMouseMove(HWND xHwnd)
+HRESULT Window::updateOnMouseMove(HWND xHwnd)
 {
 	if (aHResizeWnd != xHwnd)
 	{
@@ -139,7 +139,7 @@ HRESULT A2DWindow::updateOnMouseMove(HWND xHwnd)
 	float left, right, bottom, top;
 	int x, y;
 	POINT p;
-	A2DRect& rect = aRect;
+	Rect& rect = aRect;
 
 	GetCursorPos(&p);
 
@@ -154,53 +154,53 @@ HRESULT A2DWindow::updateOnMouseMove(HWND xHwnd)
 	if (!isResizing)
 	{
 		//bottom left corner
-		if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
 			aWinMoveRes = true;
 		}
 		//bottom right corner
-		else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
 			aWinMoveRes = false;
 		}
 		//top left corner
-		else if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
 			aWinMoveRes = true;
 		}
 		//top right corner
-		else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
 			aWinMoveRes = false;
 		}
 		//left border
-		else if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
 			aWinMoveRes = true;
 		}
 		//right border
-		else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
 			aWinMoveRes = false;
 		}
 		//bottom border
-		else if (y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
 			aWinMoveRes = false;
 		}
 		//top border
-		else if (y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
 			aWinMoveRes = true;
@@ -337,7 +337,7 @@ HRESULT A2DWindow::updateOnMouseMove(HWND xHwnd)
 	return S_OK;
 }
 
-HRESULT A2DWindow::onSize(HWND hwnd)
+HRESULT Window::onSize(HWND hwnd)
 {
 	if (hwnd == aChildHWnd)
 		aFrame->invalidate();
@@ -345,7 +345,7 @@ HRESULT A2DWindow::onSize(HWND hwnd)
 	return S_OK;
 }
 
-HRESULT A2DWindow::updateOnMouseUp(HWND xHwnd)
+HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
 	if (aHResizeWnd != xHwnd)
 	{
@@ -359,13 +359,13 @@ HRESULT A2DWindow::updateOnMouseUp(HWND xHwnd)
 	return S_OK;
 }
 
-int A2DWindow::aClassInstances = 0;
+int Window::aClassInstances = 0;
 
-HRESULT A2DWindow::registerClass()
+HRESULT Window::registerClass()
 {
 	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
 	wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wcex.lpfnWndProc = A2DWindow::wndProc;
+	wcex.lpfnWndProc = Window::wndProc;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = aHInstance;
@@ -379,7 +379,7 @@ HRESULT A2DWindow::registerClass()
 	return RegisterClassEx(&wcex);
 }
 
-void A2DWindow::updateBackgroundCache()
+void Window::updateBackgroundCache()
 {
 	destroyBackgroundResources();
 	createBackgroundResources();
@@ -388,13 +388,13 @@ void A2DWindow::updateBackgroundCache()
 	SetClassLongPtr(aParentHWnd, GCLP_HBRBACKGROUND, (LONG)brush);
 }
 
-void A2DWindow::updateShadowCache()
+void Window::updateShadowCache()
 {
 	destroyShadowResources();
 	createShadowResources();
 }
 
-void A2DWindow::destroyShadowResources()
+void Window::destroyShadowResources()
 {
 	if (aTopLeftShadow)
 	{
@@ -470,7 +470,7 @@ void A2DWindow::destroyShadowResources()
 	}
 }
 
-void A2DWindow::spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
+void Window::spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
 {
 	Graphics graphics(dest);
 
@@ -479,7 +479,7 @@ void A2DWindow::spliceToNinePatch(Image * src, Image * dest, float srcX, float s
 	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel); // Render twice to increase opacity
 }
 
-float* A2DWindow::getGaussianKernel(int xRadius)
+float* Window::getGaussianKernel(int xRadius)
 {
 	if (xRadius < 1)
 	{
@@ -511,7 +511,7 @@ float* A2DWindow::getGaussianKernel(int xRadius)
 	return data;
 }
 
-Bitmap * A2DWindow::applyGaussianBlur(Bitmap * src, int radius)
+Bitmap * Window::applyGaussianBlur(Bitmap * src, int radius)
 {
 	// NOTE: There could be memory leaks if the BitmapData is NULL
 	// PLEASE FIX!
@@ -563,7 +563,7 @@ Bitmap * A2DWindow::applyGaussianBlur(Bitmap * src, int radius)
 	return rotated;
 }
 
-void  A2DWindow::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius)
+void  Window::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius)
 {
 	int ca = 0, cr = 0, cg = 0, cb = 0;
 	float a = 0, r = 0, g = 0, b = 0;
@@ -617,7 +617,7 @@ void  A2DWindow::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPix
 	}
 }
 
-BitmapData * A2DWindow::getLockedBitmapData(Bitmap * src)
+BitmapData * Window::getLockedBitmapData(Bitmap * src)
 {
 	int srcWidth = src->GetWidth();
 	int srcHeight = src->GetHeight();
@@ -634,7 +634,7 @@ BitmapData * A2DWindow::getLockedBitmapData(Bitmap * src)
 	return bitmapData;
 }
 
-HRESULT A2DWindow::createShadowResources()
+HRESULT Window::createShadowResources()
 {
 	HRESULT hr = S_OK;
 
@@ -643,7 +643,7 @@ HRESULT A2DWindow::createShadowResources()
 	SolidBrush blackBrush(*aShadowColor);
 
 	float radius = aOptShadowRadius;
-	float radiusSafety = radius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO;
+	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFETY_RATIO;
 	float realDim = radius * 3;
 	float relativeDim = realDim + radius * 2;
 
@@ -700,7 +700,7 @@ HRESULT A2DWindow::createShadowResources()
 	return hr;
 }
 
-HRESULT A2DWindow::createBackgroundResources()
+HRESULT Window::createBackgroundResources()
 {
 	HRESULT hr = S_OK;
 
@@ -716,7 +716,7 @@ HRESULT A2DWindow::createBackgroundResources()
 	return hr;
 }
 
-void A2DWindow::destroyBackgroundResources()
+void Window::destroyBackgroundResources()
 {
 	if (aBackground)
 	{
@@ -731,7 +731,7 @@ void A2DWindow::destroyBackgroundResources()
 	}
 }
 
-HRESULT A2DWindow::createResources()
+HRESULT Window::createResources()
 {
 	HRESULT hr = S_OK;
 
@@ -746,14 +746,14 @@ HRESULT A2DWindow::createResources()
 	return hr;
 }
 
-void A2DWindow::destroyResources()
+void Window::destroyResources()
 {
 	destroyShadowResources();
 	destroyBackgroundResources();
 	destroyColorResources();
 }
 
-void A2DWindow::renderComponentBorder()
+void Window::renderComponentBorder()
 {
 	if (aOptBorderWidth > 0)
 	{
@@ -765,7 +765,7 @@ void A2DWindow::renderComponentBorder()
 	}
 }
 
-void A2DWindow::renderComponent()
+void Window::renderComponent()
 {
 	aTopShadowBrush->ResetTransform();
 	aLeftShadowBrush->ResetTransform();
@@ -793,10 +793,10 @@ void A2DWindow::renderComponent()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACTWINDOW
+// ABSTRACTWINDOW
 ////////////////////////////////////////////////////////////////////////////////
 
-void A2DWindow::setName(LPCWSTR xName)
+void Window::setName(LPCWSTR xName)
 {
 	aName = xName;
 
@@ -804,7 +804,7 @@ void A2DWindow::setName(LPCWSTR xName)
 	SetWindowText(aParentHWnd, aName);
 }
 
-void A2DWindow::setUndecorated(bool xUndecorated)
+void Window::setUndecorated(bool xUndecorated)
 {
 	// we cannot just use WS_POPUP style
 	// WS_THICKFRAME: without this the window cannot be resized and so aero snap, de-maximizing and minimizing won't work
@@ -833,12 +833,12 @@ void A2DWindow::setUndecorated(bool xUndecorated)
 	SetWindowPos(aParentHWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
-void A2DWindow::setDefaultCloseOperation(int xDefaultCloseOperation)
+void Window::setDefaultCloseOperation(int xDefaultCloseOperation)
 {
 	aDefaultCloseOperation = xDefaultCloseOperation;
 }
 
-void A2DWindow::setLocationRelativeTo(A2DAbstractWindow * xRelativeWindow)
+void Window::setLocationRelativeTo(AbstractWindow * xRelativeWindow)
 {
 	aRelativeWindow = xRelativeWindow;
 
@@ -849,7 +849,7 @@ void A2DWindow::setLocationRelativeTo(A2DAbstractWindow * xRelativeWindow)
 	}
 }
 
-void A2DWindow::setVisible(bool xVisible)
+void Window::setVisible(bool xVisible)
 {
 	aVisible = xVisible;
 
@@ -867,65 +867,65 @@ void A2DWindow::setVisible(bool xVisible)
 	}
 }
 
-void A2DWindow::setMinimumSize(A2DDims * xSize)
+void Window::setMinimumSize(Dims * xSize)
 {
 	aMinDims.aWidth = xSize->aWidth;
 	aMinDims.aHeight = xSize->aHeight;
 }
 
-void A2DWindow::setMaximumSize(A2DDims * xSize)
+void Window::setMaximumSize(Dims * xSize)
 {
 	aMaxDims.aWidth = xSize->aWidth;
 	aMaxDims.aHeight = xSize->aHeight;
 }
 
-void A2DWindow::setSize(A2DDims * xSize)
+void Window::setSize(Dims * xSize)
 {
 	aRect.aWidth = xSize->aWidth;
 	aRect.aHeight = xSize->aHeight;
 }
 
-void A2DWindow::setMinimumSize(float xWidth, float xHeight)
+void Window::setMinimumSize(float xWidth, float xHeight)
 {
 	aMinDims.aWidth = xWidth;
 	aMinDims.aHeight = xHeight;
 }
 
-void A2DWindow::setMaximumSize(float xWidth, float xHeight)
+void Window::setMaximumSize(float xWidth, float xHeight)
 {
 	aMaxDims.aWidth = xWidth;
 	aMaxDims.aHeight = xHeight;
 }
 
-void A2DWindow::setSize(float xWidth, float xHeight)
+void Window::setSize(float xWidth, float xHeight)
 {
 	aRect.aWidth = xWidth;
 	aRect.aHeight = xHeight;
 }
 
-void A2DWindow::setBorderWidth(float xBorderWidth)
+void Window::setBorderWidth(float xBorderWidth)
 {
 	aOptBorderWidth = xBorderWidth;
 }
 
-void A2DWindow::setShadowRadius(float xShadowRadius)
+void Window::setShadowRadius(float xShadowRadius)
 {
 	aOptShadowRadius = xShadowRadius;
 }
 
-void A2DWindow::setShadow(A2DColor * xShadowColor, float xShadowRadius)
+void Window::setShadow(Color * xShadowColor, float xShadowRadius)
 {
 	aOptShadowColor = *xShadowColor;
 	aOptShadowRadius = xShadowRadius;
 }
 
-void A2DWindow::setBorder(A2DColor * xBorderColor, float xBorderWidth)
+void Window::setBorder(Color * xBorderColor, float xBorderWidth)
 {
 	aOptBorderColor = *xBorderColor;
 	aOptBorderWidth = xBorderWidth;
 }
 
-void A2DWindow::setBounds(A2DRect * xRect)
+void Window::setBounds(Rect * xRect)
 {
 	aRect.aWidth = xRect->aWidth;
 	aRect.aX = xRect->aX;
@@ -933,7 +933,7 @@ void A2DWindow::setBounds(A2DRect * xRect)
 	aRect.aHeight = xRect->aHeight;
 }
 
-void A2DWindow::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
+void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 {
 	aRect.aWidth = xWidth;
 	aRect.aX = xLeft;
@@ -941,11 +941,11 @@ void A2DWindow::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 	aRect.aHeight = xHeight;
 }
 
-void A2DWindow::validate()
+void Window::validate()
 {
 	// Minimum dimensions has to be greater than border and shadow safety region
-	aMinDims.aWidth = max((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-	aMinDims.aHeight = max((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFETY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
+	aMinDims.aWidth = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFETY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
+	aMinDims.aHeight = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFETY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
 
 	// Minimum dimensions has to be greater than or equal to minimum size
 	aMaxDims.aWidth = max(aMinDims.aWidth, aMaxDims.aWidth);
@@ -956,7 +956,7 @@ void A2DWindow::validate()
 	aRect.aHeight = min(max(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
 
 	// Create resize window pointer.
-	aHResizeWnd = aOptBorderWidth < A2D_WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
+	aHResizeWnd = aOptBorderWidth < _WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
 
 	// Update caches
 	updateColorCache();
@@ -967,7 +967,7 @@ void A2DWindow::validate()
 	validated();
 }
 
-HRESULT A2DWindow::createColorResources()
+HRESULT Window::createColorResources()
 {
 	aBackgroundColor = new Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
 	aShadowColor = new Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
@@ -977,7 +977,7 @@ HRESULT A2DWindow::createColorResources()
 }
 
 
-void A2DWindow::destroyColorResources()
+void Window::destroyColorResources()
 {
 	if (aBackgroundColor)
 	{
@@ -998,40 +998,40 @@ void A2DWindow::destroyColorResources()
 	}
 }
 
-void A2DWindow::updateColorCache()
+void Window::updateColorCache()
 {
 	destroyColorResources();
 	createColorResources();
 }
 
-void A2DWindow::setBorderColor(A2DColor * xBorderColor)
+void Window::setBorderColor(Color * xBorderColor)
 {
 	aOptBorderColor = *xBorderColor;
 }
 
-void A2DWindow::setShadowed(bool xShadowed)
+void Window::setShadowed(bool xShadowed)
 {
 	aShadowed = xShadowed;
 
 	setShadowRadius(FLT_ZERO);
 }
 
-void A2DWindow::setShadowColor(A2DColor * xShadowColor)
+void Window::setShadowColor(Color * xShadowColor)
 {
 	aOptShadowColor = *xShadowColor;
 }
 
-void A2DWindow::setBackgroundColor(A2DColor * xBackgroundColor)
+void Window::setBackgroundColor(Color * xBackgroundColor)
 {
 	aOptBackgroundColor = *xBackgroundColor;
 }
 
-void* A2DWindow::getPlatformCompatibleWindowHandle()
+void* Window::getPlatformCompatibleWindowHandle()
 {
 	return static_cast<void*>(&aChildHWnd);
 }
 
-void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xEventQueue)
+void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
 {
 	MSG msg;
 	bool& resizing = isResizing;
@@ -1040,8 +1040,8 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 	int defaultAllotedAnimationFrames = 10;
 	int currentAnimationFrame = 0;
 
-	A2DAbstractFrame& frame = *aFrame;
-	A2DAbstractEventQueue& eventQueue = *xEventQueue;
+	AbstractFrame& frame = *aFrame;
+	AbstractEventQueue& eventQueue = *xEventQueue;
 
 	while (true)
 	{
@@ -1078,7 +1078,7 @@ void A2DWindow::initPlatformCompatibleEventDispatcher(A2DAbstractEventQueue * xE
 	}
 }
 
-void A2DWindow::render()
+void Window::render()
 {
 	// Cache variables to ensure that these variables
 	// won't be changed in the middle of update() via concurrent
@@ -1148,10 +1148,10 @@ void A2DWindow::render()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
-HRESULT A2DWindow::Initialize()
+HRESULT Window::Initialize()
 {
 	HRESULT hr = S_OK;
 
@@ -1165,12 +1165,12 @@ HRESULT A2DWindow::Initialize()
 
 	// Update class name
 	std::ostringstream stream;
-	stream << "A2DWindow - " << aClassInstances;
+	stream << "Window - " << aClassInstances;
 	std::string className(stream.str());
 	aClassName = new std::wstring(className.begin(), className.end());
 
 	// Super
-	A2DAbstractWindow::Initialize();
+	AbstractWindow::Initialize();
 
 	hr = registerClass();
 	if (FAILED(hr)) return hr;
@@ -1189,7 +1189,7 @@ HRESULT A2DWindow::Initialize()
 	return hr;
 }
 
-void A2DWindow::Deinitialize()
+void Window::Deinitialize()
 {
 	destroyResources();
 
@@ -1200,17 +1200,17 @@ void A2DWindow::Deinitialize()
 	aClassName = 0;
 }
 
-LPCWSTR A2DWindow::GetClass()
+LPCWSTR Window::GetClass()
 {
-	return L"A2DWindow";
+	return L"Window";
 }
 
-LPCWSTR A2DWindow::ToString()
+LPCWSTR Window::ToString()
 {
-	return L"A2DWindow";
+	return L"Window";
 }
 
-bool A2DWindow::operator==(A2DAbstract * xAbstract)
+bool Window::operator==(Abstract * xAbstract)
 {
 	return false;
 }

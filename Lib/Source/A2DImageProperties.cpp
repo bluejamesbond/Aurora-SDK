@@ -1,8 +1,8 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DRootPane.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/RootPane.h"
 
-A2DImageProperties::A2DImageProperties(A2DImageProperties * xImageProps)
+ImageProperties::ImageProperties(ImageProperties * xImageProps)
 {
 	aOptRepeat = xImageProps->aOptRepeat;     // background-repeat  (CSS)
 	aOptSizeX = xImageProps->aOptSizeX;       // background-size-x  (CSS)
@@ -10,29 +10,29 @@ A2DImageProperties::A2DImageProperties(A2DImageProperties * xImageProps)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-HRESULT A2DImageProperties::Initialize()
+HRESULT ImageProperties::Initialize()
 {
 	return S_OK;
 }
 
-LPCWSTR A2DImageProperties::GetClass()
+LPCWSTR ImageProperties::GetClass()
 {
-	return L"A2DImageProperties";
+	return L"ImageProperties";
 }
 
-LPCWSTR A2DImageProperties::ToString()
+LPCWSTR ImageProperties::ToString()
 {
-	return L"A2DImageProperties";
+	return L"ImageProperties";
 }
 
-bool A2DImageProperties::operator==(A2DAbstract * xAbstract)
+bool ImageProperties::operator==(Abstract * xAbstract)
 {
 	if (!xAbstract->isClass(this->GetClass())) return false;
 
-	A2DImageProperties * imageProps = (A2DImageProperties *) xAbstract;
+	ImageProperties * imageProps = (ImageProperties *) xAbstract;
 
 	if (imageProps->aOptRepeat == this->aOptRepeat &&
 		imageProps->aOptSizeX == this->aOptSizeX &&
@@ -43,7 +43,7 @@ bool A2DImageProperties::operator==(A2DAbstract * xAbstract)
 
 	return false;
 }
-void A2DImageProperties::Deinitialize()
+void ImageProperties::Deinitialize()
 {
 	
 }

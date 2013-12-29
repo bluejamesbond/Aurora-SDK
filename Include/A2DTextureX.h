@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTEXTUREX_H__
-#define __A2DTEXTUREX_H__
+#ifndef __TEXTUREX_H__
+#define __TEXTUREX_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:  
-//      A2DTEXTUREX
+//      TEXTUREX
 //
 //  Synopsis:
 //      Texture container class.
@@ -19,32 +19,32 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DRenderData.h"
-#include "A2DTexture.h"
-#include "A2DBackBuffer.h"
-#include "A2DRect.h"
+#include "RenderData.h"
+#include "Texture.h"
+#include "BackBuffer.h"
+#include "Rect.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-class A2DMatrixFactory;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+class MatrixFactory;
+struct RenderData;
+class BackBuffer;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
-struct A2DVertexData;
-struct A2DQuadData;
-struct A2DBufferData;
-class A2DTexture;
+class Window;
+struct VertexData;
+struct QuadData;
+struct BufferData;
+class Texture;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
@@ -54,23 +54,23 @@ class A2DTexture;
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DTextureX : public A2DTexture
+class TextureX : public Texture
 {
 public:
 	// Constructor
-	A2DTextureX(A2DBackBuffer * xBackBuffer, LPCWSTR * xFilename);
+	TextureX(BackBuffer * xBackBuffer, LPCWSTR * xFilename);
 
 	// Deconstructor
-	~A2DTextureX();
+	~TextureX();
 
 	// Variables
-	A2DRect							aClips[20];
+	Rect							aClips[20];
 
 	// Accessors
-	virtual A2DRect			*		GetClip(int xIndex = 0);
+	virtual Rect			*		GetClip(int xIndex = 0);
 
 	// Mutators
-	virtual void					SetClip(A2DRect * xClip, int xIndex = 0);
+	virtual void					SetClip(Rect * xClip, int xIndex = 0);
 
 	// Builders
 	// { NONE }
@@ -88,10 +88,10 @@ public:
 
 public:
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

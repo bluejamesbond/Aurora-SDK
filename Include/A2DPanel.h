@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DPANEL_H__
-#define __A2DPANEL_H__
+#ifndef __PANEL_H__
+#define __PANEL_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Struct:
-//      A2DPANEL
+//      PANEL
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,38 +20,38 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DComponent.h"
-#include "A2DImageProperties.h"
+#include "Component.h"
+#include "ImageProperties.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
+class Window;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DCOMPONENT_LL(str1, str2)                           str1 str2
+#define COMPONENT_LL(str1, str2)                           str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DPanel : public A2DComponent
+class Panel : public Component
 {
 public:
 
@@ -68,7 +68,7 @@ public:
 protected:
 
 	// Variables
-	A2DImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
+	ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
 	LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
 	int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
 	int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
@@ -91,7 +91,7 @@ public:
 public:
 
 	// Additional
-	virtual void                    RenderComponent(A2DRenderData * xRenderData);
+	virtual void                    RenderComponent(RenderData * xRenderData);
 
 	// Pure Virtual
 	// { NONE }
@@ -102,7 +102,7 @@ public:
 public:
 
 	// Implementation
-	// { A2DABSTRACT }
+	// { ABSTRACT }
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
 };

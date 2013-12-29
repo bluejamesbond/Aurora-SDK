@@ -1,20 +1,20 @@
 
-#include "../../Include/A2DExtLibs.h"
-#include "../../Include/A2DAbstractFrame.h"
-#include "../../Include/A2DTextureBuffer.h"
+#include "../../Include/ExtLibs.h"
+#include "../../Include/AbstractFrame.h"
+#include "../../Include/TextureBuffer.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY A@D_ABSTRACT_FRAME
 /////////////////////////////////////////////////////////////////////////////
 
-int A2DAbstractFrame::aClassInstances = -1;
+int AbstractFrame::aClassInstances = -1;
 
-void A2DAbstractFrame::SetName(LPCWSTR xName)
+void AbstractFrame::SetName(LPCWSTR xName)
 {
 	aWindow->setName(xName);
 }
 
-void A2DAbstractFrame::SetBounds(A2DRect * xRect)
+void AbstractFrame::SetBounds(Rect * xRect)
 {
 	aWindow->setBounds(xRect);
 
@@ -26,7 +26,7 @@ void A2DAbstractFrame::SetBounds(A2DRect * xRect)
 	}
 }
 
-void A2DAbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xHeight)
+void AbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xHeight)
 {
 	aWindow->setBounds(xLeft, xTop, xWidth, xHeight);
 
@@ -38,7 +38,7 @@ void A2DAbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xH
 	}
 }
 
-void A2DAbstractFrame::SetSize(float xWidth, float xHeight)
+void AbstractFrame::SetSize(float xWidth, float xHeight)
 {
 	aWindow->setSize(xWidth, xHeight);
 
@@ -50,7 +50,7 @@ void A2DAbstractFrame::SetSize(float xWidth, float xHeight)
 	}
 }
 
-void A2DAbstractFrame::SetSize(A2DDims * xDims)
+void AbstractFrame::SetSize(Dims * xDims)
 {
 	aWindow->setSize(xDims);
 
@@ -62,7 +62,7 @@ void A2DAbstractFrame::SetSize(A2DDims * xDims)
 	}
 }
 
-void A2DAbstractFrame::SetUndecorated(bool xDecorated)
+void AbstractFrame::SetUndecorated(bool xDecorated)
 {
 	aWindow->setUndecorated(xDecorated);
 
@@ -74,7 +74,7 @@ void A2DAbstractFrame::SetUndecorated(bool xDecorated)
 	}
 }
 
-void A2DAbstractFrame::SetLocationRelativeTo(A2DAbstractFrame * xFrame)
+void AbstractFrame::SetLocationRelativeTo(AbstractFrame * xFrame)
 {
 	aWindow->setLocationRelativeTo(xFrame ? xFrame->aWindow : NULL); //        WTF IS THIS INPUT FRAME BUT NEED WINDOW WTF
 
@@ -86,9 +86,9 @@ void A2DAbstractFrame::SetLocationRelativeTo(A2DAbstractFrame * xFrame)
 	}
 }
 
-void A2DAbstractFrame::setBackground(byte xRed, byte xGreen, byte xBlue)
+void AbstractFrame::setBackground(byte xRed, byte xGreen, byte xBlue)
 {
-	A2DColor color;
+	Color color;
 
 	color.aAlpha = 0xFF;
 	color.aRed = xRed;
@@ -105,9 +105,9 @@ void A2DAbstractFrame::setBackground(byte xRed, byte xGreen, byte xBlue)
 	}
 }
 
-void A2DAbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth)
+void AbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth)
 {
-	A2DColor color;
+	Color color;
 
 	color.aAlpha = xAlpha;
 	color.aRed = xRed;
@@ -125,9 +125,9 @@ void A2DAbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue
 	}
 }
 
-void A2DAbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius)
+void AbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius)
 {
-	A2DColor color;
+	Color color;
 
 	color.aAlpha = xAlpha;
 	color.aRed = xRed;
@@ -144,26 +144,26 @@ void A2DAbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue
 	}
 }
 
-void A2DAbstractFrame::SetVsync(bool xVsync)
+void AbstractFrame::SetVsync(bool xVsync)
 {
-	// A2DWindow doesn't have vsync yet.
+	// Window doesn't have vsync yet.
 }
 
-void A2DAbstractFrame::SetDefaultCloseOperation(int xOperation)
+void AbstractFrame::SetDefaultCloseOperation(int xOperation)
 {
 	aWindow->setDefaultCloseOperation(xOperation);
 }
 
-A2DAbstractWindow* A2DAbstractFrame::getWindow()
+AbstractWindow* AbstractFrame::getWindow()
 {
 	return aWindow;
 }
 
-void A2DAbstractFrame::SetVisible(bool xVisible)
+void AbstractFrame::SetVisible(bool xVisible)
 {	
 	if (xVisible)
 	{
-		if (!A2DAbstractEventQueue::isDispatchingThread(this->id()) && aEventQueue)
+		if (!AbstractEventQueue::isDispatchingThread(this->id()) && aEventQueue)
 		{
 			aEventQueue->invokeLater(this);
 			aEventQueue->resumeDispatchingThread();
@@ -182,36 +182,36 @@ void A2DAbstractFrame::SetVisible(bool xVisible)
 	}
 }
 
-void A2DAbstractFrame::run(int xThreadId)
+void AbstractFrame::run(int xThreadId)
 {
 	this->Update();
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR A2DAbstractFrame::GetClass()
+LPCWSTR AbstractFrame::GetClass()
 {
-	return L"A2DFrame";
+	return L"Frame";
 }
 
-LPCWSTR A2DAbstractFrame::ToString()
+LPCWSTR AbstractFrame::ToString()
 {
-	return L"A2DFrame";
+	return L"Frame";
 }
 
-bool A2DAbstractFrame::operator==(A2DAbstract * xAbstract)
+bool AbstractFrame::operator==(Abstract * xAbstract)
 {
 	return false;
 }
 
-int A2DAbstractFrame::id()
+int AbstractFrame::id()
 {
 	return aId;
 }
 
-void A2DAbstractFrame::dispose()
+void AbstractFrame::dispose()
 {
 	if (aEventQueue)
 	{
@@ -220,7 +220,7 @@ void A2DAbstractFrame::dispose()
 	}
 }
 
-HRESULT A2DAbstractFrame::Initialize()
+HRESULT AbstractFrame::Initialize()
 {
 	HRESULT hr;	
 
@@ -233,7 +233,7 @@ HRESULT A2DAbstractFrame::Initialize()
 	
 	// -----------------------------------------------------
 
-	aRootPane = new A2DRootPane;
+	aRootPane = new RootPane;
 
 	hr = aRootPane->Initialize();
 	if (FAILED(hr))	return hr;
@@ -250,7 +250,7 @@ HRESULT A2DAbstractFrame::Initialize()
 // Window is created here.
 // Note: We will not continue support development
 // outside of EDT. We might come back to it in the future.
-//HRESULT A2DAbstractFrame::initialize_()
+//HRESULT AbstractFrame::initialize_()
 //{
 //	HRESULT hr;
 //
@@ -258,14 +258,14 @@ HRESULT A2DAbstractFrame::Initialize()
 //
 //	// -----------------------------------------------------
 //
-//	aRenderData = new A2DRenderData();
+//	aRenderData = new RenderData();
 //
 //	hr = aRenderData->Initialize();
 //	if (FAILED(hr))	return hr;
 //
 //	// -----------------------------------------------------
 //
-//	aRootPane = new A2DRootPane;
+//	aRootPane = new RootPane;
 //
 //	hr = aRootPane->Initialize();
 //	if (FAILED(hr))	return hr;
@@ -279,7 +279,7 @@ HRESULT A2DAbstractFrame::Initialize()
 //	return hr;
 //}
 
-void A2DAbstractFrame::Deinitialize()
+void AbstractFrame::Deinitialize()
 {
 	// Release the D3D object.
 	if (aBackBuffer)
@@ -315,12 +315,12 @@ void A2DAbstractFrame::Deinitialize()
 }
 
 
-A2DRootPane * A2DAbstractFrame::GetRootPane()
+RootPane * AbstractFrame::GetRootPane()
 {
 	return aRootPane;
 }
 
-HRESULT A2DAbstractFrame::CreateResources()
+HRESULT AbstractFrame::CreateResources()
 {
 	HRESULT hr;
 	
@@ -333,14 +333,14 @@ HRESULT A2DAbstractFrame::CreateResources()
 
 	// -----------------------------------------------------
 
-	aBackBuffer = new A2DBackBuffer(aWindow, &aGXSettings);
+	aBackBuffer = new BackBuffer(aWindow, &aGXSettings);
 
 	hr = aBackBuffer->Initialize();
 	if (FAILED(hr))	return hr;
 
 	// -----------------------------------------------------
 
-	aCamera = new A2DCamera();
+	aCamera = new Camera();
 
 	hr = aCamera->Initialize();
 	if (FAILED(hr))	return hr;
@@ -348,7 +348,7 @@ HRESULT A2DAbstractFrame::CreateResources()
 	// -----------------------------------------------------
 	
 	// Adjust camera settings and then create its resources.
-	A2DCameraProperties * cameraProperties = aCamera->GetProperties();
+	CameraProperties * cameraProperties = aCamera->GetProperties();
 
 	cameraProperties->aPositionX = 0.0f;
 	cameraProperties->aPositionY = 0.0f;
@@ -358,7 +358,7 @@ HRESULT A2DAbstractFrame::CreateResources()
 	aCamera->CreateResources();
 
 	// Create graphics
-	aGraphics = new A2DGraphics();
+	aGraphics = new Graphics();
 
 	// Set the RenderData and pass it into RootPane to inialize the render process.
 	aGraphics->aBackBuffer = aBackBuffer;
@@ -366,9 +366,9 @@ HRESULT A2DAbstractFrame::CreateResources()
 	aGraphics->aWindowDims = aWindow->_getSize();
 	aGraphics->aCamera = aCamera;
 	aGraphics->aViewMatrix = reinterpret_cast<float*>(aCamera->GetViewMatrix());
-	aGraphics->aWorldMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultWorldMatrix());
-	aGraphics->aProjection3DMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultProjectionMatrix(&aWindow->getSize(), &aGXSettings));
-	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
+	aGraphics->aWorldMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultWorldMatrix());
+	aGraphics->aProjection3DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultProjectionMatrix(&aWindow->getSize(), &aGXSettings));
+	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
 
 	aRootPane->SetBounds(0, 0, aWindow->getBounds().aWidth, aWindow->getBounds().aHeight);
 
@@ -378,30 +378,30 @@ HRESULT A2DAbstractFrame::CreateResources()
 	return hr;
 }
 
-void A2DAbstractFrame::validate()
+void AbstractFrame::validate()
 {
 	// aBackBuffer->validate();
 
 	delete aGraphics->aProjection2DMatrix;
 
-	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(A2DMatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
+	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
 
 	aGraphics->validate();
 
 	aValidatedContents = true;
 }
 
-void A2DAbstractFrame::invalidate()
+void AbstractFrame::invalidate()
 {
 	aValidatedContents = false;
 }
 
-void A2DAbstractFrame::validated()
+void AbstractFrame::validated()
 {
 	aValidatedContents = true;
 }
 
-void A2DAbstractFrame::Update()
+void AbstractFrame::Update()
 {
 	if (!aValidatedContents)
 	{

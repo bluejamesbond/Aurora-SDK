@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DRENDERDATA_H__
-#define __A2DRENDERDATA_H__
+#ifndef __RENDERDATA_H__
+#define __RENDERDATA_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Struct:
-//      A2DRENDERDATA
+//      RENDERDATA
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,33 +20,33 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DAbstract.h"
-#include "A2DAbstractWindow.h"
+#include "Abstract.h"
+#include "AbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DTextureBuffer;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct RenderData;
+class BackBuffer;
+class TextureBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
             
-#define A2DRENDERDATA_LL(str1, str2)                          str1 str2                                        
+#define RENDERDATA_LL(str1, str2)                          str1 str2                                        
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct A2DRenderData
+struct RenderData
 {	
     // Variables
 	float                *     aViewMatrix;
@@ -54,11 +54,11 @@ struct A2DRenderData
 	float                *     aProjection2DMatrix;
     float                *     aProjection3DMatrix;
 
-	A2DDims					  *		aWindowDims;
-    A2DCamera				  *     aCamera;
-    A2DBackBuffer             *     aBackBuffer;
-	A2DTextureBuffer          *     aTextureBuffer;
-	A2DTextureBuffer          *     aBlurBuffer;
+	Dims					  *		aWindowDims;
+    Camera				  *     aCamera;
+    BackBuffer             *     aBackBuffer;
+	TextureBuffer          *     aTextureBuffer;
+	TextureBuffer          *     aBlurBuffer;
 };
 
 

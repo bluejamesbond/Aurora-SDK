@@ -1,21 +1,21 @@
 
-#include "../../include/A2DExtLibs.h"
-#include "../../include/A2DTextureBuffer.h"
+#include "../../include/ExtLibs.h"
+#include "../../include/TextureBuffer.h"
 
-A2DTextureBuffer::A2DTextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, A2DDims * xSize) :
+TextureBuffer::TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize) :
 aDXDevice(xDXDevice), aBackBufferaDXDepthStencilView(xBackBufferaDXDepthStencilView)
 {
 	aDims.aWidth = xSize->aWidth;
 	aDims.aHeight = xSize->aHeight;
 }
 
-bool A2DTextureBuffer::hasAlpha()
+bool TextureBuffer::hasAlpha()
 {
 	// Force to be false
 	return false;
 }
 
-HRESULT A2DTextureBuffer::Initialize()
+HRESULT TextureBuffer::Initialize()
 {
 	D3D10_TEXTURE2D_DESC textureDesc;
 	HRESULT hr;
@@ -64,7 +64,7 @@ HRESULT A2DTextureBuffer::Initialize()
 	return hr;
 }
 
-void A2DTextureBuffer::SetActive()
+void TextureBuffer::SetActive()
 {
 	ID3D10Device * device = *aDXDevice;
 
@@ -72,12 +72,12 @@ void A2DTextureBuffer::SetActive()
 	device->OMSetRenderTargets(1, &aDXRenderTargetView, *aBackBufferaDXDepthStencilView);
 }
 
-void * A2DTextureBuffer::getPlatformCompatibleResource()
+void * TextureBuffer::getPlatformCompatibleResource()
 {
 	return aResource;
 }
 
-void A2DTextureBuffer::Clear()
+void TextureBuffer::Clear()
 {
 	float color[4];
 	ID3D10Device * device = *aDXDevice;
@@ -96,10 +96,10 @@ void A2DTextureBuffer::Clear()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A2D_ABSTRACT
+// REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-void A2DTextureBuffer::Deinitialize()
+void TextureBuffer::Deinitialize()
 {
 	if (aDXRenderTargetTexture)
 	{
@@ -131,17 +131,17 @@ void A2DTextureBuffer::Deinitialize()
 
 }
 
-LPCWSTR A2DTextureBuffer::GetClass()
+LPCWSTR TextureBuffer::GetClass()
 {
-	return L"A2DTextureBuffer";
+	return L"TextureBuffer";
 }
 
-LPCWSTR A2DTextureBuffer::ToString()
+LPCWSTR TextureBuffer::ToString()
 {
-	return L"A2DTextureBuffer";
+	return L"TextureBuffer";
 }
 
-bool A2DTextureBuffer::operator==(A2DAbstract * xAbstract)
+bool TextureBuffer::operator==(Abstract * xAbstract)
 {
 	return false;
 }

@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DCAMERA_H__
-#define __A2DCAMERA_H__
+#ifndef __CAMERA_H__
+#define __CAMERA_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DCAMERA
+//      CAMERA
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,60 +20,60 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DCameraProperties.h"
-#include "A2DAbstract.h"
+#include "CameraProperties.h"
+#include "Abstract.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DAbstractComponent;
-class A2DCamera;
-struct A2DCameraProperties;
-struct A2DRenderData;
-class A2DBackBuffer;
-class A2DMatrixFactory;
-class A2DModelFactory;
-class A2DRootPane;
+class ;
+class Abstract;
+class Renderable;
+class AbstractComponent;
+class Camera;
+struct CameraProperties;
+struct RenderData;
+class BackBuffer;
+class MatrixFactory;
+class ModelFactory;
+class RootPane;
 
-class A2DWindow;
+class Window;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DCAMERA_LL(str1, str2)                              str1 str2
+#define CAMERA_LL(str1, str2)                              str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DCamera : public A2DAbstract
+class Camera : public Abstract
 {
 
 public:
 
     // Constructor
-    A2DCamera();
-    A2DCamera(A2DCameraProperties * xCameraProps);
+    Camera();
+    Camera(CameraProperties * xCameraProps);
 
     // Deconstructor
-    ~A2DCamera();
+    ~Camera();
 
 private:
 
     // Variables
-    A2DCameraProperties       *     aCameraProps;
+    CameraProperties       *     aCameraProps;
     D3DXMATRIX                *     aViewMatrix;
 
 public:
 
     // Accesors
     D3DXMATRIX                *     GetViewMatrix();
-    A2DCameraProperties       *     GetProperties();          // returns the camera properties by pointer
+    CameraProperties       *     GetProperties();          // returns the camera properties by pointer
 
 private:
 
@@ -96,12 +96,12 @@ public:
 public:
 
     // Implementation
-    // { A2DABSTRACT }
+    // { ABSTRACT }
     virtual HRESULT                 Initialize();
     virtual void                    Deinitialize();
     virtual LPCWSTR                 GetClass();
     virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(A2DAbstract * xAbstract);
+    virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

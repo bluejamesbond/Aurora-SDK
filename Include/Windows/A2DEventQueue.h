@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DEVENTQUEUE_H__
-#define __A2DEVENTQUEUE_H__
+#ifndef __EVENTQUEUE_H__
+#define __EVENTQUEUE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DWINDOW
+//      WINDOW
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,20 +20,20 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "A2DThread.h"
-#include "A2DWindow.h"
-#include "../A2DRunnable.h"
-#include "../A2DAbstract.h"
-#include "../A2DAbstractEventQueue.h"
+#include "ExtLibs.h"
+#include "Thread.h"
+#include "Window.h"
+#include "../Runnable.h"
+#include "../Abstract.h"
+#include "../AbstractEventQueue.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DFrame;
-class A2DAbstract;
-class A2DThread;
+class Frame;
+class Abstract;
+class Thread;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -41,17 +41,17 @@ class A2DThread;
 
 using namespace std;
 
-class A2DEventQueue : public A2DAbstractEventQueue
+class EventQueue : public AbstractEventQueue
 {
 public:
 
-	A2DEventQueue::A2DEventQueue(A2DAbstractFrame * xFrame);
+	EventQueue::EventQueue(AbstractFrame * xFrame);
 
-	A2DEventQueue::~A2DEventQueue();
+	EventQueue::~EventQueue();
 
 private:
 
-	queue<A2DRunnable*> * aEventQueue;
+	queue<Runnable*> * aEventQueue;
 	HANDLE aEventQueueLock;
 	HINSTANCE aHIsntance;
 
@@ -60,24 +60,24 @@ public:
 	// Queue
 	virtual bool                    getQueueLock();
 	virtual void                    releaseQueueLock();
-	virtual A2DRunnable *           peekEvent();
+	virtual Runnable *           peekEvent();
 	virtual void					popEvent();
 	virtual bool                    hasEvent();
 
 protected:
 
-	virtual void                    pushEvent(A2DRunnable * xRunnable);
+	virtual void                    pushEvent(Runnable * xRunnable);
 	virtual void                    removeAllEvents();
 
 public:
 
 	// Thread - Move from OS level to Global level!!!
-	virtual A2DAbstractThread *		createPlatformCompatibleThread(A2DRunnable * xRunnable);
+	virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
 public:
@@ -86,7 +86,7 @@ public:
 	virtual void                    Deinitialize();
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 };
 
 

@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DROOTPANE_H__
-#define __A2DROOTPANE_H__
+#ifndef __ROOTPANE_H__
+#define __ROOTPANE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      A2DROOTPANE
+//      ROOTPANE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -21,37 +21,37 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "A2DRenderData.h"
-#include "A2DVertexData.h"
-#include "A2DBackBuffer.h"
-#include "A2DTexture.h"
-#include "A2DPanel.h"
+#include "RenderData.h"
+#include "VertexData.h"
+#include "BackBuffer.h"
+#include "Texture.h"
+#include "Panel.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2D;
-class A2DAbstract;
-class A2DRenderable;
-class A2DCamera;
-struct A2DCameraProperties;
-class A2DBackBuffer;
+class ;
+class Abstract;
+class Renderable;
+class Camera;
+struct CameraProperties;
+class BackBuffer;
 
-class A2DWindow;
-class A2DAbstractComponent;
+class Window;
+class AbstractComponent;
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define A2DROOTPANE_LL(str1, str2)                            str1 str2
+#define ROOTPANE_LL(str1, str2)                            str1 str2
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-class A2DRootPane : public A2DPanel
+class RootPane : public Panel
 {
 
 private:
@@ -61,23 +61,23 @@ private:
 public:
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DPANEL
+// PANEL
 ////////////////////////////////////////////////////////////////////////////////
 
-	virtual void                    RenderComponent(A2DRenderData * xRenderData);
-	virtual void                    RenderComponentBorder(A2DRenderData * xRenderData);
+	virtual void                    RenderComponent(RenderData * xRenderData);
+	virtual void                    RenderComponentBorder(RenderData * xRenderData);
 	virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
 	virtual void					SetBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight) final;
 
 public:
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 

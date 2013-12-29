@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DTHREAD_H__
-#define __A2DTHREAD_H__
+#ifndef __THREAD_H__
+#define __THREAD_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      A2DTHREAD
+//      THREAD
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,10 +20,10 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "A2DExtLibs.h"
-#include "../A2DAbstract.h"
-#include "../A2DRunnable.h"
-#include "../A2DAbstractThread.h"
+#include "ExtLibs.h"
+#include "../Abstract.h"
+#include "../Runnable.h"
+#include "../AbstractThread.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -31,13 +31,13 @@
 
 using namespace std;
 
-class A2DThread : public A2DAbstractThread
+class Thread : public AbstractThread
 {
 
 public:
 
-	A2DThread(A2DRunnable * xRunnable);
-	~A2DThread();
+	Thread(Runnable * xRunnable);
+	~Thread();
 
 private:
 	
@@ -62,14 +62,14 @@ protected:
 	static DWORD WINAPI initThread(void * xParam);
 
 ////////////////////////////////////////////////////////////////////////////////
-// A2DABSTRACT
+// ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
 public:
 
 	virtual LPCWSTR                 GetClass();
 	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(A2DAbstract * xAbstract);
+	virtual bool                    operator==(Abstract * xAbstract);
 
 };
 
