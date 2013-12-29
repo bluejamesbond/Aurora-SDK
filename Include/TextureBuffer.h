@@ -28,60 +28,60 @@
 #include "ImageProperties.h"
 #include "Rect.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Texture;
-class AbstractTexture;
-                              
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	class Texture;
+	class AbstractTexture;
 
-class TextureBuffer : public AbstractTexture
-{
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-public:
+	class TextureBuffer : public AbstractTexture
+	{
 
-	// Constructor
-	TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
+	public:
 
-	// Deconstructor
-	~TextureBuffer();
-	
-	// Variables
-	ID3D10Device				**	aDXDevice;
-	ID3D10DepthStencilView		**	aBackBufferaDXDepthStencilView;
+		// Constructor
+		TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
 
-	ID3D10Texture2D				*	aDXRenderTargetTexture;
-	ID3D10RenderTargetView		*	aDXRenderTargetView;
-	ID3D10DepthStencilState		*   aDXDepthStencilState;
-	ID3D10ShaderResourceView*		aResource;
+		// Deconstructor
+		~TextureBuffer();
 
-	// Accessors
-	virtual	bool					hasAlpha();
+		// Variables
+		ID3D10Device				**	aDXDevice;
+		ID3D10DepthStencilView		**	aBackBufferaDXDepthStencilView;
 
-	// Mutators
-	void							SetActive();
+		ID3D10Texture2D				*	aDXRenderTargetTexture;
+		ID3D10RenderTargetView		*	aDXRenderTargetView;
+		ID3D10DepthStencilState		*   aDXDepthStencilState;
+		ID3D10ShaderResourceView*		aResource;
 
-	// Additional
-	void							Clear();
-	virtual void			   *	getPlatformCompatibleResource();
-		
-public:
+		// Accessors
+		virtual	bool					hasAlpha();
 
-	// Implementation
-	// { ABSTRACT }
-	virtual HRESULT                 Initialize();
-	virtual void	                Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
+		// Mutators
+		void							SetActive();
 
-};
+		// Additional
+		void							Clear();
+		virtual void			   *	getPlatformCompatibleResource();
 
+	public:
+
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize();
+		virtual void	                Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+
+	};
+}
 
 #endif

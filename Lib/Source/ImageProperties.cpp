@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/RootPane.h"
 
+using namespace A2D;
+
 ImageProperties::ImageProperties(ImageProperties * xImageProps)
 {
 	aOptRepeat = xImageProps->aOptRepeat;     // background-repeat  (CSS)

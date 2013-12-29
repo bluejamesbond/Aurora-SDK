@@ -23,88 +23,63 @@
 #include "Component.h"
 #include "ImageProperties.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class BackBuffer;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-class Window;
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class BackBuffer;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
+	class Window;
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	class Panel : public Component
+	{
+	public:
 
-#define COMPONENT_LL(str1, str2)                           str1 str2
+		// Variables
+		float translationX = 0;
+		float translationXG1 = 10;
+		float translationYG1 = 10;
+		float translationY = 0;
+		float translationYDirection = 1;
+		float translationXDirection = 1;
+		float translationXDirectionG1 = 1;
+		float translationYDirectionG1 = 1;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	protected:
 
-class Panel : public Component
-{
-public:
+		// Variables
+		ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
+		LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
+		int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
+		int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
+		int								aOptBackgroundPosY = 0;					// background-position-x  (CSS)
 
-	// Variables
-	float translationX = 0;
-	float translationXG1 = 10;
-	float translationYG1 = 10;
-	float translationY = 0;
-	float translationYDirection = 1;
-	float translationXDirection = 1;
-	float translationXDirectionG1 = 1;
-	float translationYDirectionG1 = 1;
+	public:
 
-protected:
+		// Additional
+		virtual void                    RenderComponent(RenderData * xRenderData);
 
-	// Variables
-	ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
-	LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
-	int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
-	int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
-	int								aOptBackgroundPosY = 0;					// background-position-x  (CSS)
+	public:
 
-public:
-
-	// Accessors
-	// { NONE }
-
-	// Mutators
-	// { NONE }
-
-	// Builders
-	// { NONE }
-
-	// Factory
-	// { NONE }
-
-public:
-
-	// Additional
-	virtual void                    RenderComponent(RenderData * xRenderData);
-
-	// Pure Virtual
-	// { NONE }
-
-	// Virtual
-	// { NONE }
-
-public:
-
-	// Implementation
-	// { ABSTRACT }
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-};
+		// Implementation
+		// { ABSTRACT }
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+	};
+}
 
 #endif

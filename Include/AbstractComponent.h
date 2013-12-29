@@ -23,151 +23,145 @@
 #include "Renderable.h"
 #include "Rect.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class Graphics;
-class BackBuffer;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-class Window;
+	class Abstract;
+	class Renderable;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class Graphics;
+	class BackBuffer;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
+	class Window;
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-#define ABSTRACTCOMPONENT_LL(str1, str2)                   str1 str2
+	class AbstractComponent : public Renderable
+	{
+	public:
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+		// Constructor
+		AbstractComponent();
 
+		// Deconstructor
+		~AbstractComponent();
 
-class AbstractComponent : public Renderable
-{
-public:
+	protected:
 
-	// Constructor
-	AbstractComponent();
+		// Variables
+		Graphics				  *     aGraphics;
+		AbstractComponent      **    aChildrenComps;
+		AbstractComponent	  *	    aParentComp;
+		int                             aChildrenCompsLength = 0;
+		int                             aChildrenCompsIndex = 0;
 
-	// Deconstructor
-	~AbstractComponent();
+		Rect							aOptRegion;
+		Rect							aOptBackgroundRegion;
 
-protected:
+		Rect							aCalculatedRegion;
 
-	// Variables
-	Graphics				  *     aGraphics;
-	AbstractComponent      **    aChildrenComps;
-	AbstractComponent	  *	    aParentComp;
-	int                             aChildrenCompsLength = 0;
-	int                             aChildrenCompsIndex = 0;
+	public:
+		// Accessors
+		AbstractComponent      *		GetParent();
+		Graphics				  *		GetGraphics();
 
-	Rect							aOptRegion;
-	Rect							aOptBackgroundRegion;
+	public:
 
-	Rect							aCalculatedRegion;
+		// Accessors
+		Rect					  *		GetBounds();
 
-public:
-	// Accessors
-	AbstractComponent      *		GetParent();
-	Graphics				  *		GetGraphics();
-
-public:
-
-	// Accessors
-	Rect					  *		GetBounds();
-
-	// Mutators
-	// { NONE }
+		// Mutators
+		// { NONE }
 
 
-private:
+	private:
 
-	bool							aValidatedContents;
+		bool							aValidatedContents;
 
-protected:
+	protected:
 
-	void							validated();
+		void							validated();
 
-public:
+	public:
 
-	void							invalidate();
-	void							revalidate();
+		void							invalidate();
+		void							revalidate();
 
-private:
+	private:
 
-	// Builders
-	AbstractComponent      **    CreateAmmoritizedComponentArray();
-	Graphics               *		CreateGraphics();
+		// Builders
+		AbstractComponent      **    CreateAmmoritizedComponentArray();
+		Graphics               *		CreateGraphics();
 
-	// Factory
-	// { NONE }
+		// Factory
+		// { NONE }
 
-public:
+	public:
 
-	// Additional
-	void                            Add(AbstractComponent * xAbstractComponent);
+		// Additional
+		void                            Add(AbstractComponent * xAbstractComponent);
 
-protected:
+	protected:
 
-	// Additional
-	void							SetParent(AbstractComponent * xComponent);
+		// Additional
+		void							SetParent(AbstractComponent * xComponent);
 
-private:
+	private:
 
-	// Additional
-	void                            RemoveComponent(AbstractComponent * xAbstractComponent);
-	void                            AddComponent(AbstractComponent * xAbstractComponent);
+		// Additional
+		void                            RemoveComponent(AbstractComponent * xAbstractComponent);
+		void                            AddComponent(AbstractComponent * xAbstractComponent);
 
-public:
+	public:
 
-	// Pure Virtual
-	virtual void                    RenderComponent(RenderData * xRenderData) = 0;
-	virtual void                    RenderComponentBorder(RenderData * xRenderData) = 0;
+		// Pure Virtual
+		virtual void                    RenderComponent(RenderData * xRenderData) = 0;
+		virtual void                    RenderComponentBorder(RenderData * xRenderData) = 0;
 
-public:
+	public:
 
-	// Virtual
-	virtual void					SetBounds(Rect * xRect);
-	virtual void					SetBounds(float xX, float xY, float xWidth, float xHeight);
+		// Virtual
+		virtual void					SetBounds(Rect * xRect);
+		virtual void					SetBounds(float xX, float xY, float xWidth, float xHeight);
 
-protected:
+	protected:
 
-	// Virtual
-	virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
-	virtual void                    RenderChildren(RenderData * xRenderData);
-	virtual void                    DeinitializeChildren() final;
-	virtual void					validate();
+		// Virtual
+		virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
+		virtual void                    RenderChildren(RenderData * xRenderData);
+		virtual void                    DeinitializeChildren() final;
+		virtual void					validate();
 
-public:
+	public:
 
-	virtual void                    Render(RenderData * xRenderData);
-	
-public:
+		virtual void                    Render(RenderData * xRenderData);
 
-	// Virtual
-	// { RENDERABLE }
-	virtual void                    Update(RenderData * xRenderData) final;
+	public:
 
-public:
+		// Virtual
+		// { RENDERABLE }
+		virtual void                    Update(RenderData * xRenderData) final;
 
-	// Implementation
-	// { ABSTRACT }
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
+	public:
 
-};
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+
+	};
+}
 
 #endif

@@ -3,6 +3,8 @@
 #include "../../include/Component.h"
 #include "../../include/Graphics.h"
 
+using namespace A2D;
+
 void Component::SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
 	int xOptBackroundSizeX,	int xOptBackroundSizeY,	int xOptBackgroundColor, int xOptBackgroundRepeat)
 {

@@ -24,61 +24,59 @@
 #include "VertexData.h"
 #include "Rect.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Pipelineable;
-class BackBuffer;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	class Abstract;
+	class Pipelineable;
+	class BackBuffer;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-class DXShapeUtils
-{
+	class DXShapeUtils
+	{
 
-public:
-	
+	public:
+
+		template<class VertexClass>
+		static HRESULT CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
+
+		static HRESULT CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
+	};
+
 	template<class VertexClass>
-	static HRESULT CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
-	
-	static HRESULT CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
-};
+	HRESULT DXShapeUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
+	{
+		HRESULT hr;
+		D3D10_BUFFER_DESC vertexBufferDesc;
+		D3D10_SUBRESOURCE_DATA vertexData;
+		VertexClass * vertices = new VertexData[xVertices];
 
-template<class VertexClass>
-HRESULT DXShapeUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
-{
-	HRESULT hr;
-	D3D10_BUFFER_DESC vertexBufferDesc;
-	D3D10_SUBRESOURCE_DATA vertexData;
-	VertexClass * vertices = new VertexData[xVertices];
+		// Initialize vertex array to zeros at first.
+		memset(vertices, 0, (sizeof(VertexClass)* xVertices));
 
-	// Initialize vertex array to zeros at first.
-	memset(vertices, 0, (sizeof(VertexClass) * xVertices));
+		vertexBufferDesc.Usage = D3D10_USAGE_DYNAMIC;
+		vertexBufferDesc.ByteWidth = sizeof(VertexClass)* xVertices;
+		vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+		vertexBufferDesc.MiscFlags = 0;
 
-	vertexBufferDesc.Usage = D3D10_USAGE_DYNAMIC;
-	vertexBufferDesc.ByteWidth = sizeof(VertexClass)* xVertices;
-	vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	vertexBufferDesc.MiscFlags = 0;
+		// Give the subresource structure a pointer to the vertex data.
+		vertexData.pSysMem = vertices;
 
-	// Give the subresource structure a pointer to the vertex data.
-	vertexData.pSysMem = vertices;
+		hr = xDXDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer);
+		if (FAILED(hr))	return hr;
 
-	hr = xDXDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer);
-	if (FAILED(hr))	return hr;
+		delete[] vertices;
+		vertices = 0;
 
-	delete[] vertices;
-	vertices = 0;
-
-	return hr;
+		return hr;
+	}
 }
 
 #endif

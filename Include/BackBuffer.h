@@ -24,96 +24,91 @@
 #include "GXSettings.h"
 #include "AbstractWindow.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
-            
-#define BACKBUFFER_LL(str1, str2)                              str1 str2
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-class BackBuffer : public Abstract
-{
+	class BackBuffer : public Abstract
+	{
 
-public:
+	public:
 
-    // Constructor
-	BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
+		// Constructor
+		BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
 
-    // Deconstructor
-    ~BackBuffer();
+		// Deconstructor
+		~BackBuffer();
 
-    // Variables
-    IDXGISwapChain            *     aDXGISwapChain;
-    ID3D10Device              *     aDXDevice;
-    ID3D10RenderTargetView    *     aDXRenderTargetView;
-    ID3D10Texture2D           *     aDXDepthStencilBuffer;
-    ID3D10DepthStencilState   *     aDXDepthStencilState;
-    ID3D10DepthStencilView    *     aDXDepthStencilView;
-    ID3D10RasterizerState     *     aDXRasterState;
-	ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
-	char							aVideoCardDescription[128];
-	int								aVideoCardMemory;
+		// Variables
+		IDXGISwapChain            *     aDXGISwapChain;
+		ID3D10Device              *     aDXDevice;
+		ID3D10RenderTargetView    *     aDXRenderTargetView;
+		ID3D10Texture2D           *     aDXDepthStencilBuffer;
+		ID3D10DepthStencilState   *     aDXDepthStencilState;
+		ID3D10DepthStencilView    *     aDXDepthStencilView;
+		ID3D10RasterizerState     *     aDXRasterState;
+		ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
+		char							aVideoCardDescription[128];
+		int								aVideoCardMemory;
 
-private:
-	// Variables
-	AbstractWindow		  *     aWindow;
-	GXSettings			  *     aGXSettings;
+	private:
+		// Variables
+		AbstractWindow		  *     aWindow;
+		GXSettings			  *     aGXSettings;
 
-public:
-    // Accessors
-    ID3D10Device              *     GetDevice();
-	void							validate();
+	public:
+		// Accessors
+		ID3D10Device              *     GetDevice();
+		void							validate();
 
-public:
-    // Mutators
-    void                            SetZBuffer(bool val);
-    
-    // Builders
-    // { NONE }
+	public:
+		// Mutators
+		void                            SetZBuffer(bool val);
 
-    // Factory
-    // { NONE }
+		// Builders
+		// { NONE }
 
-public:
-    // Additional
-    void                            SetActive();
-    void                            Swap();
-    void                            Clear();
+		// Factory
+		// { NONE }
 
-    // Pure Virtual
-    // { NONE }
+	public:
+		// Additional
+		void                            SetActive();
+		void                            Swap();
+		void                            Clear();
 
-    // Virtual
-    // { NONE }
+		// Pure Virtual
+		// { NONE }
 
-public:
+		// Virtual
+		// { NONE }
 
-    // Implementation
-    // { ABSTRACT }
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(Abstract * xAbstract);
+	public:
 
-};
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
 
+	};
+}
 #endif

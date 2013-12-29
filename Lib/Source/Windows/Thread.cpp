@@ -2,6 +2,8 @@
 #include "../../../Include/Windows/ExtLibs.h"
 #include "../../../Include/Windows/Thread.h"
 
+using namespace A2D;
+
 Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable), aThreadID (0) {}
 
 Thread::~Thread(){}

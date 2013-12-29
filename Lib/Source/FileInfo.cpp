@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/FileInfo.h"
 
+using namespace A2D;
+
 FileInfo::FileInfo(LPCWSTR * xFileName) :
 aFileName(xFileName),
 aFileInfo(NULL){}

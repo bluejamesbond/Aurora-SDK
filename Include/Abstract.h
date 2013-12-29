@@ -22,24 +22,27 @@
 
 #include "ExtLibs.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class Abstract
-{
-public:
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-    // Pure Virtual
-    virtual HRESULT                 Initialize() = 0;                           // Initialize  
-    virtual void                    Deinitialize() = 0;                         // Shutdown   
+	class Abstract
+	{
+	public:
 
-    // Virtual    
-    virtual LPCWSTR                 GetClass();                                 // Class type    
-    virtual bool                    operator==(Abstract * xAbstract);        // Class type       
-    virtual LPCWSTR                 ToString();                                 // Class type 
+		// Pure Virtual
+		virtual HRESULT                 Initialize() = 0;                           // Initialize  
+		virtual void                    Deinitialize() = 0;                         // Shutdown   
 
-	virtual bool					isClass(LPCWSTR xClass) final;
-};
+		// Virtual    
+		virtual LPCWSTR                 GetClass();                                 // Class type    
+		virtual bool                    operator==(Abstract * xAbstract);        // Class type       
+		virtual LPCWSTR                 ToString();                                 // Class type 
 
+		virtual bool					isClass(LPCWSTR xClass) final;
+	};
+
+}
 #endif

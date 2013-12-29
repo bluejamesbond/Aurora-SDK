@@ -38,97 +38,100 @@
 #include "GXSettings.h"
 #include "Rect.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
-
-class	Abstract;
-class	Renderable;
-class	AbstractComponent;
-class	Camera;
-struct	CameraProperties;
-struct	RenderData;
-class	MatrixFactory;
-class	BackBuffer;
-struct	BufferData;
-class	MatrixFactory;
-class	RootPane;
-
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
-
-class AbstractFrame : public Abstract, public Runnable
-{
+namespace A2D {
 	
-private:
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-    RootPane               *     aRootPane;
-	BackBuffer             *     aBackBuffer;
-	TextureBuffer          *     aTextureBuffer;
-	TextureBuffer          *     aBlurBuffer;
-    Camera                 *     aCamera;
-	GXSettings			  		aGXSettings;
-	AbstractWindow	  	  * 	aWindow;
-	AbstractEventQueue	  *		aEventQueue = NULL;
-	Graphics				  *		aGraphics;
-
-	int								aId;
-	static int						aClassInstances;
-
-	bool							aValidatedContents;
-public:
-
-	RootPane               *     GetRootPane();
-	HRESULT                         CreateResources();
-	void                            Update();
-	void							dispose();
-	void							invalidate();
-	// void							revalidate(); --- Unsafe for AbstractFrame!!!
-
-protected:
-	void							validated();
-	void							validate();
-
-public:
-	int								id();
-	void							setBackground(byte xRed, byte xGreen, byte xBlue);
-	void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
-	void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
-	void							SetVisible(bool xVisibility);
-	void							SetName(LPCWSTR  xName);
-	void							SetBounds(Rect * xRect);
-	void							SetBounds(float xLeft, float xTop, float xWidth, float xHeight);
-	void							SetSize(float xWidth, float xHeight);
-	void							SetSize(Dims * xDims);
-	void							SetUndecorated(bool xDecorated);
-	void							SetLocationRelativeTo(AbstractFrame * xFrame);
-	void							SetVsync(bool xVsync);
-	void							SetDefaultCloseOperation(int xOperation);
-	AbstractWindow		  *		getWindow();
-	void							run(int xThreadId);
+	class	Abstract;
+	class	Renderable;
+	class	AbstractComponent;
+	class	Camera;
+	struct	CameraProperties;
+	struct	RenderData;
+	class	MatrixFactory;
+	class	BackBuffer;
+	struct	BufferData;
+	class	MatrixFactory;
+	class	RootPane;
 	
-////////////////////////////////////////////////////////////////////////////////
-// PLATFORM COMPATIBLE IMPLEMENTATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-protected:
+	class AbstractFrame : public Abstract, public Runnable
+	{
 
-	virtual AbstractWindow *		createPlatformCompatibleWindow() = 0;
-	virtual AbstractEventQueue*	createPlatformCompatibleEventQueue() = 0;
+	private:
 
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACT
-////////////////////////////////////////////////////////////////////////////////
+		RootPane               *     aRootPane;
+		BackBuffer             *     aBackBuffer;
+		TextureBuffer          *     aTextureBuffer;
+		TextureBuffer          *     aBlurBuffer;
+		Camera                 *     aCamera;
+		GXSettings			  		aGXSettings;
+		AbstractWindow	  	  * 	aWindow;
+		AbstractEventQueue	  *		aEventQueue = NULL;
+		Graphics				  *		aGraphics;
 
-public:
+		int								aId;
+		static int						aClassInstances;
 
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
+		bool							aValidatedContents;
+	public:
 
-};
+		RootPane               *     GetRootPane();
+		HRESULT                         CreateResources();
+		void                            Update();
+		void							dispose();
+		void							invalidate();
+		// void							revalidate(); --- Unsafe for AbstractFrame!!!
+
+	protected:
+		void							validated();
+		void							validate();
+
+	public:
+		int								id();
+		void							setBackground(byte xRed, byte xGreen, byte xBlue);
+		void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
+		void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
+		void							SetVisible(bool xVisibility);
+		void							SetName(LPCWSTR  xName);
+		void							SetBounds(Rect * xRect);
+		void							SetBounds(float xLeft, float xTop, float xWidth, float xHeight);
+		void							SetSize(float xWidth, float xHeight);
+		void							SetSize(Dims * xDims);
+		void							SetUndecorated(bool xDecorated);
+		void							SetLocationRelativeTo(AbstractFrame * xFrame);
+		void							SetVsync(bool xVsync);
+		void							SetDefaultCloseOperation(int xOperation);
+		AbstractWindow		  *		getWindow();
+		void							run(int xThreadId);
+
+		////////////////////////////////////////////////////////////////////////////////
+		// PLATFORM COMPATIBLE IMPLEMENTATION
+		////////////////////////////////////////////////////////////////////////////////
+
+	protected:
+
+		virtual AbstractWindow *		createPlatformCompatibleWindow() = 0;
+		virtual AbstractEventQueue*	createPlatformCompatibleEventQueue() = 0;
+
+		////////////////////////////////////////////////////////////////////////////////
+		// ABSTRACT
+		////////////////////////////////////////////////////////////////////////////////
+
+	public:
+
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+
+	};
+}
 
 #endif

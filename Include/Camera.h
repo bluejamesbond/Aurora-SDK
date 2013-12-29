@@ -23,86 +23,80 @@
 #include "CameraProperties.h"
 #include "Abstract.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class BackBuffer;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-class Window;
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class BackBuffer;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
+	class Window;
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-#define CAMERA_LL(str1, str2)                              str1 str2
+	class Camera : public Abstract
+	{
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	public:
 
-class Camera : public Abstract
-{
+		// Constructor
+		Camera();
+		Camera(CameraProperties * xCameraProps);
 
-public:
+		// Deconstructor
+		~Camera();
 
-    // Constructor
-    Camera();
-    Camera(CameraProperties * xCameraProps);
+	private:
 
-    // Deconstructor
-    ~Camera();
+		// Variables
+		CameraProperties       *     aCameraProps;
+		D3DXMATRIX                *     aViewMatrix;
 
-private:
+	public:
 
-    // Variables
-    CameraProperties       *     aCameraProps;
-    D3DXMATRIX                *     aViewMatrix;
+		// Accesors
+		D3DXMATRIX                *     GetViewMatrix();
+		CameraProperties       *     GetProperties();          // returns the camera properties by pointer
 
-public:
+	private:
 
-    // Accesors
-    D3DXMATRIX                *     GetViewMatrix();
-    CameraProperties       *     GetProperties();          // returns the camera properties by pointer
+		// Builders
+		// { NONE }
 
-private:
+		// Factory
+		// { NONE }
 
-    // Builders
-    // { NONE }
+	public:
+		// Additional
+		void						   CreateResources();
 
-    // Factory
-    // { NONE }
+		// Pure Virtual
+		// { NONE }
 
-public:
-    // Additional
-	void						   CreateResources();
+		// Virtual
+		// { NONE }
 
-    // Pure Virtual
-    // { NONE }
+	public:
 
-    // Virtual
-    // { NONE }
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
 
-public:
-
-    // Implementation
-    // { ABSTRACT }
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(Abstract * xAbstract);
-
-};
-
+	};
+}
 #endif

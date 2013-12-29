@@ -23,22 +23,25 @@
 #include "ExtLibs.h"
 #include "Abstract.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class Pipelineable : public Abstract
-{
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-public:
+	class Pipelineable : public Abstract
+	{
 
-	// Implementation
-	// { ABSTRACT }
-	virtual HRESULT                 Initialize() = 0;
-	virtual void                    Deinitialize() = 0;
-	virtual LPCWSTR                 GetClass() = 0;
-	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(Abstract * xAbstract) = 0;
-};
+	public:
+
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize() = 0;
+		virtual void                    Deinitialize() = 0;
+		virtual LPCWSTR                 GetClass() = 0;
+		virtual LPCWSTR                 ToString() = 0;
+		virtual bool                    operator==(Abstract * xAbstract) = 0;
+	};
+}
 
 #endif

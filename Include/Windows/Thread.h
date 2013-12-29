@@ -25,52 +25,54 @@
 #include "../Runnable.h"
 #include "../AbstractThread.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
-
 using namespace std;
 
-class Thread : public AbstractThread
-{
+namespace A2D {
 
-public:
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-	Thread(Runnable * xRunnable);
-	~Thread();
+	class Thread : public AbstractThread
+	{
 
-private:
-	
-	HANDLE aHThread;
-	DWORD aThreadID;
+	public:
 
-	static HANDLE aHandles[50];
+		Thread(Runnable * xRunnable);
+		~Thread();
 
-public:
+	private:
 
-	virtual bool start();
-	virtual void interrupt();
-	virtual void resume();
-	virtual void stop();
-	virtual bool isAlive();
-	virtual int	id();
-	virtual void waitAll();
-	virtual int getCurrentThreadId();
+		HANDLE aHThread;
+		DWORD aThreadID;
 
-protected:
+		static HANDLE aHandles[50];
 
-	static DWORD WINAPI initThread(void * xParam);
+	public:
 
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACT
-////////////////////////////////////////////////////////////////////////////////
+		virtual bool start();
+		virtual void interrupt();
+		virtual void resume();
+		virtual void stop();
+		virtual bool isAlive();
+		virtual int	id();
+		virtual void waitAll();
+		virtual int getCurrentThreadId();
 
-public:
+	protected:
 
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
+		static DWORD WINAPI initThread(void * xParam);
 
-};
+		////////////////////////////////////////////////////////////////////////////////
+		// ABSTRACT
+		////////////////////////////////////////////////////////////////////////////////
 
+	public:
+
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+
+	};
+}
 #endif

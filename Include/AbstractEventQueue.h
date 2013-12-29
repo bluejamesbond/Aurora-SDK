@@ -27,90 +27,92 @@
 #include "Runnable.h"
 #include "Rect.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D{
 
-class AbstractFrame;
-class AbstractWindow;
-class Window;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	class AbstractFrame;
+	class AbstractWindow;
+	class Window;
 
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-class AbstractEventQueue : public Runnable, public Abstract
-{
-public:
+	class AbstractEventQueue : public Runnable, public Abstract
+	{
+	public:
 
-	AbstractEventQueue(AbstractFrame * xFrame);
+		AbstractEventQueue(AbstractFrame * xFrame);
 
-private:
+	private:
 
-    Runnable               *     aImmediateRunnable = NULL;
-	AbstractThread		  *		aThread = NULL;
+		Runnable               *     aImmediateRunnable = NULL;
+		AbstractThread		  *		aThread = NULL;
 
-protected:
+	protected:
 
-	AbstractFrame		  *		aFrame;
+		AbstractFrame		  *		aFrame;
 
-public:
+	public:
 
-    void                            invokeLater(Runnable * xRunnable);
-    void                            invokeAndWait(Runnable * xRunnable);
-    void                            clearQueue();
-	bool							dispatchNextEvent();
-	AbstractThread		 *		getDispatchingThread();
+		void                            invokeLater(Runnable * xRunnable);
+		void                            invokeAndWait(Runnable * xRunnable);
+		void                            clearQueue();
+		bool							dispatchNextEvent();
+		AbstractThread		 *		getDispatchingThread();
 
-	static bool						isDispatchingThread(int xFrameId);
-    void							invokeRerender();
-    void							invokeRevalidate();
-    void							invokeReset();
+		static bool						isDispatchingThread(int xFrameId);
+		void							invokeRerender();
+		void							invokeRevalidate();
+		void							invokeReset();
 
-    void                            invokeAnimationFrame(int xTime, Runnable * xRunnable);
-	
-	int		 						waitForAllDispatchingThreads();
+		void                            invokeAnimationFrame(int xTime, Runnable * xRunnable);
 
-	void							startDispatchingThread();
-	void							stopDispatchingThread();
-	void							interruptDispatchingThread();
-	void							resumeDispatchingThread();
+		int		 						waitForAllDispatchingThreads();
 
-	static AbstractEventQueue*	aClassInstance;
-	static AbstractEventQueue*	getInstance();
+		void							startDispatchingThread();
+		void							stopDispatchingThread();
+		void							interruptDispatchingThread();
+		void							resumeDispatchingThread();
 
-    // Queue
+		static AbstractEventQueue*	aClassInstance;
+		static AbstractEventQueue*	getInstance();
 
-public:
+		// Queue
 
-    virtual bool                    getQueueLock() = 0;
-	virtual void                    releaseQueueLock() = 0;
-	virtual Runnable *           peekEvent() = 0;
-	virtual void					popEvent() = 0;
-	virtual bool                    hasEvent() = 0;
+	public:
 
-protected:
+		virtual bool                    getQueueLock() = 0;
+		virtual void                    releaseQueueLock() = 0;
+		virtual Runnable *           peekEvent() = 0;
+		virtual void					popEvent() = 0;
+		virtual bool                    hasEvent() = 0;
 
-    virtual void                    pushEvent(Runnable * xRunnable) = 0;
-	virtual void                    removeAllEvents() = 0;
-	virtual void					run(int xThreadId);
+	protected:
 
-	// Creators
-	virtual AbstractThread*		createPlatformCompatibleThread(Runnable * xRunnable) = 0;
+		virtual void                    pushEvent(Runnable * xRunnable) = 0;
+		virtual void                    removeAllEvents() = 0;
+		virtual void					run(int xThreadId);
 
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACT
-////////////////////////////////////////////////////////////////////////////////
+		// Creators
+		virtual AbstractThread*		createPlatformCompatibleThread(Runnable * xRunnable) = 0;
 
-public:
+		////////////////////////////////////////////////////////////////////////////////
+		// ABSTRACT
+		////////////////////////////////////////////////////////////////////////////////
 
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass() = 0;
-	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(Abstract * xAbstract) = 0;
+	public:
 
-};
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass() = 0;
+		virtual LPCWSTR                 ToString() = 0;
+		virtual bool                    operator==(Abstract * xAbstract) = 0;
+
+	};
+}
 
 #endif

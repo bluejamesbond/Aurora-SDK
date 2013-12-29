@@ -23,43 +23,40 @@
 #include "Dims.h"
 #include "GXSettings.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class BackBuffer;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
-class Window;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////The 
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class BackBuffer;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
+	class Window;
 
-#define MATRIXFACTORY_LL(str1, str2)                       str1 str2
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	class MatrixFactory
+	{
 
-class MatrixFactory
-{
+	public:
 
-public:
+		// Factory
+		static D3DXMATRIX         *     createDefaultWorldMatrix();
+		static D3DXMATRIX         *     createDefaultProjectionMatrix(Dims * xWindowSize, GXSettings * xSettings);
+		static D3DXMATRIX         *     createDefaultOrthogonalMatrix(Dims * xWindowSize, GXSettings * xSettings);
 
-    // Factory
-    static D3DXMATRIX         *     createDefaultWorldMatrix();
-	static D3DXMATRIX         *     createDefaultProjectionMatrix(Dims * xWindowSize, GXSettings * xSettings);
-	static D3DXMATRIX         *     createDefaultOrthogonalMatrix(Dims * xWindowSize, GXSettings * xSettings);
-    
 
-};
+	};
+}
 
 #endif

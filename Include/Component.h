@@ -24,110 +24,92 @@
 #include "ImageProperties.h"
 #include "Pipeline.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class BackBuffer;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-class Window;
-class TextureBuffer;
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class BackBuffer;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
+	class Window;
+	class TextureBuffer;
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-#define COMPONENT_LL(str1, str2)                           str1 str2
+	class Component : public AbstractComponent
+	{
+	public:
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+		// Variables
+		bool blurred = false;
+		TextureBuffer		  *     aTextureBuffer;
+		bool aDoubleBuffer = false;
+		//Public Methods
+		void SetDoubleBuffered(bool xDoubleBuffer);
+		bool IsDoubleBuffered();
+		Pipeline * pipeline = NULL;
 
-class Component : public AbstractComponent
-{
-public:
+	protected:
 
-	// Variables
-	bool blurred = false;
-	TextureBuffer		  *     aTextureBuffer;
-	bool aDoubleBuffer = false;
-	//Public Methods
-	void SetDoubleBuffered(bool xDoubleBuffer);
-	bool IsDoubleBuffered();
-	Pipeline * pipeline = NULL;
+		// Variables
+		ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
+		LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
+		int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
+		int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
+		int								aOptBackgroundPosY = 0;					// background-position-x  (CSS)
 
-protected:
+	public:
 
-	// Variables
-	ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
-	LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
-	int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
-	int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
-	int								aOptBackgroundPosY = 0;					// background-position-x  (CSS)
+		// Accessors
+		LPCWSTR				*			GetOptBackgroundImage()													{ return	aOptBackgroundSrc; };
+		int								GetOptBackgroundPositionX()												{ return	aOptBackgroundPosX; };
+		int								GetOptBackgroundPositionY()												{ return	aOptBackgroundPosY; };
+		int								GetOptBackgroundSizeX()													{ return	aOptBackgroundProps->aOptSizeX; };
+		int								GetOptBackgroundSizeY()													{ return	aOptBackgroundProps->aOptSizeY; };
+		int								GetOptBackgroundColor()													{ return	aOptBackgroundColor; };
+		int								GetOptBackgroundRepeat()												{ return	aOptBackgroundProps->aOptRepeat; };
+		ImageProperties	*			GetOptBackgroundProperties()											{ return	aOptBackgroundProps; };
 
-public:
+		// Mutators
+		void							SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY,
+			int xOptBackroundSizeX, int xOptBackroundSizeY, int xOptBackgroundColor, int xOptBackgroundRepeat);
 
-    // Accessors
-	LPCWSTR				*			GetOptBackgroundImage()													{ return	aOptBackgroundSrc; };
-	int								GetOptBackgroundPositionX()												{ return	aOptBackgroundPosX; };
-	int								GetOptBackgroundPositionY()												{ return	aOptBackgroundPosY; };
-	int								GetOptBackgroundSizeX()													{ return	aOptBackgroundProps->aOptSizeX; };
-	int								GetOptBackgroundSizeY()													{ return	aOptBackgroundProps->aOptSizeY; };
-	int								GetOptBackgroundColor()													{ return	aOptBackgroundColor; };
-	int								GetOptBackgroundRepeat()												{ return	aOptBackgroundProps->aOptRepeat; };
-	ImageProperties	*			GetOptBackgroundProperties()											{ return	aOptBackgroundProps; };
+		void							SetOptBackgroundImage(LPCWSTR * xOptBackgroundImage)					{ aOptBackgroundSrc = xOptBackgroundImage; };
+		void							SetOptBackgroundPositionX(int xOptPositionX)							{ aOptBackgroundPosX = xOptPositionX; };
+		void							SetOptBackgroundPositionY(int xOptPositionY)							{ aOptBackgroundPosY = xOptPositionY; };
+		void							SetOptBackgroundSizeX(int xOptSizeX)									{ aOptBackgroundProps->aOptSizeX = xOptSizeX; };
+		void							SetOptBackgroundSizeY(int xOptSizeY)									{ aOptBackgroundProps->aOptSizeY = xOptSizeY; };
+		void							SetOptBackgroundColor(int xOptColor)									{ aOptBackgroundColor = xOptColor; };
+		void							SetOptBackgroundRepeat(int xOptRepeat)									{ aOptBackgroundProps->aOptRepeat = xOptRepeat; };
+		void							SetOptBackgroundProperties(ImageProperties * xOptBackgroundProps)	{ aOptBackgroundProps = xOptBackgroundProps; };
 
-    // Mutators
-	void							SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
-													 int xOptBackroundSizeX, int xOptBackroundSizeY, int xOptBackgroundColor, int xOptBackgroundRepeat);
+	public:
 
-	void							SetOptBackgroundImage(LPCWSTR * xOptBackgroundImage)					{ aOptBackgroundSrc = xOptBackgroundImage; };
-	void							SetOptBackgroundPositionX(int xOptPositionX)							{ aOptBackgroundPosX = xOptPositionX; };
-	void							SetOptBackgroundPositionY(int xOptPositionY)							{ aOptBackgroundPosY = xOptPositionY; };
-	void							SetOptBackgroundSizeX(int xOptSizeX)									{ aOptBackgroundProps->aOptSizeX = xOptSizeX; };
-	void							SetOptBackgroundSizeY(int xOptSizeY)									{ aOptBackgroundProps->aOptSizeY = xOptSizeY; };
-	void							SetOptBackgroundColor(int xOptColor)									{ aOptBackgroundColor = xOptColor; };
-	void							SetOptBackgroundRepeat(int xOptRepeat)									{ aOptBackgroundProps->aOptRepeat = xOptRepeat; };
-	void							SetOptBackgroundProperties(ImageProperties * xOptBackgroundProps)	{ aOptBackgroundProps = xOptBackgroundProps; };
+		// Additional
+		virtual void                    RenderComponent(RenderData * xRenderData);
+		virtual void                    RenderComponentBorder(RenderData * xRenderData);
+		// virtual void					Render(RenderData * xRenderData);
 
-    // Builders
-    // { NONE }
+	public:
 
-    // Factory
-    // { NONE }
-
-public:
-
-    // Additional
-	virtual void                    RenderComponent(RenderData * xRenderData);
-	virtual void                    RenderComponentBorder(RenderData * xRenderData);
-	// virtual void					Render(RenderData * xRenderData);
-
-    // Pure Virtual
-    // { NONE }
-
-    // Virtual
-    // { NONE }
-
-public:
-
-    // Implementation
-    // { ABSTRACT }
-    virtual HRESULT                 Initialize();
-    virtual void                    Deinitialize();
-    virtual LPCWSTR                 GetClass();
-    virtual LPCWSTR                 ToString();
-    virtual bool                    operator==(Abstract * xAbstract);
-};
-
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+	};
+}
 #endif

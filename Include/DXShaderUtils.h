@@ -22,34 +22,35 @@
 #include "ExtLibs.h"
 #include "BackBuffer.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Pipelineable;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	class Abstract;
+	class Pipelineable;
 
-class DXShaderUtils
-{
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-public:
+	class DXShaderUtils
+	{
 
-	// Load a shader from file
-	static HRESULT					LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * xDXDevice, ID3D10Effect ** xEffect);
+	public:
 
-	// Create Alpha transpareny supportable PNG
-	static HRESULT					CreatePNGCompatibleBlendStates(ID3D10Device * aDXDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState);
+		// Load a shader from file
+		static HRESULT					LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * xDXDevice, ID3D10Effect ** xEffect);
 
-	// Output Error - Use SYSOUT in the future
-	static void						SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename);
+		// Create Alpha transpareny supportable PNG
+		static HRESULT					CreatePNGCompatibleBlendStates(ID3D10Device * aDXDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState);
 
-};
+		// Output Error - Use SYSOUT in the future
+		static void						SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename);
 
+	};
+}
 
 
 #endif

@@ -3,8 +3,9 @@
 #include "../../include/AbstractEventQueue.h"
 #include "../../include/AbstractFrame.h"
 
-AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) {}
+using namespace A2D;
 
+AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) {}
 
 void AbstractEventQueue::invokeLater(Runnable * xRunnable)
 {

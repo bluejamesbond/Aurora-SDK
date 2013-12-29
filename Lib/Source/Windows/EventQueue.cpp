@@ -2,6 +2,8 @@
 #include "../../../Include/Windows/ExtLibs.h"
 #include "../../../Include/Windows/EventQueue.h"
 
+using namespace A2D;
+
 EventQueue::EventQueue(AbstractFrame * xFrame) : AbstractEventQueue(xFrame){}
 
 bool EventQueue::getQueueLock()

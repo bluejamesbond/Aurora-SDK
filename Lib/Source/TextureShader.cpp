@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/TextureShader.h"
 
+using namespace A2D;
+
 TextureShader::TextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrix, float ** xViewMatrix, float ** xProjectionMatrix) : 
 aDXDevice(xDXDevice), aWorldMatrix(xWorldMatrix), aViewMatrix(xViewMatrix), aProjectionMatrix(xProjectionMatrix) {}
 

@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/TextureBuffer.h"
 
+using namespace A2D;
+
 TextureBuffer::TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize) :
 aDXDevice(xDXDevice), aBackBufferaDXDepthStencilView(xBackBufferaDXDepthStencilView)
 {

@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Texture.h"
 
+using namespace A2D;
+
 Texture::Texture(ID3D10Device ** xDXDevice, LPCWSTR * xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
 {
 	aResource = NULL;

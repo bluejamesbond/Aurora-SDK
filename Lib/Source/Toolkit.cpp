@@ -3,6 +3,8 @@
 #include "../../include/Toolkit.h"
 #include "../../include/AbstractEventQueue.h"
 
+using namespace A2D;
+
 int Toolkit::waitForBackgroundThreads()
 {
 	// DO null check here!

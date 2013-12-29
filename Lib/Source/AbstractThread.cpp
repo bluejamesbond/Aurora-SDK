@@ -2,6 +2,8 @@
 #include "../../Include/ExtLibs.h"
 #include "../../Include/AbstractThread.h"
 
+using namespace A2D;
+
 AbstractThread::AbstractThread(Runnable * xRunnable) : aRunnable (xRunnable) {}
 
 AbstractThread::~AbstractThread(){}

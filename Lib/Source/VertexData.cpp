@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/VertexData.h"
 
+using namespace A2D;
+
 //LPCWSTR VertexData::GetClass()
 //{
 //    return L"VertexType";

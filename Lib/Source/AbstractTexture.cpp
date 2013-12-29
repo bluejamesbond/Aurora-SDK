@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/AbstractTexture.h"
 
+using namespace A2D;
+
 bool AbstractTexture::hasAlpha()
 {
 	// Force to be true

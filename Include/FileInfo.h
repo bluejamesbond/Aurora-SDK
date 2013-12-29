@@ -24,77 +24,55 @@
 #include "Common.h"
 #include "Abstract.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class	Abstract;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	class	Abstract;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-class FileInfo : public Abstract
-{
+	class FileInfo : public Abstract
+	{
 
-public:
+	public:
 
-	// Constructor
-	FileInfo(LPCWSTR * xFileName);
+		// Constructor
+		FileInfo(LPCWSTR * xFileName);
 
-	// Deconstructor
-	~FileInfo();
+		// Deconstructor
+		~FileInfo();
 
-private:
+	private:
 
-	// Variables
-	D3DXIMAGE_INFO		  * 	aFileInfo;
-	LPCWSTR               *     aFileName;
+		// Variables
+		D3DXIMAGE_INFO		  * 	aFileInfo;
+		LPCWSTR               *     aFileName;
 
 
-public:
-	// Accessors
-	float							GetHeight();
-	float							GetWidth();
-	int							GetDepth();
-	int							GetMipLevels();
-	D3DXIMAGE_INFO		*		GetInfo();
+	public:
+		// Accessors
+		float						GetHeight();
+		float						GetWidth();
+		int							GetDepth();
+		int							GetMipLevels();
+		D3DXIMAGE_INFO		*		GetInfo();
 
-	// Mutators
-	// { NONE }
+	public:
 
-	// Builders
-	// { NONE }
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
 
-	// Factory
-	// { NONE }
-
-	// Additional
-	// { NONE }
-
-	// Additional
-	// { NONE }
-
-	// Pure Virtual
-	// { NONE }
-
-	// Virtual
-	// { NONE }
-
-public:
-
-	// Implementation
-	// { ABSTRACT }
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
-
-};
+	};
+}
 
 #endif

@@ -3,6 +3,8 @@
 #include "../../include/Panel.h"
 #include "../../include/Graphics.h"
 
+using namespace A2D;
+
 void Panel::RenderComponent(RenderData * xRenderData)
 {
 	Graphics * graphics = (Graphics *)xRenderData;

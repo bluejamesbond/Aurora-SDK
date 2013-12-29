@@ -3,6 +3,8 @@
 #include "../../include/DXShapeUtils.h"
 #include "../../include/BackBuffer.h"
 
+using namespace A2D;
+
 HRESULT DXShapeUtils::CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
 {
 	HRESULT hr;

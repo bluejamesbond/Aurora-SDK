@@ -22,52 +22,53 @@
 #include "Rect.h"
 #include "Pipelineable.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class AbstractTexture;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	class Abstract;
+	class AbstractTexture;
 
-class AbstractTexture : public Pipelineable
-{
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-protected:
+	class AbstractTexture : public Pipelineable
+	{
 
-	// Variables
-	Dims							aDims;
-	Rect							aClip;
+	protected:
 
-public:
+		// Variables
+		Dims							aDims;
+		Rect							aClip;
 
-	// Accessors
-	Dims			*		GetSize();
-	Rect			*		GetClip(int xIndex = 0);
+	public:
 
-	// Mutators
-	void					SetClip(Rect * xClip, int xIndex = 0);
-	
-	// Virtual
-	virtual void			*		getPlatformCompatibleResource() = 0;
-	virtual	bool					hasAlpha() = 0;
-	
-public:
+		// Accessors
+		Dims			*		GetSize();
+		Rect			*		GetClip(int xIndex = 0);
 
-	// Implementation
-	// { ABSTRACT }
-	virtual HRESULT                 Initialize() = 0;
-	virtual void                    Deinitialize() = 0;
-	virtual LPCWSTR                 GetClass() = 0;
-	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(Abstract * xAbstract) = 0;
+		// Mutators
+		void					SetClip(Rect * xClip, int xIndex = 0);
 
-};
+		// Virtual
+		virtual void			*		getPlatformCompatibleResource() = 0;
+		virtual	bool					hasAlpha() = 0;
 
+	public:
 
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize() = 0;
+		virtual void                    Deinitialize() = 0;
+		virtual LPCWSTR                 GetClass() = 0;
+		virtual LPCWSTR                 ToString() = 0;
+		virtual bool                    operator==(Abstract * xAbstract) = 0;
+
+	};
+
+}
 
 #endif

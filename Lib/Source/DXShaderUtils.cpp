@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/DXShaderUtils.h"
 
+using namespace A2D;
+
 HRESULT DXShaderUtils::LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * aDXDevice, ID3D10Effect ** xEffect)
 {
 	HRESULT hr;

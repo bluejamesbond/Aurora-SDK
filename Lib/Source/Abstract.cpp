@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Abstract.h"
 
+using namespace A2D;
+
 LPCWSTR Abstract::GetClass()
 {
 	return L"Abstract";

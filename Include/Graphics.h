@@ -31,66 +31,63 @@
 #include "AbstractComponent.h"
 #include "Pipeline.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class BackBuffer;
-class MatrixFactory;
-class RootPane;
-class Window;
-struct VertexData;
-class Texture;
-class TextureBuffer;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////                               
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class BackBuffer;
+	class MatrixFactory;
+	class RootPane;
+	class Window;
+	struct VertexData;
+	class Texture;
+	class TextureBuffer;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-class Graphics : public RenderData, public Abstract
-{
-	
-private:
+	class Graphics : public RenderData, public Abstract
+	{
 
-	ID3D10Device		**			aDXDevice;
-	Rect				 *			aClip;
-	QuadFactory		 *			aQuadFactory;
-	TextureShader	 *			aTextureShader;
+	private:
 
-public:
+		ID3D10Device		**			aDXDevice;
+		Rect				 *			aClip;
+		QuadFactory		 *			aQuadFactory;
+		TextureShader	 *			aTextureShader;
 
-	// Additional
-	void							setClip(Rect * aRect);
+	public:
 
-	void							DrawImage(Pipeline ** xPipeline, LPCWSTR * xSrc, Rect * aRect, ImageProperties * xImageProps);
-	void							DrawImage(Pipeline * xPipeline, Texture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, ImageProperties * xImageProps, int xBlur);
-	
-	void							validate();
+		// Additional
+		void							setClip(Rect * aRect);
 
-public:
+		void							DrawImage(Pipeline ** xPipeline, LPCWSTR * xSrc, Rect * aRect, ImageProperties * xImageProps);
+		void							DrawImage(Pipeline * xPipeline, Texture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, ImageProperties * xImageProps, int xBlur);
 
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACT
-////////////////////////////////////////////////////////////////////////////////
+		void							validate();
 
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
+	public:
 
-};
+		////////////////////////////////////////////////////////////////////////////////
+		// ABSTRACT
+		////////////////////////////////////////////////////////////////////////////////
 
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+
+	};
+}
 
 #endif

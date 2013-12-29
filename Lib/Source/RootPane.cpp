@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/RootPane.h"
 
+using namespace A2D;
+
 void RootPane::RenderComponent(RenderData * xRenderData)
 {
 	Component::RenderComponent(xRenderData);

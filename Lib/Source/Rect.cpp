@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Rect.h"
 
+using namespace A2D;
+
 void  Rect::memcpySSE2(Rect * xDest, const Rect * xSrc)
 {
 	// Memcpy built just for Rect and is optimized for

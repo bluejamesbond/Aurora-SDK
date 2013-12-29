@@ -27,67 +27,69 @@
 #include "../Abstract.h"
 #include "../AbstractEventQueue.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
-
-class Frame;
-class Abstract;
-class Thread;
-
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
-
 using namespace std;
 
-class EventQueue : public AbstractEventQueue
-{
-public:
+namespace A2D {
 
-	EventQueue::EventQueue(AbstractFrame * xFrame);
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-	EventQueue::~EventQueue();
+	class Frame;
+	class Abstract;
+	class Thread;
 
-private:
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-	queue<Runnable*> * aEventQueue;
-	HANDLE aEventQueueLock;
-	HINSTANCE aHIsntance;
+	class EventQueue : public AbstractEventQueue
+	{
+	public:
 
-public:
-	
-	// Queue
-	virtual bool                    getQueueLock();
-	virtual void                    releaseQueueLock();
-	virtual Runnable *           peekEvent();
-	virtual void					popEvent();
-	virtual bool                    hasEvent();
+		EventQueue::EventQueue(AbstractFrame * xFrame);
 
-protected:
+		EventQueue::~EventQueue();
 
-	virtual void                    pushEvent(Runnable * xRunnable);
-	virtual void                    removeAllEvents();
+	private:
 
-public:
+		queue<Runnable*> * aEventQueue;
+		HANDLE aEventQueueLock;
+		HINSTANCE aHIsntance;
 
-	// Thread - Move from OS level to Global level!!!
-	virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+	public:
+
+		// Queue
+		virtual bool                    getQueueLock();
+		virtual void                    releaseQueueLock();
+		virtual Runnable *           peekEvent();
+		virtual void					popEvent();
+		virtual bool                    hasEvent();
+
+	protected:
+
+		virtual void                    pushEvent(Runnable * xRunnable);
+		virtual void                    removeAllEvents();
+
+	public:
+
+		// Thread - Move from OS level to Global level!!!
+		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACT
-////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
+		// ABSTRACT
+		////////////////////////////////////////////////////////////////////////////////
 
-public:
+	public:
 
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
-};
-
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+	};
+}
 
 #endif

@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Camera.h"
 
+using namespace A2D;
+
 Camera::Camera() :
 aCameraProps(NULL){}
 

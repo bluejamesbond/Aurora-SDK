@@ -23,64 +23,64 @@
 #include "DXShaderUtils.h"
 #include "Texture.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	class Abstract;
 
-class TextureShader : public DXShaderUtils
-{
-public:
-	TextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrixPtr, float ** xViewMatrix, float ** xProjectionMatrix);
-	~TextureShader();
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-private:
+	class TextureShader : public DXShaderUtils
+	{
+	public:
+		TextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrixPtr, float ** xViewMatrix, float ** xProjectionMatrix);
+		~TextureShader();
 
-	// Pull out and cache device
-	ID3D10Device				**	aDXDevice;
-	
-	float						**	aWorldMatrix;
-	float						**	aViewMatrix;
-	float						**	aProjectionMatrix;
+	private:
 
-	ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
-	ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
-	ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
-	ID3D10EffectShaderResourceVariable	*	aTexturePtr;
+		// Pull out and cache device
+		ID3D10Device				**	aDXDevice;
 
-	ID3D10Effect				*	aEffect;
-	ID3D10EffectTechnique		*	aTechnique;
-	ID3D10InputLayout			*	aLayout;
-	ID3D10BlendState			*	aBlendState;
-	ID3D10BlendState			*	aBlendDisabledState;
+		float						**	aWorldMatrix;
+		float						**	aViewMatrix;
+		float						**	aProjectionMatrix;
 
-	Texture					*	aTexture;
+		ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
+		ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
+		ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
+		ID3D10EffectShaderResourceVariable	*	aTexturePtr;
 
-public:
+		ID3D10Effect				*	aEffect;
+		ID3D10EffectTechnique		*	aTechnique;
+		ID3D10InputLayout			*	aLayout;
+		ID3D10BlendState			*	aBlendState;
+		ID3D10BlendState			*	aBlendDisabledState;
 
-	void							setTexture(Texture * xTexture);
-	void							loadMatrices();
-	void							renderTexture();
+		Texture					*	aTexture;
 
-public:
+	public:
 
-	//////////////////////////////////////////////////////////
-	// ABSTRACT IMPLEMENTATION
-	//////////////////////////////////////////////////////////
+		void							setTexture(Texture * xTexture);
+		void							loadMatrices();
+		void							renderTexture();
 
-	virtual HRESULT	                Initialize();
-	virtual void	                Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract);
-};
+	public:
 
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
 
+		virtual HRESULT	                Initialize();
+		virtual void	                Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract);
+	};
+}
 
 #endif

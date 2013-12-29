@@ -4,6 +4,8 @@
 #include "../../include/AbstractFrame.h"
 #include "../../include/AbstractEventQueue.h"
 
+using namespace A2D;
+
 AbstractWindow::AbstractWindow(AbstractFrame * xFrame) : aFrame(xFrame) {}
 
 /**

@@ -31,10 +31,13 @@
 // DECLARATION
 ////////////////////////////////////////////////////////////////////////////////
 
-struct Dims
-{
-	float			aWidth;
-	float			aHeight;
-};
+namespace A2D {
+
+	struct Dims
+	{
+		float			aWidth;
+		float			aHeight;
+	};
+}
 
 #endif

@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Graphics.h"
 
+using namespace A2D;
+
 void Graphics::setClip(Rect * xClip)
 {
 	aQuadFactory->setConstraints(NULL, aClip = xClip);

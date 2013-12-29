@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/QuadFactory.h"
 
+using namespace A2D;
+
 QuadFactory::QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims) : aDXDevice(xDXDevice), aWindowDims(xWindowDims){}
 
 QuadFactory::~QuadFactory(){}

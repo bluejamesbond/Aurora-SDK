@@ -26,36 +26,39 @@
 #include "Rect.h"
 #include "Pipelineable.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-struct QuadData : public Pipelineable
-{
-	// Before adjusting the ID3D10Buffer
-	// check if any of these values are different
-	// Do a memcompare(ptr1, ptr2) of these with the new ones
-	Rect aPreviousRect; // cached
-	Rect aPreviousContraints; // cached
-	Rect	aPreviousTextureClip; // cached
-	Dims	aPreviousTextureSize; // cached
-	ImageProperties aPreviousImageProperties; // cached
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-	// Do not delete only adjust the values! 
-	VertexData					aVertices[6];
+	struct QuadData : public Pipelineable
+	{
+		// Before adjusting the ID3D10Buffer
+		// check if any of these values are different
+		// Do a memcompare(ptr1, ptr2) of these with the new ones
+		Rect aPreviousRect; // cached
+		Rect aPreviousContraints; // cached
+		Rect	aPreviousTextureClip; // cached
+		Dims	aPreviousTextureSize; // cached
+		ImageProperties aPreviousImageProperties; // cached
 
-	// Vertex buffer can change (but change only as needed)
-	ID3D10Buffer		*			aVertexBuffer;
+		// Do not delete only adjust the values! 
+		VertexData					aVertices[6];
 
-	// This pretty much stays constant
-	// so it will be stored inside Quads instance.
-	// ID3D10Buffer		*			aIndexBuffer;
+		// Vertex buffer can change (but change only as needed)
+		ID3D10Buffer		*			aVertexBuffer;
 
-	virtual HRESULT                 Initialize(){ return S_OK;  };
-	virtual void                    Deinitialize(){};
-	virtual LPCWSTR                 GetClass(){ return L"QuadData"; };
-	virtual LPCWSTR                 ToString(){ return L"QuadData";  };
-	virtual bool                    operator==(Abstract * xAbstract){ return false; };
-};
+		// This pretty much stays constant
+		// so it will be stored inside Quads instance.
+		// ID3D10Buffer		*			aIndexBuffer;
+
+		virtual HRESULT                 Initialize(){ return S_OK; };
+		virtual void                    Deinitialize(){};
+		virtual LPCWSTR                 GetClass(){ return L"QuadData"; };
+		virtual LPCWSTR                 ToString(){ return L"QuadData"; };
+		virtual bool                    operator==(Abstract * xAbstract){ return false; };
+	};
+}
 
 #endif

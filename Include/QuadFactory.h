@@ -25,71 +25,68 @@
 #include "Rect.h"
 #include "QuadData.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class DXShapeUtils;
-class Texture;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+	class Abstract;
+	class DXShapeUtils;
+	class Texture;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-class QuadFactory
-{
-public:
+	class QuadFactory
+	{
+	public:
 
-	QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims);
-	~QuadFactory();
+		QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims);
+		~QuadFactory();
 
-	ID3D10Buffer	*	aIndexBuffer;
-	ID3D10Buffer	*	aVertexBuffer;
+		ID3D10Buffer	*	aIndexBuffer;
+		ID3D10Buffer	*	aVertexBuffer;
 
-	static unsigned int aStride;
-	static unsigned int aOffset;
+		static unsigned int aStride;
+		static unsigned int aOffset;
 
-	///////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////
 
-	Rect				aConstraints;
-	Dims			*	aWindowDims;
-	ID3D10Device	**	aDXDevice;
-	
-	///////////////////////////////////////////////////////////
+		Rect				aConstraints;
+		Dims			*	aWindowDims;
+		ID3D10Device	**	aDXDevice;
 
-	bool						aContraintsChanged;
+		///////////////////////////////////////////////////////////
 
-	// Rect				*			aRect;
-	VertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
-	
-	void							x_aligned_memcpy_sse2(void* dest, const void* src, const unsigned long size_t);
-	
-	float							aPrevPosX;
-	float							aPrevPosY;
+		bool						aContraintsChanged;
 
-	HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
-	void							RenderQuad(QuadData * aQuadData);
-	bool							setConstraints(QuadData * aQuadData, Rect * xContraints);
-	
-public:
+		// Rect				*			aRect;
+		VertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
 
-	//////////////////////////////////////////////////////////
-	// ABSTRACT IMPLEMENTATION
-	//////////////////////////////////////////////////////////
+		void							x_aligned_memcpy_sse2(void* dest, const void* src, const unsigned long size_t);
 
-	virtual HRESULT                 Initialize();
-	virtual void                    Deinitialize();
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
-	virtual bool                    operator==(Abstract * xAbstract); // Don't campare against quad but against any Object
-};
+		float							aPrevPosX;
+		float							aPrevPosY;
 
+		HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
+		void							RenderQuad(QuadData * aQuadData);
+		bool							setConstraints(QuadData * aQuadData, Rect * xContraints);
+
+	public:
+
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
+
+		virtual HRESULT                 Initialize();
+		virtual void                    Deinitialize();
+		virtual LPCWSTR                 GetClass();
+		virtual LPCWSTR                 ToString();
+		virtual bool                    operator==(Abstract * xAbstract); // Don't campare against quad but against any Object
+	};
+}
 
 
 #endif

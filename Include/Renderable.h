@@ -22,53 +22,46 @@
 
 #include "Abstract.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct CameraProperties;
-struct RenderData;
-class BackBuffer;
-class MatrixFactory;
-class ModelFactory;
-class RootPane;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-class Window;
-class ImagePanel;
-
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
-
-#define RENDERABLE_LL(str1, str2)                          str1 str2
-
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
-
-class Renderable : public Abstract
-{
-
-public:
-
-	// Pure Virtual
-	virtual void                    Update(RenderData * xRenderData) = 0;
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct CameraProperties;
+	struct RenderData;
+	class BackBuffer;
+	class MatrixFactory;
+	class ModelFactory;
+	class RootPane;
+	class Window;
 	
-public:
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-	// Implementation
-	// { ABSTRACT }
-	virtual HRESULT                 Initialize() = 0;
-	virtual void                    Deinitialize() = 0;
-	virtual LPCWSTR                 GetClass() = 0;
-	virtual LPCWSTR                 ToString() = 0;
-	virtual bool                    operator==(Abstract * xAbstract) = 0;
+	class Renderable : public Abstract
+	{
 
-};
+	public:
 
+		// Pure Virtual
+		virtual void                    Update(RenderData * xRenderData) = 0;
+
+	public:
+
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 Initialize() = 0;
+		virtual void                    Deinitialize() = 0;
+		virtual LPCWSTR                 GetClass() = 0;
+		virtual LPCWSTR                 ToString() = 0;
+		virtual bool                    operator==(Abstract * xAbstract) = 0;
+
+	};
+}
 #endif

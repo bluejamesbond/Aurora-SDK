@@ -3,6 +3,8 @@
 #include "../../include/AbstractComponent.h"
 #include "../../include/Graphics.h"
 
+using namespace A2D;
+
 AbstractComponent::AbstractComponent() : 
 aParentComp(NULL),
 aGraphics(NULL) {}

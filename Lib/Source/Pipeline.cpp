@@ -1,6 +1,8 @@
 
 #include "../../include/Pipeline.h"
 
+using namespace A2D;
+
 Pipeline::Pipeline() : aLifeCycle(Pipeline::aGlobalLifeCycle - 1) {} // Offset by 1
 
 Pipeline::Pipeline(Pipeline * xPipeline){}

@@ -3,6 +3,8 @@
 #include "../../../Include/Windows/Window.h"
 #include "../../../Include/Windows/Frame.h"
 
+using namespace A2D;
+
 ////////////////////////////////////////////////////////////////////////////////
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
@@ -470,13 +472,13 @@ void Window::destroyShadowResources()
 	}
 }
 
-void Window::spliceToNinePatch(Image * src, Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
+void Window::spliceToNinePatch(Gdiplus::Image * src, Gdiplus::Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
 {
-	Graphics graphics(dest);
+	Gdiplus::Graphics graphics(dest);
 
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel);
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel); // Render twice to increase opacity
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, UnitPixel); // Render twice to increase opacity
+	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
+	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
+	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
 }
 
 float* Window::getGaussianKernel(int xRadius)
@@ -511,19 +513,19 @@ float* Window::getGaussianKernel(int xRadius)
 	return data;
 }
 
-Bitmap * Window::applyGaussianBlur(Bitmap * src, int radius)
+Gdiplus::Bitmap * Window::applyGaussianBlur(Gdiplus::Bitmap * src, int radius)
 {
-	// NOTE: There could be memory leaks if the BitmapData is NULL
+	// NOTE: There could be memory leaks if the Gdiplus::BitmapData is NULL
 	// PLEASE FIX!
 
 	float * kernel;
-	Bitmap * blurred, *rotated;
-	BitmapData * rotatedData, *srcData, *blurredData;
+	Gdiplus::Bitmap * blurred, *rotated;
+	Gdiplus::BitmapData * rotatedData, *srcData, *blurredData;
 
 	kernel = getGaussianKernel(radius);
 
-	blurred = new Bitmap(src->GetWidth(), src->GetHeight());
-	rotated = new Bitmap(src->GetHeight(), src->GetWidth());
+	blurred = new Gdiplus::Bitmap(src->GetWidth(), src->GetHeight());
+	rotated = new Gdiplus::Bitmap(src->GetHeight(), src->GetWidth());
 
 	// horizontal pass 0
 	srcData = getLockedBitmapData(src);
@@ -537,7 +539,7 @@ Bitmap * Window::applyGaussianBlur(Bitmap * src, int radius)
 	src->UnlockBits(srcData);
 
 	blurred->UnlockBits(blurredData);
-	blurred->RotateFlip(Rotate90FlipNone);
+	blurred->RotateFlip(Gdiplus::Rotate90FlipNone);
 
 	delete srcData;
 	delete blurredData;
@@ -563,7 +565,7 @@ Bitmap * Window::applyGaussianBlur(Bitmap * src, int radius)
 	return rotated;
 }
 
-void  Window::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels, float * kernel, int radius)
+void  Window::applyHorizontalblur(Gdiplus::BitmapData * srcPixels, Gdiplus::BitmapData * dstPixels, float * kernel, int radius)
 {
 	int ca = 0, cr = 0, cg = 0, cb = 0;
 	float a = 0, r = 0, g = 0, b = 0;
@@ -617,15 +619,15 @@ void  Window::applyHorizontalblur(BitmapData * srcPixels, BitmapData * dstPixels
 	}
 }
 
-BitmapData * Window::getLockedBitmapData(Bitmap * src)
+Gdiplus::BitmapData * Window::getLockedBitmapData(Gdiplus::Bitmap * src)
 {
 	int srcWidth = src->GetWidth();
 	int srcHeight = src->GetHeight();
 
-	BitmapData * bitmapData = new BitmapData();
+	Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData();
 
-	Status ret = src->LockBits(new Rect(0, 0, srcWidth, srcHeight),
-		ImageLockMode::ImageLockModeRead | ImageLockMode::ImageLockModeWrite,
+	Gdiplus::Status ret = src->LockBits(new Gdiplus::Rect(0, 0, srcWidth, srcHeight),
+		Gdiplus::ImageLockMode::ImageLockModeRead | Gdiplus::ImageLockMode::ImageLockModeWrite,
 		src->GetPixelFormat(),
 		bitmapData);
 
@@ -638,9 +640,9 @@ HRESULT Window::createShadowResources()
 {
 	HRESULT hr = S_OK;
 
-	Bitmap * solid, *blurred;
-	Graphics * graphics;
-	SolidBrush blackBrush(*aShadowColor);
+	Gdiplus::Bitmap * solid, *blurred;
+	Gdiplus::Graphics * graphics;
+	Gdiplus::SolidBrush blackBrush(*aShadowColor);
 
 	float radius = aOptShadowRadius;
 	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFETY_RATIO;
@@ -651,18 +653,18 @@ HRESULT Window::createShadowResources()
 	int radiusSafetyAsInt = static_cast<int>(radiusSafety);
 	int relativeDimAsInt = static_cast<int>(relativeDim);
 
-	aTopLeftShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomLeftShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aTopRightShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomRightShadow = new Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aTopRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aBottomRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
 
-	aTopShadow = new Bitmap(1, radiusAsInt);
-	aLeftShadow = new Bitmap(radiusAsInt, 1);
-	aRightShadow = new Bitmap(radiusAsInt, 1);
-	aBottomShadow = new Bitmap(1, radiusAsInt);
+	aTopShadow = new Gdiplus::Bitmap(1, radiusAsInt);
+	aLeftShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
+	aRightShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
+	aBottomShadow = new Gdiplus::Bitmap(1, radiusAsInt);
 
-	solid = new Bitmap(relativeDimAsInt, relativeDimAsInt);
-	graphics = new Graphics(solid);
+	solid = new Gdiplus::Bitmap(relativeDimAsInt, relativeDimAsInt);
+	graphics = new Gdiplus::Graphics(solid);
 
 	// Draw base shape
 
@@ -684,10 +686,10 @@ HRESULT Window::createShadowResources()
 	spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, FLT_ONE);
 	spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, FLT_ONE, radius);
 
-	aTopShadowBrush = new TextureBrush(aTopShadow);
-	aLeftShadowBrush = new TextureBrush(aLeftShadow);
-	aRightShadowBrush = new TextureBrush(aRightShadow);
-	aBottomShadowBrush = new TextureBrush(aBottomShadow);
+	aTopShadowBrush = new Gdiplus::TextureBrush(aTopShadow);
+	aLeftShadowBrush = new Gdiplus::TextureBrush(aLeftShadow);
+	aRightShadowBrush = new Gdiplus::TextureBrush(aRightShadow);
+	aBottomShadowBrush = new Gdiplus::TextureBrush(aBottomShadow);
 
 	// update values
 	aPadding = radius;
@@ -704,14 +706,14 @@ HRESULT Window::createBackgroundResources()
 {
 	HRESULT hr = S_OK;
 
-	aBackground = new Bitmap(1, 1);
+	aBackground = new Gdiplus::Bitmap(1, 1);
 
-	Graphics  graphics(aBackground);
-	SolidBrush blackBrush(*aBackgroundColor);
+	Gdiplus::Graphics graphics(aBackground);
+	Gdiplus::SolidBrush blackBrush(*aBackgroundColor);
 
 	graphics.FillRectangle(&blackBrush, 0, 0, 1, 1);
 
-	aBackgroundBrush = new TextureBrush(aBackground);
+	aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
 
 	return hr;
 }
@@ -757,7 +759,7 @@ void Window::renderComponentBorder()
 {
 	if (aOptBorderWidth > 0)
 	{
-		Pen borderPen(*aBorderColor, aOptBorderWidth);
+		Gdiplus::Pen borderPen(*aBorderColor, aOptBorderWidth);
 
 		aGraphics->DrawRectangle(&borderPen, aPadding + aOptBorderWidth / 2, aPadding + aOptBorderWidth / 2, aRealWidth + aOptBorderWidth, aRealHeight + aOptBorderWidth);
 
@@ -969,9 +971,9 @@ void Window::validate()
 
 HRESULT Window::createColorResources()
 {
-	aBackgroundColor = new Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
-	aShadowColor = new Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
-	aBorderColor = new Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
+	aBackgroundColor = new Gdiplus::Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
+	aShadowColor = new Gdiplus::Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
+	aBorderColor = new Gdiplus::Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
 
 	return S_OK;
 }
@@ -1109,7 +1111,7 @@ void Window::render()
 	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight));
 	SelectObject(memDC, memBitmap);
 
-	aGraphics = new Graphics(memDC);
+	aGraphics = new Gdiplus::Graphics(memDC);
 
 	/***********************************************/
 
@@ -1155,10 +1157,10 @@ HRESULT Window::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	GdiplusStartupInput gdiplusStartupInput;
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR           gdiplusToken;
 
-	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
 	// Change class name
 	aClassInstances++;

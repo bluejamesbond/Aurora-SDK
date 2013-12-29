@@ -23,43 +23,38 @@
 #include "Abstract.h"
 #include "AbstractWindow.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-////////////////////////////////////////////////////////////////////////////////
+namespace A2D {
 
-class ;
-class Abstract;
-class Renderable;
-class AbstractComponent;
-class Camera;
-struct RenderData;
-class BackBuffer;
-class TextureBuffer;
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
-            
-#define RENDERDATA_LL(str1, str2)                          str1 str2                                        
+	class Abstract;
+	class Renderable;
+	class AbstractComponent;
+	class Camera;
+	struct RenderData;
+	class BackBuffer;
+	class TextureBuffer;
 
-////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-struct RenderData
-{	
-    // Variables
-	float                *     aViewMatrix;
-	float                *     aWorldMatrix;
-	float                *     aProjection2DMatrix;
-    float                *     aProjection3DMatrix;
+	struct RenderData
+	{
+		// Variables
+		float                *     aViewMatrix;
+		float                *     aWorldMatrix;
+		float                *     aProjection2DMatrix;
+		float                *     aProjection3DMatrix;
 
-	Dims					  *		aWindowDims;
-    Camera				  *     aCamera;
-    BackBuffer             *     aBackBuffer;
-	TextureBuffer          *     aTextureBuffer;
-	TextureBuffer          *     aBlurBuffer;
-};
-
+		Dims					  *		aWindowDims;
+		Camera				  *     aCamera;
+		BackBuffer             *     aBackBuffer;
+		TextureBuffer          *     aTextureBuffer;
+		TextureBuffer          *     aBlurBuffer;
+	};
+}
 
 #endif

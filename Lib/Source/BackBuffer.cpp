@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/BackBuffer.h"
 
+using namespace A2D;
+
 BackBuffer::BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings) :
 aGXSettings(xGXSettings),
 aWindow(xWindow),

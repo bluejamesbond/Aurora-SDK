@@ -2,6 +2,8 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/MatrixFactory.h"
 
+using namespace A2D;
+
 D3DXMATRIX * MatrixFactory::createDefaultWorldMatrix()
 {
 	// Create
