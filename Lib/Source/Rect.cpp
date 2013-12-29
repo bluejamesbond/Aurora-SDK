@@ -15,8 +15,8 @@ void  Rect::memcpySSE2(Rect * xDest, const Rect * xSrc)
 		mov esi, xSrc;
 		mov edi, xDest;
 
-		movdqu xmm1, [xSrc];
-		movdqu[xDest], xmm1;
+		movdqu xmm1, [esi];
+		movdqu[edi], xmm1;
 	}
 }
 
