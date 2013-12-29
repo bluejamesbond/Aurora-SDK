@@ -59,17 +59,8 @@ namespace A2D {
 		ID3D10Device	**	aDXDevice;
 
 		///////////////////////////////////////////////////////////
-
-		bool						aContraintsChanged;
-
-		// Rect				*			aRect;
-		VertexData		*			aVertices; // DONT FORGET TO RELEASE THIS AFTER
-
-		static void					memcpySSE2VertexData(void * xDest, const void * xSrc);
-
-		float							aPrevPosX;
-		float							aPrevPosY;
-
+				
+		static void						memcpySSE2VertexData(void * xDest, const void * xSrc);
 		HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
 		void							RenderQuad(QuadData * aQuadData);
 		bool							setConstraints(QuadData * aQuadData, Rect * xContraints);

@@ -30,26 +30,30 @@ bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
 void  QuadFactory::memcpySSE2VertexData(void * xDest, const void * xSrc)
 {
 	// Memcopy built specifically for VertexData (120 bytes)
-	// Based on William Chan and Google
-	// Unaligned data
-	// SSE2 Regisers with 64 bytes at time
+	// Unaligned D3DData
+	// @author MK - Based on William Chan and Google
 
 	__asm
 	{
+		// Store
 		mov esi, xSrc;
 		mov edi, xDest;
 
-		prefetchnta 64[ESI]; // SSE2 prefetch
-		prefetchnta 96[ESI]; // SSE2 prefetch
+		// Prefetch
+		prefetchnta 64[ESI]; 
+		prefetchnta 96[ESI]; 
 
+		// Move into Xmms - 128 bit
 		movdqu xmm0, 0[ESI];	
 		movdqu xmm1, 16[ESI];	
 		movdqu xmm2, 32[ESI];   
 		movdqu xmm3, 48[ESI];   
 		movdqu xmm4, 64[ESI];   
 		movdqu xmm5, 80[ESI];
-		movdqu xmm6, 96[ESI];	// 8 byes left
-		movq   mm0, 112[ESI];	// 8 byes left
+		movdqu xmm6, 96[ESI];	
+
+		// Move into Mmx - 64 bit
+		movq   mm0, 112[ESI];	
 
 		movdqu 0[EDI], xmm0; 
 		movdqu 16[EDI], xmm1;
@@ -58,6 +62,7 @@ void  QuadFactory::memcpySSE2VertexData(void * xDest, const void * xSrc)
 		movdqu 64[EDI], xmm4;
 		movdqu 80[EDI], xmm5;
 		movdqu 96[EDI], xmm6;
+
 		movq   112[EDI], mm0;
 	}
 }
