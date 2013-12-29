@@ -38,11 +38,7 @@ void  QuadFactory::memcpySSE2VertexData(void * xDest, const void * xSrc)
 		// Store
 		mov esi, xSrc;
 		mov edi, xDest;
-
-		// Prefetch
-		prefetchnta 64[ESI]; 
-		prefetchnta 96[ESI]; 
-
+		
 		// Move into Xmms - 128 bit
 		movdqu xmm0, 0[ESI];	
 		movdqu xmm1, 16[ESI];	
@@ -50,10 +46,9 @@ void  QuadFactory::memcpySSE2VertexData(void * xDest, const void * xSrc)
 		movdqu xmm3, 48[ESI];   
 		movdqu xmm4, 64[ESI];   
 		movdqu xmm5, 80[ESI];
-		movdqu xmm6, 96[ESI];	
-
-		// Move into Mmx - 64 bit
-		movq   mm0, 112[ESI];	
+		movdqu xmm6, 96[ESI];
+		mov edx, 112[ESI];
+		mov ebx, 116[ESI];
 
 		movdqu 0[EDI], xmm0; 
 		movdqu 16[EDI], xmm1;
@@ -62,8 +57,9 @@ void  QuadFactory::memcpySSE2VertexData(void * xDest, const void * xSrc)
 		movdqu 64[EDI], xmm4;
 		movdqu 80[EDI], xmm5;
 		movdqu 96[EDI], xmm6;
+		mov 112[EDI], edx;
+		mov 116[EDI], ebx;
 
-		movq   112[EDI], mm0;
 	}
 }
 
