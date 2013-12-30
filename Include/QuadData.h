@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "VertexData.h"
+#include "TextureVertex.h"
 #include "ImageProperties.h"
 #include "Rect.h"
 #include "Pipelineable.h"
@@ -44,7 +44,7 @@ namespace A2D {
 		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
-		VertexData					aVertices[6];
+		TextureVertex			aVertices[6];
 
 		// Vertex buffer can change (but change only as needed)
 		ID3D10Buffer		*			aVertexBuffer;
@@ -58,6 +58,7 @@ namespace A2D {
 		virtual LPCWSTR                 GetClass(){ return L"QuadData"; };
 		virtual LPCWSTR                 ToString(){ return L"QuadData"; };
 		virtual bool                    operator==(Abstract * xAbstract){ return false; };
+
 	};
 }
 

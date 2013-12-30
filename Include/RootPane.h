@@ -21,7 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "RenderData.h"
-#include "VertexData.h"
 #include "BackBuffer.h"
 #include "Texture.h"
 #include "Panel.h"

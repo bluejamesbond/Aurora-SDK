@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Common.h"
-#include "VertexData.h"
+#include "TextureVertex.h"
 #include "BackBuffer.h"
 #include "TextureShader.h"
 #include "TextureBuffer.h"

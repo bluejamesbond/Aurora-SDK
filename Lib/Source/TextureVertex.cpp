@@ -1,12 +1,12 @@
 
 #include "../../include/ExtLibs.h"
-#include "../../include/VertexData.h"
+#include "../../include/TextureVertex.h"
 
 using namespace A2D;
 
-void  VertexData::memcpySSE2(VertexData * xDest, const VertexData * xSrc)
+void  TextureVertex::memcpySSE2(TextureVertex * xDest, const TextureVertex * xSrc)
 {
-	// Memcopy built specifically for VertexData (120 bytes)
+	// Memcopy built specifically for TextureVertex (120 bytes)
 	// Unaligned D3DData
 	// @author MK - Based on William Chan and Google
 

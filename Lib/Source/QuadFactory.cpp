@@ -71,7 +71,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 		aOrigWidth = rectWidth,
 		aOrigHeight = rectHeight;
 
-	VertexData * vertices = aQuadData->aVertices;
+	TextureVertex * vertices = aQuadData->aVertices;
 	void * mappedVertices = 0;
 	
 	// Add as static method to Image properties
@@ -128,7 +128,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	if (FAILED(hr))	return hr;
 
 	// Copy data using SSE2 accelerated method
-	VertexData::memcpySSE2(static_cast<VertexData*>(mappedVertices), vertices);
+	QuadFactory::memcpySSE2QuadTextureVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
 
 	// Unlock the vertex buffer.
 	aQuadData->aVertexBuffer->Unmap();
@@ -137,7 +137,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 
 }
 
-unsigned int QuadFactory::aStride = sizeof(VertexData);
+unsigned int QuadFactory::aStride = sizeof(TextureVertex);
 unsigned int QuadFactory::aOffset = 0;
 
 
@@ -161,11 +161,51 @@ void QuadFactory::RenderQuad(QuadData * aQuadData)
 	return;
 }
 
+
+void  QuadFactory::memcpySSE2QuadTextureVertex(TextureVertex * xDest, const TextureVertex * xSrc)
+{
+	// Memcopy built specifically for TextureVertex (120 bytes)
+	// Unaligned D3DData
+	// @author MK - Based on William Chan and Google
+
+	__asm
+	{
+		// Store
+		mov esi, xSrc;
+		mov edi, xDest;
+
+		// No need to prefetch since the 
+		// offset is really low
+
+		// Move into Xmms - 128 bit
+		movdqu xmm0, 0[ESI];
+		movdqu xmm1, 16[ESI];
+		movdqu xmm2, 32[ESI];
+		movdqu xmm3, 48[ESI];
+		movdqu xmm4, 64[ESI];
+		movdqu xmm5, 80[ESI];
+		movdqu xmm6, 96[ESI];
+
+		movlpd xmm7, 112[ESI];
+
+		movdqu 0[EDI], xmm0;
+		movdqu 16[EDI], xmm1;
+		movdqu 32[EDI], xmm2;
+		movdqu 48[EDI], xmm3;
+		movdqu 64[EDI], xmm4;
+		movdqu 80[EDI], xmm5;
+		movdqu 96[EDI], xmm6;
+
+		movlpd 112[EDI], xmm7;
+
+	}
+}
+
 HRESULT QuadFactory::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	hr = DXShapeUtils::CreateDefaultDynamicVertexBuffer<VertexData>(*aDXDevice, &aVertexBuffer, 6);
+	hr = DXShapeUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDXDevice, &aVertexBuffer, 6);
 	if (FAILED(hr))	return hr;
 
 	hr = DXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6);

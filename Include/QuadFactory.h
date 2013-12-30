@@ -24,6 +24,7 @@
 #include "Texture.h"
 #include "Rect.h"
 #include "QuadData.h"
+#include "ColoredTextureVertex.h"
 
 namespace A2D {
 
@@ -59,7 +60,8 @@ namespace A2D {
 		ID3D10Device	**	aDXDevice;
 
 		///////////////////////////////////////////////////////////
-				
+	
+		void							memcpySSE2QuadTextureVertex(TextureVertex * xDest, const TextureVertex * xSrc);
 		HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
 		void							RenderQuad(QuadData * aQuadData);
 		bool							setConstraints(QuadData * aQuadData, Rect * xContraints);

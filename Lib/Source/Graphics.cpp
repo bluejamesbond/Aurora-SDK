@@ -27,7 +27,7 @@ void Graphics::DrawImage(Pipeline ** xPipeline, LPCWSTR * xSrc, Rect * aRect, Im
 		texture = new Texture(aDXDevice, xSrc);
 		quadData = new QuadData();
 		
-		DXShapeUtils::CreateDefaultDynamicVertexBuffer<VertexData>(*aDXDevice, &quadData->aVertexBuffer, 6);
+		DXShapeUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDXDevice, &quadData->aVertexBuffer, 6);
 
 		texture->Initialize();
 

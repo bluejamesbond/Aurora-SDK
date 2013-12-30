@@ -21,7 +21,6 @@
 
 #include "ExtLibs.h"
 #include "Pipelineable.h"
-#include "VertexData.h"
 #include "Rect.h"
 
 namespace A2D {
@@ -55,7 +54,7 @@ namespace A2D {
 		HRESULT hr;
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;
-		VertexClass * vertices = new VertexData[xVertices];
+		VertexClass * vertices = new VertexClass[xVertices];
 
 		// Initialize vertex array to zeros at first.
 		memset(vertices, 0, (sizeof(VertexClass)* xVertices));
