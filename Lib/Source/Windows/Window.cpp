@@ -1070,16 +1070,12 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			}
 			else if (currentAnimationFrame > 0)
 			{
-				clock_t tStart = clock();
 				currentAnimationFrame--;
 				frame.Update();
-				SYSOUT_F("FPS %.5f\n", 1 / ((double)(clock() - tStart) / CLOCKS_PER_SEC));
 			}
 			else if (resizing)
 			{
-				clock_t tStart = clock();
 				frame.Update();
-				SYSOUT_F("FPS %.5f\n", 1 / ((double)(clock() - tStart) / CLOCKS_PER_SEC));
 			}
 		}	
 

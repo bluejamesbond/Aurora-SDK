@@ -429,6 +429,7 @@ void BackBuffer::validate()
 	Dims& aDim = aWindow->getSize();
 	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance
 	D3D10_VIEWPORT& viewport = aViewport;
+	ID3D10Texture2D* backBuffer;
 
 	aDXRenderTargetView->Release();
 	aDXDepthStencilView->Release();
@@ -439,7 +440,6 @@ void BackBuffer::validate()
 	hr = aDXGISwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 	if (FAILED(hr)) return;
 
-	ID3D10Texture2D* backBuffer;
 	hr = aDXGISwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), reinterpret_cast<void**>(&backBuffer));
 	if (FAILED(hr)) return;
 

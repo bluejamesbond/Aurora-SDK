@@ -61,7 +61,6 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 		*/
 
 	bool repeat;
-	bool cover;
 
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
@@ -79,7 +78,6 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 			  (xImageProperties->aOptRepeat <= (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y));
 	
 	repeat = true;
-	cover = true;
 	
 	calcLeft = max(rectX, 0);
 	calcTop = max(rectY, 0);
@@ -132,9 +130,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	// Lock the vertex buffer.
 	hr = aQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
 	if (FAILED(hr))	return hr;
-
-	SYSOUT_INT(sizeof(ColoredTextureVertex)* 6);
-
+	
 	// Copy data using SSE2 accelerated method
 	QuadFactory::memcpySSE2QuadColoredTextureVertex(static_cast<ColoredTextureVertex*>(mappedVertices), vertices);
 
