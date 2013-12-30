@@ -463,6 +463,4 @@ void BackBuffer::validate()
 
 	aDXDevice->RSSetViewports(1, &viewport);
 
-	// SetActive();
-
 }

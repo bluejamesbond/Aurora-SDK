@@ -54,6 +54,13 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 				return aWindow->onSize(xHwnd);
 
 		}
+		case WM_ERASEBKGND:
+		{
+				// OS must not erase background. DirectX and
+				// OpenGL will automatically do its parent
+				// (aChildHWnd) window.
+				return S_OK;
+		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
 

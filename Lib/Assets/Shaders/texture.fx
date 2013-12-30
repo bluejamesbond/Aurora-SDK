@@ -21,27 +21,28 @@ SamplerState SampleType
 //////////////
 // TYPEDEFS //
 //////////////
-struct VertexInputType
+struct VertexInput
 {
 	float4 position : POSITION;
 	float2 tex : TEXCOORD0;
+	float4 color : COLOR;
 };
 
-struct PixelInputType
+struct PixelInput
 {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
+	float4 color : COLOR;
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType TextureVertexShader(VertexInputType input)
+PixelInput TextureVertexShader(VertexInput input)
 {
-	PixelInputType output;
-
-
+	PixelInput output;
+	
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
 
@@ -50,8 +51,8 @@ PixelInputType TextureVertexShader(VertexInputType input)
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
-	// Store the texture coordinates for the pixel shader.
 	output.tex = input.tex;
+	output.color = input.color;
 
 	return output;
 }
@@ -60,17 +61,21 @@ PixelInputType TextureVertexShader(VertexInputType input)
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 TexturePixelShader(PixelInputType input) : SV_Target
+float4 TexturePixelShader(PixelInput input) : SV_Target
 {
 	float4 textureColor;
+	float4 alphaComposite;
+	float4 inputColor;
 
-
-	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
+	inputColor = input.color;
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
-
-	// textureColor = saturate(blendColor);
-
-	return textureColor;
+	
+	// Porter and Duff equations for calculating
+	// alpha composite.
+	alphaComposite.a = textureColor.a + inputColor.a * (1.0 - textureColor.a);
+	alphaComposite.rgb = (textureColor.a * textureColor.rgb + (inputColor.a * inputColor.rgb) * (1.0 - textureColor.a)) / alphaComposite.a;
+	
+	return alphaComposite;
 }
 
 

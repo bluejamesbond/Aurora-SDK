@@ -408,6 +408,8 @@ void AbstractFrame::Update()
 	if (!aValidatedContents)
 	{
 		validate();
+
+		if (!aValidatedContents)	return;
 	}
 
 	aBackBuffer->SetActive();

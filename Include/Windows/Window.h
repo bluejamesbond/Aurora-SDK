@@ -54,6 +54,10 @@ namespace A2D {
 
 		~Window();
 
+	protected:
+
+		HWND                            aChildHWnd;
+
 	private:
 
 		int                             aStyle;
@@ -100,7 +104,6 @@ namespace A2D {
 		HINSTANCE                       aHInstance;
 		HWND                            aHResizeWnd;
 		HWND                            aParentHWnd;
-		HWND                            aChildHWnd;
 		HCURSOR                         aCurrentCursor;
 		POINT                           aLastDraggedPoint;
 

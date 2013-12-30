@@ -22,6 +22,7 @@
 
 #include "ExtLibs.h"
 #include "TextureVertex.h"
+#include "ColoredTextureVertex.h"
 #include "ImageProperties.h"
 #include "Rect.h"
 #include "Pipelineable.h"
@@ -44,7 +45,7 @@ namespace A2D {
 		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
-		TextureVertex			aVertices[6];
+		ColoredTextureVertex			aVertices[6];
 
 		// Vertex buffer can change (but change only as needed)
 		ID3D10Buffer		*			aVertexBuffer;

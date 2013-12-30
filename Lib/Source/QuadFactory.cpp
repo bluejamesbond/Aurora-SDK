@@ -71,7 +71,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 		aOrigWidth = rectWidth,
 		aOrigHeight = rectHeight;
 
-	TextureVertex * vertices = aQuadData->aVertices;
+	ColoredTextureVertex * vertices = aQuadData->aVertices;
 	void * mappedVertices = 0;
 	
 	// Add as static method to Image properties
@@ -107,28 +107,36 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	// Set up vertices
 	vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
 	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
+	vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
 	vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
+	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
 	vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
+	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
 	vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
+	vertices[3].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
 	vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
+	vertices[4].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
 	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
+	vertices[5].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 	
 	// Lock the vertex buffer.
 	hr = aQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
 	if (FAILED(hr))	return hr;
 
+	SYSOUT_INT(sizeof(ColoredTextureVertex)* 6);
+
 	// Copy data using SSE2 accelerated method
-	QuadFactory::memcpySSE2QuadTextureVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
+	QuadFactory::memcpySSE2QuadColoredTextureVertex(static_cast<ColoredTextureVertex*>(mappedVertices), vertices);
 
 	// Unlock the vertex buffer.
 	aQuadData->aVertexBuffer->Unmap();
@@ -137,10 +145,8 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 
 }
 
-unsigned int QuadFactory::aStride = sizeof(TextureVertex);
+unsigned int QuadFactory::aStride = sizeof(ColoredTextureVertex);
 unsigned int QuadFactory::aOffset = 0;
-
-
 
 void QuadFactory::RenderQuad(QuadData * aQuadData)
 {
@@ -160,7 +166,6 @@ void QuadFactory::RenderQuad(QuadData * aQuadData)
 
 	return;
 }
-
 
 void  QuadFactory::memcpySSE2QuadTextureVertex(TextureVertex * xDest, const TextureVertex * xSrc)
 {
@@ -201,11 +206,65 @@ void  QuadFactory::memcpySSE2QuadTextureVertex(TextureVertex * xDest, const Text
 	}
 }
 
+void  QuadFactory::memcpySSE2QuadColoredTextureVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc)
+{
+	// Memcopy built specifically for TextureVertex (216 bytes)
+	// Unaligned D3DData
+	// @author MK - Based on William Chan and Google
+
+	__asm
+	{
+		// Store
+		mov esi, xSrc;
+		mov edi, xDest;
+
+		prefetchnta 128[ESI]; //SSE2 prefetch
+		prefetchnta 160[ESI];
+		prefetchnta 192[ESI];
+
+		// Move into Xmms - 128 bit
+		movdqu xmm0, 0[ESI];
+		movdqu xmm1, 16[ESI];
+		movdqu xmm2, 32[ESI];
+		movdqu xmm3, 48[ESI];
+		movdqu xmm4, 64[ESI];
+		movdqu xmm5, 80[ESI];
+		movdqu xmm6, 96[ESI];
+		movdqu xmm7, 112[ESI];
+
+		movdqu 0[EDI], xmm0;
+		movdqu 16[EDI], xmm1;
+		movdqu 32[EDI], xmm2;
+		movdqu 48[EDI], xmm3;
+		movdqu 64[EDI], xmm4;
+		movdqu 80[EDI], xmm5;
+		movdqu 96[EDI], xmm6;
+		movdqu 112[EDI], xmm7;
+
+		add esi, 128;
+		add edi, 128;				// 128 bytes moved (88 left)
+
+		movdqu xmm0, 0[ESI];
+		movdqu xmm1, 16[ESI];
+		movdqu xmm2, 32[ESI];
+		movdqu xmm3, 48[ESI];
+		movdqu xmm4, 64[ESI];
+		movlpd xmm5, 80[ESI];
+
+		movdqu 0[EDI], xmm0;
+		movdqu 16[EDI], xmm1;
+		movdqu 32[EDI], xmm2;
+		movdqu 48[EDI], xmm3;
+		movdqu 64[EDI], xmm4;
+		movlpd 80[EDI], xmm5;
+	}
+}
+
 HRESULT QuadFactory::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	hr = DXShapeUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDXDevice, &aVertexBuffer, 6);
+	hr = DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &aVertexBuffer, 6);
 	if (FAILED(hr))	return hr;
 
 	hr = DXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6);
