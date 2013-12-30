@@ -56,6 +56,8 @@ namespace A2D {
 		~BackBuffer();
 
 		// Variables
+		D3D10_VIEWPORT					aViewport;
+		D3D10_TEXTURE2D_DESC			aDepthBufferDesc;
 		IDXGISwapChain            *     aDXGISwapChain;
 		ID3D10Device              *     aDXDevice;
 		ID3D10RenderTargetView    *     aDXRenderTargetView;
@@ -64,8 +66,6 @@ namespace A2D {
 		ID3D10DepthStencilView    *     aDXDepthStencilView;
 		ID3D10RasterizerState     *     aDXRasterState;
 		ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
-		char							aVideoCardDescription[128];
-		int								aVideoCardMemory;
 
 	private:
 		// Variables

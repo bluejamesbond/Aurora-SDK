@@ -29,15 +29,16 @@ HRESULT BackBuffer::Initialize()
 	DXGI_ADAPTER_DESC adapterDesc;
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	ID3D10Texture2D* backBufferPtr;
-	D3D10_TEXTURE2D_DESC depthBufferDesc;
+	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc;
 	D3D10_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D10_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	D3D10_VIEWPORT viewport;
+	D3D10_VIEWPORT& viewport = aViewport;
 	D3D10_RASTERIZER_DESC rasterDesc;
 	D3D10_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
-	int error, width = static_cast<int>(aWindow->getBounds().aWidth), height = static_cast<int>(aWindow->getBounds().aHeight);
+	int videoCardMemory, error, width = static_cast<int>(aWindow->getBounds().aWidth), height = static_cast<int>(aWindow->getBounds().aHeight);
+	char videoCardDescription[128];
 
 	// Create a DirectX graphics interface factory.
 	hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**) &factory);
@@ -82,10 +83,10 @@ HRESULT BackBuffer::Initialize()
 	if (FAILED(hr))		return hr;
 
 	// Store the dedicated video card memory in megabytes.
-	aVideoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
+	videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
 
 	// Convert the name of the video card to a character array and store it.
-	error = wcstombs_s(&stringLength, aVideoCardDescription, 128, adapterDesc.Description, 128);
+	error = wcstombs_s(&stringLength, videoCardDescription, 128, adapterDesc.Description, 128);
 	if (error != 0)		return hr = E_FAIL;
 
 	// Release the display mode list.
@@ -423,31 +424,45 @@ bool BackBuffer::operator==(Abstract * xAbstract)
 }
 
 void BackBuffer::validate()
-{
-
-	Dims& aDim = aWindow->getSize();
-
-	// Release all outstanding references to 
-	// the swap chain's buffers.
-	aDXDevice->Release();
-
+{	
 	HRESULT hr;
+	Dims& aDim = aWindow->getSize();
+	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance
+	D3D10_VIEWPORT& viewport = aViewport;
 
-	// Preserve the existing buffer count and format.
-	// Automatically choose the width and height to 
-	// match the client rect for HWNDs.
+	aDXRenderTargetView->Release();
+	aDXDepthStencilView->Release();
+	aDXDepthStencilBuffer->Release();
+
+	// Resize the swap chain and recreate the 
+	// render target view.
 	hr = aDXGISwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-	if (hr) SYSOUT_STR("Goodddddddddddddddddddd");
-	
-	// Get buffer and create a render-target-view.
-	ID3D10Texture2D* backBufferPtr;
-	hr = aDXGISwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**) &backBufferPtr);
-	
-	hr = aDXDevice->CreateRenderTargetView(backBufferPtr, NULL, &aDXRenderTargetView);
+	if (FAILED(hr)) return;
 
-	backBufferPtr->Release();
-	backBufferPtr = 0;
+	ID3D10Texture2D* backBuffer;
+	hr = aDXGISwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), reinterpret_cast<void**>(&backBuffer));
+	if (FAILED(hr)) return;
 
-	SetActive();
+	hr = aDXDevice->CreateRenderTargetView(backBuffer, 0, &aDXRenderTargetView);
+	if (FAILED(hr)) return;
+	
+	backBuffer->Release();
+	
+	// Update depth buffer description
+	depthBufferDesc.Width = aDim.aWidth;
+	depthBufferDesc.Height = aDim.aHeight;
+
+	hr = aDXDevice->CreateTexture2D(&depthBufferDesc, 0, &aDXDepthStencilBuffer);
+	if (FAILED(hr)) return;
+
+	hr = aDXDevice->CreateDepthStencilView(aDXDepthStencilBuffer, 0, &aDXDepthStencilView);
+	if (FAILED(hr)) return;
+
+	viewport.Width = aDim.aWidth;
+	viewport.Height = aDim.aHeight;
+
+	aDXDevice->RSSetViewports(1, &viewport);
+
+	// SetActive();
 
 }

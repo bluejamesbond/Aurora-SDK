@@ -117,7 +117,6 @@ void TextureShader::renderTexture()
 	{
 		device->OMSetBlendState(aBlendState, 0, 0xffffffff);
 	}
-
 	else
 	{
 		device->OMSetBlendState(aBlendDisabledState, 0, 0xffffffff);

@@ -13,7 +13,7 @@ bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
 
 	Rect::memcpySSE2(&aConstraints, xContraints);
 
-	// WHy store contraints into every QuadData
+	// WHy store constraints into every QuadData
 //	if (memcmp(&aQuadData->aPreviousContraints, xContraints, sizeof(Rect)) != 0)
 //	{
 //		x_aligned_memcpy_sse2(&aQuadData->aPreviousContraints, xContraints, sizeof(Rect));
@@ -32,8 +32,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 {
 	HRESULT hr = S_OK;
 
-
-	Rect& contraints = aConstraints;
+	Rect& constraints = aConstraints;
 
 	int textureDimsChange = 0;
 	int textureClipChange = 0;
@@ -44,9 +43,8 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	float rectY = xRect->aY;
 	float rectWidth = xRect->aWidth;
 	float rectHeight = xRect->aHeight;
-
-	
-	if (rectX >= contraints.aWidth || rectY >= contraints.aHeight)	return hr;
+		
+	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return hr;
 	
 	/*
 	// Compare using built in accelerated-function
@@ -56,124 +54,80 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 
 	if (!(rectChange | imagePropertiesChange) && !aContraintsChanged)	return hr;
 
-	// Transfer all previous contraints over using accelerated functions
+	// Transfer all previous constraints over using accelerated functions
 	x_aligned_memcpy_sse2(&aQuadData->aPreviousRect, xRect, sizeof(Rect));
 	x_aligned_memcpy_sse2(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
 	x_aligned_memcpy_sse2(&aQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
 		*/
 
-	float realX, realY;	
-	float textureX = xTextureClip->aX;
-	float textureY = xTextureClip->aY;
-	float textureWidth = xTextureClip->aWidth;
-	float textureHeight = xTextureClip->aHeight;
+	bool repeat;
+	bool cover;
 
-	float realWidth, realHeight, calcWidth, calcHeight;
-	float consOffsetX, consOffsetY;
-	float realTWidth, realTHeight, calcTX, calcTY;
-	float tWidthOffset, tHeightOffset;
+	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
+		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
+		texelRight, texelBottom, 
+		textureWidth = xTextureClip->aWidth,
+		textureHeight = xTextureClip->aHeight,
+		aOrigWidth = rectWidth,
+		aOrigHeight = rectHeight;
 
-	float left;
-	float right;
-	float top;
-	float bottom;
-	float leftTex;
-	float rightTex;
-	float topTex;
-	float bottomTex;
-
-	byte index = 0;
 	VertexData * vertices = aQuadData->aVertices;
 	void * mappedVertices = 0;
 	
-	// Bitmap mapping calculations.
-	realX = rectX < 0 ? contraints.aX : contraints.aX + rectX;
-	realY = rectY < 0 ? contraints.aY : contraints.aY + rectY;
-
-	calcWidth = rectX < 0 ? rectWidth - abs(rectX) : rectWidth;
-	calcHeight = rectY < 0 ? rectHeight - abs(rectY) : rectHeight;
-
-	consOffsetX = rectX < 0 ? 0 : rectX;
-	consOffsetY = rectY < 0 ? 0 : rectY;
-
-	realWidth = rectX + calcWidth > contraints.aWidth ? contraints.aWidth - consOffsetX : calcWidth;
-	realHeight = rectY + calcHeight > contraints.aHeight ? contraints.aHeight - consOffsetY : calcHeight;
-
-	// Handle negative constraint dimensions.
-	if (realWidth < 0)
-	{
-		realWidth = realWidth + rectX > 0 ? realWidth + rectX : 0;
-	}
-	if (realHeight < 0)
-	{
-		realHeight = realHeight + rectY > 0 ? realHeight + rectY : 0;
-	}
-
-	// Texture mapping calculations.
-	calcTX = rectX < 0 ? rectX + (rectWidth * abs(rectX)) / contraints.aWidth : rectX;
-	calcTY = rectX < 0 ? rectY + (rectHeight * abs(rectY)) / contraints.aHeight : rectY;
-
-	calcTX += textureX;
-	calcTY += textureY;
-
-	// Calculate offset for x and y constraints.
-	tWidthOffset = rectX + calcWidth > contraints.aWidth || rectX < 0 ? (rectWidth * abs(rectX)) / contraints.aWidth : 0;
-	realTWidth = rectWidth - tWidthOffset;
-
-	realTWidth = textureWidth - realTWidth < 0 ? textureWidth : realTWidth;
-
-	tHeightOffset = rectY + calcHeight > contraints.aHeight || rectY < 0 ? (rectHeight * abs(rectY)) / contraints.aHeight : 0;
-	realTHeight = rectHeight - tHeightOffset;
-
-	realTHeight = textureHeight - realTHeight < 0 ? textureHeight : realTHeight;
-
-	// Calculate offset for dimension constraints.
-	realTWidth -= rectWidth < contraints.aWidth ? (rectWidth * (contraints.aWidth - rectWidth)) / contraints.aWidth : 0;
-	realTHeight -= rectHeight < contraints.aHeight ? (rectHeight * (contraints.aHeight - rectHeight)) / contraints.aHeight : 0;
-				
-	// Calculate the screen coordinates of the left side of the bitmap.
-	left = ((aWindowDims->aWidth / 2) * -1) + realX;
-
-	// Calculate the screen coordinates of the right side of the bitmap.
-	right = left + realWidth;
-
-	// Calculate the screen coordinates of the top of the bitmap.
-	top = (aWindowDims->aHeight / 2) - realY;
-
-	// Calculate the screen coordinates of the bottom of the bitmap.
-	bottom = top - realHeight;
-
-	// Calculate dESIred texture mapping.
-	leftTex = calcTX / xTextureDims->aWidth;
-	rightTex = (calcTX + realTWidth) / xTextureDims->aWidth;;
-	topTex = calcTY / xTextureDims->aWidth;
-	bottomTex = (calcTY + realTHeight) / xTextureDims->aHeight;
+	// Add as static method to Image properties
+	repeat = (xImageProperties->aOptRepeat >= _OPT_BACKGROUND_REPEAT_REPEAT_X) && 
+			  (xImageProperties->aOptRepeat <= (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y));
 	
-	// Load the vertex array with data.
-	vertices[index].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-	vertices[index++].texture = D3DXVECTOR2(leftTex, topTex);
+	repeat = true;
+	cover = true;
+	
+	calcLeft = max(rectX, 0);
+	calcTop = max(rectY, 0);
+	calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+	calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
 
-	vertices[index].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-	vertices[index++].texture = D3DXVECTOR2(rightTex, bottomTex);
+	calcHeight = calcBottom - calcTop;
+	calcWidth = calcRight - calcLeft;
 
-	vertices[index].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
-	vertices[index++].texture = D3DXVECTOR2(leftTex, bottomTex);
+	left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
+	right = left + calcWidth;
+	top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
+	bottom = top - calcHeight;
 
-	// Second triangle.
-	vertices[index].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
-	vertices[index++].texture = D3DXVECTOR2(leftTex, topTex);
+	texLeft = rectX > 0 ? 0.0f : abs(rectX);
+	texTop = rectY > 0 ? 0.0f : abs(rectY);
+	texRight = calcRight < constraints.aWidth ? aOrigWidth : calcWidth;
+	texBottom = calcBottom < constraints.aHeight ? aOrigHeight : calcHeight;
 
-	vertices[index].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
-	vertices[index++].texture = D3DXVECTOR2(rightTex, topTex);
+	texelLeft = repeat ? texLeft / textureWidth : texLeft / aOrigWidth;
+	texelTop = repeat ? texTop / textureHeight : texTop / aOrigHeight;
+	texelRight = repeat ? (calcWidth + texLeft) / textureWidth : texRight / aOrigWidth;
+	texelBottom = repeat ? (calcHeight + texTop) / textureHeight : texBottom / aOrigHeight;
+	
+	// Set up vertices
+	vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
 
-	vertices[index].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
-	vertices[index++].texture = D3DXVECTOR2(rightTex, bottomTex);
+	vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+	vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
+
+	vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
+	vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
+
+	vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+	vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+	vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
+	vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
+
+	vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
 	
 	// Lock the vertex buffer.
-	hr = aQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, (void**)&mappedVertices);
+	hr = aQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
 	if (FAILED(hr))	return hr;
 
-	// Copy the data into the vertex buffer.
+	// Copy data using SSE2 accelerated method
 	VertexData::memcpySSE2(static_cast<VertexData*>(mappedVertices), vertices);
 
 	// Unlock the vertex buffer.

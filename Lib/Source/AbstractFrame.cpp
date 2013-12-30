@@ -382,7 +382,7 @@ HRESULT AbstractFrame::CreateResources()
 
 void AbstractFrame::validate()
 {
-	// aBackBuffer->validate();
+	aBackBuffer->validate();
 
 	delete aGraphics->aProjection2DMatrix;
 
