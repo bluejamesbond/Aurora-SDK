@@ -43,6 +43,8 @@ int AbstractEventQueue::waitForAllDispatchingThreads()
 		aThread->Initialize();
 	}
 
+	Sleep(5000);
+
 	aThread->waitAll();
 
 	return 0;

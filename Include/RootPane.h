@@ -56,10 +56,10 @@ namespace A2D {
 		// PANEL
 		////////////////////////////////////////////////////////////////////////////////
 
-		virtual void                    RenderComponent(RenderData * xRenderData);
-		virtual void                    RenderComponentBorder(RenderData * xRenderData);
+		virtual void                    paintComponent(RenderData * xRenderData);
+		virtual void                    paintComponentBorder(RenderData * xRenderData);
 		virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
-		virtual void					SetBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight) final;
+		virtual void					setBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight) final;
 
 	public:
 

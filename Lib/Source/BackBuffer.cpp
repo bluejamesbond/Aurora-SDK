@@ -424,7 +424,18 @@ bool BackBuffer::operator==(Abstract * xAbstract)
 }
 
 void BackBuffer::validate()
-{	
+{
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
+
 	HRESULT hr;
 	Dims& aDim = aWindow->getSize();
 	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance

@@ -16,7 +16,7 @@ void AbstractFrame::SetName(LPCWSTR xName)
 	aWindow->setName(xName);
 }
 
-void AbstractFrame::SetBounds(Rect * xRect)
+void AbstractFrame::setBounds(Rect * xRect)
 {
 	aWindow->setBounds(xRect);
 
@@ -28,7 +28,7 @@ void AbstractFrame::SetBounds(Rect * xRect)
 	}
 }
 
-void AbstractFrame::SetBounds(float xLeft, float xTop, float xWidth, float xHeight)
+void AbstractFrame::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 {
 	aWindow->setBounds(xLeft, xTop, xWidth, xHeight);
 
@@ -372,7 +372,7 @@ HRESULT AbstractFrame::CreateResources()
 	aGraphics->aProjection3DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultProjectionMatrix(&aWindow->getSize(), &aGXSettings));
 	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
 
-	aRootPane->SetBounds(0, 0, aWindow->getBounds().aWidth, aWindow->getBounds().aHeight);
+	aRootPane->setBounds(0, 0, aWindow->getBounds().aWidth, aWindow->getBounds().aHeight);
 
 	// Create graphics
 	aGraphics->Initialize();

@@ -97,8 +97,8 @@ namespace A2D {
 	public:
 
 		// Additional
-		virtual void                    RenderComponent(RenderData * xRenderData);
-		virtual void                    RenderComponentBorder(RenderData * xRenderData);
+		virtual void                    paintComponent(RenderData * xRenderData);
+		virtual void                    paintComponentBorder(RenderData * xRenderData);
 		// virtual void					Render(RenderData * xRenderData);
 
 	public:

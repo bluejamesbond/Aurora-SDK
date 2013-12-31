@@ -1048,6 +1048,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 	int defaultAllotedAnimationFrames = 10;
 	int currentAnimationFrame = 0;
+	int counter = 0;
 
 	AbstractFrame& frame = *aFrame;
 	AbstractEventQueue& eventQueue = *xEventQueue;
@@ -1059,7 +1060,6 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
 
 		if (visible)
 		{
@@ -1077,9 +1077,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			{
 				frame.Update();
 			}
-		}	
-
-
+		}
 	}
 }
 
@@ -1120,7 +1118,7 @@ void Window::render()
 
 	renderComponent();
 	renderComponentBorder();
-
+	
 	/***********************************************/
 	
 	BLENDFUNCTION blendFunction;

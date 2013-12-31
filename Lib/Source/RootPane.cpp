@@ -4,18 +4,18 @@
 
 using namespace A2D;
 
-void RootPane::RenderComponent(RenderData * xRenderData)
+void RootPane::paintComponent(RenderData * xRenderData)
 {
-	Component::RenderComponent(xRenderData);
+	Component::paintComponent(xRenderData);
 }
 
-void RootPane::RenderComponentBorder(RenderData * xRenderData){}
+void RootPane::paintComponentBorder(RenderData * xRenderData){}
 
-void RootPane::SetBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight)
+void RootPane::setBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight)
 {
 	if (!aLockDimensions)
 	{
-		Component::SetBounds(xOptLeft, xOptTop, xOptWidth, xOptHeight);
+		Component::setBounds(xOptLeft, xOptTop, xOptWidth, xOptHeight);
 		aLockDimensions = true;
 	}
 }

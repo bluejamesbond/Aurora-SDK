@@ -5,7 +5,7 @@
 
 using namespace A2D;
 
-void Component::SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
+void Component::SetBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
 	int xOptBackroundSizeX,	int xOptBackroundSizeY,	int xOptBackgroundColor, int xOptBackgroundRepeat)
 {
 	aOptBackgroundSrc = xOptBackgroundImage;
@@ -17,13 +17,13 @@ void Component::SetOptBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroun
 	aOptBackgroundProps->aOptRepeat = xOptBackgroundRepeat;
 };
 
-void Component::RenderComponent(RenderData * xRenderData)
+void Component::paintComponent(RenderData& xRenderData)
 {
-	Graphics * graphics = (Graphics *) xRenderData;
+	Graphics& graphics = static_cast<Graphics&>(xRenderData);
 
 	if (aOptBackgroundSrc != NULL)
 	{
-		graphics->DrawImage(&pipeline, aOptBackgroundSrc, &aOptBackgroundRegion, aOptBackgroundProps);
+		graphics.DrawImage(&pipeline, aOptBackgroundSrc, &aOptBackgroundRegion, aOptBackgroundProps);
 	}
 }
 
@@ -37,7 +37,7 @@ bool Component::IsDoubleBuffered()
 	return aDoubleBuffer;
 }
 
-void Component::RenderComponentBorder(RenderData * xRenderData){}
+void Component::paintComponentBorder(RenderData * xRenderData){}
 
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY _ABSTRACT

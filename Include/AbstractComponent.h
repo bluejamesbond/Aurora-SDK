@@ -31,15 +31,8 @@ namespace A2D {
 
 	class Abstract;
 	class Renderable;
-	class Camera;
-	struct CameraProperties;
 	struct RenderData;
 	class Graphics;
-	class BackBuffer;
-	class MatrixFactory;
-	class ModelFactory;
-	class RootPane;
-	class Window;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -58,21 +51,20 @@ namespace A2D {
 	protected:
 
 		// Variables
-		Graphics				  *     aGraphics;
-		AbstractComponent      **    aChildrenComps;
-		AbstractComponent	  *	    aParentComp;
+		Graphics			   **       aGraphics;  // cached for later use; i.e. repaint
+		AbstractComponent      **		aChildrenComps;
+		AbstractComponent	  *			aParentComp;
+
 		int                             aChildrenCompsLength = 0;
 		int                             aChildrenCompsIndex = 0;
 
 		Rect							aOptRegion;
 		Rect							aOptBackgroundRegion;
-
 		Rect							aCalculatedRegion;
 
 	public:
 		// Accessors
 		AbstractComponent      *		GetParent();
-		Graphics				  *		GetGraphics();
 
 	public:
 
@@ -99,7 +91,7 @@ namespace A2D {
 	private:
 
 		// Builders
-		AbstractComponent      **    CreateAmmoritizedComponentArray();
+		AbstractComponent      **		CreateAmmoritizedComponentArray();
 		Graphics               *		CreateGraphics();
 
 		// Factory
@@ -124,32 +116,31 @@ namespace A2D {
 	public:
 
 		// Pure Virtual
-		virtual void                    RenderComponent(RenderData * xRenderData) = 0;
-		virtual void                    RenderComponentBorder(RenderData * xRenderData) = 0;
+		virtual void                    paintComponent(RenderData& xRenderData) = 0;
+		virtual void                    paintComponentBorder(RenderData& xRenderData) = 0;
 
 	public:
 
 		// Virtual
-		virtual void					SetBounds(Rect * xRect);
-		virtual void					SetBounds(float xX, float xY, float xWidth, float xHeight);
+		virtual void					setBounds(Rect& xRect);
+		virtual void					setBounds(float xX, float xY, float xWidth, float xHeight);
 
 	protected:
 
 		// Virtual
-		virtual LRESULT                 WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam);
-		virtual void                    RenderChildren(RenderData * xRenderData);
+		virtual void                    paintChildren(RenderData& xRenderData);
 		virtual void                    DeinitializeChildren() final;
 		virtual void					validate();
 
 	public:
 
-		virtual void                    Render(RenderData * xRenderData);
+		virtual void                    Render(RenderData& xRenderData);
 
 	public:
 
 		// Virtual
 		// { RENDERABLE }
-		virtual void                    Update(RenderData * xRenderData) final;
+		virtual void                    Update(RenderData& xRenderData) final;
 
 	public:
 

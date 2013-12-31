@@ -5,11 +5,11 @@
 
 using namespace A2D;
 
-void Panel::RenderComponent(RenderData * xRenderData)
+void Panel::paintComponent(RenderData * xRenderData)
 {
 	Graphics * graphics = (Graphics *)xRenderData;
 	
-	Component::RenderComponent(xRenderData);
+	Component::paintComponent(xRenderData);
 }
 
 /////////////////////////////////////////////////////////////////////////////

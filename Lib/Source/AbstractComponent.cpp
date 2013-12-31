@@ -50,7 +50,7 @@ AbstractComponent * AbstractComponent::GetParent()
 	return aParentComp;
 }
 
-void AbstractComponent::SetBounds(Rect * xRect)
+void AbstractComponent::setBounds(Rect * xRect)
 {
 	Graphics * graphics = GetGraphics();
 	
@@ -82,7 +82,7 @@ void AbstractComponent::validate()
 	aValidatedContents = true;
 }
 
-void AbstractComponent::SetBounds(float xX, float xY, float xWidth, float xHeight)
+void AbstractComponent::setBounds(float xX, float xY, float xWidth, float xHeight)
 {
 	Graphics * graphics = GetGraphics();
 
@@ -103,20 +103,20 @@ void AbstractComponent::Render(RenderData * xRenderData)
 	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);
 
 	// Render the current component
-	RenderComponent(xRenderData);
+	paintComponent(xRenderData);
 
 	// This will call children updates
 	// This is sort of saying: (Render <==> Update)
-	RenderChildren(xRenderData);
+	paintChildren(xRenderData);
 
 	// Force region
 	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);
 
 	// Render the currect component border
-	RenderComponentBorder(xRenderData);
+	paintComponentBorder(xRenderData);
 }
 
-void AbstractComponent::RenderChildren(RenderData * xRenderData)
+void AbstractComponent::paintChildren(RenderData * xRenderData)
 {
 	for (int i = 0; i < aChildrenCompsIndex; i++)
 	{

@@ -71,7 +71,7 @@ namespace A2D {
 	public:
 
 		// Additional
-		virtual void                    RenderComponent(RenderData * xRenderData);
+		virtual void                    paintComponent(RenderData * xRenderData);
 
 	public:
 
