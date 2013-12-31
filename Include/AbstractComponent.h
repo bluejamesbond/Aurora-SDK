@@ -64,16 +64,12 @@ namespace A2D {
 
 	public:
 		// Accessors
-		AbstractComponent      *		GetParent();
+		AbstractComponent      *		getParent();
 
 	public:
 
 		// Accessors
-		Rect					  *		GetBounds();
-
-		// Mutators
-		// { NONE }
-
+		Rect							getBounds();
 
 	private:
 
@@ -81,6 +77,7 @@ namespace A2D {
 
 	protected:
 
+		Rect				  *			_getBounds(); //ptr so it can be switched
 		void							validated();
 
 	public:
@@ -92,7 +89,6 @@ namespace A2D {
 
 		// Builders
 		AbstractComponent      **		CreateAmmoritizedComponentArray();
-		Graphics               *		CreateGraphics();
 
 		// Factory
 		// { NONE }
@@ -100,12 +96,12 @@ namespace A2D {
 	public:
 
 		// Additional
-		void                            Add(AbstractComponent * xAbstractComponent);
+		void                            add(AbstractComponent * xAbstractComponent);
 
 	protected:
 
 		// Additional
-		void							SetParent(AbstractComponent * xComponent);
+		void							setParent(AbstractComponent * xComponent);
 
 	private:
 
@@ -130,11 +126,10 @@ namespace A2D {
 		// Virtual
 		virtual void                    paintChildren(RenderData& xRenderData);
 		virtual void                    DeinitializeChildren() final;
-		virtual void					validate();
 
 	public:
 
-		virtual void                    Render(RenderData& xRenderData);
+		virtual void                    paint(RenderData& xRenderData);
 
 	public:
 
