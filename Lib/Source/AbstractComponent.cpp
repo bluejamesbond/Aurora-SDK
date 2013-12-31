@@ -26,7 +26,7 @@ void AbstractComponent::revalidate()
 	validate();
 }
 
-void AbstractComponent::Update(RenderData * xRenderData)
+void AbstractComponent::update(RenderData& xRenderData)
 {
 	if (!aValidatedContents)
 	{
@@ -38,14 +38,10 @@ void AbstractComponent::Update(RenderData * xRenderData)
 	// -> Render its children on top
 	// -> Render the border that overlays
 	//    both of the previous renders.
-	Render(xRenderData);
+	paint(xRenderData);
 }
 
-Graphics * AbstractComponent::GetGraphics()
-{
-	return aGraphics;
-}
-AbstractComponent * AbstractComponent::GetParent()
+AbstractComponent * AbstractComponent::getParent()
 {
 	return aParentComp;
 }
@@ -84,8 +80,6 @@ void AbstractComponent::validate()
 
 void AbstractComponent::setBounds(float xX, float xY, float xWidth, float xHeight)
 {
-	Graphics * graphics = GetGraphics();
-
 	aOptRegion.aWidth = xWidth;
 	aOptRegion.aHeight = xHeight;
 	aOptRegion.aX = xX;
@@ -97,7 +91,7 @@ void AbstractComponent::setBounds(float xX, float xY, float xWidth, float xHeigh
 	invalidate();
 }
 
-void AbstractComponent::Render(RenderData * xRenderData)
+void AbstractComponent::paint(RenderData * xRenderData)
 {
 	// Force region
 	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);

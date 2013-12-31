@@ -79,6 +79,7 @@ namespace A2D {
 
 		Rect				  *			_getBounds(); //ptr so it can be switched
 		void							validated();
+		void							validate();
 
 	public:
 
@@ -106,8 +107,8 @@ namespace A2D {
 	private:
 
 		// Additional
-		void                            RemoveComponent(AbstractComponent * xAbstractComponent);
-		void                            AddComponent(AbstractComponent * xAbstractComponent);
+		void                            removeComponent(AbstractComponent * xAbstractComponent);
+		void                            addComponent(AbstractComponent * xAbstractComponent);
 
 	public:
 
@@ -135,7 +136,7 @@ namespace A2D {
 
 		// Virtual
 		// { RENDERABLE }
-		virtual void                    Update(RenderData& xRenderData) final;
+		virtual void                    update(RenderData& xRenderData) final;
 
 	public:
 
