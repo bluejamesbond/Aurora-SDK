@@ -30,15 +30,7 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Abstract;
-	class Renderable;
 	class AbstractComponent;
-	class Camera;
-	struct CameraProperties;
-	struct RenderData;
-	class BackBuffer;
-	class MatrixFactory;
-	class ModelFactory;
-	class RootPane;
 	class Window;
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +41,6 @@ namespace A2D {
 	{
 	public:
 
-		// Variables
 		float translationX = 0;
 		float translationXG1 = 10;
 		float translationYG1 = 10;
@@ -61,22 +52,10 @@ namespace A2D {
 
 	protected:
 
-		// Variables
-		ImageProperties	*			aOptBackgroundProps;					// background-size/background-repeat
-		LPCWSTR			*				aOptBackgroundSrc = NULL;				// background-image  (CSS)
-		int								aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
-		int								aOptBackgroundPosX = 0;					// background-position-x  (CSS)
-		int								aOptBackgroundPosY = 0;					// background-position-x  (CSS)
+		virtual void                    paintComponent(Graphics& xGraphics);
 
 	public:
 
-		// Additional
-		virtual void                    paintComponent(RenderData * xRenderData);
-
-	public:
-
-		// Implementation
-		// { ABSTRACT }
 		virtual LPCWSTR                 GetClass();
 		virtual LPCWSTR                 ToString();
 	};

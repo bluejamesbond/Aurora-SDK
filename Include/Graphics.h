@@ -64,6 +64,16 @@ namespace A2D {
 		Rect				 *			aClip;
 		QuadFactory		 *			aQuadFactory;
 		TextureShader	 *			aTextureShader;
+		float                *     aViewMatrix;
+		float                *     aWorldMatrix;
+		float                *     aProjection2DMatrix;
+		float                *     aProjection3DMatrix;
+
+		Dims					  *		aWindowDims;
+		Camera				  *     aCamera;
+		BackBuffer             *     aBackBuffer;
+		TextureBuffer          *     aTextureBuffer;
+		TextureBuffer          *     aBlurBuffer;
 
 	public:
 

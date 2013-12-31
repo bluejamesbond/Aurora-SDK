@@ -5,12 +5,6 @@
 
 using namespace A2D;
 
-AbstractComponent::AbstractComponent() : 
-aParentComp(NULL),
-aGraphics(NULL) {}
-
-AbstractComponent::~AbstractComponent(){}
-
 void AbstractComponent::invalidate()
 {
 	aValidatedContents = false;
@@ -26,7 +20,7 @@ void AbstractComponent::revalidate()
 	validate();
 }
 
-void AbstractComponent::update(RenderData& xRenderData)
+void AbstractComponent::update(Graphics& xGraphics)
 {
 	if (!aValidatedContents)
 	{
@@ -37,26 +31,37 @@ void AbstractComponent::update(RenderData& xRenderData)
 	// -> Render component
 	// -> Render its children on top
 	// -> Render the border that overlays
-	//    both of the previous renders.
-	paint(xRenderData);
+	//    both of the previous renders.	// Force region
+	xGraphics.setClip(&aCalculatedRegion);
+
+	// Render the current component
+	paintComponent(xGraphics);
+
+	// This will call children update
+	// This is sort of saying: (Render <==> Update)
+	updateChildren(xGraphics);
+
+	// Force region
+	xGraphics.setClip(&aCalculatedRegion);
+
+	// Render the currect component border
+	paintComponentBorder(xGraphics);
 }
 
-AbstractComponent * AbstractComponent::getParent()
+AbstractComponent& AbstractComponent::getParent()
 {
-	return aParentComp;
+	return *aParentComp;
 }
 
-void AbstractComponent::setBounds(Rect * xRect)
-{
-	Graphics * graphics = GetGraphics();
-	
-	aOptRegion.aWidth = xRect->aWidth;
-	aOptRegion.aHeight = xRect->aHeight;
-	aOptRegion.aX = xRect->aX;
-	aOptRegion.aY = xRect->aY;
+void AbstractComponent::setBounds(Rect& xRect)
+{	
+	aOptRegion.aWidth = xRect.aWidth;
+	aOptRegion.aHeight = xRect.aHeight;
+	aOptRegion.aX = xRect.aX;
+	aOptRegion.aY = xRect.aY;
 
-	aOptBackgroundRegion.aWidth = xRect->aWidth;
-	aOptBackgroundRegion.aHeight = xRect->aHeight;
+	aOptBackgroundRegion.aWidth = xRect.aWidth;
+	aOptBackgroundRegion.aHeight = xRect.aHeight;
 
 	invalidate();
 }
@@ -91,119 +96,39 @@ void AbstractComponent::setBounds(float xX, float xY, float xWidth, float xHeigh
 	invalidate();
 }
 
-void AbstractComponent::paint(RenderData * xRenderData)
+void AbstractComponent::updateChildren(Graphics& xGraphics)
 {
-	// Force region
-	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);
+	QuickList<AbstractComponent*>::Iterator<AbstractComponent*> iterator = aChildren.iterator();
 
-	// Render the current component
-	paintComponent(xRenderData);
-
-	// This will call children updates
-	// This is sort of saying: (Render <==> Update)
-	paintChildren(xRenderData);
-
-	// Force region
-	static_cast<Graphics*>(xRenderData)->setClip(&aCalculatedRegion);
-
-	// Render the currect component border
-	paintComponentBorder(xRenderData);
-}
-
-void AbstractComponent::paintChildren(RenderData * xRenderData)
-{
-	for (int i = 0; i < aChildrenCompsIndex; i++)
+	while (iterator.has_next())
 	{
-		// To render this. You have to call its children
-		// update! This shows to update you have to call its
-		// render and to render you are callings its update method.
-		// A bit confusing but it's the best solution.
-		aChildrenComps[i]->Update(xRenderData);
+		iterator.next()->update(xGraphics);
 	}
 }
 
-void AbstractComponent::AddComponent(AbstractComponent * xAbstractComponent)
-{
-	AbstractComponent **	newComponents;
-
-	if (aChildrenCompsIndex >= aChildrenCompsLength)
-	{
-		newComponents = CreateAmmoritizedComponentArray();
-		delete aChildrenComps;
-		aChildrenComps = newComponents;
-	}
-
-	aChildrenComps[aChildrenCompsIndex++] = xAbstractComponent;
-
-	// Set the current component as the parent of the next
-	xAbstractComponent->SetParent(this); 	
-}
-
-void AbstractComponent::SetParent(AbstractComponent * xComponent)
+void AbstractComponent::setParent(AbstractComponent * xComponent)
 {
 	aParentComp = xComponent;
 }
 
-AbstractComponent** AbstractComponent::CreateAmmoritizedComponentArray()
+Rect AbstractComponent::getBounds()
 {
-	AbstractComponent **	newComponents;
-
-	newComponents = new AbstractComponent *[aChildrenCompsLength * 2];
-
-	for (int i = 0; i < aChildrenCompsIndex; i++)
-	{
-		newComponents[i] = aChildrenComps[i];
-	}
-
-	aChildrenCompsLength *= 2;
-
-	return newComponents;
+	return aOptRegion;
 }
 
-HRESULT AbstractComponent::Initialize()
-{
-	HRESULT hr = S_OK;
-
-	aChildrenComps = new AbstractComponent *[aChildrenCompsLength = 5];
-	
-	return hr;
-}
-
-void AbstractComponent::Deinitialize()
-{
-	DeinitializeChildren();
-
-	delete [] aChildrenComps;
-}
-
-void AbstractComponent::DeinitializeChildren()
-{
-	for (int i = 0; i < aChildrenCompsIndex; i++)
-	{
-		aChildrenComps[i]->Deinitialize();
-	}
-}
-
-Rect * AbstractComponent::GetBounds()
+Rect * AbstractComponent::_getBounds()
 {
 	return &aOptRegion;
 }
 
-void AbstractComponent::Add(AbstractComponent * xAbstractComponent)
+void AbstractComponent::add(AbstractComponent& xAbstractComponent)
 {
-	AddComponent(xAbstractComponent);
+	aChildren.push_back(&xAbstractComponent);
 }
 
-void AbstractComponent::RemoveComponent(AbstractComponent * xAbstractComponent)
+void AbstractComponent::remove(AbstractComponent& xAbstractComponent)
 {
-	// Fix later
-}
-
-LRESULT AbstractComponent::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
-{
-	// Fix later
-	// Pass it all the children based on location!
-	return NULL;
+	aChildren.remove(&xAbstractComponent);
 }
 
 LPCWSTR AbstractComponent::GetClass()

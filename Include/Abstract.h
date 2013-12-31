@@ -38,7 +38,7 @@ namespace A2D {
 
 		// Virtual    
 		virtual LPCWSTR                 GetClass();                                 // Class type    
-		virtual bool                    operator==(Abstract * xAbstract);        // Class type       
+		virtual bool                    operator==(Abstract * xAbstract);           // Class type       
 		virtual LPCWSTR                 ToString();                                 // Class type 
 
 		virtual bool					isClass(LPCWSTR xClass) final;

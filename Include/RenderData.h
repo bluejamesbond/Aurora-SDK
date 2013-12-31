@@ -44,16 +44,6 @@ namespace A2D {
 	struct RenderData
 	{
 		// Variables
-		float                *     aViewMatrix;
-		float                *     aWorldMatrix;
-		float                *     aProjection2DMatrix;
-		float                *     aProjection3DMatrix;
-
-		Dims					  *		aWindowDims;
-		Camera				  *     aCamera;
-		BackBuffer             *     aBackBuffer;
-		TextureBuffer          *     aTextureBuffer;
-		TextureBuffer          *     aBlurBuffer;
 	};
 }
 

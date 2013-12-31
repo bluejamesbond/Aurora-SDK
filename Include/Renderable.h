@@ -41,7 +41,7 @@ namespace A2D {
 	public:
 
 		// Pure Virtual
-		virtual void                    Update(RenderData& xRenderData) = 0;
+		virtual void                    Update(RenderData * xRenderData) = 0;
 
 	public:
 
