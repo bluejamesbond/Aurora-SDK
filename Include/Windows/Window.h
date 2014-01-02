@@ -124,7 +124,7 @@ namespace A2D {
 		HRESULT                         createShadowResources();
 		HRESULT                         createColorResources();
 
-		HRESULT                         registerClass();
+		ATOM	                        registerClass();
 
 		HRESULT                         updateOnMouseDown(HWND xHwnd);
 		HRESULT                         updateOnMouseMove(HWND xHwnd);

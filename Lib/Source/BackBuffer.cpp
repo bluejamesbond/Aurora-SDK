@@ -71,8 +71,7 @@ HRESULT BackBuffer::initialize()
 
 	// Create a list to hold all the possible display 
 	// modes for this monitor/video card combination.
-	displayModeList = new DXGI_MODE_DESC[numModes];
-	SAFELY(displayModeList);
+	NULLCHECK((displayModeList = new DXGI_MODE_DESC[numModes]));
 
 	// Now fill the display mode list structures.
 	SAFELY(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
@@ -96,7 +95,6 @@ HRESULT BackBuffer::initialize()
 	// Get the adapter (video card) description.
 	SAFELY(adapter->GetDesc(&adapterDesc));
 	
-
 	// Store the dedicated video card memory in
 	// megabytes.
 	videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
@@ -282,6 +280,17 @@ HRESULT BackBuffer::initialize()
 	// Now set the rasterizer state.
 	device->RSSetState(aDXRasterState);
 	
+	// Setup the viewport for rendering.
+	viewport.Width = aDims.aWidth = width;
+	viewport.Height = aDims.aHeight = height;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+
+	// Create the viewport.
+	aDXDevice->RSSetViewports(1, &viewport);
+
 	// Clear the second depth stencil state 
 	// before setting the parameters.
 	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
@@ -406,7 +415,7 @@ void BackBuffer::validate()
 	G_SAFELY(device->CreateDepthStencilView(aDXDepthStencilBuffer, 0, &aDXDepthStencilView));
 
 	viewport.Width = aDims.aWidth = windowDims.aWidth;
-	viewport.Height = aDims.aWidth = windowDims.aHeight;
+	viewport.Height = aDims.aHeight = windowDims.aHeight;
 
 	device->RSSetViewports(1, &viewport);
 }

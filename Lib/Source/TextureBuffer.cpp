@@ -20,7 +20,6 @@ bool TextureBuffer::hasAlpha()
 HRESULT TextureBuffer::initialize()
 {
 	D3D10_TEXTURE2D_DESC textureDesc;
-	HRESULT hr;
 	D3D10_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	D3D10_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	ID3D10Device * device = *aDXDevice;
@@ -41,8 +40,7 @@ HRESULT TextureBuffer::initialize()
 	textureDesc.MiscFlags = 0;
 
 	// Create the render target texture.
-	hr = device->CreateTexture2D(&textureDesc, NULL, &aDXRenderTargetTexture);
-	if (FAILED(hr))		return hr;
+	SAFELY(device->CreateTexture2D(&textureDesc, NULL, &aDXRenderTargetTexture));
 
 	// Setup the description of the render target view.
 	renderTargetViewDesc.Format = textureDesc.Format;
@@ -50,8 +48,7 @@ HRESULT TextureBuffer::initialize()
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the render target view.
-	hr = device->CreateRenderTargetView(aDXRenderTargetTexture, &renderTargetViewDesc, &aDXRenderTargetView);
-	if (FAILED(hr))		return hr;
+	SAFELY(device->CreateRenderTargetView(aDXRenderTargetTexture, &renderTargetViewDesc, &aDXRenderTargetView));
 
 	// Setup the description of the shader resource view.
 	shaderResourceViewDesc.Format = textureDesc.Format;
@@ -60,10 +57,9 @@ HRESULT TextureBuffer::initialize()
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 	
 	// Create the shader resource view.
-	hr = device->CreateShaderResourceView(aDXRenderTargetTexture, &shaderResourceViewDesc, &aResource);
-	if (FAILED(hr))		return hr;
+	SAFELY(device->CreateShaderResourceView(aDXRenderTargetTexture, &shaderResourceViewDesc, &aResource));
 
-	return hr;
+	return S_OK;
 }
 
 void TextureBuffer::SetActive()

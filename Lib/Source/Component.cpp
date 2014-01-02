@@ -31,6 +31,11 @@ void Component::update()
 {
 	Graphics& graphics = *aGraphics;
 
+	if (!aValidatedContents)
+	{
+		validate();
+	}
+
 	graphics.setClip(&aCalculatedRegion);
 
 	// Render the current component

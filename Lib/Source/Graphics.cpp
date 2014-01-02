@@ -41,16 +41,12 @@ void Graphics::setClip(Rect * xClip)
 
 void Graphics::validate()
 {
-	float *projection2D, *projection3D;
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
 
-	G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&projection2D), size, settings));
-	G_SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&projection3D), size, settings));
-
-	aProjection2DMatrix = projection2D;
-	aProjection3DMatrix = projection3D;
-
+	G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
+	G_SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
+	
 	aTextureShader->loadMatrices();
 }
 
@@ -103,7 +99,6 @@ LPCWSTR Graphics::toString()
 
 HRESULT Graphics::initialize()
 {
-	float * world, *view, *projection2D, *projection3D;
 	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
@@ -113,20 +108,15 @@ HRESULT Graphics::initialize()
 	cameraProperties.aPositionY = 0.0f;
 	cameraProperties.aPositionZ = -10.0f;
 
-	SAFELY(MatrixFactory::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&world)));
-	SAFELY(MatrixFactory::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&view), cameraProperties));
-	SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&projection2D), size, settings));
-	SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&projection3D), size, settings));
+	SAFELY(MatrixFactory::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
+	SAFELY(MatrixFactory::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));
+	SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
+	SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 
-	aWorldMatrix = world;
-	aViewMatrix = view;
-	aProjection2DMatrix = projection2D;
-	aProjection3DMatrix = projection3D;
-		
 	aQuadFactory = new QuadFactory(device, aBackBufferDims);
 	SAFELY(aQuadFactory->initialize());
 
-	aTextureShader = new TextureShader(device, &world, &view, &projection2D);
+	aTextureShader = new TextureShader(device, &aWorldMatrix, &aViewMatrix, &aProjection2DMatrix);
 	SAFELY(aTextureShader->initialize());
 
 	return S_OK;

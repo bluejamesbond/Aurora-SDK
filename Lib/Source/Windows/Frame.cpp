@@ -16,7 +16,7 @@ Frame::~Frame(){}
 // ABSTRACTFRAME
 ////////////////////////////////////////////////////////////////////////////////
 
-AbstractWindow *	Frame::createPlatformCompatibleWindow()
+AbstractWindow * Frame::createPlatformCompatibleWindow()
 {
 	return new Window(this, aHInstance);
 }

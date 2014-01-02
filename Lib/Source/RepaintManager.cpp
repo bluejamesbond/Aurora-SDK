@@ -13,7 +13,7 @@ RepaintManager::RepaintManager(Graphics * xGraphics, Component * xRoot)
 	aRoot = xRoot;
 }
 
-RepaintManager::~RepaintManager(){};
+RepaintManager::~RepaintManager(){}
 
 HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 {
@@ -25,8 +25,9 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 	}
 
 	xChild._setDepth(++depth);
-
 	xChild._setGraphics(xParent.getGraphics());
+
+	xChild.invalidate();
 
 	if (addToDepthTracker(xChild, depth))
 	{
@@ -42,15 +43,23 @@ HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 {
 	UnorderedList<Component*> * peerComponents;
 
-	int maxTrackerZ = aOpaqueDepthTracker.size();
-	int listsToAdd = xZ;
+	int maxZ = aOpaqueDepthTracker.size() - 1;
+	int neededZ = static_cast<int>(xZ);
 
-	while (maxTrackerZ < listsToAdd)
+	if (maxZ <= neededZ)
 	{
-		aOpaqueDepthTracker.push_back(peerComponents = new UnorderedList<Component*>());
+		while (maxZ++ <= neededZ)
+		{
+			aOpaqueDepthTracker.push_back(peerComponents = new UnorderedList<Component*>());
+		}
+
+		peerComponents->push(&xComponent);
+	}
+	else
+	{
+		aOpaqueDepthTracker.get(neededZ)->push(&xComponent);
 	}
 
-	peerComponents->push(&xComponent);
 
 	return S_OK;
 }
@@ -63,7 +72,7 @@ void RepaintManager::update()
 	backBuffer->clear();
 	backBuffer->setZBuffer(false);
 
-	int i, heapSize = 0;
+	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.reverse_iterator();
 	Component * component;
 
@@ -74,14 +83,11 @@ void RepaintManager::update()
 		if (containers->size() > 0)
 		{
 			heapSize = containers->heap_size();
+			size = containers->size();
 
-			for (i = 0; i < heapSize; i++)
+			for (i = 0; i < size; i++)
 			{
-				if ((component = containers->get(heapSize)) == NULL)
-				{
-					break;
-				}
-				else
+				if ((component = containers->get(i)) != NULL)
 				{
 					component->update();
 				}
@@ -111,6 +117,7 @@ HRESULT RepaintManager::initialize()
 
 	addToDepthTracker(root, 0.0f);
 	root.setBounds(0, 0, 500, 500);
+	root.invalidate();
 
 	return S_OK;
 }

@@ -28,9 +28,7 @@
 #include "Texture.h"
 #include "QuadFactory.h"
 #include "ImageProperties.h"
-#include "Container.h"
 #include "Pipeline.h"
-#include "Camera.h"
 #include "MatrixFactory.h"
 
 namespace A2D {

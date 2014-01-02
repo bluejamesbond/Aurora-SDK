@@ -367,7 +367,7 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 
 int Window::aClassInstances = 0;
 
-HRESULT Window::registerClass()
+ATOM Window::registerClass()
 {
 	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
 	wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -1160,14 +1160,9 @@ HRESULT Window::initialize()
 	// Super
 	AbstractWindow::initialize();
 
-	SAFELY(registerClass());
-
-	aParentHWnd = createCompatibleWindow(true);
-	if (!aParentHWnd) return E_FAIL;
-
-	aChildHWnd = createCompatibleWindow(false);
-	if (!aChildHWnd) return E_FAIL;
-
+	NULLCHECK(registerClass());
+	NULLCHECK((aParentHWnd = createCompatibleWindow(true)));
+	NULLCHECK((aChildHWnd = createCompatibleWindow(false)));
 	SAFELY(createResources());
 
 	update();

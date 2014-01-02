@@ -21,6 +21,7 @@
 
 #include "ExtLibs.h"
 #include "Pipelineable.h"
+#include "Common.h"
 #include "Rect.h"
 
 namespace A2D {
@@ -44,14 +45,12 @@ namespace A2D {
 
 		template<class VertexClass>
 		static HRESULT CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
-
 		static HRESULT CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
 	};
 
 	template<class VertexClass>
 	HRESULT DXShapeUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
 	{
-		HRESULT hr;
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;
 		VertexClass * vertices = new VertexClass[xVertices];
@@ -68,13 +67,12 @@ namespace A2D {
 		// Give the subresource structure a pointer to the vertex data.
 		vertexData.pSysMem = vertices;
 
-		hr = xDXDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer);
-		if (FAILED(hr))	return hr;
+		SAFELY(xDXDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer));
 
 		delete[] vertices;
 		vertices = 0;
 
-		return hr;
+		return S_OK;
 	}
 }
 

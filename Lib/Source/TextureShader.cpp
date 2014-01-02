@@ -11,8 +11,6 @@ TextureShader::~TextureShader(){}
 
 HRESULT TextureShader::initialize()
 {
-	HRESULT hr = S_OK;
-
 	D3D10_INPUT_ELEMENT_DESC polygonLayout[3];
 	unsigned int numElements;
 	D3D10_PASS_DESC passDesc;
@@ -22,17 +20,14 @@ HRESULT TextureShader::initialize()
 
 	// Use the DXShaderUtils to create a shader
 	// and cache it.
-	hr = DXShaderUtils::LoadShaderFromFile(L"../../../Aurora-SDK/Lib/Assets/Shaders/texture.fx", device, &aEffect);
-	if (FAILED(hr))			return hr;
+	SAFELY(DXShaderUtils::LoadShaderFromFile(L"../../../Aurora-SDK/Lib/Assets/Shaders/texture.fx", device, &aEffect));
 
 	// Create alpha channel supported blend states
 	// and cache it for reuse.
-	hr = DXShaderUtils::CreatePNGCompatibleBlendStates(device, &aBlendState, &aBlendDisabledState);
-	if (FAILED(hr))			return hr;
+	SAFELY(DXShaderUtils::CreatePNGCompatibleBlendStates(device, &aBlendState, &aBlendDisabledState));
 
 	// Get a pointer to the technique inside the shader.
-	aTechnique = aEffect->GetTechniqueByName("MainTechnique");
-	if (!aTechnique)		return E_FAIL;
+	NULLCHECK((aTechnique = aEffect->GetTechniqueByName("MainTechnique")));
 
 	// Now setup the layout of the data that goes into the shader.
 	// This setup needs to match the VertexData stucture.
@@ -70,8 +65,7 @@ HRESULT TextureShader::initialize()
 	aTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
 
 	// Create the input layout.
-	hr = device->CreateInputLayout(polygonLayout, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &aLayout);
-	if (FAILED(hr))		return hr;
+	SAFELY(device->CreateInputLayout(polygonLayout, numElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &aLayout));
 
 	// Get pointers to the three matrices inside the 
 	// shader so we can update them from this class.
@@ -83,7 +77,7 @@ HRESULT TextureShader::initialize()
 	// Load the matrices
 	loadMatrices();
 
-	return hr;
+	return S_OK;
 }
 
 void TextureShader::loadMatrices()

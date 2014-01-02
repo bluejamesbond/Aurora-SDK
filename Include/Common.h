@@ -58,7 +58,8 @@
 
 #define G_SAFELY(hr)    if(hr != 0)	return;
 #define SAFELY(hr)		if(hr != 0)	return E_FAIL
+#define NULLCHECK(hr)	if(!hr)	return E_FAIL
 #define	DESTROY(x)		if(x) { delete x; x = 0; }
-#define D3DDESTROY(x)   if(x) { x->Release(); delete x; x = 0; }
+#define D3DDESTROY(x)   if(x) { x->Release(); x = 0; }
 
 #endif

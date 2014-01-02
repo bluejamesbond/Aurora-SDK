@@ -262,15 +262,10 @@ void  QuadFactory::memcpySSE2QuadColoredTextureVertex(ColoredTextureVertex * xDe
 
 HRESULT QuadFactory::initialize()
 {
-	HRESULT hr = S_OK;
+	SAFELY(DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &aVertexBuffer, 6));
+	SAFELY(DXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6));
 
-	hr = DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &aVertexBuffer, 6);
-	if (FAILED(hr))	return hr;
-
-	hr = DXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6);
-	if (FAILED(hr))	return hr;
-
-	return hr;
+	return S_OK;
 }
 
 LPCWSTR QuadFactory::getClass()

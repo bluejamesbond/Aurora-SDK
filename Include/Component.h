@@ -50,8 +50,8 @@ namespace A2D {
 		AbstractFrame		    *		aFrame;
 		Component			    *		aParent;
 		OrderedList<Component*>			aChildren;
-		Component				*       aParentComp;
-		Pipeline				*		aPipeline;
+		Component				*       aParentComp = NULL;
+		Pipeline				*		aPipeline = NULL;
 
     protected:
 
