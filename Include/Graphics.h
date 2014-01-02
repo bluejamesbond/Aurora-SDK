@@ -30,6 +30,8 @@
 #include "ImageProperties.h"
 #include "Pipeline.h"
 #include "MatrixFactory.h"
+#include "GradientPaint.h"
+#include "Color3D.h"
 
 namespace A2D {
 
@@ -90,8 +92,15 @@ namespace A2D {
 		void							validate();
 		BackBuffer*						getBackBuffer();
 
-		void							drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, ImageProperties& xImageProps);
-	
+		void							setBackground(Color3D& xColor);
+		void							setBackground(GradientPaint& xGradientPaint);
+		void							fillRect();
+		void							drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect);
+		void							drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool xRepeat);
+		void							drawImage();
+		void							drawRect();
+		void							drawLine();
+
 	public:
 
 		virtual HRESULT                 initialize();

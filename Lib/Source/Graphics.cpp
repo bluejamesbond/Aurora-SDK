@@ -50,7 +50,7 @@ void Graphics::validate()
 	aTextureShader->loadMatrices();
 }
 
-void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, ImageProperties& xImageProps)
+void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool xRepeat)
 {
 	Texture * texture;
 	QuadData * quadData;
@@ -80,7 +80,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, Image
 	quadData = static_cast<QuadData*>((*xPipeline)->aPipelineComps[1]);
 	
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), &xImageProps);
+	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), xRepeat);
 	aTextureShader->setTexture(texture);
 				
 	aQuadFactory->RenderQuad(quadData);

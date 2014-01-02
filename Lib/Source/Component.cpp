@@ -23,7 +23,7 @@ void Component::paintComponent()
 
 	if (aOptBackgroundSrc != NULL)
 	{
-		graphics.drawImage(&aPipeline, aOptBackgroundSrc, aOptBackgroundRegion, aOptBackgroundProps);
+		graphics.drawImage(&aPipeline, aOptBackgroundSrc, aOptBackgroundRegion, true);
 	}
 }
 
