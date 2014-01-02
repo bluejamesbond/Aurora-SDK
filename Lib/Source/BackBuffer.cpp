@@ -318,6 +318,10 @@ HRESULT BackBuffer::initialize()
 	// Create the state using the device.
 	SAFELY(device->CreateDepthStencilState(&depthDisabledStencilDesc, &aDXDepthDisabledStencilState));	
 
+	// Set the type of primitive that should be 
+	// rendered from this vertex buffer, in this case triangles.
+	device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	return S_OK;
 }
 

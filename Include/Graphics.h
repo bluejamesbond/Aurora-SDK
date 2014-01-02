@@ -86,7 +86,7 @@ namespace A2D {
 
 		Dims*							getDrawableDimensions();
 		CameraProperties*				getCameraProperties();
-		void							setClip(Rect * aRect);
+		void							setClip(Rect * aRect, float xZ);
 		void							validate();
 		BackBuffer*						getBackBuffer();
 

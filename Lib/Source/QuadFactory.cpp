@@ -4,6 +4,9 @@
 
 using namespace A2D;
 
+unsigned int QuadFactory::aStride = sizeof(ColoredTextureVertex);
+unsigned int QuadFactory::aOffset = 0;
+
 QuadFactory::QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims) : aDXDevice(xDXDevice), aWindowDims(xWindowDims){}
 
 QuadFactory::~QuadFactory()
@@ -12,8 +15,14 @@ QuadFactory::~QuadFactory()
 	D3DDESTROY(aIndexBuffer);
 }
 
-bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
+void QuadFactory::setDepth(float xZ)
 {
+	aDepth = xZ;
+}
+
+bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints, float xZ)
+{
+	aDepth = xZ;
 
 	Rect::memcpySSE2(&aConstraints, xContraints);
 
@@ -34,8 +43,6 @@ bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
 HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip,
 					Dims * xTextureDims, ImageProperties * xImageProperties)
 {
-	HRESULT hr = S_OK;
-
 	Rect& constraints = aConstraints;
 
 	int textureDimsChange = 0;
@@ -48,7 +55,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	float rectWidth = xRect->aWidth;
 	float rectHeight = xRect->aHeight;
 		
-	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return hr;
+	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return S_OK;
 	
 	/*
 	// Compare using built in accelerated-function
@@ -71,8 +78,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 		texelRight, texelBottom, 
 		textureWidth = xTextureClip->aWidth,
 		textureHeight = xTextureClip->aHeight,
-		aOrigWidth = rectWidth,
-		aOrigHeight = rectHeight;
+		depth = aDepth;
 
 	ColoredTextureVertex * vertices = aQuadData->aVertices;
 	void * mappedVertices = 0;
@@ -98,42 +104,41 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 
 	texLeft = rectX > 0 ? 0.0f : abs(rectX);
 	texTop = rectY > 0 ? 0.0f : abs(rectY);
-	texRight = calcRight < constraints.aWidth ? aOrigWidth : calcWidth;
-	texBottom = calcBottom < constraints.aHeight ? aOrigHeight : calcHeight;
+	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
+	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
-	texelLeft = repeat ? texLeft / textureWidth : texLeft / aOrigWidth;
-	texelTop = repeat ? texTop / textureHeight : texTop / aOrigHeight;
-	texelRight = repeat ? (calcWidth + texLeft) / textureWidth : texRight / aOrigWidth;
-	texelBottom = repeat ? (calcHeight + texTop) / textureHeight : texBottom / aOrigHeight;
+	texelLeft = repeat ? texLeft / textureWidth : texLeft / rectWidth;
+	texelTop = repeat ? texTop / textureHeight : texTop / rectHeight;
+	texelRight = repeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
+	texelBottom = repeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
 	
 	// Set up vertices
-	vertices[0].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
 	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
 	vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+	vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
 	vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
 	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);  // Bottom left.
+	vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
 	vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
 	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[3].position = D3DXVECTOR3(left, top, 0.0f);  // Top left.
+	vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
 	vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
 	vertices[3].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[4].position = D3DXVECTOR3(right, top, 0.0f);  // Top right.
+	vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
 	vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
 	vertices[4].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);  // Bottom right.
+	vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
 	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
 	vertices[5].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 	
 	// Lock the vertex buffer.
-	hr = aQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
-	if (FAILED(hr))	return hr;
+	SAFELY(aQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices)));
 	
 	// Copy data using SSE2 accelerated method
 	QuadFactory::memcpySSE2QuadColoredTextureVertex(static_cast<ColoredTextureVertex*>(mappedVertices), vertices);
@@ -141,12 +146,9 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect
 	// Unlock the vertex buffer.
 	aQuadData->aVertexBuffer->Unmap();
 
-	return hr;
+	return S_OK;
 
 }
-
-unsigned int QuadFactory::aStride = sizeof(ColoredTextureVertex);
-unsigned int QuadFactory::aOffset = 0;
 
 void QuadFactory::RenderQuad(QuadData * aQuadData)
 {
@@ -159,10 +161,6 @@ void QuadFactory::RenderQuad(QuadData * aQuadData)
 	// Set the index buffer to active in the input
 	// assembler so it can be rendered.
 	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	// Set the type of primitive that should be 
-	// rendered from this vertex buffer, in this case triangles.
-	device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
 }

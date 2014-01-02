@@ -36,13 +36,13 @@ void Component::update()
 		validate();
 	}
 
-	graphics.setClip(&aCalculatedRegion);
+	graphics.setClip(&aCalculatedRegion, aDepth);
 
 	// Render the current component
 	paintComponent();
 
 	// Force region
-	graphics.setClip(&aCalculatedRegion);
+	graphics.setClip(&aCalculatedRegion, aDepth);
 
 	// Render the currect component border
 	paintComponentBorder();

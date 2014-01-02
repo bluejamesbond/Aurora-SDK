@@ -34,9 +34,9 @@ Dims * Graphics::getDrawableDimensions()
 	return aBackBufferDims;
 }
 
-void Graphics::setClip(Rect * xClip)
+void Graphics::setClip(Rect * xClip, float xDepth)
 {
-	aQuadFactory->setConstraints(NULL, aClip = xClip);
+	aQuadFactory->setConstraints(NULL, aClip = xClip, xDepth);
 }
 
 void Graphics::validate()
@@ -106,7 +106,7 @@ HRESULT Graphics::initialize()
 		
 	cameraProperties.aPositionX = 0.0f;
 	cameraProperties.aPositionY = 0.0f;
-	cameraProperties.aPositionZ = -10.0f;
+	cameraProperties.aPositionZ = -800.0f;
 
 	SAFELY(MatrixFactory::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
 	SAFELY(MatrixFactory::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));

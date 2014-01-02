@@ -70,7 +70,7 @@ void RepaintManager::update()
 
 	backBuffer->setActive();
 	backBuffer->clear();
-	backBuffer->setZBuffer(false);
+//	backBuffer->setZBuffer(false);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.reverse_iterator();
@@ -85,7 +85,7 @@ void RepaintManager::update()
 			heapSize = containers->heap_size();
 			size = containers->size();
 
-			for (i = 0; i < size; i++)
+			for (i = --size; i > -1; i--)
 			{
 				if ((component = containers->get(i)) != NULL)
 				{
@@ -95,7 +95,7 @@ void RepaintManager::update()
 		}
 	}
 
-	backBuffer->setZBuffer(true);
+//	backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }
 

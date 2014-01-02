@@ -53,6 +53,8 @@ namespace A2D {
 		static unsigned int aStride;
 		static unsigned int aOffset;
 
+		float				aDepth = 0.0f;
+
 		///////////////////////////////////////////////////////////
 
 		Rect				aConstraints;
@@ -65,7 +67,8 @@ namespace A2D {
 		static void						memcpySSE2QuadColoredTextureVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
 		HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, ImageProperties * xImageProperties);
 		void							RenderQuad(QuadData * aQuadData);
-		bool							setConstraints(QuadData * aQuadData, Rect * xContraints);
+		bool							setConstraints(QuadData * aQuadData, Rect * xContraints, float xZ);
+		void							setDepth(float xZ);
 
 	public:
 
