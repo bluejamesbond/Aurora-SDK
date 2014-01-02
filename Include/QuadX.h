@@ -85,10 +85,10 @@ public:
 	// ABSTRACT IMPLEMENTATION
 	//////////////////////////////////////////////////////////
 
-	virtual HRESULT                 Initialize() = 0;
+	virtual HRESULT                 initialize() = 0;
 	virtual void                    Deinitialize() = 0;
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
+	virtual LPCWSTR                 getClass();
+	virtual LPCWSTR                 toString();
 	virtual bool                    operator==(Abstract * Abstract);
 	
 };

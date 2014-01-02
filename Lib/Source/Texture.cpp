@@ -30,7 +30,7 @@ HRESULT Texture::changeTexture(LPCWSTR * xSrc)
 
 	// Can't catch error here!!!! NOTE: FIX
 	// Remind Mathew if you see this.
-	return Initialize();
+	return initialize();
 }
  
 
@@ -49,7 +49,7 @@ void Texture::Deinitialize()
 
 ID3D10ShaderResourceView* Texture::aStaticResource;
 
-HRESULT Texture::Initialize()
+HRESULT Texture::initialize()
 {
 	HRESULT hr = S_OK;
 	D3DX10_IMAGE_LOAD_INFO loadInfo;
@@ -88,12 +88,12 @@ HRESULT Texture::Initialize()
 	return hr;
 }
 
-LPCWSTR Texture::GetClass()
+LPCWSTR Texture::getClass()
 {
 	return L"Texture";
 }
 
-LPCWSTR Texture::ToString()
+LPCWSTR Texture::toString()
 {
 	return L"Texture";
 }

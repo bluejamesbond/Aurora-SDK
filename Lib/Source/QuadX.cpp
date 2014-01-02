@@ -11,7 +11,7 @@ QuadX::~QuadX(){}
 
 HRESULT QuadX::CreateResources(void * xArgs[])
 {
-	// Initialize buffers depending on the amount of quads we are going to render.
+	// initialize buffers depending on the amount of quads we are going to render.
 	aVertexCount = aQuadCount * 6;
 	aIndexCount = aQuadCount * 6;
 	return DXShapeUtils::CreateResources(xArgs);
@@ -87,7 +87,7 @@ HRESULT QuadX::MapCoords()
 	HRESULT hr;
 	void* verticesPtr;
 
-	// Initialize the vertex buffer pointer to null first.
+	// initialize the vertex buffer pointer to null first.
 	verticesPtr = 0;
 
 	// Lock the vertex buffer.
@@ -107,12 +107,12 @@ HRESULT QuadX::MapCoords()
 }
 
 
-LPCWSTR QuadX::GetClass()
+LPCWSTR QuadX::getClass()
 {
 	return L"QuadX";
 }
 
-LPCWSTR QuadX::ToString()
+LPCWSTR QuadX::toString()
 {
 	return L"QuadX";
 }

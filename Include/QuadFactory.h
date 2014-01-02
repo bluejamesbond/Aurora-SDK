@@ -73,11 +73,9 @@ namespace A2D {
 		// ABSTRACT IMPLEMENTATION
 		//////////////////////////////////////////////////////////
 
-		virtual HRESULT                 Initialize();
-		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract); // Don't campare against quad but against any Object
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 	};
 }
 

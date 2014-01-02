@@ -25,12 +25,12 @@ void RootPane::setBounds(float xOptLeft, float xOptTop, float xOptWidth, float x
 // REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR RootPane::GetClass()
+LPCWSTR RootPane::getClass()
 {
 	return L"RootPane";
 }
 
-LPCWSTR RootPane::ToString()
+LPCWSTR RootPane::toString()
 {
 	return L"RootPane";
 }

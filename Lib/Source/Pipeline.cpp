@@ -7,7 +7,7 @@ Pipeline::Pipeline() : aLifeCycle(Pipeline::aGlobalLifeCycle - 1) {} // Offset b
 
 Pipeline::Pipeline(Pipeline * xPipeline){}
 
-// Initialize to value
+// initialize to value
 int Pipeline::aGlobalLifeCycle = 0;
 
 void Pipeline::nextLifeCycle()
@@ -19,12 +19,12 @@ void Pipeline::nextLifeCycle()
 // REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR Pipeline::GetClass()
+LPCWSTR Pipeline::getClass()
 {
 	return L"Pipeline";
 }
 
-LPCWSTR Pipeline::ToString()
+LPCWSTR Pipeline::toString()
 {
 	return L"Pipeline";
 }
@@ -34,7 +34,7 @@ bool Pipeline::operator==(Abstract * xAbstract)
 	return false;
 }
 
-HRESULT Pipeline::Initialize()
+HRESULT Pipeline::initialize()
 {
 	return NULL;
 }

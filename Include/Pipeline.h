@@ -61,10 +61,10 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 Initialize();
+		virtual HRESULT                 initialize();
 		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 		virtual bool                    operator==(Abstract * xAbstract);
 
 	};

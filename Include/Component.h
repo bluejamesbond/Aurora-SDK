@@ -20,7 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "AbstractComponent.h"
 #include "ImageProperties.h"
 #include "Pipeline.h"
 
@@ -31,66 +30,100 @@ namespace A2D {
     ////////////////////////////////////////////////////////////////////////////////
 
     class Abstract;
-    class AbstractComponent;
-	class ImageProperties;
+    class Component;
+	struct ImageProperties;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
-    class Component : public AbstractComponent
+    class Component
     {
-    public:
 
-        bool							blurred = false;
-        bool							aDoubleBuffer = false;
+	private:
 
-		TextureBuffer         *			aTextureBuffer;
-        Pipeline			  *			pipeline = NULL;
+
+		Frame				    *		aFrame;
+		Component			    *		aParent;
+		OrderedList<Component*>			aChildren;
+		Component				*       aParentComp;
+		Pipeline				*		aPipeline;
 
     protected:
 
-        ImageProperties *               aOptBackgroundProps;                    // background-size/background-repeat
+		Graphics                *       aGraphics;
+		bool                            aValidatedContents;
+		Rect                            aOptRegion;
+		Rect                            aOptBackgroundRegion;
+		Rect                            aCalculatedRegion;
+
+        ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
         LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
         int                             aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
         int                             aOptBackgroundPosX = 0;                 // background-position-x  (CSS)
         int                             aOptBackgroundPosY = 0;                 // background-position-x  (CSS)
 
-        virtual void                    paintComponent(Graphics& xGraphics) = 0;
-        virtual void                    paintComponentBorder(Graphics& xGraphics) = 0;
+        virtual void                    paintComponent();
+        virtual void                    paintComponentBorder();
+
+	protected:
+		
+		virtual void                    validate();
 
     public:
+
+		void							revalidate();
+		void							validated();
+		void							invalidate();
+
+		Rect *							_getBounds();
+		void							_setDepth(float xDepth);
+		void							_setGraphics(Graphics& xGraphics);
+		void                            _setParent(Component& xComponent);
+		void							_setFrame(Frame& xFrame);
+		void							_add(Component& xComponent);
+		void							_remove(Component& xComponent);
+
+		float							getDepth();
+		Graphics&						getGraphics();
+		Component&						getParent();
+		Component&						getRoot();
+		Frame&							getFrame();
+
+		void							update();
+		Rect                            getBounds();
+		void                            setBounds(Rect& xRect);
+		void                            add(Component& xComponent);
+		void                            remove(Component& xComponent);
+		void                            setBounds(float xX, float xY, float xWidth, float xHeight);
 
         bool                            isDoubleBuffered();
         LPCWSTR                         getBackgroundImage()                                                    { return    aOptBackgroundSrc; };
         int                             getBackgroundPositionX()                                                { return    aOptBackgroundPosX; };
         int                             getBackgroundPositionY()                                                { return    aOptBackgroundPosY; };
-        int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps->aOptSizeX; };
-        int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps->aOptSizeY; };
+        int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps.aOptSizeX; };
+        int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps.aOptSizeY; };
         int                             getBackgroundColor()                                                    { return    aOptBackgroundColor; };
-        int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps->aOptRepeat; };
+        int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps.aOptRepeat; };
         ImageProperties                 getBackgroundProperties()                                               { return    aOptBackgroundProps; };
-
-        
+		        
         void                            setDoubleBuffered(bool xDoubleBuffer);
         void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)                     { aOptBackgroundSrc = xOptBackgroundImage; };
         void                            setBackgroundPositionX(int xOptPositionX)                           { aOptBackgroundPosX = xOptPositionX; };
         void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
-        void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps->aOptSizeX = xOptSizeX; };
-        void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps->aOptSizeY = xOptSizeY; };
+        void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
+        void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
         void                            setBackgroundColor(int xOptColor)                                   { aOptBackgroundColor = xOptColor; };
-        void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps->aOptRepeat = xOptRepeat; };
+        void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
         void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
-        void                            setBackground(LPCWSTR * xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
+        void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
                                                       int xOptBackroundSizeX, int xOptBackroundSizeY, int xOptBackgroundColor, int xOptBackgroundRepeat);
         
     public:
 
-        virtual HRESULT                 Initialize();
-        virtual void                    Deinitialize();
-        virtual LPCWSTR                 GetClass();
-        virtual LPCWSTR                 ToString();
-        virtual bool                    operator==(Abstract * xAbstract);
+        virtual HRESULT                 initialize();
+        virtual LPCWSTR                 getClass();
+        virtual LPCWSTR                 toString();
     };
 }
 #endif

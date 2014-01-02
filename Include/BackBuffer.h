@@ -32,7 +32,7 @@ namespace A2D {
 
 	class Abstract;
 	class Renderable;
-	class AbstractComponent;
+	class Container;
 	class Camera;
 	struct CameraProperties;
 	struct RenderData;
@@ -49,13 +49,11 @@ namespace A2D {
 
 	public:
 
-		// Constructor
 		BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
-
-		// Deconstructor
 		~BackBuffer();
 
-		// Variables
+	private:
+
 		D3D10_VIEWPORT					aViewport;
 		D3D10_TEXTURE2D_DESC			aDepthBufferDesc;
 		IDXGISwapChain            *     aDXGISwapChain;
@@ -67,47 +65,26 @@ namespace A2D {
 		ID3D10RasterizerState     *     aDXRasterState;
 		ID3D10DepthStencilState   *     aDXDepthDisabledStencilState;
 
-	private:
-		// Variables
-		AbstractWindow		  *     aWindow;
-		GXSettings			  *     aGXSettings;
+		Dims					 	   aDims;
+		AbstractWindow			  *    aWindow;
+		GXSettings				       aSettings;
 
 	public:
-		// Accessors
-		ID3D10Device              *     GetDevice();
+
+		ID3D10Device              **    getDevice();
 		void							validate();
-
-	public:
-		// Mutators
-		void                            SetZBuffer(bool val);
-
-		// Builders
-		// { NONE }
-
-		// Factory
-		// { NONE }
-
-	public:
-		// Additional
-		void                            SetActive();
-		void                            Swap();
-		void                            Clear();
-
-		// Pure Virtual
-		// { NONE }
-
-		// Virtual
-		// { NONE }
+		Dims					  *		getSize();
+		GXSettings				  *		getSettings();
+		void                            setActive();
+		void                            swap();
+		void                            clear();
+		void                            setZBuffer(bool val);
 
 	public:
 
-		// Implementation
-		// { ABSTRACT }
-		virtual HRESULT                 Initialize();
-		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract);
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 
 	};
 }

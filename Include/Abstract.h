@@ -30,18 +30,13 @@ namespace A2D {
 
 	class Abstract
 	{
+
 	public:
 
-		// Pure Virtual
-		virtual HRESULT                 Initialize() = 0;                           // Initialize  
-		virtual void                    Deinitialize() = 0;                         // Shutdown   
-
-		// Virtual    
-		virtual LPCWSTR                 GetClass();                                 // Class type    
-		virtual bool                    operator==(Abstract * xAbstract);           // Class type       
-		virtual LPCWSTR                 ToString();                                 // Class type 
-
-		virtual bool					isClass(LPCWSTR xClass) final;
+		virtual HRESULT                 initialize() = 0;                           // initialize  
+		virtual LPCWSTR                 getClass();                                 // Class type    
+		virtual LPCWSTR                 toString();                                 // Class type 
+		static bool						isClass(Abstract& xAbstract, LPCWSTR xClass);
 	};
 
 }

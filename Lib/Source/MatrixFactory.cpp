@@ -4,52 +4,87 @@
 
 using namespace A2D;
 
-D3DXMATRIX * MatrixFactory::createDefaultWorldMatrix()
+HRESULT MatrixFactory::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 {
-	// Create
-	D3DXMATRIX * worldMatrix;
-
 	// Set
-	worldMatrix = new D3DXMATRIX;
+	*xWorldMatrix = new D3DXMATRIX;
 
-	// Initialize
-	D3DXMatrixIdentity(worldMatrix);
+	// initialize
+	D3DXMatrixIdentity(*xWorldMatrix);
 
-	// Return Pointer
-	return worldMatrix;
+	return S_OK;
 }
 
-D3DXMATRIX * MatrixFactory::createDefaultProjectionMatrix(Dims * xWindowSize, GXSettings * xSettings)
+HRESULT MatrixFactory::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create
-	D3DXMATRIX * projectionMatrix;
 	FLOAT fieldOfView, screenAspect;
 
 	// Set
 	fieldOfView = ((float) D3DX_PI / 4.0f);
 	screenAspect = xWindowSize->aWidth / xWindowSize->aHeight;
-	projectionMatrix = new D3DXMATRIX;
 
-	// Initialize
-	D3DXMatrixPerspectiveFovLH(projectionMatrix, fieldOfView, screenAspect, xSettings->aScreenNear, xSettings->aScreenDepth);
+	*xProjectionMatrix = new D3DXMATRIX;
 
-	// Return Pointer
-	return projectionMatrix;
+	// initialize
+	D3DXMatrixPerspectiveFovLH(*xProjectionMatrix, fieldOfView, screenAspect, xSettings->aScreenNear, xSettings->aScreenDepth);
+
+	return S_OK;
 }
 
-D3DXMATRIX * MatrixFactory::createDefaultOrthogonalMatrix(Dims * xWindowSize, GXSettings * xSettings)
+HRESULT MatrixFactory::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix,  Dims * xWindowSize, GXSettings * xSettings)
 {
-	// Create
-	D3DXMATRIX * orthogonalMatrix;
+	// Set
+	*xProjectionMatrix = new D3DXMATRIX;
+
+	// initialize
+	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
+
+	return S_OK;
+}
+
+HRESULT MatrixFactory::createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties)
+{
+	D3DXVECTOR3 up, position, lookAt;
+	float yaw, pitch, roll;
+	D3DXMATRIX rotationMatrix;
 
 	// Set
-	orthogonalMatrix = new D3DXMATRIX;
+	*xViewMatrix = new D3DXMATRIX;
 
-	// Initialize
-	D3DXMatrixOrthoLH(orthogonalMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
+	// Setup the vector that points upwards.
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
 
-	// Return Pointer
-	return orthogonalMatrix;
+	// Setup the position of the camera in the world.
+	position.x = xCameraProperties.aPositionX;
+	position.y = xCameraProperties.aPositionY;
+	position.z = xCameraProperties.aPositionZ;
+
+	// Setup where the camera is looking by default.
+	lookAt.x = 0;
+	lookAt.y = 0;
+	lookAt.z = 1;
+
+	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
+	pitch = xCameraProperties.aRotationX * 0.0174532925f;
+	yaw = xCameraProperties.aRotationY * 0.0174532925f;
+	roll = xCameraProperties.aRotationZ * 0.0174532925f;
+
+	// Create the rotation matrix from the yaw, pitch, and roll values.
+	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
+
+	// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
+	D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
+	D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
+
+	// Translate the rotated camera position to the location of the viewer.
+	lookAt = position + lookAt;
+
+	// Finally create the view matrix from the three updated vectors.
+	D3DXMatrixLookAtLH(*xViewMatrix, &position, &lookAt, &up);
+
+	return S_OK;
 }
-
 

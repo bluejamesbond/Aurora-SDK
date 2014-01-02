@@ -30,7 +30,7 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Abstract;
-	class AbstractComponent;
+	class Container;
 	class Window;
 	
 	////////////////////////////////////////////////////////////////////////////////
@@ -56,8 +56,8 @@ namespace A2D {
 
 	public:
 
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 	};
 }
 

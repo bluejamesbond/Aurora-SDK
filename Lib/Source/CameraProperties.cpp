@@ -8,22 +8,17 @@ using namespace A2D;
 // REQUIRED BY ABSTRACT_AURORA
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR CameraProperties::GetClass()
+LPCWSTR CameraProperties::getClass()
 {
 	return L"Camera";
 }
 
-LPCWSTR CameraProperties::ToString()
+LPCWSTR CameraProperties::toString()
 {
 	return L"Camera";
 }
 
-bool CameraProperties::operator==(Abstract * xAbstract)
-{
-	return false;
-}
-
-HRESULT CameraProperties::Initialize(){
+HRESULT CameraProperties::initialize(){
 
 	return NULL;
 }

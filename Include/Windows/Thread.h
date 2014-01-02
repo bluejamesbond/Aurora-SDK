@@ -69,9 +69,8 @@ namespace A2D {
 
 	public:
 
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract);
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 
 	};
 }

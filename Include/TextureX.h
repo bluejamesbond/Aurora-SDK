@@ -31,7 +31,7 @@
 class ;
 class Abstract;
 class Renderable;
-class AbstractComponent;
+class Container;
 class Camera;
 struct CameraProperties;
 class MatrixFactory;
@@ -89,8 +89,8 @@ public:
 public:
 	// Implementation
 	// { ABSTRACT }
-	virtual LPCWSTR                 GetClass();
-	virtual LPCWSTR                 ToString();
+	virtual LPCWSTR                 getClass();
+	virtual LPCWSTR                 toString();
 	virtual bool                    operator==(Abstract * xAbstract);
 
 };

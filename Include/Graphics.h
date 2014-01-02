@@ -28,8 +28,10 @@
 #include "Texture.h"
 #include "QuadFactory.h"
 #include "ImageProperties.h"
-#include "AbstractComponent.h"
+#include "Container.h"
 #include "Pipeline.h"
+#include "Camera.h"
+#include "MatrixFactory.h"
 
 namespace A2D {
 
@@ -39,7 +41,7 @@ namespace A2D {
 
 	class Abstract;
 	class Renderable;
-	class AbstractComponent;
+	class Container;
 	class Camera;
 	struct CameraProperties;
 	struct RenderData;
@@ -57,45 +59,46 @@ namespace A2D {
 
 	class Graphics : public RenderData, public Abstract
 	{
+	public:
+
+		Graphics(BackBuffer * xBackBuffer);
+		~Graphics();
 
 	private:
 
-		ID3D10Device		**			aDXDevice;
+		float                *			aViewMatrix;
+		float                *			aWorldMatrix;
+		float                *			aProjection2DMatrix;
+		float                *			aProjection3DMatrix;
+
+		BackBuffer			 *			aBackBuffer;
+		Dims				 *			aBackBufferDims;
+		GXSettings			 *			aBackBufferSettings;
+
+		CameraProperties				aCameraProperties;
 		Rect				 *			aClip;
-		QuadFactory		 *			aQuadFactory;
-		TextureShader	 *			aTextureShader;
-		float                *     aViewMatrix;
-		float                *     aWorldMatrix;
-		float                *     aProjection2DMatrix;
-		float                *     aProjection3DMatrix;
+		QuadFactory			 *			aQuadFactory;
+		TextureShader		 *			aTextureShader;
+		TextureBuffer        *			aTextureBuffer;
+		TextureBuffer        *			aBlurBuffer;
 
-		Dims					  *		aWindowDims;
-		Camera				  *     aCamera;
-		BackBuffer             *     aBackBuffer;
-		TextureBuffer          *     aTextureBuffer;
-		TextureBuffer          *     aBlurBuffer;
+		ID3D10Device		**			aDXDevice;
 
 	public:
 
-		// Additional
+		Dims*							getDrawableDimensions();
+		CameraProperties*				getCameraProperties();
 		void							setClip(Rect * aRect);
-
-		void							DrawImage(Pipeline ** xPipeline, LPCWSTR * xSrc, Rect * aRect, ImageProperties * xImageProps);
-		void							DrawImage(Pipeline * xPipeline, Texture * xTexture, float xImageLeft, float xImageTop, float xImageWidth, float xImageHeight, ImageProperties * xImageProps, int xBlur);
-
 		void							validate();
+		BackBuffer*						getBackBuffer();
 
+		void							drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, ImageProperties& xImageProps);
+	
 	public:
 
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACT
-		////////////////////////////////////////////////////////////////////////////////
-
-		virtual HRESULT                 Initialize();
-		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract);
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 
 	};
 }

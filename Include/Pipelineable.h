@@ -36,10 +36,10 @@ namespace A2D {
 
 		// Implementation
 		// { ABSTRACT }
-		virtual HRESULT                 Initialize() = 0;
+		virtual HRESULT                 initialize() = 0;
 		virtual void                    Deinitialize() = 0;
-		virtual LPCWSTR                 GetClass() = 0;
-		virtual LPCWSTR                 ToString() = 0;
+		virtual LPCWSTR                 getClass() = 0;
+		virtual LPCWSTR                 toString() = 0;
 		virtual bool                    operator==(Abstract * xAbstract) = 0;
 	};
 }

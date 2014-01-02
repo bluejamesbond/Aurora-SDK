@@ -47,11 +47,11 @@ void EventQueue::removeAllEvents()
 	aEventQueue = new queue<Runnable*>();
 }
 
-HRESULT EventQueue::Initialize()
+HRESULT EventQueue::initialize()
 {
 	aEventQueue = new queue<Runnable *>();
 
-	return AbstractEventQueue::Initialize();
+	return AbstractEventQueue::initialize();
 }
 
 void EventQueue::Deinitialize()
@@ -61,12 +61,12 @@ void EventQueue::Deinitialize()
 	CloseHandle(aEventQueueLock);	
 }
 
-LPCWSTR EventQueue::GetClass()
+LPCWSTR EventQueue::getClass()
 {
 	return L"EventQueue";
 }
 
-LPCWSTR EventQueue::ToString()
+LPCWSTR EventQueue::toString()
 {
 	return L"EventQueue";
 }

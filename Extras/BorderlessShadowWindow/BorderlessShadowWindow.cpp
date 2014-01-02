@@ -51,7 +51,7 @@ ATOM BorderlessShadowWindow::RegisterClass()
 	return RegisterClassEx(&wcex);
 }
 
-HRESULT BorderlessShadowWindow::Initialize()
+HRESULT BorderlessShadowWindow::initialize()
 {
 	HRESULT hr;
 	HWND hWnd;

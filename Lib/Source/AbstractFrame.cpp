@@ -5,13 +5,16 @@
 
 using namespace A2D;
 
-/////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY A@D_ABSTRACT_FRAME
-/////////////////////////////////////////////////////////////////////////////
-
 int AbstractFrame::aClassInstances = -1;
 
-void AbstractFrame::SetName(LPCWSTR xName)
+AbstractFrame::~AbstractFrame()
+{
+	DESTROY(aBackBuffer);
+	DESTROY(aRepaintManager);
+	DESTROY(aGraphics);
+}
+
+void AbstractFrame::setName(LPCWSTR xName)
 {
 	aWindow->setName(xName);
 }
@@ -40,7 +43,7 @@ void AbstractFrame::setBounds(float xLeft, float xTop, float xWidth, float xHeig
 	}
 }
 
-void AbstractFrame::SetSize(float xWidth, float xHeight)
+void AbstractFrame::setSize(float xWidth, float xHeight)
 {
 	aWindow->setSize(xWidth, xHeight);
 
@@ -52,7 +55,7 @@ void AbstractFrame::SetSize(float xWidth, float xHeight)
 	}
 }
 
-void AbstractFrame::SetSize(Dims * xDims)
+void AbstractFrame::setSize(Dims * xDims)
 {
 	aWindow->setSize(xDims);
 
@@ -64,7 +67,7 @@ void AbstractFrame::SetSize(Dims * xDims)
 	}
 }
 
-void AbstractFrame::SetUndecorated(bool xDecorated)
+void AbstractFrame::setUndecorated(bool xDecorated)
 {
 	aWindow->setUndecorated(xDecorated);
 
@@ -76,7 +79,7 @@ void AbstractFrame::SetUndecorated(bool xDecorated)
 	}
 }
 
-void AbstractFrame::SetLocationRelativeTo(AbstractFrame * xFrame)
+void AbstractFrame::setLocationRelativeTo(AbstractFrame * xFrame)
 {
 	aWindow->setLocationRelativeTo(xFrame ? xFrame->aWindow : NULL); //        WTF IS THIS INPUT FRAME BUT NEED WINDOW WTF
 
@@ -146,12 +149,12 @@ void AbstractFrame::setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, f
 	}
 }
 
-void AbstractFrame::SetVsync(bool xVsync)
+void AbstractFrame::setVsync(bool xVsync)
 {
 	// Window doesn't have vsync yet.
 }
 
-void AbstractFrame::SetDefaultCloseOperation(int xOperation)
+void AbstractFrame::setDefaultCloseOperation(int xOperation)
 {
 	aWindow->setDefaultCloseOperation(xOperation);
 }
@@ -161,7 +164,7 @@ AbstractWindow* AbstractFrame::getWindow()
 	return aWindow;
 }
 
-void AbstractFrame::SetVisible(bool xVisible)
+void AbstractFrame::setVisible(bool xVisible)
 {	
 	if (xVisible)
 	{
@@ -186,26 +189,17 @@ void AbstractFrame::SetVisible(bool xVisible)
 
 void AbstractFrame::run(int xThreadId)
 {
-	this->Update();
+	this->update();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY _ABSTRACT
-/////////////////////////////////////////////////////////////////////////////
-
-LPCWSTR AbstractFrame::GetClass()
+LPCWSTR AbstractFrame::getClass()
 {
 	return L"Frame";
 }
 
-LPCWSTR AbstractFrame::ToString()
+LPCWSTR AbstractFrame::toString()
 {
 	return L"Frame";
-}
-
-bool AbstractFrame::operator==(Abstract * xAbstract)
-{
-	return false;
 }
 
 int AbstractFrame::id()
@@ -222,174 +216,53 @@ void AbstractFrame::dispose()
 	}
 }
 
-HRESULT AbstractFrame::Initialize()
+HRESULT AbstractFrame::initialize()
 {
 	HRESULT hr;	
 
 	aId = ++aClassInstances;
 
+	SAFELY(aRootPane.initialize());
+
 	aEventQueue = createPlatformCompatibleEventQueue();
-
-	hr = aEventQueue->Initialize();
-	if (FAILED(hr))	return hr;
+	SAFELY(aEventQueue->initialize());
 	
-	// -----------------------------------------------------
-
-	aRootPane = new RootPane;
-
-	hr = aRootPane->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
+	
 	aEventQueue->startDispatchingThread();
-
-	// -----------------------------------------------------
-
+	
 	return hr;
 }
 
-// Window is created here.
-// Note: We will not continue support development
-// outside of EDT. We might come back to it in the future.
-//HRESULT AbstractFrame::initialize_()
-//{
-//	HRESULT hr;
-//
-//	aId = ++aClassInstances;
-//
-//	// -----------------------------------------------------
-//
-//	aRenderData = new RenderData();
-//
-//	hr = aRenderData->Initialize();
-//	if (FAILED(hr))	return hr;
-//
-//	// -----------------------------------------------------
-//
-//	aRootPane = new RootPane;
-//
-//	hr = aRootPane->Initialize();
-//	if (FAILED(hr))	return hr;
-//
-//	// -----------------------------------------------------
-//
-//	hr = createWindow();
-//
-//	// -----------------------------------------------------
-//
-//	return hr;
-//}
-
-void AbstractFrame::Deinitialize()
-{
-	// Release the D3D object.
-	if (aBackBuffer)
-	{
-		aBackBuffer->Deinitialize();
-		delete aBackBuffer;
-		aBackBuffer = 0;
-	}
-
-	// Release the Camera object.
-	if (aCamera)
-	{
-		aCamera->Deinitialize();
-		delete aCamera;
-		aCamera = 0;
-	}
-
-	// Release the D3D object.
-	if (aRootPane)
-	{
-		aRootPane->Deinitialize();
-		delete aRootPane;
-		aRootPane = 0;
-	}
-
-	// Release the RenderData object.
-	if (aGraphics)
-	{
-		aGraphics->Deinitialize();
-		delete aGraphics;
-		aGraphics = 0;
-	}
-}
-
-
-RootPane * AbstractFrame::GetRootPane()
+RootPane& AbstractFrame::getRootPane()
 {
 	return aRootPane;
 }
 
-HRESULT AbstractFrame::CreateResources()
-{
-	HRESULT hr;
-	
-	// -----------------------------------------------------
-
+HRESULT AbstractFrame::createResources()
+{	
 	aWindow = createPlatformCompatibleWindow();
-
-	hr = aWindow->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aBackBuffer = new BackBuffer(aWindow, &aGXSettings);
-
-	hr = aBackBuffer->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
-
-	aCamera = new Camera();
-
-	hr = aCamera->Initialize();
-	if (FAILED(hr))	return hr;
-
-	// -----------------------------------------------------
+	SAFELY(aWindow->initialize());
 	
-	// Adjust camera settings and then create its resources.
-	CameraProperties * cameraProperties = aCamera->GetProperties();
-
-	cameraProperties->aPositionX = 0.0f;
-	cameraProperties->aPositionY = 0.0f;
-	cameraProperties->aPositionZ = -10.0f;
-
-	// Create properties once the properties have been set
-	aCamera->CreateResources();
-
-	// Create graphics
-	aGraphics = new Graphics();
-
-	// Set the RenderData and pass it into RootPane to inialize the render process.
-	aGraphics->aBackBuffer = aBackBuffer;
-	aGraphics->aBlurBuffer = aBlurBuffer;
-	aGraphics->aWindowDims = aWindow->_getSize();
-	aGraphics->aCamera = aCamera;
-	aGraphics->aViewMatrix = reinterpret_cast<float*>(aCamera->GetViewMatrix());
-	aGraphics->aWorldMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultWorldMatrix());
-	aGraphics->aProjection3DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultProjectionMatrix(&aWindow->getSize(), &aGXSettings));
-	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
-
-	aRootPane->setBounds(0, 0, aWindow->getBounds().aWidth, aWindow->getBounds().aHeight);
-
-	// Create graphics
-	aGraphics->Initialize();
-
-	return hr;
+	aBackBuffer = new BackBuffer(aWindow, &aGXSettings);
+	SAFELY(aBackBuffer->initialize());
+	
+	aGraphics = new Graphics(aBackBuffer);
+	SAFELY(aGraphics->initialize());
+	
+	aRepaintManager = new RepaintManager(aGraphics, &aRootPane);
+	SAFELY(aRepaintManager->initialize());
+		
+	return S_OK;
 }
 
 void AbstractFrame::validate()
 {
 	aBackBuffer->validate();
 
-	delete aGraphics->aProjection2DMatrix;
-
-	aGraphics->aProjection2DMatrix = reinterpret_cast<float*>(MatrixFactory::createDefaultOrthogonalMatrix(&aWindow->getSize(), &aGXSettings));
-
 	aGraphics->validate();
 
+	// aRepaintManager->validate();
+	
 	aValidatedContents = true;
 }
 
@@ -403,7 +276,7 @@ void AbstractFrame::validated()
 	aValidatedContents = true;
 }
 
-void AbstractFrame::Update()
+void AbstractFrame::update()
 {
 	if (!aValidatedContents)
 	{
@@ -412,12 +285,5 @@ void AbstractFrame::Update()
 		if (!aValidatedContents)	return;
 	}
 
-	aBackBuffer->SetActive();
-	aBackBuffer->Clear();
-	aBackBuffer->SetZBuffer(false);
-
-	aRootPane->Update(aGraphics);
-
-	aBackBuffer->SetZBuffer(true);
-	aBackBuffer->Swap();
+	aRepaintManager->update();
 }

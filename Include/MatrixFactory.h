@@ -22,6 +22,7 @@
 
 #include "Dims.h"
 #include "GXSettings.h"
+#include "CameraProperties.h"
 
 namespace A2D {
 
@@ -31,7 +32,7 @@ namespace A2D {
 
 	class Abstract;
 	class Renderable;
-	class AbstractComponent;
+	class Container;
 	class Camera;
 	struct CameraProperties;
 	struct RenderData;
@@ -50,11 +51,10 @@ namespace A2D {
 
 	public:
 
-		// Factory
-		static D3DXMATRIX         *     createDefaultWorldMatrix();
-		static D3DXMATRIX         *     createDefaultProjectionMatrix(Dims * xWindowSize, GXSettings * xSettings);
-		static D3DXMATRIX         *     createDefaultOrthogonalMatrix(Dims * xWindowSize, GXSettings * xSettings);
-
+		static HRESULT				    createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix);
+		static HRESULT					createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims* xWindowSize, GXSettings*  xSettings);
+		static HRESULT				    createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, Dims* xWindowSize, GXSettings* xSettings);
+		static HRESULT					createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties);
 
 	};
 }

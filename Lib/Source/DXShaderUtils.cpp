@@ -9,7 +9,7 @@ HRESULT DXShaderUtils::LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * aDXD
 	HRESULT hr;
 	ID3D10Blob* errorMessage;
 
-	// Initialize the error message.
+	// initialize the error message.
 	errorMessage = 0;
 
 	// Load the shader in from the file.

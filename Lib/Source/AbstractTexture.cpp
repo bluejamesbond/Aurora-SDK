@@ -43,7 +43,7 @@ void AbstractTexture::SetClip(Rect * xClip, int xIndex)
 // REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-HRESULT AbstractTexture::Initialize()
+HRESULT AbstractTexture::initialize()
 {
 	SetClip(NULL);
 

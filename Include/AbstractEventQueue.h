@@ -62,7 +62,7 @@ namespace A2D{
 		void                            invokeAndWait(Runnable * xRunnable);
 		void                            clearQueue();
 		bool							dispatchNextEvent();
-		AbstractThread		 *		getDispatchingThread();
+		AbstractThread		 *			getDispatchingThread();
 
 		static bool						isDispatchingThread(int xFrameId);
 		void							invokeRerender();
@@ -78,8 +78,8 @@ namespace A2D{
 		void							interruptDispatchingThread();
 		void							resumeDispatchingThread();
 
-		static AbstractEventQueue*	aClassInstance;
-		static AbstractEventQueue*	getInstance();
+		static AbstractEventQueue*		aClassInstance;
+		static AbstractEventQueue*		getInstance();
 
 		// Queue
 
@@ -87,7 +87,7 @@ namespace A2D{
 
 		virtual bool                    getQueueLock() = 0;
 		virtual void                    releaseQueueLock() = 0;
-		virtual Runnable *           peekEvent() = 0;
+		virtual Runnable *				peekEvent() = 0;
 		virtual void					popEvent() = 0;
 		virtual bool                    hasEvent() = 0;
 
@@ -98,7 +98,7 @@ namespace A2D{
 		virtual void					run(int xThreadId);
 
 		// Creators
-		virtual AbstractThread*		createPlatformCompatibleThread(Runnable * xRunnable) = 0;
+		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ABSTRACT
@@ -106,11 +106,9 @@ namespace A2D{
 
 	public:
 
-		virtual HRESULT                 Initialize();
-		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass() = 0;
-		virtual LPCWSTR                 ToString() = 0;
-		virtual bool                    operator==(Abstract * xAbstract) = 0;
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass() = 0;
+		virtual LPCWSTR                 toString() = 0;
 
 	};
 }

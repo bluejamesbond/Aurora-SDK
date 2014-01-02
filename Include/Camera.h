@@ -31,7 +31,7 @@ namespace A2D {
 
 	class Abstract;
 	class Renderable;
-	class AbstractComponent;
+	class Container;
 	class Camera;
 	struct CameraProperties;
 	struct RenderData;
@@ -91,10 +91,10 @@ namespace A2D {
 
 		// Implementation
 		// { ABSTRACT }
-		virtual HRESULT                 Initialize();
+		virtual HRESULT                 initialize();
 		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 		virtual bool                    operator==(Abstract * xAbstract);
 
 	};

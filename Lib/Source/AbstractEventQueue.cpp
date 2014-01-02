@@ -40,7 +40,7 @@ int AbstractEventQueue::waitForAllDispatchingThreads()
 	if (!aThread)
 	{
 		aThread = createPlatformCompatibleThread(NULL);
-		aThread->Initialize();
+		aThread->initialize();
 	}
 
 	Sleep(5000);
@@ -77,7 +77,7 @@ AbstractEventQueue* AbstractEventQueue::getInstance()
 	return aClassInstance;
 }
 
-HRESULT AbstractEventQueue::Initialize()
+HRESULT AbstractEventQueue::initialize()
 {
 	aClassInstance = this;
 
@@ -111,7 +111,7 @@ void AbstractEventQueue::startDispatchingThread()
 
 	aThread = createPlatformCompatibleThread(this);
 	
-	hr = aThread->Initialize();	
+	hr = aThread->initialize();	
 	if (FAILED(hr)) return;
 
 	// If it fails...screwed! -FIX IT. Catch the HRESULT!

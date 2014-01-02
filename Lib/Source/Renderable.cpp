@@ -5,12 +5,12 @@
 Renderable::Renderable(){}
 Renderable::~Renderable(){}
 
-LPCWSTR Renderable::GetClass()
+LPCWSTR Renderable::getClass()
 {
 	return L"Renderable";
 }
 
-LPCWSTR Renderable::ToString()
+LPCWSTR Renderable::toString()
 {
 	return L"Renderable";
 }
@@ -20,7 +20,7 @@ bool Renderable::operator==(Abstract * xAbstract)
 	return false;
 }
 
-HRESULT Renderable::Initialize(){
+HRESULT Renderable::initialize(){
 
 	return NULL;
 }

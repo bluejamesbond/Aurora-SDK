@@ -1,0 +1,67 @@
+////////////////////////////////////////////////////////////////////////////////
+// GAURDS
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef __CONTAINER_H__
+#define __CONTAINER_H__
+
+//+-----------------------------------------------------------------------------
+//
+//  Abstract Class:
+//      CONTAINER
+//
+//  Synopsis:
+//      Differentiates which of the two possible arcs could match the given arc
+//      parameters.
+//
+//------------------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE
+////////////////////////////////////////////////////////////////////////////////
+
+#include "OrderedList.h"
+#include "Rect.h"
+
+namespace A2D {
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
+
+    class Abstract;
+	class Graphics;
+	class Component;
+	class Frame;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
+
+	class Container : public Abstract
+    {
+
+    protected:
+
+
+	private:
+
+    public:
+
+		
+
+
+		virtual void					update() = 0;
+		virtual void                    validate() = 0;
+
+
+    public:
+
+        virtual HRESULT                 initialize() = 0;
+		virtual LPCWSTR                 getClass() = 0;
+		virtual LPCWSTR                 toString() = 0;
+
+    };
+}
+
+#endif

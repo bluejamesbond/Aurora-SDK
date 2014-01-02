@@ -14,12 +14,12 @@ FileInfo::~FileInfo(){}
 // REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR FileInfo::GetClass()
+LPCWSTR FileInfo::getClass()
 {
 	return L"FileInfo";
 }
 
-LPCWSTR FileInfo::ToString()
+LPCWSTR FileInfo::toString()
 {
 	return L"FileInfo";
 }
@@ -54,7 +54,7 @@ D3DXIMAGE_INFO * FileInfo::GetInfo()
 	return aFileInfo;
 }
 
-HRESULT FileInfo::Initialize()
+HRESULT FileInfo::initialize()
 {
 	HRESULT hr = S_OK;
 

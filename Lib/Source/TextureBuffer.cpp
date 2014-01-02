@@ -17,7 +17,7 @@ bool TextureBuffer::hasAlpha()
 	return false;
 }
 
-HRESULT TextureBuffer::Initialize()
+HRESULT TextureBuffer::initialize()
 {
 	D3D10_TEXTURE2D_DESC textureDesc;
 	HRESULT hr;
@@ -25,7 +25,7 @@ HRESULT TextureBuffer::Initialize()
 	D3D10_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	ID3D10Device * device = *aDXDevice;
 
-	// Initialize the render target texture description.
+	// initialize the render target texture description.
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 
 	// Setup the render target texture description.
@@ -133,12 +133,12 @@ void TextureBuffer::Deinitialize()
 
 }
 
-LPCWSTR TextureBuffer::GetClass()
+LPCWSTR TextureBuffer::getClass()
 {
 	return L"TextureBuffer";
 }
 
-LPCWSTR TextureBuffer::ToString()
+LPCWSTR TextureBuffer::toString()
 {
 	return L"TextureBuffer";
 }

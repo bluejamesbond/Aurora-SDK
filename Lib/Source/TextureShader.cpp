@@ -9,7 +9,7 @@ aDXDevice(xDXDevice), aWorldMatrix(xWorldMatrix), aViewMatrix(xViewMatrix), aPro
 
 TextureShader::~TextureShader(){}
 
-HRESULT TextureShader::Initialize()
+HRESULT TextureShader::initialize()
 {
 	HRESULT hr = S_OK;
 
@@ -147,12 +147,12 @@ void TextureShader::renderTexture()
 	}
 }
 
-LPCWSTR TextureShader::ToString()
+LPCWSTR TextureShader::toString()
 {
 	return L"TextureShader";
 }
 
-LPCWSTR TextureShader::GetClass()
+LPCWSTR TextureShader::getClass()
 {
 	return L"TextureShader";
 }

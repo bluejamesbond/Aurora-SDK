@@ -54,11 +54,9 @@ namespace A2D {
 		// so it will be stored inside Quads instance.
 		// ID3D10Buffer		*			aIndexBuffer;
 
-		virtual HRESULT                 Initialize(){ return S_OK; };
-		virtual void                    Deinitialize(){};
-		virtual LPCWSTR                 GetClass(){ return L"QuadData"; };
-		virtual LPCWSTR                 ToString(){ return L"QuadData"; };
-		virtual bool                    operator==(Abstract * xAbstract){ return false; };
+		virtual HRESULT                 initialize(){ return S_OK; };
+		virtual LPCWSTR                 getClass(){ return L"QuadData"; };
+		virtual LPCWSTR                 toString(){ return L"QuadData"; };;
 
 	};
 }

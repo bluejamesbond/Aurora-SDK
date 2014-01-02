@@ -27,7 +27,7 @@
 #define _GRAPHICS_ACTIVE_BUFFER_SECONDARY		          0x3512
 #define _GRAPHICS_ACTIVE_BUFFER_TERTIARY					  0x3513
 
-#define _WINDOW_BOX_SHADOW_SAFETY_RATIO					  2
+#define _WINDOW_BOX_SHADOW_SAFELYTY_RATIO					  2
 #define _WINDOW_RESIZE_EDGE_DISTANCE                       10
 #define _WINDOW_RESIZE_DEFAULT_DISTANCE					  3
 
@@ -55,5 +55,10 @@
 #define SYSOUT_HEX(x)										  _RPT1( 0, "[Aurora -SDK] 0x%X\n", x )
 #define SYSOUT_STR(x)										  _RPT1( 0, "[Aurora -SDK] %s\n", x )
 #define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora -SDK] " f, __VA_ARGS__ )
+
+#define G_SAFELY(hr)    if(hr != 0)	return;
+#define SAFELY(hr)		if(hr != 0)	return hr
+#define	DESTROY(x)		if(x) { delete x; x = 0; }
+#define D3DDESTROY(x)   if(x) { x->Release(); delete x; x = 0; }
 
 #endif

@@ -14,12 +14,12 @@ void Panel::paintComponent(Graphics& xGraphics)
 // REQUIRED BY _ABSTRACT
 /////////////////////////////////////////////////////////////////////////////
 
-LPCWSTR Panel::GetClass()
+LPCWSTR Panel::getClass()
 {
 	return L"Camera";
 }
 
-LPCWSTR Panel::ToString()
+LPCWSTR Panel::toString()
 {
 	return L"Camera";
 }

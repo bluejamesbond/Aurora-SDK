@@ -4,12 +4,12 @@
 
 using namespace A2D;
 
-LPCWSTR Abstract::GetClass()
+LPCWSTR Abstract::getClass()
 {
 	return L"Abstract";
 }
 
-LPCWSTR Abstract::ToString()
+LPCWSTR Abstract::toString()
 {
 	return L"Abstract";
 }
@@ -21,5 +21,5 @@ bool Abstract::operator==(Abstract * xAbstract)
 
 bool Abstract::isClass(LPCWSTR xClass)
 {
-	return wcscmp(GetClass(), xClass) == 0;
+	return wcscmp(getClass(), xClass) == 0;
 }

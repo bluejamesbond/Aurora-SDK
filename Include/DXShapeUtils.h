@@ -56,7 +56,7 @@ namespace A2D {
 		D3D10_SUBRESOURCE_DATA vertexData;
 		VertexClass * vertices = new VertexClass[xVertices];
 
-		// Initialize vertex array to zeros at first.
+		// initialize vertex array to zeros at first.
 		memset(vertices, 0, (sizeof(VertexClass)* xVertices));
 
 		vertexBufferDesc.Usage = D3D10_USAGE_DYNAMIC;

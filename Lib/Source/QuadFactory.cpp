@@ -256,7 +256,7 @@ void  QuadFactory::memcpySSE2QuadColoredTextureVertex(ColoredTextureVertex * xDe
 	}
 }
 
-HRESULT QuadFactory::Initialize()
+HRESULT QuadFactory::initialize()
 {
 	HRESULT hr = S_OK;
 
@@ -286,12 +286,12 @@ void QuadFactory::Deinitialize()
 	}
 }
 
-LPCWSTR QuadFactory::GetClass()
+LPCWSTR QuadFactory::getClass()
 {
 	return L"QuadFactory";
 }
 
-LPCWSTR QuadFactory::ToString()
+LPCWSTR QuadFactory::toString()
 {
 	return L"QuadFactory";
 }

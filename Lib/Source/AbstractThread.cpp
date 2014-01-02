@@ -30,7 +30,7 @@ AbstractThread* AbstractThread::getInstance()
 	return aClassInstance;
 }
 
-HRESULT AbstractThread::Initialize()
+HRESULT AbstractThread::initialize()
 {
     if (aRunnable == NULL)
     {

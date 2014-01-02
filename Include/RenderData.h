@@ -31,7 +31,7 @@ namespace A2D {
 
 	class Abstract;
 	class Renderable;
-	class AbstractComponent;
+	class Container;
 	class Camera;
 	struct RenderData;
 	class BackBuffer;

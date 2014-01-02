@@ -228,7 +228,7 @@ void AbstractWindow::revalidate()
 	validate();
 }
 
-HRESULT AbstractWindow::Initialize()
+HRESULT AbstractWindow::initialize()
 {
 	HRESULT hr = S_OK;
 	

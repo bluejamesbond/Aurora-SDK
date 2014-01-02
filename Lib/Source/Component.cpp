@@ -11,61 +11,125 @@ void Component::setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPosi
 	aOptBackgroundSrc = xOptBackgroundImage;
 	aOptBackgroundPosX = xOptBackroundPositionX;
 	aOptBackgroundPosY = xOptBackroundPositionY;
-	aOptBackgroundProps->aOptSizeX = xOptBackroundSizeX;
-	aOptBackgroundProps->aOptSizeY = xOptBackroundSizeY;
+	aOptBackgroundProps.aOptSizeX = xOptBackroundSizeX;
+	aOptBackgroundProps.aOptSizeY = xOptBackroundSizeY;
 	aOptBackgroundColor = xOptBackgroundColor;
-	aOptBackgroundProps->aOptRepeat = xOptBackgroundRepeat;
+	aOptBackgroundProps.aOptRepeat = xOptBackgroundRepeat;
 };
 
-void Component::paintComponent(RenderData& xRenderData)
+void Component::paintComponent()
 {
-	Graphics& graphics = static_cast<Graphics&>(xRenderData);
+	Graphics& graphics = *aGraphics;
 
 	if (aOptBackgroundSrc != NULL)
 	{
-		graphics.DrawImage(&pipeline, aOptBackgroundSrc, &aOptBackgroundRegion, aOptBackgroundProps);
+		graphics.drawImage(&aPipeline, aOptBackgroundSrc, aOptBackgroundRegion, aOptBackgroundProps);
 	}
 }
 
-void Component::SetDoubleBuffered(bool xDoubleBuffer)
+void Component::update()
 {
-	aDoubleBuffer = xDoubleBuffer;
+	Graphics& graphics = *aGraphics;
+
+	graphics.setClip(&aCalculatedRegion);
+
+	// Render the current component
+	paintComponent();
+
+	// Force region
+	graphics.setClip(&aCalculatedRegion);
+
+	// Render the currect component border
+	paintComponentBorder();
 }
 
-bool Component::IsDoubleBuffered()
+void Component::paintComponentBorder(){}
+
+
+Component& Component::getParent()
 {
-	return aDoubleBuffer;
+	return *aParentComp;
 }
 
-void Component::paintComponentBorder(RenderData * xRenderData){}
+void Component::_setParent(Component& xComponent)
+{
+	aParentComp = &xComponent;
+}
 
-/////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY _ABSTRACT
-/////////////////////////////////////////////////////////////////////////////
+Rect Component::getBounds()
+{
+	return aOptRegion;
+}
 
-LPCWSTR Component::GetClass()
+Rect * Component::_getBounds()
+{
+	return &aOptRegion;
+}
+
+void Component::_add(Component& xContainer)
+{
+	aChildren.push_back(&xContainer);
+}
+
+void Component::_remove(Component& xContainer)
+{
+	aChildren.remove(&xContainer);
+}
+
+void Component::setBounds(Rect& xRect)
+{
+	aOptRegion.aWidth = xRect.aWidth;
+	aOptRegion.aHeight = xRect.aHeight;
+	aOptRegion.aX = xRect.aX;
+	aOptRegion.aY = xRect.aY;
+
+	aOptBackgroundRegion.aWidth = xRect.aWidth;
+	aOptBackgroundRegion.aHeight = xRect.aHeight;
+
+	invalidate();
+}
+
+void Component::validate()
+{
+	Component * parentComp = aParentComp;
+	bool hasParent = parentComp != NULL;
+
+	Rect& compRect = aOptRegion;
+	Rect * parentRect = hasParent ? &parentComp->aOptRegion : NULL;
+	Rect * parentGraphicsClip = hasParent ? &parentComp->aCalculatedRegion : NULL;
+
+	aCalculatedRegion.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect.aX;
+	aCalculatedRegion.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect.aY;
+	aCalculatedRegion.aWidth = min(compRect.aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
+	aCalculatedRegion.aHeight = min(compRect.aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
+
+	aValidatedContents = true;
+}
+
+void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
+{
+	aOptRegion.aWidth = xWidth;
+	aOptRegion.aHeight = xHeight;
+	aOptRegion.aX = xX;
+	aOptRegion.aY = xY;
+
+	aOptBackgroundRegion.aWidth = xWidth;
+	aOptBackgroundRegion.aHeight = xHeight;
+
+	invalidate();
+}
+
+LPCWSTR Component::getClass()
 {
 	return L"Camera";
 }
 
-LPCWSTR Component::ToString()
+LPCWSTR Component::toString()
 {
 	return L"Camera";
 }
 
-bool Component::operator==(Abstract * xAbstract)
+HRESULT Component::initialize()
 {
-	return false;
-}
-
-HRESULT Component::Initialize()
-{
-	aOptBackgroundProps = new ImageProperties;
-
-	return AbstractComponent::Initialize();
-}
-
-void Component::Deinitialize()
-{
-	AbstractComponent::Deinitialize();
+	return S_OK;
 }

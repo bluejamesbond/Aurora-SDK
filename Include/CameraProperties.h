@@ -25,27 +25,10 @@
 namespace A2D {
 
 	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
-
-	class Abstract;
-	class Renderable;
-	class AbstractComponent;
-	class Camera;
-	struct CameraProperties;
-	struct RenderData;
-	class BackBuffer;
-	class MatrixFactory;
-	class ModelFactory;
-	class RootPane;
-	class Window;
-	class ImagePanel;
-
-	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	struct CameraProperties : public Abstract
+	struct CameraProperties
 	{
 
 	public:
@@ -87,17 +70,6 @@ namespace A2D {
 		float                           aLookAtXDef = 0.0f;
 		float                           aLookAtYDef = 0.0f;
 		float                           aLookAtZDef = 1.0f;
-
-	public:
-
-		// Implementation
-		// { ABSTRACT }
-		virtual HRESULT                 Initialize();
-		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract);
-
 	};
 }
 #endif

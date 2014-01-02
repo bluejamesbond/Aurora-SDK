@@ -37,7 +37,7 @@ namespace A2D {
 	struct CameraProperties;
 	class BackBuffer;
 	class Window;
-	class AbstractComponent;
+	class Container;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -67,9 +67,8 @@ namespace A2D {
 		// ABSTRACT
 		////////////////////////////////////////////////////////////////////////////////
 
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract);
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 
 	};
 }

@@ -652,7 +652,7 @@ HRESULT Window::createShadowResources()
 	Gdiplus::SolidBrush blackBrush(*aShadowColor);
 
 	float radius = aOptShadowRadius;
-	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFETY_RATIO;
+	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
 	float realDim = radius * 3;
 	float relativeDim = realDim + radius * 2;
 
@@ -953,8 +953,8 @@ void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 void Window::validate()
 {
 	// Minimum dimensions has to be greater than border and shadow safety region
-	aMinDims.aWidth = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFETY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-	aMinDims.aHeight = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFETY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
+	aMinDims.aWidth = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
+	aMinDims.aHeight = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
 
 	// Minimum dimensions has to be greater than or equal to minimum size
 	aMaxDims.aWidth = max(aMinDims.aWidth, aMaxDims.aWidth);
@@ -1154,7 +1154,7 @@ void Window::render()
 // ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
-HRESULT Window::Initialize()
+HRESULT Window::initialize()
 {
 	HRESULT hr = S_OK;
 
@@ -1173,7 +1173,7 @@ HRESULT Window::Initialize()
 	aClassName = new std::wstring(className.begin(), className.end());
 
 	// Super
-	AbstractWindow::Initialize();
+	AbstractWindow::initialize();
 
 	hr = registerClass();
 	if (FAILED(hr)) return hr;
@@ -1203,12 +1203,12 @@ void Window::Deinitialize()
 	aClassName = 0;
 }
 
-LPCWSTR Window::GetClass()
+LPCWSTR Window::getClass()
 {
 	return L"Window";
 }
 
-LPCWSTR Window::ToString()
+LPCWSTR Window::toString()
 {
 	return L"Window";
 }

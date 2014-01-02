@@ -23,7 +23,7 @@
 #include "Abstract.h"
 #include "Graphics.h"
 #include "Renderable.h"
-#include "AbstractComponent.h"
+#include "Container.h"
 #include "Pipelineable.h"
 #include "AbstractTexture.h"
 #include "Component.h"
@@ -36,6 +36,7 @@
 #include "RootPane.h"
 #include "AbstractWindow.h"
 #include "GXSettings.h"
+#include "RepaintManager.h"
 #include "Rect.h"
 
 namespace A2D {
@@ -46,7 +47,7 @@ namespace A2D {
 
 	class	Abstract;
 	class	Renderable;
-	class	AbstractComponent;
+	class	Container;
 	class	Camera;
 	struct	CameraProperties;
 	struct	RenderData;
@@ -63,27 +64,30 @@ namespace A2D {
 	class AbstractFrame : public Abstract, public Runnable
 	{
 
+	public:
+
+		~AbstractFrame();
+
 	private:
 
-		RootPane               *     aRootPane;
-		BackBuffer             *     aBackBuffer;
-		TextureBuffer          *     aTextureBuffer;
-		TextureBuffer          *     aBlurBuffer;
-		Camera                 *     aCamera;
-		GXSettings			  		aGXSettings;
-		AbstractWindow	  	  * 	aWindow;
-		AbstractEventQueue	  *		aEventQueue = NULL;
-		Graphics				  *		aGraphics;
+		RepaintManager		   *		aRepaintManager;
+		RootPane                		aRootPane;
+		GXSettings			  			aGXSettings;
+		BackBuffer			   *		aBackBuffer;
+		AbstractWindow	  	   *		aWindow;
+		AbstractEventQueue	   *		aEventQueue = NULL;
+		Graphics			   * 		aGraphics;
 
 		int								aId;
 		static int						aClassInstances;
 
 		bool							aValidatedContents;
+
 	public:
 
-		RootPane               *     GetRootPane();
-		HRESULT                         CreateResources();
-		void                            Update();
+		RootPane&               		getRootPane();
+		HRESULT                         createResources();
+		void                            update();
 		void							dispose();
 		void							invalidate();
 		// void							revalidate(); --- Unsafe for AbstractFrame!!!
@@ -97,39 +101,29 @@ namespace A2D {
 		void							setBackground(byte xRed, byte xGreen, byte xBlue);
 		void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
 		void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
-		void							SetVisible(bool xVisibility);
-		void							SetName(LPCWSTR  xName);
+		void							setVisible(bool xVisibility);
+		void							setName(LPCWSTR  xName);
 		void							setBounds(Rect * xRect);
 		void							setBounds(float xLeft, float xTop, float xWidth, float xHeight);
-		void							SetSize(float xWidth, float xHeight);
-		void							SetSize(Dims * xDims);
-		void							SetUndecorated(bool xDecorated);
-		void							SetLocationRelativeTo(AbstractFrame * xFrame);
-		void							SetVsync(bool xVsync);
-		void							SetDefaultCloseOperation(int xOperation);
-		AbstractWindow		  *		getWindow();
+		void							setSize(float xWidth, float xHeight);
+		void							setSize(Dims * xDims);
+		void							setUndecorated(bool xDecorated);
+		void							setLocationRelativeTo(AbstractFrame * xFrame);
+		void							setVsync(bool xVsync);
+		void							setDefaultCloseOperation(int xOperation);
+		AbstractWindow			*		getWindow();
 		void							run(int xThreadId);
-
-		////////////////////////////////////////////////////////////////////////////////
-		// PLATFORM COMPATIBLE IMPLEMENTATION
-		////////////////////////////////////////////////////////////////////////////////
-
+		
 	protected:
 
 		virtual AbstractWindow *		createPlatformCompatibleWindow() = 0;
-		virtual AbstractEventQueue*	createPlatformCompatibleEventQueue() = 0;
-
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACT
-		////////////////////////////////////////////////////////////////////////////////
-
+		virtual AbstractEventQueue*		createPlatformCompatibleEventQueue() = 0;
+		
 	public:
 
-		virtual HRESULT                 Initialize();
-		virtual void                    Deinitialize();
-		virtual LPCWSTR                 GetClass();
-		virtual LPCWSTR                 ToString();
-		virtual bool                    operator==(Abstract * xAbstract);
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 
 	};
 }
