@@ -229,9 +229,7 @@ void AbstractWindow::revalidate()
 }
 
 HRESULT AbstractWindow::initialize()
-{
-	HRESULT hr = S_OK;
-	
+{	
 	//------------------------------------------------------------
 	// ABSTRACTWINDOW DEFAULTS
 	//------------------------------------------------------------
@@ -284,5 +282,5 @@ HRESULT AbstractWindow::initialize()
 
 	//------------------------------------------------------------
 
-	return hr;
+	return S_OK;
 }

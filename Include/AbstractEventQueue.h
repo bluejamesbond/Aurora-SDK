@@ -46,11 +46,12 @@ namespace A2D{
 	public:
 
 		AbstractEventQueue(AbstractFrame * xFrame);
+		~AbstractEventQueue();
 
 	private:
 
 		Runnable               *     aImmediateRunnable = NULL;
-		AbstractThread		  *		aThread = NULL;
+		AbstractThread		   *     aThread = NULL;
 
 	protected:
 
@@ -81,10 +82,10 @@ namespace A2D{
 		static AbstractEventQueue*		aClassInstance;
 		static AbstractEventQueue*		getInstance();
 
-		// Queue
 
 	public:
 
+		// Queue
 		virtual bool                    getQueueLock() = 0;
 		virtual void                    releaseQueueLock() = 0;
 		virtual Runnable *				peekEvent() = 0;
@@ -97,7 +98,6 @@ namespace A2D{
 		virtual void                    removeAllEvents() = 0;
 		virtual void					run(int xThreadId);
 
-		// Creators
 		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) = 0;
 
 		////////////////////////////////////////////////////////////////////////////////

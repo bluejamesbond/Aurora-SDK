@@ -4,15 +4,16 @@
 
 using namespace A2D;
 
-FileInfo::FileInfo(LPCWSTR * xFileName) :
-aFileName(xFileName),
-aFileInfo(NULL){}
+FileInfo::FileInfo(LPCWSTR xFileName)
+{
+	aFileName = xFileName;
+	aFileInfo = NULL;
+}
 
-FileInfo::~FileInfo(){}
-
-/////////////////////////////////////////////////////////////////////////////
-// REQUIRED BY _ABSTRACT
-/////////////////////////////////////////////////////////////////////////////
+FileInfo::~FileInfo()
+{
+	DESTROY(aFileInfo);
+}
 
 LPCWSTR FileInfo::getClass()
 {
@@ -24,66 +25,42 @@ LPCWSTR FileInfo::toString()
 	return L"FileInfo";
 }
 
-bool FileInfo::operator==(Abstract * xAbstract)
-{
-	return false;
-}
-
-float FileInfo::GetHeight()
+float FileInfo::getHeight()
 {
 	return (float) aFileInfo->Height;
 }
 
-float FileInfo::GetWidth()
+float FileInfo::getWidth()
 {
 	return (float) aFileInfo->Width;
 }
 
-int FileInfo::GetDepth()
+int FileInfo::getDepth()
 {
 	return aFileInfo->Height;
 }
 
-int FileInfo::GetMipLevels()
+int FileInfo::getMipLevels()
 {
 	return aFileInfo->Height;
 }
 
-D3DXIMAGE_INFO * FileInfo::GetInfo()
+D3DXIMAGE_INFO * FileInfo::getInfo()
 {
 	return aFileInfo;
 }
 
 HRESULT FileInfo::initialize()
 {
-	HRESULT hr = S_OK;
-
 	// -----------------------------------------------------
 
 	aFileInfo = new D3DXIMAGE_INFO;
 
 	// -----------------------------------------------------
 
-	D3DXGetImageInfoFromFile(*aFileName, aFileInfo);
+	D3DXGetImageInfoFromFile(aFileName, aFileInfo);
 
 	// -----------------------------------------------------
 
-	return hr;
-}
-
-void FileInfo::Deinitialize()
-{
-	// Release the D3D object.
-	if (aFileName)
-	{
-		delete aFileName;
-		aFileName = 0;
-	}
-
-	// Release the Camera object.
-	if (aFileInfo)
-	{
-		delete aFileInfo;
-		aFileInfo = 0;
-	}
+	return S_OK;
 }

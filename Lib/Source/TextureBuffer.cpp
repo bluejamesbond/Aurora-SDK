@@ -101,36 +101,12 @@ void TextureBuffer::Clear()
 // REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-void TextureBuffer::Deinitialize()
+TextureBuffer::~TextureBuffer()
 {
-	if (aDXRenderTargetTexture)
-	{
-		aDXRenderTargetTexture->Release();
-		delete aDXRenderTargetTexture;
-		aDXRenderTargetTexture = 0;
-	}
-
-	if (aDXRenderTargetView)
-	{
-		aDXRenderTargetView->Release();
-		delete aDXRenderTargetView;
-		aDXRenderTargetView = 0;
-	}
-
-	if (aDXDepthStencilState)
-	{
-		aDXDepthStencilState->Release();
-		delete aDXDepthStencilState;
-		aDXDepthStencilState = 0;
-	}
-
-	if (aResource)
-	{
-		aResource->Release();
-		delete aResource;
-		aResource = 0;
-	}
-
+	D3DDESTROY(aDXRenderTargetTexture);
+	D3DDESTROY(aDXRenderTargetView);
+	D3DDESTROY(aDXDepthStencilState);
+	D3DDESTROY(aResource);
 }
 
 LPCWSTR TextureBuffer::getClass()
@@ -141,9 +117,4 @@ LPCWSTR TextureBuffer::getClass()
 LPCWSTR TextureBuffer::toString()
 {
 	return L"TextureBuffer";
-}
-
-bool TextureBuffer::operator==(Abstract * xAbstract)
-{
-	return false;
 }

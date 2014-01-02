@@ -23,6 +23,7 @@
 #include "ExtLibs.h"
 #include "Abstract.h"
 #include "Pipelineable.h"
+#include "Common.h"
 
 namespace A2D {
 
@@ -32,10 +33,6 @@ namespace A2D {
 
 	class Abstract;
 	class Pipelineable;
-
-	////////////////////////////////////////////////////////////////////////////////
-	// DEFINE
-	////////////////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -48,13 +45,11 @@ namespace A2D {
 
 		Pipeline();
 
-		Pipeline(Pipeline * xRenderData);
+		~Pipeline();
 
-		Pipelineable		  * aPipelineComps[8];
-
+		Pipelineable		  *			aPipelineComps[8];
 		int							    aLength = 0;
 		int								aLifeCycle = 0;
-
 		static int						aGlobalLifeCycle;
 
 		static void						nextLifeCycle();
@@ -62,10 +57,8 @@ namespace A2D {
 	public:
 
 		virtual HRESULT                 initialize();
-		virtual void                    Deinitialize();
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
-		virtual bool                    operator==(Abstract * xAbstract);
 
 	};
 }

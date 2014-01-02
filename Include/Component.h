@@ -20,8 +20,10 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "OrderedList.h"
 #include "ImageProperties.h"
 #include "Pipeline.h"
+#include "Rect.h"
 
 namespace A2D {
 
@@ -29,8 +31,10 @@ namespace A2D {
     // FORWARD DECLARATIONS
     ////////////////////////////////////////////////////////////////////////////////
 
+	class AbstractFrame;
     class Abstract;
-    class Component;
+	class Graphics;
+	class Component;
 	struct ImageProperties;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -42,8 +46,8 @@ namespace A2D {
 
 	private:
 
-
-		Frame				    *		aFrame;
+		float							aDepth = FLT_MIN;
+		AbstractFrame		    *		aFrame;
 		Component			    *		aParent;
 		OrderedList<Component*>			aChildren;
 		Component				*       aParentComp;
@@ -80,7 +84,7 @@ namespace A2D {
 		void							_setDepth(float xDepth);
 		void							_setGraphics(Graphics& xGraphics);
 		void                            _setParent(Component& xComponent);
-		void							_setFrame(Frame& xFrame);
+		void							_setFrame(AbstractFrame& xFrame);
 		void							_add(Component& xComponent);
 		void							_remove(Component& xComponent);
 
@@ -88,7 +92,7 @@ namespace A2D {
 		Graphics&						getGraphics();
 		Component&						getParent();
 		Component&						getRoot();
-		Frame&							getFrame();
+		AbstractFrame&					getFrame();
 
 		void							update();
 		Rect                            getBounds();

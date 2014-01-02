@@ -6,6 +6,13 @@ using namespace A2D;
 
 EventQueue::EventQueue(AbstractFrame * xFrame) : AbstractEventQueue(xFrame){}
 
+EventQueue::~EventQueue()
+{
+	AbstractEventQueue::~AbstractEventQueue();
+
+	CloseHandle(aEventQueueLock);
+}
+
 bool EventQueue::getQueueLock()
 {
 	return WaitForSingleObject(aEventQueueLock, INFINITE) != WAIT_ABANDONED;
@@ -54,13 +61,6 @@ HRESULT EventQueue::initialize()
 	return AbstractEventQueue::initialize();
 }
 
-void EventQueue::Deinitialize()
-{
-	AbstractEventQueue::Deinitialize();
-
-	CloseHandle(aEventQueueLock);	
-}
-
 LPCWSTR EventQueue::getClass()
 {
 	return L"EventQueue";
@@ -69,11 +69,6 @@ LPCWSTR EventQueue::getClass()
 LPCWSTR EventQueue::toString()
 {
 	return L"EventQueue";
-}
-
-bool EventQueue::operator==(Abstract * xAbstract)
-{
-	return false;
 }
 
 AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)

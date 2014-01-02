@@ -57,7 +57,7 @@
 #define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora -SDK] " f, __VA_ARGS__ )
 
 #define G_SAFELY(hr)    if(hr != 0)	return;
-#define SAFELY(hr)		if(hr != 0)	return hr
+#define SAFELY(hr)		if(hr != 0)	return E_FAIL
 #define	DESTROY(x)		if(x) { delete x; x = 0; }
 #define D3DDESTROY(x)   if(x) { x->Release(); delete x; x = 0; }
 

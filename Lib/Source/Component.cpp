@@ -45,15 +45,44 @@ void Component::update()
 
 void Component::paintComponentBorder(){}
 
-
 Component& Component::getParent()
 {
 	return *aParentComp;
 }
 
-void Component::_setParent(Component& xComponent)
+float Component::getDepth()
 {
-	aParentComp = &xComponent;
+	return aDepth;
+}
+
+AbstractFrame& Component::getFrame()
+{
+	return *aFrame;
+}
+
+void Component::_setGraphics(Graphics& xGraphics)
+{
+	aGraphics = &xGraphics;
+}
+
+Graphics& Component::getGraphics()
+{
+	return *aGraphics;
+}
+
+void Component::_setDepth( float xDepth)
+{
+	aDepth = xDepth;
+}
+
+void Component::_setFrame(AbstractFrame& xFrame)
+{
+	aFrame = &xFrame;
+}
+
+void Component::_setParent(Component& xParent)
+{
+	aParent = &xParent;
 }
 
 Rect Component::getBounds()
@@ -87,6 +116,21 @@ void Component::setBounds(Rect& xRect)
 	aOptBackgroundRegion.aHeight = xRect.aHeight;
 
 	invalidate();
+}
+
+void Component::invalidate()
+{
+	aValidatedContents = false;
+}
+
+void Component::revalidate()
+{
+	validate();
+}
+
+void Component::validated()
+{
+	aValidatedContents = true;
 }
 
 void Component::validate()

@@ -162,7 +162,7 @@ namespace A2D{
 		int m_fragments_ammort_length = 0;
 		void ** m_fragments = NULL;
 
-		bool m_released = false;
+		bool m_released = true;
 		bool m_arrayed = false;
 
 		// Ammortizes the src array based on the parameters.

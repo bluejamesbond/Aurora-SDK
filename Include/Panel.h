@@ -32,6 +32,7 @@ namespace A2D {
 	class Abstract;
 	class Container;
 	class Window;
+	class Component;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -49,10 +50,7 @@ namespace A2D {
 		float translationXDirection = 1;
 		float translationXDirectionG1 = 1;
 		float translationYDirectionG1 = 1;
-
-	protected:
-
-		virtual void                    paintComponent(Graphics& xGraphics);
+		
 
 	public:
 

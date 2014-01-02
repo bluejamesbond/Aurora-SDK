@@ -6,7 +6,11 @@ using namespace A2D;
 
 QuadFactory::QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims) : aDXDevice(xDXDevice), aWindowDims(xWindowDims){}
 
-QuadFactory::~QuadFactory(){}
+QuadFactory::~QuadFactory()
+{
+	D3DDESTROY(aVertexBuffer);
+	D3DDESTROY(aIndexBuffer);
+}
 
 bool QuadFactory::setConstraints(QuadData * aQuadData, Rect * xContraints)
 {
@@ -269,23 +273,6 @@ HRESULT QuadFactory::initialize()
 	return hr;
 }
 
-void QuadFactory::Deinitialize()
-{
-	if (aVertexBuffer)
-	{
-		aVertexBuffer->Release();
-		delete aVertexBuffer;
-		aVertexBuffer = 0;
-	}
-
-	if (aIndexBuffer)
-	{
-		aIndexBuffer->Release();
-		delete aIndexBuffer;
-		aIndexBuffer = 0;
-	}
-}
-
 LPCWSTR QuadFactory::getClass()
 {
 	return L"QuadFactory";
@@ -295,9 +282,3 @@ LPCWSTR QuadFactory::toString()
 {
 	return L"QuadFactory";
 }
-
-bool QuadFactory::operator==(Abstract * Abstract)
-{
-	return false;
-}
-

@@ -41,7 +41,7 @@ namespace A2D {
 	{
 	public:
 		// Constructor
-		Texture(ID3D10Device ** xDXDevice, LPCWSTR * xFilename);
+		Texture(ID3D10Device ** xDXDevice, LPCWSTR xFilename);
 
 		// Deconstructor
 		~Texture();
@@ -52,13 +52,13 @@ namespace A2D {
 		static			ID3D10ShaderResourceView* aStaticResource;
 
 		// Variables
-		LPCTSTR					*		aSrc;
+		LPCTSTR							aSrc;
 
 		// Accessors
 		LPCTSTR					*		GetSrc();
 
 		// Virtual
-		HRESULT							changeTexture(LPCWSTR * xSrc);
+		HRESULT							changeTexture(LPCWSTR  xSrc);
 
 		// Virtual
 		virtual	bool					hasAlpha();

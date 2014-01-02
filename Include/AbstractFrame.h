@@ -26,14 +26,12 @@
 #include "Container.h"
 #include "Pipelineable.h"
 #include "AbstractTexture.h"
-#include "Component.h"
-#include "Panel.h"
+#include "RootPane.h"
 #include "Camera.h"
 #include "CameraProperties.h"
 #include "RenderData.h"
 #include "BackBuffer.h"
 #include "MatrixFactory.h"
-#include "RootPane.h"
 #include "AbstractWindow.h"
 #include "GXSettings.h"
 #include "RepaintManager.h"
@@ -113,7 +111,9 @@ namespace A2D {
 		void							setDefaultCloseOperation(int xOperation);
 		AbstractWindow			*		getWindow();
 		void							run(int xThreadId);
-		
+		RepaintManager*					getRepaintManager();
+
+
 	protected:
 
 		virtual AbstractWindow *		createPlatformCompatibleWindow() = 0;

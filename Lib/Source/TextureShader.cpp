@@ -156,13 +156,3 @@ LPCWSTR TextureShader::getClass()
 {
 	return L"TextureShader";
 }
-
-void TextureShader::Deinitialize()
-{
-	// Please add all the destroy data
-}
-
-bool TextureShader::operator==(Abstract * xAbstract)
-{
-	return false;
-}

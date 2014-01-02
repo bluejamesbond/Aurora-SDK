@@ -4,13 +4,6 @@
 
 using namespace A2D;
 
-void RootPane::paintComponent(RenderData * xRenderData)
-{
-	Component::paintComponent(xRenderData);
-}
-
-void RootPane::paintComponentBorder(RenderData * xRenderData){}
-
 void RootPane::setBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight)
 {
 	if (!aLockDimensions)
@@ -33,14 +26,4 @@ LPCWSTR RootPane::getClass()
 LPCWSTR RootPane::toString()
 {
 	return L"RootPane";
-}
-
-bool RootPane::operator==(Abstract * xAbstract)
-{
-	return this == xAbstract;
-}
-
-LRESULT RootPane::WindowMsg(HWND * xHwnd, UINT * xMessage, WPARAM * xWParam, LPARAM * xLParam)
-{ 
-	return DefWindowProc(*xHwnd, *xMessage, *xWParam, *xLParam); 
 }

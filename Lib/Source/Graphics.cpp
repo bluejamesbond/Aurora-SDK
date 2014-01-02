@@ -24,6 +24,11 @@ Graphics::~Graphics()
 	DESTROY(aBlurBuffer);
 }
 
+BackBuffer * Graphics::getBackBuffer()
+{
+	return aBackBuffer;
+}
+
 Dims * Graphics::getDrawableDimensions()
 {
 	return aBackBufferDims;
@@ -36,6 +41,16 @@ void Graphics::setClip(Rect * xClip)
 
 void Graphics::validate()
 {
+	float *projection2D, *projection3D;
+	GXSettings* settings = aBackBufferSettings;
+	Dims* size = aBackBufferDims;
+
+	G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&projection2D), size, settings));
+	G_SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&projection3D), size, settings));
+
+	aProjection2DMatrix = projection2D;
+	aProjection3DMatrix = projection3D;
+
 	aTextureShader->loadMatrices();
 }
 
@@ -69,7 +84,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, Image
 	quadData = static_cast<QuadData*>((*xPipeline)->aPipelineComps[1]);
 	
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, aRect, texture->GetClip(), texture->GetSize(), xImageProps);
+	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), &xImageProps);
 	aTextureShader->setTexture(texture);
 				
 	aQuadFactory->RenderQuad(quadData);
@@ -84,14 +99,6 @@ LPCWSTR Graphics::getClass()
 LPCWSTR Graphics::toString()
 {
 	return L"Graphics";
-}
-
-void Graphics::validate()
-{
-	aViewMatrix = 0;
-	aWorldMatrix = 0;
-	aProjection2DMatrix = 0;
-	aProjection3DMatrix = 0;
 }
 
 HRESULT Graphics::initialize()

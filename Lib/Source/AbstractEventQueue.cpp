@@ -5,7 +5,19 @@
 
 using namespace A2D;
 
+AbstractEventQueue* AbstractEventQueue::aClassInstance = NULL;
+
 AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) {}
+
+AbstractEventQueue::~AbstractEventQueue()
+{
+	if (aThread)
+	{
+		aThread->stop();
+	}
+
+	DESTROY(aThread);
+}
 
 void AbstractEventQueue::invokeLater(Runnable * xRunnable)
 {
@@ -70,8 +82,6 @@ void AbstractEventQueue::invokeRerender()
 	// Yea right...
 }
 
-AbstractEventQueue* AbstractEventQueue::aClassInstance = NULL;
-
 AbstractEventQueue* AbstractEventQueue::getInstance()
 {
 	return aClassInstance;
@@ -84,35 +94,19 @@ HRESULT AbstractEventQueue::initialize()
 	return S_OK;
 }
 
-void AbstractEventQueue::Deinitialize()
-{
-	if (aThread)
-	{
-		aThread->stop();
-		aThread->Deinitialize();
-		delete aThread;
-		aThread = 0;
-	}
-}
-
 void AbstractEventQueue::startDispatchingThread()
 {
-	HRESULT hr;
-
 	if (aThread)
 	{
 		aThread->stop();
-		aThread->Deinitialize();
 		delete aThread;
-		aThread = 0;
 	}
 	
 	Toolkit::addSystemEventQueue(this); // added to Frame index!
 
 	aThread = createPlatformCompatibleThread(this);
 	
-	hr = aThread->initialize();	
-	if (FAILED(hr)) return;
+	G_SAFELY(aThread->initialize());	
 
 	// If it fails...screwed! -FIX IT. Catch the HRESULT!
 
@@ -145,11 +139,10 @@ void AbstractEventQueue::stopDispatchingThread()
 	}
 }
 
-
 void AbstractEventQueue::run(int xThreadId)
 {
 	// Create frame resources inside EDT
-	aFrame->CreateResources();
+	aFrame->createResources();
 
 	// Start platform compatible message loop which will
 	// embed the event dispatcher

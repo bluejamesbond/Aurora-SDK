@@ -14,12 +14,7 @@ LPCWSTR Abstract::toString()
 	return L"Abstract";
 }
 
-bool Abstract::operator==(Abstract * xAbstract)
+bool Abstract::isClass(Abstract& xAbstract, LPCWSTR xClass)
 {
-	return this == xAbstract;
-}
-
-bool Abstract::isClass(LPCWSTR xClass)
-{
-	return wcscmp(getClass(), xClass) == 0;
+	return wcscmp(xAbstract.getClass(), xClass) == 0;
 }

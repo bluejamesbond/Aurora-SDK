@@ -6,7 +6,13 @@ using namespace A2D;
 
 Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable), aThreadID (0) {}
 
-Thread::~Thread(){}
+Thread::~Thread()
+{
+	if (isAlive())
+	{
+		stop();
+	}
+}
 
 bool Thread::start()
 {
@@ -85,9 +91,4 @@ LPCWSTR Thread::getClass()
 LPCWSTR Thread::toString()
 {
 	return L"Thread";
-}
-
-bool Thread::operator==(Abstract * xAbstract)
-{
-	return false;
 }

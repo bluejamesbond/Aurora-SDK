@@ -41,36 +41,27 @@ namespace A2D {
 
 	public:
 
-		// Constructor
-		FileInfo(LPCWSTR * xFileName);
-
-		// Deconstructor
+		FileInfo(LPCWSTR xFileName);
 		~FileInfo();
 
 	private:
 
-		// Variables
 		D3DXIMAGE_INFO		  * 	aFileInfo;
-		LPCWSTR               *     aFileName;
-
-
-	public:
-		// Accessors
-		float						GetHeight();
-		float						GetWidth();
-		int							GetDepth();
-		int							GetMipLevels();
-		D3DXIMAGE_INFO		*		GetInfo();
-
+		LPCWSTR                     aFileName;
+		
 	public:
 
-		// Implementation
-		// { ABSTRACT }
+		float						getHeight();
+		float						getWidth();
+		int							getDepth();
+		int							getMipLevels();
+		D3DXIMAGE_INFO		*		getInfo();
+
+	public:
+
 		virtual HRESULT                 initialize();
-		virtual void                    Deinitialize();
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
-		virtual bool                    operator==(Abstract * xAbstract);
 
 	};
 }

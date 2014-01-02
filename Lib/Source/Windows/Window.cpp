@@ -11,8 +11,6 @@ using namespace A2D;
 
 Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xFrame), aHInstance(xHInstance){}
 
-Window::~Window(){}
-
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
 	Window * aWindow;
@@ -69,7 +67,6 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 
 HWND Window::createCompatibleWindow(bool isParent)
 {
-	HRESULT         hr = S_OK;
 	HWND            hWnd, hwndParent;
 	int             left, top, width, height;
 	DWORD           lStyle, lExStyle;
@@ -645,8 +642,6 @@ Gdiplus::BitmapData * Window::getLockedBitmapData(Gdiplus::Bitmap * src)
 
 HRESULT Window::createShadowResources()
 {
-	HRESULT hr = S_OK;
-
 	Gdiplus::Bitmap * solid, *blurred;
 	Gdiplus::Graphics * graphics;
 	Gdiplus::SolidBrush blackBrush(*aShadowColor);
@@ -706,13 +701,11 @@ HRESULT Window::createShadowResources()
 	delete blurred;
 	delete solid;
 
-	return hr;
+	return S_OK;
 }
 
 HRESULT Window::createBackgroundResources()
 {
-	HRESULT hr = S_OK;
-
 	aBackground = new Gdiplus::Bitmap(1, 1);
 
 	Gdiplus::Graphics graphics(aBackground);
@@ -722,7 +715,7 @@ HRESULT Window::createBackgroundResources()
 
 	aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
 
-	return hr;
+	return S_OK;
 }
 
 void Window::destroyBackgroundResources()
@@ -742,17 +735,11 @@ void Window::destroyBackgroundResources()
 
 HRESULT Window::createResources()
 {
-	HRESULT hr = S_OK;
+	SAFELY(createColorResources());
+	SAFELY(createBackgroundResources());
+	SAFELY(createShadowResources());
 
-	hr = createColorResources();
-	if (FAILED(hr)) return hr;
-
-	hr = createBackgroundResources();
-	if (FAILED(hr)) return hr;
-
-	hr = createShadowResources();
-
-	return hr;
+	return S_OK;
 }
 
 void Window::destroyResources()
@@ -1071,11 +1058,11 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			else if (currentAnimationFrame > 0)
 			{
 				currentAnimationFrame--;
-				frame.Update();
+				frame.update();
 			}
 			else if (resizing)
 			{
-				frame.Update();
+				frame.update();
 			}
 		}
 	}
@@ -1156,8 +1143,6 @@ void Window::render()
 
 HRESULT Window::initialize()
 {
-	HRESULT hr = S_OK;
-
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR           gdiplusToken;
 
@@ -1175,8 +1160,7 @@ HRESULT Window::initialize()
 	// Super
 	AbstractWindow::initialize();
 
-	hr = registerClass();
-	if (FAILED(hr)) return hr;
+	SAFELY(registerClass());
 
 	aParentHWnd = createCompatibleWindow(true);
 	if (!aParentHWnd) return E_FAIL;
@@ -1184,15 +1168,14 @@ HRESULT Window::initialize()
 	aChildHWnd = createCompatibleWindow(false);
 	if (!aChildHWnd) return E_FAIL;
 
-	hr = createResources();
-	if (FAILED(hr)) return hr;
+	SAFELY(createResources());
 
 	update();
 
-	return hr;
+	return S_OK;
 }
 
-void Window::Deinitialize()
+Window::~Window()
 {
 	destroyResources();
 
@@ -1211,9 +1194,4 @@ LPCWSTR Window::getClass()
 LPCWSTR Window::toString()
 {
 	return L"Window";
-}
-
-bool Window::operator==(Abstract * xAbstract)
-{
-	return false;
 }

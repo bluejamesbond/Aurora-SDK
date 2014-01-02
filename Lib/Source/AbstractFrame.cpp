@@ -216,21 +216,23 @@ void AbstractFrame::dispose()
 	}
 }
 
+RepaintManager* AbstractFrame::getRepaintManager()
+{
+	return aRepaintManager;
+}
+
 HRESULT AbstractFrame::initialize()
 {
-	HRESULT hr;	
-
 	aId = ++aClassInstances;
 
 	SAFELY(aRootPane.initialize());
 
 	aEventQueue = createPlatformCompatibleEventQueue();
-	SAFELY(aEventQueue->initialize());
-	
+	SAFELY(aEventQueue->initialize());	
 	
 	aEventQueue->startDispatchingThread();
 	
-	return hr;
+	return S_OK;
 }
 
 RootPane& AbstractFrame::getRootPane()

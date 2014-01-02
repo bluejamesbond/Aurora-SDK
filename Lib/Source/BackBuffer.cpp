@@ -34,8 +34,6 @@ GXSettings * BackBuffer::getSettings()
 
 HRESULT BackBuffer::initialize()
 {
-	HRESULT hr;
-
 	IDXGIFactory* factory;
 	IDXGIAdapter* adapter;
 	IDXGIOutput* adapterOutput;
@@ -74,7 +72,7 @@ HRESULT BackBuffer::initialize()
 	// Create a list to hold all the possible display 
 	// modes for this monitor/video card combination.
 	displayModeList = new DXGI_MODE_DESC[numModes];
-	if (!displayModeList)		return hr;
+	SAFELY(displayModeList);
 
 	// Now fill the display mode list structures.
 	SAFELY(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
@@ -311,7 +309,7 @@ HRESULT BackBuffer::initialize()
 	// Create the state using the device.
 	SAFELY(device->CreateDepthStencilState(&depthDisabledStencilDesc, &aDXDepthDisabledStencilState));	
 
-	return hr;
+	return S_OK;
 }
 
 void BackBuffer::setActive()
@@ -381,7 +379,6 @@ void BackBuffer::validate()
 	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
 	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
 
-	HRESULT hr;
 	Dims& windowDims = aWindow->getSize();
 	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance
 	D3D10_VIEWPORT& viewport = aViewport;

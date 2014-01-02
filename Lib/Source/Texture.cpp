@@ -4,12 +4,15 @@
 
 using namespace A2D;
 
-Texture::Texture(ID3D10Device ** xDXDevice, LPCWSTR * xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
+Texture::Texture(ID3D10Device ** xDXDevice, LPCWSTR xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
 {
 	aResource = NULL;
 }
 
-Texture::~Texture(){}
+Texture::~Texture()
+{
+	D3DDESTROY(aResource);
+}
 
 bool Texture::hasAlpha()
 {
@@ -22,11 +25,11 @@ void * Texture::getPlatformCompatibleResource()
 	return aResource;
 }
 
-HRESULT Texture::changeTexture(LPCWSTR * xSrc)
+HRESULT Texture::changeTexture(LPCWSTR  xSrc)
 {
 	aSrc = xSrc;
 
-	Deinitialize();
+	D3DDESTROY(aResource);
 
 	// Can't catch error here!!!! NOTE: FIX
 	// Remind Mathew if you see this.
@@ -38,31 +41,19 @@ HRESULT Texture::changeTexture(LPCWSTR * xSrc)
 // REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-void Texture::Deinitialize()
-{
-	if (aResource)
-	{
-		delete aResource;
-		aResource = 0;
-	}
-}
-
 ID3D10ShaderResourceView* Texture::aStaticResource;
 
 HRESULT Texture::initialize()
 {
-	HRESULT hr = S_OK;
 	D3DX10_IMAGE_LOAD_INFO loadInfo;
-
 
 	if (aStaticResource == NULL)
 	{
 		D3DX10_IMAGE_INFO srcInfo;
 		loadInfo.pSrcInfo = &srcInfo;
 
-		hr = D3DX10CreateShaderResourceViewFromFile(*aDXDevice, *aSrc, &loadInfo, NULL, &aStaticResource, NULL);
-		if (FAILED(hr))		return hr;
-
+		SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDXDevice, aSrc, &loadInfo, NULL, &aStaticResource, NULL));
+		
 		aResource = aStaticResource;
 
 		// Load the texture in.
@@ -76,7 +67,7 @@ HRESULT Texture::initialize()
 	 else
 	 {
 		 D3DXIMAGE_INFO srcInfoFromFile;
-		 D3DXGetImageInfoFromFile(*aSrc, &srcInfoFromFile);
+		 D3DXGetImageInfoFromFile(aSrc, &srcInfoFromFile);
 		 aResource = aStaticResource;
 
 		 aClip.aX = 0;
@@ -85,7 +76,7 @@ HRESULT Texture::initialize()
 		 aClip.aHeight = aDims.aHeight = (float)srcInfoFromFile.Height;
 	 }
 
-	return hr;
+	return S_OK;
 }
 
 LPCWSTR Texture::getClass()
@@ -96,9 +87,4 @@ LPCWSTR Texture::getClass()
 LPCWSTR Texture::toString()
 {
 	return L"Texture";
-}
-
-bool Texture::operator==(Abstract * xAbstract)
-{
-	return false;
 }
