@@ -35,7 +35,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTexture : public Pipelineable
+	class AbstractTexture : public Abstract
 	{
 
 	protected:

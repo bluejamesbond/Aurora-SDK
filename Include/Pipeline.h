@@ -47,7 +47,7 @@ namespace A2D {
 
 		~Pipeline();
 
-		Pipelineable		  *			aPipelineComps[8];
+		void				  *			aPipelineComps[8];
 		int							    aLength = 0;
 		int								aLifeCycle = 0;
 		static int						aGlobalLifeCycle;

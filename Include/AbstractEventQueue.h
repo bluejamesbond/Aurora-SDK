@@ -23,6 +23,7 @@
 #include "Abstract.h"
 #include "Renderable.h"
 #include "AbstractThread.h"
+#include "OrderedList.h"
 #include "Toolkit.h"
 #include "Runnable.h"
 #include "Rect.h"
@@ -50,6 +51,7 @@ namespace A2D{
 
 	private:
 
+		OrderedList<Runnable*>		 aEventQueue;
 		Runnable               *     aImmediateRunnable = NULL;
 		AbstractThread		   *     aThread = NULL;
 
@@ -87,16 +89,16 @@ namespace A2D{
 
 		// Queue
 		virtual bool                    getQueueLock() = 0;
-		virtual void                    releaseQueueLock() = 0;
-		virtual Runnable *				peekEvent() = 0;
-		virtual void					popEvent() = 0;
-		virtual bool                    hasEvent() = 0;
+		virtual void					releaseQueueLock() = 0;
+		Runnable *						peekEvent();
+		void							popEvent();
+		bool							hasEvent();
 
 	protected:
 
-		virtual void                    pushEvent(Runnable * xRunnable) = 0;
-		virtual void                    removeAllEvents() = 0;
-		virtual void					run(int xThreadId);
+		void							pushEvent(Runnable * xRunnable);
+		void							removeAllEvents();
+		void							run(int xThreadId);
 
 		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) = 0;
 

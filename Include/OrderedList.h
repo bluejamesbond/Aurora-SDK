@@ -720,6 +720,11 @@ namespace A2D{
 			return node->value;
 		}
 
+		T peek()
+		{
+			return m_head->value;
+		}
+
 		void pop();
 		void sort(); // This will be a pain. In time tho!
 

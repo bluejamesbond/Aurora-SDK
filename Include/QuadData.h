@@ -38,10 +38,10 @@ namespace A2D {
 		// Before adjusting the ID3D10Buffer
 		// check if any of these values are different
 		// Do a memcompare(ptr1, ptr2) of these with the new ones
-		Rect aPreviousRect; // cached
-		Rect aPreviousContraints; // cached
-		Rect	aPreviousTextureClip; // cached
-		Dims	aPreviousTextureSize; // cached
+		Rect			aPreviousRect;			  // cached
+		Rect			aPreviousContraints;	  // cached
+		Rect			aPreviousTextureClip;	  // cached
+		Dims			aPreviousTextureSize;	  // cached
 		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
@@ -53,11 +53,6 @@ namespace A2D {
 		// This pretty much stays constant
 		// so it will be stored inside Quads instance.
 		// ID3D10Buffer		*			aIndexBuffer;
-
-		virtual HRESULT                 initialize(){ return S_OK; };
-		virtual LPCWSTR                 getClass(){ return L"QuadData"; };
-		virtual LPCWSTR                 toString(){ return L"QuadData"; };;
-
 	};
 }
 

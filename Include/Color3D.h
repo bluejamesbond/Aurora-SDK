@@ -35,20 +35,20 @@ namespace A2D{
 
 		Color3D(int xColor)
 		{
-			aAlpha = static_cast<float>(((xColor << 24) && 0xFF) / 0xFF);
-			aRed = static_cast<float>(((xColor << 16) && 0xFF) / 0xFF);
-			aBlue = static_cast<float>(((xColor << 8) && 0xFF) / 0xFF);
-			aGreen = static_cast<float>(((xColor) && 0xFF) / 0xFF);
+			aAlpha = static_cast<float>(((xColor << 24) & 0xFF) / FLT_255);
+			aRed = static_cast<float>(((xColor << 16) & 0xFF) / FLT_255);
+			aBlue = static_cast<float>(((xColor << 8) & 0xFF) / FLT_255);
+			aGreen = static_cast<float>(((xColor)& 0xFF) / FLT_255);
 		}
 
 		static Color3D* fromColor(Color& xColor)
 		{
 			Color3D * color3D = new Color3D;
 
-			color3D->aAlpha = static_cast<float>(xColor.aAlpha / 0xFF);
-			color3D->aRed = static_cast<float>(xColor.aRed / 0xFF);
-			color3D->aBlue = static_cast<float>(xColor.aBlue / 0xFF);
-			color3D->aGreen = static_cast<float>(xColor.aGreen / 0xFF);
+			color3D->aAlpha = static_cast<float>(xColor.aAlpha / FLT_255);
+			color3D->aRed = static_cast<float>(xColor.aRed / FLT_255);
+			color3D->aBlue = static_cast<float>(xColor.aBlue / FLT_255);
+			color3D->aGreen = static_cast<float>(xColor.aGreen / FLT_255);
 
 			return color3D;
 		}

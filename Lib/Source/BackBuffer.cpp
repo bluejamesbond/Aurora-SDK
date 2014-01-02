@@ -51,7 +51,7 @@ HRESULT BackBuffer::initialize()
 	Dims& windowDims = aWindow->getSize();
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
-	int videoCardMemory, error, width = windowDims.aWidth, height = windowDims.aHeight;
+	int videoCardMemory, width = windowDims.aWidth, height = windowDims.aHeight;
 	char videoCardDescription[128];
 
 	// Create a DirectX graphics interface factory.
@@ -355,7 +355,7 @@ void BackBuffer::swap()
 	// rendering is complete.
 
 	// Lock to screen refresh rate or present as fast as possible
-	aDXGISwapChain->Present(aSettings.aVsync ? 1 : 0, 0);
+	aDXGISwapChain->Present(0, 0);
 }
 
 ID3D10Device ** BackBuffer::getDevice()
@@ -366,7 +366,6 @@ ID3D10Device ** BackBuffer::getDevice()
 void BackBuffer::setZBuffer(bool val)
 {
 	aDXDevice->OMSetDepthStencilState(val ? aDXDepthStencilState : aDXDepthDisabledStencilState, 1);
-	return;
 }
 
 LPCWSTR BackBuffer::getClass()

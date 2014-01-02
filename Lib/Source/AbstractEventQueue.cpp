@@ -148,6 +148,31 @@ bool AbstractEventQueue::isDispatchingThread(int xFrameId)
 	return eventQueue->getDispatchingThread()->id() == thread->getCurrentThreadId();
 }
 
+Runnable * AbstractEventQueue::peekEvent()
+{
+	return aEventQueue.peek();
+}
+
+void AbstractEventQueue::popEvent()
+{
+	aEventQueue.remove_index(0);
+}
+
+void AbstractEventQueue::pushEvent(Runnable * xRunnable)
+{
+	aEventQueue.push_back(xRunnable);
+}
+
+bool AbstractEventQueue::hasEvent()
+{
+	return !aEventQueue.is_empty();
+}
+
+void AbstractEventQueue::removeAllEvents()
+{
+	aEventQueue.max_remove_all();
+}
+
 bool AbstractEventQueue::dispatchNextEvent()
 {
 	if (hasEvent())

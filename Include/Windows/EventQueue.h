@@ -53,7 +53,6 @@ namespace A2D {
 
 	private:
 
-		queue<Runnable*> * aEventQueue;
 		HANDLE aEventQueueLock;
 		HINSTANCE aHIsntance;
 
@@ -62,21 +61,11 @@ namespace A2D {
 		// Queue
 		virtual bool                    getQueueLock();
 		virtual void                    releaseQueueLock();
-		virtual Runnable *           peekEvent();
-		virtual void					popEvent();
-		virtual bool                    hasEvent();
-
-	protected:
-
-		virtual void                    pushEvent(Runnable * xRunnable);
-		virtual void                    removeAllEvents();
 
 	public:
 
 		// Thread - Move from OS level to Global level!!!
 		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
-
-
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ABSTRACT
@@ -84,7 +73,6 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
 	};

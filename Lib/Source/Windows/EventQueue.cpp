@@ -23,44 +23,10 @@ void EventQueue::releaseQueueLock()
     ReleaseMutex(aEventQueueLock);
 }
 
-Runnable * EventQueue::peekEvent()
+AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)
 {
-	return aEventQueue->front();
+	return new Thread(xRunnable);
 }
-
-void EventQueue::popEvent()
-{
-	aEventQueue->pop();
-}
-
-void EventQueue::pushEvent(Runnable * xRunnable)
-{
-    aEventQueue->push(xRunnable);
-}
-
-bool EventQueue::hasEvent()
-{
-    return !aEventQueue->empty();
-}
-
-void EventQueue::removeAllEvents()
-{
-    if(aEventQueue)
-    {
-        delete aEventQueue;
-        aEventQueue = 0;
-    }
-
-	aEventQueue = new queue<Runnable*>();
-}
-
-HRESULT EventQueue::initialize()
-{
-	aEventQueue = new queue<Runnable *>();
-
-	return AbstractEventQueue::initialize();
-}
-
 LPCWSTR EventQueue::getClass()
 {
 	return L"EventQueue";
@@ -69,9 +35,4 @@ LPCWSTR EventQueue::getClass()
 LPCWSTR EventQueue::toString()
 {
 	return L"EventQueue";
-}
-
-AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)
-{
-	return new Thread(xRunnable);
 }

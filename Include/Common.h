@@ -56,6 +56,8 @@
 #define SYSOUT_STR(x)										  _RPT1( 0, "[Aurora -SDK] %s\n", x )
 #define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora -SDK] " f, __VA_ARGS__ )
 
+#define FLT_255			255.0f
+
 #define G_SAFELY(hr)    if(hr != 0)	return;
 #define SAFELY(hr)		if(hr != 0)	return E_FAIL
 #define NULLCHECK(hr)	if(!hr)	return E_FAIL

@@ -29,14 +29,9 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Pipelineable : public Abstract
+	class Pipelineable
 	{
 
-	public:
-
-		virtual HRESULT                 initialize() = 0;
-		virtual LPCWSTR                 getClass() = 0;
-		virtual LPCWSTR                 toString() = 0;
 	};
 }
 
