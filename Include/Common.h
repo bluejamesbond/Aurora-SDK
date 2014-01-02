@@ -61,5 +61,6 @@
 #define NULLCHECK(hr)	if(!hr)	return E_FAIL
 #define	DESTROY(x)		if(x) { delete x; x = 0; }
 #define D3DDESTROY(x)   if(x) { x->Release(); x = 0; }
+#define THREAD_DESTROY(x)  if(x) { x->stop(); delete x; x = 0; }
 
 #endif

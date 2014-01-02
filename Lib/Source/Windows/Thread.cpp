@@ -17,7 +17,9 @@ Thread::~Thread()
 bool Thread::start()
 {
 	aHThread = CreateThread(NULL, 0, &initThread, this, 0, &aThreadID);
+	SetThreadPriority(aHThread, THREAD_PRIORITY_TIME_CRITICAL);
 	aHandles[AbstractThread::id()] = aHThread;
+
     return (aHThread != NULL);
 }
 

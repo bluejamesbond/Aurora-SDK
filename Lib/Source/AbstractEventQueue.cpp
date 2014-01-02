@@ -11,12 +11,7 @@ AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) 
 
 AbstractEventQueue::~AbstractEventQueue()
 {
-	if (aThread)
-	{
-		aThread->stop();
-	}
-
-	DESTROY(aThread);
+	THREAD_DESTROY(aThread);
 }
 
 void AbstractEventQueue::invokeLater(Runnable * xRunnable)
@@ -96,11 +91,7 @@ HRESULT AbstractEventQueue::initialize()
 
 void AbstractEventQueue::startDispatchingThread()
 {
-	if (aThread)
-	{
-		aThread->stop();
-		delete aThread;
-	}
+	THREAD_DESTROY(aThread);
 	
 	Toolkit::addSystemEventQueue(this); // added to Frame index!
 
@@ -131,12 +122,7 @@ void AbstractEventQueue::resumeDispatchingThread()
 
 void AbstractEventQueue::stopDispatchingThread()
 {
-	if (aThread)
-	{
-		aThread->stop();
-		delete aThread;
-		aThread = 0;
-	}
+	THREAD_DESTROY(aThread);
 }
 
 void AbstractEventQueue::run(int xThreadId)
