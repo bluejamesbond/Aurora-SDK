@@ -158,21 +158,8 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 	GetCursorPos(&p);
 
-	POINT pRel; // cursor coordinates relative to client window
-
-	GetCursorPos(&pRel);
-	ScreenToClient(aChildHWnd, &pRel);
-
-	//((A2DAbstractComponent*)aFrame->GetRootPane())->
-
 	x = p.x;
 	y = p.y;
-
-	xRel = pRel.x;
-	yRel = pRel.y;
-
-	SYSOUT_INT(xRel);
-	SYSOUT_INT(yRel);
 
 	left = (isParent ? aRelativeX + aPadding : aRealX);
 	top = (isParent ? aRelativeY + aPadding : aRealY);
