@@ -1122,6 +1122,11 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			{
 				frame.update();
 			}
+			else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 	}
 }
@@ -1202,7 +1207,7 @@ void Window::render()
 
 	/***********************************************/
 
-	// Reisze the child only after requesting frameBuffer
+	// Reisze the child only after requesting frame
 	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(realX), static_cast<int>(realY), static_cast<int>(realWidth), static_cast<int>(realHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	EndDeferWindowPos(hdwp);
