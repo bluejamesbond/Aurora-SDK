@@ -47,13 +47,13 @@ namespace A2D {
 	public:
 
 		// Constructor
-		TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
+		TextureBuffer(ID3D10Device ** xDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
 
 		// Deconstructor
 		~TextureBuffer();
 
 		// Variables
-		ID3D10Device				**	aDXDevice;
+		ID3D10Device				**	aDevice;
 		ID3D10DepthStencilView		**	aBackBufferaDXDepthStencilView;
 
 		ID3D10Texture2D				*	aDXRenderTargetTexture;

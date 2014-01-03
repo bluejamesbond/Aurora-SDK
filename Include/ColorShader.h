@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __DXSHADERUTILS_H__
-#define __DXSHADERUTILS_H__
+#ifndef __COLORSHADER_H__
+#define __COLORSHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      DXSHADERUTILS
+//      ABSTRACTTEXTURESHADER
 //
 //  Synopsis:
 //      Texture quad.
@@ -20,7 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "BackBuffer.h"
+#include "DXShaderUtils.h"
+#include "Texture.h"
+#include "AbstractShader.h"
 
 namespace A2D {
 
@@ -29,30 +31,38 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Abstract;
-	class Pipelineable;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class DXShaderUtils
+	class ColorShader : public AbstractShader
 	{
+	public:
+
+		ColorShader(ID3D10Device ** xDevice);
+		virtual ~ColorShader();
+		
+		static ID3D10Effect			*	aColorEffect;
+
+	protected:
+
+		virtual ID3D10Effect		**	getEffect();
+		virtual LPCWSTR					getEffectName();
+		virtual HRESULT					getUsableVariablePointers(ID3D10Effect * xEffect);
+		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout);
+		virtual unsigned int			getPolygonLayoutElementCount();
+		virtual	LPCSTR					getTechniqueName();
 
 	public:
 
-		// Load a shader from file
-		static HRESULT					LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * xDevice, ID3D10Effect ** xEffect);
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
 
-		// Create Alpha transpareny supportable PNG
-		static HRESULT					CreatePNGCompatibleBlendStates(ID3D10Device * xDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState);
-
-		// Output Error - Use SYSOUT in the future
-		static void						SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename);
-
-		// Load technieque from shader
-		static HRESULT					loadTechniqueFromEffect(ID3D10Device * xDevice, ID3D10Effect * xEffect, ID3D10InputLayout ** xLayout, ID3D10EffectTechnique ** xTechnqiue, D3D10_INPUT_ELEMENT_DESC * xPolygonLayout, LPCSTR xName, unsigned int xElements);
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
 	};
 }
-
 
 #endif

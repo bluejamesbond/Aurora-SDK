@@ -14,13 +14,13 @@ matrix projectionMatrix;
 //////////////
 // TYPEDEFS //
 //////////////
-struct VertexInputType
+struct ColorVertex
 {
     float4 position : POSITION;
     float4 color : COLOR;
 };
 
-struct PixelInputType
+struct ColorPixel
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
@@ -30,9 +30,9 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType ColorVertexShader(VertexInputType input)
+ColorPixel ColorVertexShader(ColorVertex input)
 {
-    PixelInputType output;
+	ColorPixel output;
     
     
 	// Change the position vector to be 4 units for proper matrix calculations.
@@ -53,7 +53,7 @@ PixelInputType ColorVertexShader(VertexInputType input)
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 ColorPixelShader(PixelInputType input) : SV_Target
+float4 ColorPixelShader(ColorPixel input) : SV_Target
 {
     return input.color;
 }

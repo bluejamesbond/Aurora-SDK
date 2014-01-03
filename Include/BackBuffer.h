@@ -57,7 +57,7 @@ namespace A2D {
 		D3D10_VIEWPORT					aViewport;
 		D3D10_TEXTURE2D_DESC			aDepthBufferDesc;
 		IDXGISwapChain            *     aDXGISwapChain;
-		ID3D10Device              *     aDXDevice;
+		ID3D10Device              *     aDevice;
 		ID3D10RenderTargetView    *     aDXRenderTargetView;
 		ID3D10Texture2D           *     aDXDepthStencilBuffer;
 		ID3D10DepthStencilState   *     aDXDepthStencilState;

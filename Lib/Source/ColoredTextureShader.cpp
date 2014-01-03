@@ -4,8 +4,7 @@
 
 using namespace A2D;
 
-ColoredTextureShader::ColoredTextureShader(ID3D10Device ** xDXDevice) :
-AbstractTextureShader(xDXDevice){}
+ColoredTextureShader::ColoredTextureShader(ID3D10Device ** xDevice) : AbstractTextureShader(xDevice){}
 
 HRESULT	ColoredTextureShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout)
 {
@@ -44,4 +43,14 @@ unsigned int ColoredTextureShader::getPolygonLayoutElementCount()
 LPCSTR ColoredTextureShader::getTechniqueName()
 {
 	return "ColoredTextureTechnique";
+}
+
+LPCWSTR ColoredTextureShader::toString()
+{
+	return L"ColoredTextureShader";
+}
+
+LPCWSTR ColoredTextureShader::getClass()
+{
+	return L"ColoredTextureShader";
 }

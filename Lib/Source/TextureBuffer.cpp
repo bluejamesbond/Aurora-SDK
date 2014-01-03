@@ -4,8 +4,8 @@
 
 using namespace A2D;
 
-TextureBuffer::TextureBuffer(ID3D10Device ** xDXDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize) :
-aDXDevice(xDXDevice), aBackBufferaDXDepthStencilView(xBackBufferaDXDepthStencilView)
+TextureBuffer::TextureBuffer(ID3D10Device ** xDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize) :
+aDevice(xDevice), aBackBufferaDXDepthStencilView(xBackBufferaDXDepthStencilView)
 {
 	aDims.aWidth = xSize->aWidth;
 	aDims.aHeight = xSize->aHeight;
@@ -22,7 +22,7 @@ HRESULT TextureBuffer::initialize()
 	D3D10_TEXTURE2D_DESC textureDesc;
 	D3D10_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	D3D10_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	ID3D10Device * device = *aDXDevice;
+	ID3D10Device * device = *aDevice;
 
 	// initialize the render target texture description.
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -64,7 +64,7 @@ HRESULT TextureBuffer::initialize()
 
 void TextureBuffer::SetActive()
 {
-	ID3D10Device * device = *aDXDevice;
+	ID3D10Device * device = *aDevice;
 
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	device->OMSetRenderTargets(1, &aDXRenderTargetView, *aBackBufferaDXDepthStencilView);
@@ -78,7 +78,7 @@ void * TextureBuffer::getPlatformCompatibleResource()
 void TextureBuffer::Clear()
 {
 	float color[4];
-	ID3D10Device * device = *aDXDevice;
+	ID3D10Device * device = *aDevice;
 	
 	// Setup the color to clear the buffer to.
 	color[0] = 1.0f;

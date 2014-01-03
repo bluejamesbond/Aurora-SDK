@@ -7,7 +7,7 @@ using namespace A2D;
 Graphics::Graphics(BackBuffer * xBackBuffer)
 {
 	aBackBuffer = xBackBuffer;
-	aDXDevice = xBackBuffer->getDevice();
+	aDevice = xBackBuffer->getDevice();
 	aBackBufferDims = xBackBuffer->getSize();
 	aBackBufferSettings = xBackBuffer->getSettings();
 }
@@ -60,10 +60,10 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 	{
 		*xPipeline = new Pipeline();
 
-		texture = new Texture(aDXDevice, xSrc);
+		texture = new Texture(aDevice, xSrc);
 		quadData = new QuadData<TextureVertex>();
 
-		DXShapeUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDXDevice, &quadData->aVertexBuffer, 6);
+		DXShapeUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
 		texture->initialize();
 
@@ -83,7 +83,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 	aTextureShader->setTexture(texture);
 
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-	aTextureShader->renderTexture();
+	aTextureShader->renderShader();
 }
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
@@ -97,10 +97,10 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 
 		*xPipeline = new Pipeline();
 
-		texture = new Texture(aDXDevice, xSrc);
+		texture = new Texture(aDevice, xSrc);
 		quadData = new QuadData<ColoredTextureVertex>();
 
-		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &quadData->aVertexBuffer, 6);
+		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
 		texture->initialize();
 
@@ -120,9 +120,37 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 	aColoredTextureShader->setTexture(texture);
 
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColoredTextureVertex));
-	aColoredTextureShader->renderTexture();
+	aColoredTextureShader->renderShader();
 }
 
+void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
+{
+	QuadData<ColorVertex> * quadData;
+
+	if (*xPipeline == NULL)
+	{
+		// Intialize the pipeline
+
+		*xPipeline = new Pipeline();
+
+		quadData = new QuadData<ColorVertex>();
+
+		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+
+		(*xPipeline)->aPipelineComps[0] = quadData;
+
+		(*xPipeline)->aLength = 2;
+
+		return;
+	}
+
+	quadData = static_cast<QuadData<ColorVertex>*>((*xPipeline)->aPipelineComps[0]);
+	
+	aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint);
+
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
+	aColorShader->renderShader();
+}
 
 LPCWSTR Graphics::getClass()
 {
@@ -139,7 +167,7 @@ HRESULT Graphics::initialize()
 	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
-	ID3D10Device ** device = aDXDevice;
+	ID3D10Device ** device = aDevice;
 		
 	cameraProperties.aPositionX = 0.0f;
 	cameraProperties.aPositionY = 0.0f;
@@ -158,6 +186,9 @@ HRESULT Graphics::initialize()
 
 	aTextureShader = new TextureShader(device);
 	SAFELY(aTextureShader->initialize());
+
+	aColorShader = new ColorShader(device);
+	SAFELY(aColorShader->initialize());
 
 	AbstractTextureShader::setViewMatrix(&aViewMatrix);
 	AbstractTextureShader::setProjectionMatrix(&aProjection2DMatrix);

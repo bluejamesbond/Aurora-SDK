@@ -26,7 +26,6 @@ namespace A2D {
 
 	struct ColorVertex
 	{
-		// Variables
 		D3DXVECTOR3 position;
 		D3DXVECTOR4 color;
 	};

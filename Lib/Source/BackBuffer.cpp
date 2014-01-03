@@ -19,7 +19,7 @@ BackBuffer::~BackBuffer()
 	D3DDESTROY(aDXDepthStencilBuffer);
 	D3DDESTROY(aDXRenderTargetView);
 	D3DDESTROY(aDXGISwapChain);
-	D3DDESTROY(aDXDevice);
+	D3DDESTROY(aDevice);
 }
 
 Dims * BackBuffer::getSize()
@@ -174,10 +174,10 @@ HRESULT BackBuffer::initialize()
 
 	// Create the swap chain and the Direct3D device.
 	SAFELY(D3D10CreateDeviceAndSwapChain(NULL, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_SDK_VERSION,
-		&swapChainDesc, &aDXGISwapChain, &aDXDevice));
+		&swapChainDesc, &aDXGISwapChain, &aDevice));
 	
 	// Local copy
-	device = aDXDevice;
+	device = aDevice;
 
 	// Get the pointer to the back buffer.
 	SAFELY(aDXGISwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&backBufferPtr));
@@ -289,7 +289,7 @@ HRESULT BackBuffer::initialize()
 	viewport.TopLeftY = 0;
 
 	// Create the viewport.
-	aDXDevice->RSSetViewports(1, &viewport);
+	aDevice->RSSetViewports(1, &viewport);
 
 	// Clear the second depth stencil state 
 	// before setting the parameters.
@@ -329,7 +329,7 @@ void BackBuffer::setActive()
 {		
 	// Reset the render target back to the original back
 	// buffer and not the render to texture anymore.
-	aDXDevice->OMSetRenderTargets(1, &aDXRenderTargetView, aDXDepthStencilView);
+	aDevice->OMSetRenderTargets(1, &aDXRenderTargetView, aDXDepthStencilView);
 	return;
 }
 
@@ -343,10 +343,10 @@ void BackBuffer::clear()
 	color[3] = 1.0f;
 
 	// Clear the back buffer.
-	aDXDevice->ClearRenderTargetView(aDXRenderTargetView, color);
+	aDevice->ClearRenderTargetView(aDXRenderTargetView, color);
 
 	// Clear the depth buffer.
-	aDXDevice->ClearDepthStencilView(aDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
+	aDevice->ClearDepthStencilView(aDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void BackBuffer::swap()
@@ -360,12 +360,12 @@ void BackBuffer::swap()
 
 ID3D10Device ** BackBuffer::getDevice()
 {
-	return &aDXDevice;
+	return &aDevice;
 }
 
 void BackBuffer::setZBuffer(bool val)
 {
-	aDXDevice->OMSetDepthStencilState(val ? aDXDepthStencilState : aDXDepthDisabledStencilState, 1);
+	aDevice->OMSetDepthStencilState(val ? aDXDepthStencilState : aDXDepthDisabledStencilState, 1);
 }
 
 LPCWSTR BackBuffer::getClass()
@@ -395,7 +395,7 @@ void BackBuffer::validate()
 	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance
 	D3D10_VIEWPORT& viewport = aViewport;
 	ID3D10Texture2D* backBuffer;
-	ID3D10Device * device = aDXDevice;
+	ID3D10Device * device = aDevice;
 	IDXGISwapChain  *  swapChain = aDXGISwapChain;
 
 	aDXRenderTargetView->Release();

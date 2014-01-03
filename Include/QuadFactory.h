@@ -46,7 +46,7 @@ namespace A2D {
 	{
 	public:
 
-		QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims);
+		QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims);
 		~QuadFactory();
 
 		ID3D10Buffer	*	aIndexBuffer;
@@ -58,7 +58,7 @@ namespace A2D {
 
 		Rect				aConstraints;
 		Dims			*	aWindowDims;
-		ID3D10Device	**	aDXDevice;
+		ID3D10Device	**	aDevice;
 
 		///////////////////////////////////////////////////////////
 	

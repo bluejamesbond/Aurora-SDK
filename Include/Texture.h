@@ -41,12 +41,12 @@ namespace A2D {
 	{
 	public:
 		// Constructor
-		Texture(ID3D10Device ** xDXDevice, LPCWSTR xFilename);
+		Texture(ID3D10Device ** xDevice, LPCWSTR xFilename);
 
 		// Deconstructor
 		~Texture();
 
-		ID3D10Device			**		aDXDevice;
+		ID3D10Device			**		aDevice;
 		ID3D10ShaderResourceView*		aResource;
 
 		static			ID3D10ShaderResourceView* aStaticResource;

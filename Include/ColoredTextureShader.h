@@ -39,13 +39,23 @@ namespace A2D {
 	{
 	public:
 
-		ColoredTextureShader(ID3D10Device ** xDXDevice);
+		ColoredTextureShader(ID3D10Device ** xDevice);
 
 	protected:
 
 		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout);
 		virtual unsigned int			getPolygonLayoutElementCount();
 		virtual	LPCSTR					getTechniqueName();
+
+	public:
+
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
+
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
+		
 
 	};
 }

@@ -4,8 +4,8 @@
 
 using namespace A2D;
 
-TextureShader::TextureShader(ID3D10Device ** xDXDevice) :
-AbstractTextureShader(xDXDevice){}
+TextureShader::TextureShader(ID3D10Device ** xDevice) :
+AbstractTextureShader(xDevice){}
 
 HRESULT	TextureShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout)
 {
@@ -36,4 +36,14 @@ unsigned int TextureShader::getPolygonLayoutElementCount()
 LPCSTR TextureShader::getTechniqueName()
 {
 	return "TextureTechnique";
+}
+
+LPCWSTR TextureShader::toString()
+{
+	return L"TextureShader";
+}
+
+LPCWSTR TextureShader::getClass()
+{
+	return L"TextureShader";
 }

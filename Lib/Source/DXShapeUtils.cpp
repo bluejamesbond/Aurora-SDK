@@ -5,7 +5,7 @@
 
 using namespace A2D;
 
-HRESULT DXShapeUtils::CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
+HRESULT DXShapeUtils::CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
 {
 	D3D10_BUFFER_DESC indexBufferDesc;
 	D3D10_SUBRESOURCE_DATA indexData;
@@ -26,7 +26,7 @@ HRESULT DXShapeUtils::CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10B
 	// Give the subresource structure a pointer to the index data.
 	indexData.pSysMem = indices;
 
-	SAFELY(xDXDevice->CreateBuffer(&indexBufferDesc, &indexData, xIndexBuffer));
+	SAFELY(xDevice->CreateBuffer(&indexBufferDesc, &indexData, xIndexBuffer));
 
 	delete[] indices;
 	indices = 0;

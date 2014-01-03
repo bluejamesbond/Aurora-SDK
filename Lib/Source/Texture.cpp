@@ -4,7 +4,7 @@
 
 using namespace A2D;
 
-Texture::Texture(ID3D10Device ** xDXDevice, LPCWSTR xSrc) : aSrc(xSrc), aDXDevice(xDXDevice)
+Texture::Texture(ID3D10Device ** xDevice, LPCWSTR xSrc) : aSrc(xSrc), aDevice(xDevice)
 {
 	aResource = NULL;
 }
@@ -52,7 +52,7 @@ HRESULT Texture::initialize()
 		D3DX10_IMAGE_INFO srcInfo;
 		loadInfo.pSrcInfo = &srcInfo;
 
-		SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDXDevice, aSrc, &loadInfo, NULL, &aStaticResource, NULL));
+		SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDevice, aSrc, &loadInfo, NULL, &aStaticResource, NULL));
 		
 		aResource = aStaticResource;
 

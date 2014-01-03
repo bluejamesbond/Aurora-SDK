@@ -33,6 +33,7 @@
 #include "Paint.h"
 #include "Color3D.h"
 #include "TextureShader.h"
+#include "ColorShader.h"
 
 namespace A2D {
 
@@ -78,12 +79,15 @@ namespace A2D {
 		CameraProperties				aCameraProperties;
 		Rect				 *			aClip;
 		QuadFactory			 *			aQuadFactory;
-		AbstractTextureShader*			aColoredTextureShader;
-		AbstractTextureShader*			aTextureShader;
 		TextureBuffer        *			aTextureBuffer;
 		TextureBuffer        *			aBlurBuffer;
 
-		ID3D10Device		**			aDXDevice;
+		// Shaders
+		AbstractShader		 *			aColorShader;
+		AbstractTextureShader*			aColoredTextureShader;
+		AbstractTextureShader*			aTextureShader;
+
+		ID3D10Device		**			aDevice;
 
 	public:
 

@@ -4,9 +4,9 @@
 
 using namespace A2D;
 
-QuadFactory::QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims)
+QuadFactory::QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims)
 {
-	aDXDevice = xDXDevice;
+	aDevice = xDevice;
 	aWindowDims = xWindowDims;
 }
 
@@ -21,6 +21,39 @@ void QuadFactory::setDepth(float xZ)
 	aDepth = xZ;
 }
 
+bool QuadFactory::setConstraints(Rect * xContraints, float xZ)
+{
+	aDepth = xZ;
+
+	Rect::memcpySSE2(&aConstraints, xContraints);
+
+	// WHy store constraints into every QuadData
+	//	if (memcmp(&xQuadData->aPreviousContraints, xContraints, sizeof(Rect)) != 0)
+	//	{
+	//		x_aligned_memcpy_sse2(&xQuadData->aPreviousContraints, xContraints, sizeof(Rect));
+	//		return aContraintsChanged = true;
+	//	}
+	//	else
+	//	{
+	//		return aContraintsChanged = false;
+	//	}
+
+	return true;
+}
+
+void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
+{
+	ID3D10Device  *	device = *aDevice;
+	unsigned int offset = 0;
+
+	// Set the vertex buffer to active in the input 
+	// assembler so it can be rendered.
+	device->IASetVertexBuffers(0, 1, &xVertexBuffer, &xStride, &offset);
+
+	// Set the index buffer to active in the input
+	// assembler so it can be rendered.
+	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+}
 
 HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 {
@@ -430,44 +463,10 @@ void  QuadFactory::memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex *
 	}
 }
 
-void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
-{
-	ID3D10Device  *	device = *aDXDevice;
-	unsigned int offset = 0;
-
-	// Set the vertex buffer to active in the input 
-	// assembler so it can be rendered.
-	device->IASetVertexBuffers(0, 1, &xVertexBuffer, &xStride, &offset);
-
-	// Set the index buffer to active in the input
-	// assembler so it can be rendered.
-	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-}
-
-bool QuadFactory::setConstraints(Rect * xContraints, float xZ)
-{
-	aDepth = xZ;
-
-	Rect::memcpySSE2(&aConstraints, xContraints);
-
-	// WHy store constraints into every QuadData
-	//	if (memcmp(&xQuadData->aPreviousContraints, xContraints, sizeof(Rect)) != 0)
-	//	{
-	//		x_aligned_memcpy_sse2(&xQuadData->aPreviousContraints, xContraints, sizeof(Rect));
-	//		return aContraintsChanged = true;
-	//	}
-	//	else
-	//	{
-	//		return aContraintsChanged = false;
-	//	}
-
-	return true;
-}
-
 HRESULT QuadFactory::initialize()
 {
-	SAFELY(DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &aVertexBuffer, 6));
-	SAFELY(DXShapeUtils::CreateDefaultIndexBuffer(*aDXDevice, &aIndexBuffer, 6));
+	SAFELY(DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
+	SAFELY(DXShapeUtils::CreateDefaultIndexBuffer(*aDevice, &aIndexBuffer, 6));
 
 	return S_OK;
 }

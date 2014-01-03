@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ABSTRACTTEXTURESHADER_H__
-#define __ABSTRACTTEXTURESHADER_H__
+#ifndef __ABSTRACTSHADER_H__
+#define __ABSTRACTSHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      ABSTRACTTEXTURESHADER
+//      TEXTURESHADER
 //
 //  Synopsis:
 //      Texture quad.
@@ -22,7 +22,6 @@
 #include "ExtLibs.h"
 #include "DXShaderUtils.h"
 #include "Texture.h"
-#include "AbstractShader.h"
 
 namespace A2D {
 
@@ -36,33 +35,49 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTextureShader : public AbstractShader
+	class AbstractShader
 	{
 	public:
 
-		AbstractTextureShader(ID3D10Device ** xDevice);
-		virtual ~AbstractTextureShader();
-
-	private:
-
-		ID3D10EffectShaderResourceVariable*        aTexturePtr;
-
-		Texture						*	aTexture;
-
-		static ID3D10Effect			*	aTextureEffect;
-
-	public:
-
-		void							setTexture(Texture * xTexture);
+		AbstractShader(ID3D10Device ** xDevice);
+		virtual ~AbstractShader();
 
 	protected:
 
-		virtual ID3D10Effect		**	getEffect();
-		virtual LPCWSTR					getEffectName();
-		virtual HRESULT					getUsableVariablePointers(ID3D10Effect * xEffect);
+		// Pull out and cache device
+		ID3D10Device				**	aDevice;
+		ID3D10EffectTechnique		*	aTechnique;
+		ID3D10InputLayout			*	aLayout;
+		bool							aHasAlpha = false;
+
+
+	private:
+
+		static ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
+		static ID3D10BlendState		*	aBlendState;
+		static ID3D10BlendState		*	aBlendDisabledState;
+
+		static float				**	aProjectionMatrix;
+
+	public:
+
+		void							renderShader();
+
+		static void						setViewMatrix(float ** xMatrix);
+		static void						setWorldMatrix(float ** xMatrix);
+		static void						setProjectionMatrix(float ** xMatrix);
+		static void						reloadProjectionMatrix();
+
+	protected:
+
 		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout) = 0;
 		virtual unsigned int			getPolygonLayoutElementCount() = 0;
 		virtual	LPCSTR					getTechniqueName() = 0;
+		virtual ID3D10Effect		**	getEffect() = 0;
+		virtual LPCWSTR					getEffectName() = 0;
+		virtual HRESULT					getUsableVariablePointers(ID3D10Effect * xEffect) = 0;
 
 	public:
 
@@ -70,6 +85,7 @@ namespace A2D {
 		// ABSTRACT IMPLEMENTATION
 		//////////////////////////////////////////////////////////
 
+		virtual HRESULT	                initialize();
 		virtual LPCWSTR                 getClass() = 0;
 		virtual LPCWSTR                 toString() = 0;
 	};

@@ -43,12 +43,12 @@ namespace A2D {
 	public:
 
 		template<class VertexClass>
-		static HRESULT CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
-		static HRESULT CreateDefaultIndexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
+		static HRESULT CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
+		static HRESULT CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
 	};
 
 	template<class VertexClass>
-	HRESULT DXShapeUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDXDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
+	HRESULT DXShapeUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
 	{
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;
@@ -66,7 +66,7 @@ namespace A2D {
 		// Give the subresource structure a pointer to the vertex data.
 		vertexData.pSysMem = vertices;
 
-		SAFELY(xDXDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer));
+		SAFELY(xDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer));
 
 		delete[] vertices;
 		vertices = 0;
