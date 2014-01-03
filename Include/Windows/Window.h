@@ -77,6 +77,7 @@ namespace A2D {
 
 		bool                            isDragged = false;
 		bool                            isResizing = false;
+		bool							isMoving = false;
 		bool                            aWinMoveRes = false;
 
 		Gdiplus::Color					  * 	aBorderColor = NULL;
@@ -103,6 +104,7 @@ namespace A2D {
 
 		HINSTANCE                       aHInstance;
 		HWND                            aHResizeWnd;
+		HWND							aHMoveWnd;
 		HWND                            aParentHWnd;
 		HCURSOR                         aCurrentCursor;
 		POINT                           aLastDraggedPoint;

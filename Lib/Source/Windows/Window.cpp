@@ -76,7 +76,7 @@ HWND Window::createCompatibleWindow(bool isParent)
 	top = static_cast<int>(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
 	width = static_cast<int>(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
 	height = static_cast<int>(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = static_cast<int>(isParent ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
+	lStyle = static_cast<int>(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
 	lExStyle = static_cast<int>(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
 	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
 	titleName = aName;
@@ -96,7 +96,8 @@ HWND Window::createCompatibleWindow(bool isParent)
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
-	if (aHResizeWnd != xHwnd)
+	SetForegroundWindow(xHwnd);
+	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
 	}
@@ -126,7 +127,11 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 		y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
 		!isResizing)
 	{
-		isResizing = true;
+		isResizing = xHwnd == aHResizeWnd ? true : false;
+	}
+	else if (y < top + _WINDOW_MOVE_BAR_DISTANCE)
+	{
+		isMoving = xHwnd == aHMoveWnd ? true : false;
 	}
 
 	SetCursor(aCurrentCursor);
@@ -136,28 +141,45 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 
 HRESULT Window::updateOnMouseMove(HWND xHwnd)
 {
-	if (aHResizeWnd != xHwnd)
+	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
+		if (xHwnd == aParentHWnd)
+		{
+			ReleaseCapture();
+		}
 		return 0;
 	}
 
 	bool isParent = aParentHWnd == xHwnd;
 	float left, right, bottom, top;
-	int x, y;
+	int x, y, xRel, yRel;
 	POINT p;
 	Rect& rect = aRect;
 
 	GetCursorPos(&p);
 
+	POINT pRel; // cursor coordinates relative to client window
+
+	GetCursorPos(&pRel);
+	ScreenToClient(aChildHWnd, &pRel);
+
+	//((A2DAbstractComponent*)aFrame->GetRootPane())->
+
 	x = p.x;
 	y = p.y;
+
+	xRel = pRel.x;
+	yRel = pRel.y;
+
+	SYSOUT_INT(xRel);
+	SYSOUT_INT(yRel);
 
 	left = (isParent ? aRelativeX + aPadding : aRealX);
 	top = (isParent ? aRelativeY + aPadding : aRealY);
 	bottom = top + aRect.aHeight;
 	right = left + aRect.aWidth;
 
-	if (!isResizing)
+	if (!isResizing && !isMoving)
 	{
 		//bottom left corner
 		if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
@@ -188,25 +210,33 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 			aWinMoveRes = false;
 		}
 		//left border
-		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
 			aWinMoveRes = true;
 		}
 		//right border
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
 			aWinMoveRes = false;
 		}
 		//bottom border
-		else if (y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE  &&
+			x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
 			aWinMoveRes = false;
 		}
 		//top border
-		else if (y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
+		else if (y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE  &&
+			x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
+			x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
 			aWinMoveRes = true;
@@ -215,6 +245,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		else
 		{
 			aCurrentCursor = LoadCursor(NULL, IDC_ARROW);
+			// Handle the window movement here.
 			aWinMoveRes = false;
 		}
 
@@ -227,7 +258,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		ScreenToClient(xHwnd, &aLastDraggedPoint);
 	}
 
-	if (isDragged && isResizing)
+	if (isDragged && (isResizing || isMoving))
 	{
 		float deltaY, deltaX;
 		HCURSOR currentCursor;
@@ -240,101 +271,111 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		currentCursor = GetCursor();
 
 		// Process resizing.
+		if (isResizing)
+		{
+			// Resize up and down.
+			if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
+			{
+				if (aWinMoveRes)
+				{
+					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
+						rect.aHeight + deltaY < aMaxDims.aHeight)
+					{
+						rect.aY -= (deltaY);
+						rect.aHeight += (deltaY);
+						p.y += static_cast<long>(deltaY);
+					}
+				}
+				else
+				{
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+				}
+			}
+			// Resize left and right.
+			else if (currentCursor == LoadCursor(NULL, IDC_SIZEWE))
+			{
+				if (aWinMoveRes)
+				{
+					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
+						rect.aWidth + deltaX < aMaxDims.aWidth)
+					{
+						rect.aX -= (deltaX);
+						rect.aWidth += (deltaX);
+						p.x += static_cast<long>(deltaX);
+					}
+				}
+				else
+				{
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+				}
 
-		// Resize up and down.
-		if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
-		{
-			if (aWinMoveRes)
+			}
+			// Resize upper right and lower left corners.
+			else if (currentCursor == LoadCursor(NULL, IDC_SIZENESW))
 			{
-				if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-					rect.aHeight + deltaY < aMaxDims.aHeight)
+				if (aWinMoveRes)
 				{
-					rect.aY -= (deltaY);
-					rect.aHeight += (deltaY);
-					p.y += static_cast<long>(deltaY);
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
+						rect.aWidth + deltaX < aMaxDims.aWidth)
+					{
+						rect.aX -= (deltaX);
+						rect.aWidth += (deltaX);
+						p.x += static_cast<long>(deltaX);
+					}
+				}
+				else
+				{
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
+						rect.aHeight + deltaY < aMaxDims.aHeight)
+					{
+						rect.aY -= (deltaY);
+						rect.aHeight += (deltaY);
+						p.y += static_cast<long>(deltaY);
+					}
 				}
 			}
-			else
+			// Resize upper left and lower right corners.
+			else if (currentCursor == LoadCursor(NULL, IDC_SIZENWSE))
 			{
-				rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
-			}
-		}
-		// Resize left and right.
-		else if (currentCursor == LoadCursor(NULL, IDC_SIZEWE))
-		{
-			if (aWinMoveRes)
-			{
-				if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-					rect.aWidth + deltaX < aMaxDims.aWidth)
+				if (aWinMoveRes)
 				{
-					rect.aX -= (deltaX);
-					rect.aWidth += (deltaX);
-					p.x += static_cast<long>(deltaX);
+					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
+						rect.aWidth + deltaX < aMaxDims.aWidth)
+					{
+						rect.aX -= (deltaX);
+						rect.aWidth += (deltaX);
+						p.x += static_cast<long>(deltaX);
+					}
+					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
+						rect.aHeight + deltaY < aMaxDims.aHeight)
+					{
+						rect.aY -= (deltaY);
+						rect.aHeight += (deltaY);
+						p.y += static_cast<long>(deltaY);
+					}
 				}
-			}
-			else
-			{
-				rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+				else
+				{
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+				}
 			}
 
 		}
-		// Resize upper right and lower left corners.
-		else if (currentCursor == LoadCursor(NULL, IDC_SIZENESW))
+		// Process window movement.
+		else if (isMoving)
 		{
-			if (aWinMoveRes)
-			{
-				rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
-				if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-					rect.aWidth + deltaX < aMaxDims.aWidth)
-				{
-					rect.aX -= (deltaX);
-					rect.aWidth += (deltaX);
-					p.x += static_cast<long>(deltaX);
-				}
-			}
-			else
-			{
-				rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-				if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-					rect.aHeight + deltaY < aMaxDims.aHeight)
-				{
-					rect.aY -= (deltaY);
-					rect.aHeight += (deltaY);
-					p.y += static_cast<long>(deltaY);
-				}
-			}
+			rect.aX -= deltaX;
+			rect.aY -= deltaY;
+			p.x += static_cast<long>(deltaX);
+			p.y += static_cast<long>(deltaY);
 		}
-		// Resize upper left and lower right corners.
-		else if (currentCursor == LoadCursor(NULL, IDC_SIZENWSE))
-		{
-			if (aWinMoveRes)
-			{
-				if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-					rect.aWidth + deltaX < aMaxDims.aWidth)
-				{
-					rect.aX -= (deltaX);
-					rect.aWidth += (deltaX);
-					p.x += static_cast<long>(deltaX);
-				}
-				if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-					rect.aHeight + deltaY < aMaxDims.aHeight)
-				{
-					rect.aY -= (deltaY);
-					rect.aHeight += (deltaY);
-					p.y += static_cast<long>(deltaY);
-				}
-			}
-			else
-			{
-				rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-				rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
-			}
 
-		}
 		// DEFER REGION //
 
-
-		render(); // For performance
+		render();
 
 		// DEFER REGION //
 
@@ -353,7 +394,7 @@ HRESULT Window::onSize(HWND hwnd)
 
 HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
-	if (aHResizeWnd != xHwnd)
+	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
 	}
@@ -361,6 +402,7 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	ReleaseCapture();
 	isDragged = false;
 	isResizing = false;
+	isMoving = false;
 
 	return S_OK;
 }
@@ -953,6 +995,7 @@ void Window::validate()
 
 	// Create resize window pointer.
 	aHResizeWnd = aOptBorderWidth < _WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
+	aHMoveWnd = aOptBorderWidth < _WINDOW_MOVE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
 
 	// Update caches
 	updateColorCache();
