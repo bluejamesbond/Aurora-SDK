@@ -51,7 +51,7 @@ struct TexturePixel
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-ColoredTexturePixel TextureVertexShader(ColoredTextureVertex input)
+ColoredTexturePixel ColoredTextureVertexShader(ColoredTextureVertex input)
 {
 	ColoredTexturePixel output;
 	
@@ -73,7 +73,7 @@ ColoredTexturePixel TextureVertexShader(ColoredTextureVertex input)
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 TexturePixelShader(ColoredTexturePixel input) : SV_Target
+float4 ColoredTexturePixelShader(ColoredTexturePixel input) : SV_Target
 {
 	float4 textureColor;
 	float4 alphaComposite;
@@ -91,9 +91,59 @@ float4 TexturePixelShader(ColoredTexturePixel input) : SV_Target
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Vertex Shader
+////////////////////////////////////////////////////////////////////////////////
+TexturePixel TextureVertexShader(TextureVertex input)
+{
+	TexturePixel output;
+
+	// Change the position vector to be 4 units for proper matrix calculations.
+	input.position.w = 1.0f;
+
+	// Calculate the position of the vertex against the world, view, and projection matrices.
+	output.position = mul(input.position, worldMatrix);
+	output.position = mul(output.position, viewMatrix);
+	output.position = mul(output.position, projectionMatrix);
+
+	output.tex = input.tex;
+
+	return output;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 TexturePixelShader(TexturePixel input) : SV_Target
+{
+	float4 textureColor;
+
+
+	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
+	textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+	// textureColor = saturate(blendColor);
+
+	return textureColor;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Technique
 ////////////////////////////////////////////////////////////////////////////////
 technique10 ColoredTextureTechnique
+{
+	pass pass0
+	{
+		SetVertexShader(CompileShader(vs_4_0, ColoredTextureVertexShader()));
+		SetPixelShader(CompileShader(ps_4_0, ColoredTexturePixelShader()));
+		SetGeometryShader(NULL);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Technique
+////////////////////////////////////////////////////////////////////////////////
+technique10 TextureTechnique
 {
 	pass pass0
 	{
@@ -102,4 +152,6 @@ technique10 ColoredTextureTechnique
 		SetGeometryShader(NULL);
 	}
 }
+
+
 

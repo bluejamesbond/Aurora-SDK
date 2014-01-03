@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __COLOREDTEXTURESHADER_H__
-#define __COLOREDTEXTURESHADER_H__
+#ifndef __TEXTURESHADER_H__
+#define __TEXTURESHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      COLOREDTEXTURESHADER
+//      TEXTURESHADER
 //
 //  Synopsis:
 //      Texture quad.
@@ -35,11 +35,11 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class ColoredTextureShader : public AbstractTextureShader
+	class TextureShader : public AbstractTextureShader
 	{
 	public:
 
-		ColoredTextureShader(ID3D10Device ** xDXDevice);
+		TextureShader(ID3D10Device ** xDXDevice);
 
 	protected:
 

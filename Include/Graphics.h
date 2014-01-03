@@ -32,6 +32,7 @@
 #include "MatrixFactory.h"
 #include "GradientPaint.h"
 #include "Color3D.h"
+#include "TextureShader.h"
 
 namespace A2D {
 
@@ -49,7 +50,6 @@ namespace A2D {
 	class MatrixFactory;
 	class RootPane;
 	class Window;
-	struct VertexData;
 	class Texture;
 	class TextureBuffer;
 
@@ -79,6 +79,7 @@ namespace A2D {
 		Rect				 *			aClip;
 		QuadFactory			 *			aQuadFactory;
 		AbstractTextureShader*			aColoredTextureShader;
+		AbstractTextureShader*			aTextureShader;
 		TextureBuffer        *			aTextureBuffer;
 		TextureBuffer        *			aBlurBuffer;
 
