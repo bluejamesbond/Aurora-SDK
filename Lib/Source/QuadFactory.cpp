@@ -21,11 +21,12 @@ void QuadFactory::setDepth(float xZ)
 	aDepth = xZ;
 }
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Rect * xTextureClip,
-	Dims * xTextureDims, bool xRepeat)
+
+HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
-
+	Rect * textureClip = xTexture->GetClip();
+	
 	int textureDimsChange = 0;
 	int textureClipChange = 0;
 	int rectChange = 0;
@@ -38,25 +39,11 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 
 	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return S_OK;
 
-	/*
-	// Compare using built in accelerated-function
-	rectChange = memcmp(&xQuadData->aPreviousRect, xRect, sizeof(Rect));
-	imagePropertiesChange = memcmp(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
-	imagePropertiesChange = memcmp(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
-
-	if (!(rectChange | imagePropertiesChange) && !aContraintsChanged)	return hr;
-
-	// Transfer all previous constraints over using accelerated functions
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousRect, xRect, sizeof(Rect));
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
-	*/
-
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 		texelRight, texelBottom,
-		textureWidth = xTextureClip->aWidth,
-		textureHeight = xTextureClip->aHeight,
+		textureWidth = textureClip->aWidth,
+		textureHeight = textureClip->aHeight,
 		depth = aDepth;
 
 	ColoredTextureVertex * vertices = xQuadData->aVertices;
@@ -84,31 +71,36 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 	texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
 	texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
 	texelBottom = xRepeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
+	
+	Color3D& topLeftColor = xPaint->aStart;
+	Color3D& topRightColor = xPaint->aStart;
+	Color3D& bottomLeftColor = xPaint->aEnd;
+	Color3D& bottomRightColor = xPaint->aEnd;
 
 	// Set up vertices
 	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
 	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
-	vertices[0].color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
+	vertices[0].color = D3DXVECTOR4(topLeftColor.aRed, topLeftColor.aGreen, topLeftColor.aBlue, topLeftColor.aAlpha);
 
 	vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
 	vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
-	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 1.0f, 1.0f);
+	vertices[1].color = D3DXVECTOR4(bottomRightColor.aRed, bottomRightColor.aGreen, bottomRightColor.aBlue, bottomRightColor.aAlpha);
 
 	vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
 	vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
-	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.3f, 1.0f);
+	vertices[2].color = D3DXVECTOR4(bottomLeftColor.aRed, bottomLeftColor.aGreen, bottomLeftColor.aBlue, bottomLeftColor.aAlpha);
 
 	vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
 	vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
-	vertices[3].color = D3DXVECTOR4(0.0f, 0.5f, 0.2f, 1.0f);
+	vertices[3].color = D3DXVECTOR4(topLeftColor.aRed, topLeftColor.aGreen, topLeftColor.aBlue, topLeftColor.aAlpha);
 
 	vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
 	vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
-	vertices[4].color = D3DXVECTOR4(0.0f, 1.0f, 1.0f, 1.0f);
+	vertices[4].color = D3DXVECTOR4(topRightColor.aRed, topRightColor.aGreen, topRightColor.aBlue, topRightColor.aAlpha);
 
 	vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
 	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
-	vertices[5].color = D3DXVECTOR4(0.1f, 1.0f, 0.1f, 1.0f);
+	vertices[5].color = D3DXVECTOR4(bottomRightColor.aRed, bottomRightColor.aGreen, bottomRightColor.aBlue, bottomRightColor.aAlpha);
 
 	// Lock the vertex buffer.
 	SAFELY(xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices)));
@@ -123,10 +115,10 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 
 }
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Rect * xTextureClip,
-	Dims * xTextureDims, bool xRepeat)
+HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
+	Rect * textureClip = xTexture->GetClip();
 
 	int textureDimsChange = 0;
 	int textureClipChange = 0;
@@ -157,8 +149,8 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rec
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 		texelRight, texelBottom,
-		textureWidth = xTextureClip->aWidth,
-		textureHeight = xTextureClip->aHeight,
+		textureWidth = textureClip->aWidth,
+		textureHeight = textureClip->aHeight,
 		depth = aDepth;
 
 	TextureVertex * vertices = xQuadData->aVertices;
@@ -219,8 +211,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rec
 
 }
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Rect * xTextureClip,
-	Dims * xTextureDims, bool xRepeat)
+HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint)
 {
 	Rect& constraints = aConstraints;
 
@@ -235,27 +226,9 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 	float rectHeight = xRect->aHeight;
 
 	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return S_OK;
-
-	/*
-	// Compare using built in accelerated-function
-	rectChange = memcmp(&xQuadData->aPreviousRect, xRect, sizeof(Rect));
-	imagePropertiesChange = memcmp(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
-	imagePropertiesChange = memcmp(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
-
-	if (!(rectChange | imagePropertiesChange) && !aContraintsChanged)	return hr;
-
-	// Transfer all previous constraints over using accelerated functions
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousRect, xRect, sizeof(Rect));
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
-	*/
-
+	
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
-		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
-		texelRight, texelBottom,
-		textureWidth = xTextureClip->aWidth,
-		textureHeight = xTextureClip->aHeight,
-		depth = aDepth;
+		left, right, top, bottom, depth = aDepth;
 
 	ColorVertex * vertices = xQuadData->aVertices;
 	void * mappedVertices = 0;
@@ -272,35 +245,30 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 	right = left + calcWidth;
 	top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
 	bottom = top - calcHeight;
-
-	texLeft = rectX > 0 ? 0.0f : abs(rectX);
-	texTop = rectY > 0 ? 0.0f : abs(rectY);
-	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
-	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
-
-	texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
-	texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
-	texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
-	texelBottom = xRepeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
+	
+	Color3D& topLeftColor = xPaint->aStart;
+	Color3D& topRightColor = xPaint->aStart;
+	Color3D& bottomLeftColor = xPaint->aEnd;
+	Color3D& bottomRightColor = xPaint->aEnd;
 
 	// Set up vertices
 	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
-	vertices[0].color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
+	vertices[0].color = D3DXVECTOR4(topLeftColor.aRed, topLeftColor.aGreen, topLeftColor.aBlue, topLeftColor.aAlpha);
 
 	vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
-	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 1.0f, 1.0f);
+	vertices[1].color = D3DXVECTOR4(bottomRightColor.aRed, bottomRightColor.aGreen, bottomRightColor.aBlue, bottomRightColor.aAlpha);
 
 	vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
-	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.3f, 1.0f);
+	vertices[2].color = D3DXVECTOR4(bottomLeftColor.aRed, bottomLeftColor.aGreen, bottomLeftColor.aBlue, bottomLeftColor.aAlpha);
 
 	vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
-	vertices[3].color = D3DXVECTOR4(0.0f, 0.5f, 0.2f, 1.0f);
+	vertices[3].color = D3DXVECTOR4(topLeftColor.aRed, topLeftColor.aGreen, topLeftColor.aBlue, topLeftColor.aAlpha);
 
 	vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
-	vertices[4].color = D3DXVECTOR4(0.0f, 1.0f, 1.0f, 1.0f);
+	vertices[4].color = D3DXVECTOR4(topRightColor.aRed, topRightColor.aGreen, topRightColor.aBlue, topRightColor.aAlpha);
 
 	vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right
-	vertices[5].color = D3DXVECTOR4(0.1f, 1.0f, 0.1f, 1.0f);
+	vertices[5].color = D3DXVECTOR4(bottomRightColor.aRed, bottomRightColor.aGreen, bottomRightColor.aBlue, bottomRightColor.aAlpha);
 
 	// Lock the vertex buffer.
 	SAFELY(xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices)));

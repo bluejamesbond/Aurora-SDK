@@ -30,7 +30,7 @@
 #include "ImageProperties.h"
 #include "Pipeline.h"
 #include "MatrixFactory.h"
-#include "GradientPaint.h"
+#include "Paint.h"
 #include "Color3D.h"
 #include "TextureShader.h"
 
@@ -89,18 +89,15 @@ namespace A2D {
 
 		Dims*							getDrawableDimensions();
 		CameraProperties*				getCameraProperties();
-		void							setClip(Rect * aRect, float xZ);
-		void							validate();
 		BackBuffer*						getBackBuffer();
+		
+		void							validate();
 
-		void							setBackground(Color3D& xColor);
-		void							setBackground(GradientPaint& xGradientPaint);
-		void							fillRect();
-		void							drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect);
-		void							drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool xRepeat);
-		void							drawImage();
-		void							drawRect();
-		void							drawLine();
+		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
+		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat);
+		void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
+
+		void							setClip(Rect * aRect, float xZ);
 
 	public:
 

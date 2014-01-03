@@ -50,7 +50,7 @@ void Graphics::validate()
 	AbstractTextureShader::reloadProjectionMatrix();
 }
 
-void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool xRepeat)
+void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
 	Texture * texture;
 	QuadData<TextureVertex> * quadData;
@@ -79,49 +79,49 @@ void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool 
 	quadData = static_cast<QuadData<TextureVertex>*>((*xPipeline)->aPipelineComps[1]);
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), xRepeat);
+	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat);
 	aTextureShader->setTexture(texture);
 
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
 	aTextureShader->renderTexture();
 }
 
-//void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool xRepeat)
-//{
-//	Texture * texture;
-//	QuadData<ColoredTextureVertex> * quadData;
-//
-//	if (*xPipeline == NULL)
-//	{
-//		// Intialize the pipeline
-//
-//		*xPipeline = new Pipeline();
-//
-//		texture = new Texture(aDXDevice, xSrc);
-//		quadData = new QuadData<ColoredTextureVertex>();
-//
-//		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &quadData->aVertexBuffer, 6);
-//
-//		texture->initialize();
-//
-//		(*xPipeline)->aPipelineComps[0] = texture;
-//		(*xPipeline)->aPipelineComps[1] = quadData;
-//
-//		(*xPipeline)->aLength = 2;
-//
-//		return;
-//	}
-//
-//	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-//	quadData = static_cast<QuadData<ColoredTextureVertex>*>((*xPipeline)->aPipelineComps[1]);
-//
-//	// texture->Update(textureArgs); <<<<+++ ADD LATER
-//	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), xRepeat);
-//	aColoredTextureShader->setTexture(texture);
-//
-//	aQuadFactory->renderQuad(quadData->aVertexBuffer);
-//	aColoredTextureShader->renderTexture();
-//}
+void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
+{
+	Texture * texture;
+	QuadData<ColoredTextureVertex> * quadData;
+
+	if (*xPipeline == NULL)
+	{
+		// Intialize the pipeline
+
+		*xPipeline = new Pipeline();
+
+		texture = new Texture(aDXDevice, xSrc);
+		quadData = new QuadData<ColoredTextureVertex>();
+
+		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &quadData->aVertexBuffer, 6);
+
+		texture->initialize();
+
+		(*xPipeline)->aPipelineComps[0] = texture;
+		(*xPipeline)->aPipelineComps[1] = quadData;
+
+		(*xPipeline)->aLength = 2;
+
+		return;
+	}
+
+	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
+	quadData = static_cast<QuadData<ColoredTextureVertex>*>((*xPipeline)->aPipelineComps[1]);
+
+	// texture->Update(textureArgs); <<<<+++ ADD LATER
+	aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xPaint, xRepeat);
+	aColoredTextureShader->setTexture(texture);
+
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColoredTextureVertex));
+	aColoredTextureShader->renderTexture();
+}
 
 
 LPCWSTR Graphics::getClass()
@@ -153,8 +153,8 @@ HRESULT Graphics::initialize()
 	aQuadFactory = new QuadFactory(device, aBackBufferDims);
 	SAFELY(aQuadFactory->initialize());
 
-	//aColoredTextureShader = new ColoredTextureShader(device);
-	//SAFELY(aColoredTextureShader->initialize());
+	aColoredTextureShader = new ColoredTextureShader(device);
+	SAFELY(aColoredTextureShader->initialize());
 
 	aTextureShader = new TextureShader(device);
 	SAFELY(aTextureShader->initialize());
