@@ -138,7 +138,7 @@ void AbstractEventQueue::run(int xThreadId)
 bool AbstractEventQueue::isDispatchingThread(int xFrameId)
 {
 	AbstractEventQueue* eventQueue = Toolkit::getSystemEventQueue(xFrameId);
-	AbstractThread* thread = AbstractThread::getInstance();
+	AbstractThread* thread = AbstractThread::getSingleton();
 
 	if (thread == NULL || eventQueue == NULL)
 	{

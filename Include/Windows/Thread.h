@@ -61,6 +61,8 @@ namespace A2D {
 
 	protected:
 
+		static AbstractThread * aClassInstance;
+
 		static DWORD WINAPI initThread(void * xParam);
 
 		////////////////////////////////////////////////////////////////////////////////

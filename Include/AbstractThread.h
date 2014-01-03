@@ -22,6 +22,7 @@
 
 #include "Abstract.h"
 #include "Runnable.h"
+#include "Common.h"
 
 namespace A2D {
 
@@ -35,24 +36,31 @@ namespace A2D {
 	public:
 
 		AbstractThread(Runnable * xRunnable);
+		~AbstractThread();
 
 	private:
 
 		Runnable * aRunnable;
 
 		int aId;
-		static int aClassInstances;
-		static AbstractThread * aClassInstance;
+
 
 	protected:
 
-		void fire();
-		static int getClassInstances();
+		static AbstractThread * aSingleton;
+		static int aInstanceCount;
+		static int aActiveCount;
 
 	public:
 
-		static AbstractThread* getInstance();
+		static AbstractThread* getSingleton();
+		static int instanceCount();
+		static int activeCount();
 
+		void fire();
+
+	public:
+		
 		virtual int	 id();
 		virtual bool start() = 0;
 		virtual void interrupt() = 0;

@@ -4,7 +4,12 @@
 
 using namespace A2D;
 
-Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable), aThreadID (0) {}
+AbstractThread* Thread::aClassInstance = new Thread(NULL); // Set an instance of this. So it can call waitAll
+
+Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable)
+{
+	aThreadID = 0;
+}
 
 Thread::~Thread()
 {
@@ -12,10 +17,15 @@ Thread::~Thread()
 	{
 		stop();
 	}
+
+	AbstractThread::~AbstractThread(); // Call super deconstructor
 }
+
 
 bool Thread::start()
 {
+	AbstractThread::aActiveCount++; // Increment parent activeCount
+
 	aHThread = CreateThread(NULL, 0, &initThread, this, 0, &aThreadID);
 	SetThreadPriority(aHThread, THREAD_PRIORITY_TIME_CRITICAL);
 	aHandles[AbstractThread::id()] = aHThread;
@@ -25,7 +35,11 @@ bool Thread::start()
 
 void Thread::interrupt()
 {
-    SuspendThread(aHThread);
+	if (aHThread)
+	{
+		SuspendThread(aHThread);
+		AbstractThread::aActiveCount--; // Decrement parent activeCount
+	}
 }
 
 int Thread::id()
@@ -35,12 +49,17 @@ int Thread::id()
 
 void Thread::resume()
 {
-    int resumeCount = ResumeThread(aHThread);
-  
-    while (resumeCount > 1)
-    {
-        resumeCount = ResumeThread(aHThread);
-    }
+	if (aHThread)
+	{
+		int resumeCount = ResumeThread(aHThread);
+		
+		while (resumeCount > 1)
+		{
+			resumeCount = ResumeThread(aHThread);
+		}
+
+		AbstractThread::aActiveCount++; // Increment parent activeCount
+	}
 }
 
 HANDLE Thread::aHandles[50];
@@ -52,7 +71,8 @@ void Thread::stop()
 		TerminateThread( aHThread, 0 );
 		CloseHandle(aHThread);
 		aHandles[AbstractThread::id()] = NULL;
-		aHThread= NULL;
+		aHThread = NULL;
+		AbstractThread::aActiveCount--; // Decrement parent activeCount
     }
 }
 
@@ -63,7 +83,7 @@ bool Thread::isAlive()
 
 void Thread::waitAll()
 {
-	WaitForMultipleObjects(AbstractThread::getClassInstances(), aHandles, true, INFINITE);
+	WaitForMultipleObjects(AbstractThread::instanceCount(), aHandles, true, INFINITE);
 }
 
 int Thread::getCurrentThreadId()

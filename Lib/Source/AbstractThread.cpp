@@ -4,7 +4,21 @@
 
 using namespace A2D;
 
-AbstractThread::AbstractThread(Runnable * xRunnable) : aRunnable (xRunnable) {}
+int AbstractThread::aInstanceCount = -1;
+int AbstractThread::aActiveCount = 0;
+
+AbstractThread* AbstractThread::aSingleton = NULL;
+
+AbstractThread::AbstractThread(Runnable * xRunnable)
+{
+	aRunnable = xRunnable;
+}
+
+AbstractThread::~AbstractThread()
+{
+	aInstanceCount--;
+}
+
 
 void AbstractThread::fire()
 {
@@ -14,32 +28,29 @@ void AbstractThread::fire()
 	}
 }
 
-int AbstractThread::aClassInstances = -1;
-
-AbstractThread* AbstractThread::aClassInstance = NULL;
-
-int AbstractThread::getClassInstances()
+int AbstractThread::activeCount()
 {
-	return aClassInstances + 1;
+	return aActiveCount;
 }
 
-AbstractThread* AbstractThread::getInstance()
+int AbstractThread::instanceCount()
 {
-	return aClassInstance;
+	return aInstanceCount + 1;
+}
+
+
+AbstractThread* AbstractThread::getSingleton()
+{
+	return aSingleton;
 }
 
 HRESULT AbstractThread::initialize()
 {
-    if (aRunnable == NULL)
-    {
-        return E_FAIL;
-    } 
+	NULLCHECK(aRunnable);
 
-	aClassInstance = this;
+	aId = ++aInstanceCount;
 
-	aId = ++aClassInstances;
-	
-    return S_OK;
+	return S_OK;
 }
 
 int AbstractThread::id()
