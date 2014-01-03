@@ -50,10 +50,7 @@ namespace A2D {
 
 		ID3D10Buffer	*	aIndexBuffer;
 		ID3D10Buffer	*	aVertexBuffer;
-
-		static unsigned int aStride;
-		static unsigned int aOffset;
-
+		
 		float				aDepth = 0.0f;
 
 		///////////////////////////////////////////////////////////
@@ -72,7 +69,7 @@ namespace A2D {
 		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, bool xRepeat);
 
 		void							setDepth(float xZ);
-		void							renderQuad(ID3D10Buffer * xVertexBuffer);
+		void							renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride);
 		bool							setConstraints(Rect * xContraints, float xZ);
 
 	public:

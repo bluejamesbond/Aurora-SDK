@@ -4,9 +4,6 @@
 
 using namespace A2D;
 
-unsigned int QuadFactory::aStride = sizeof(ColoredTextureVertex);
-unsigned int QuadFactory::aOffset = 0;
-
 QuadFactory::QuadFactory(ID3D10Device ** xDXDevice, Dims * xWindowDims)
 {
 	aDXDevice = xDXDevice;
@@ -465,19 +462,18 @@ void  QuadFactory::memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex *
 	}
 }
 
-void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer)
+void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 {
 	ID3D10Device  *	device = *aDXDevice;
+	unsigned int offset = 0;
 
 	// Set the vertex buffer to active in the input 
 	// assembler so it can be rendered.
-	device->IASetVertexBuffers(0, 1, &xVertexBuffer, &aStride, &aOffset);
+	device->IASetVertexBuffers(0, 1, &xVertexBuffer, &xStride, &offset);
 
 	// Set the index buffer to active in the input
 	// assembler so it can be rendered.
 	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	return;
 }
 
 bool QuadFactory::setConstraints(Rect * xContraints, float xZ)

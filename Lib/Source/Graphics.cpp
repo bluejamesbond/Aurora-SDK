@@ -80,10 +80,9 @@ void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool 
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
 	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), xRepeat);
-	// aQuadFactory->updateVertexBuffer(quadData, aRect, texture->GetClip(), texture->GetSize(), true);
 	aTextureShader->setTexture(texture);
 
-	aQuadFactory->renderQuad(quadData->aVertexBuffer);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
 	aTextureShader->renderTexture();
 }
 
