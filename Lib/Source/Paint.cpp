@@ -41,6 +41,8 @@ Paint Paint::CLEAR(Color3D::CLEAR);
 Paint Paint::ALIZARIN_TO_POMEGRANATE_VERTICAL(0, 0, Color3D::ALIZARIN, 0, 0, Color3D::POMEGRANATE, Mode::VERTICAL);
 Paint Paint::GREEN_SEA_TO_POMEGRANATE_VERTICAL(0, 0, Color3D::GREEN_SEA, 0, 0, Color3D::POMEGRANATE, Mode::VERTICAL);
 
+Paint::Paint(){}
+
 Paint::Paint(int xColor)
 {
 	Color3D::from(aStart, xColor);
@@ -75,4 +77,9 @@ Paint::Paint(float xStartX, float xStartY, Color3D& xStart, float xEndX, float x
 	aEndX = xEndX;
 	aEndY = xEndY;
 	aMode = xMode;
+}
+
+void Paint::from(Paint& xDst, Paint& xSrc)
+{
+	memcpy(&xDst, &xSrc, sizeof(Paint));
 }

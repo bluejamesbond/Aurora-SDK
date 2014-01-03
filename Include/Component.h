@@ -24,6 +24,7 @@
 #include "ImageProperties.h"
 #include "Pipeline.h"
 #include "Rect.h"
+#include "Paint.h"
 
 namespace A2D {
 
@@ -41,8 +42,12 @@ namespace A2D {
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
-    class Component
+    class Component : public Abstract
     {
+	public:
+
+		Component();
+		~Component();
 
 	private:
 
@@ -63,7 +68,7 @@ namespace A2D {
 
         ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
         LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
-        int                             aOptBackgroundColor = 0xFF000000;       // background-color  (CSS)
+        Paint                           aOptBackgroundPaint;			        // background-color  (CSS)
         int                             aOptBackgroundPosX = 0;                 // background-position-x  (CSS)
         int                             aOptBackgroundPosY = 0;                 // background-position-x  (CSS)
 
@@ -107,7 +112,7 @@ namespace A2D {
         int                             getBackgroundPositionY()                                                { return    aOptBackgroundPosY; };
         int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps.aOptSizeX; };
         int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps.aOptSizeY; };
-        int                             getBackgroundColor()                                                    { return    aOptBackgroundColor; };
+		Paint&                          getBackgroundPaint()                                                    { return    aOptBackgroundPaint; };
         int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps.aOptRepeat; };
         ImageProperties                 getBackgroundProperties()                                               { return    aOptBackgroundProps; };
 		        
@@ -117,11 +122,11 @@ namespace A2D {
         void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
         void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
         void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
-        void                            setBackgroundColor(int xOptColor)                                   { aOptBackgroundColor = xOptColor; };
+		void                            setBackgroundPaint(Paint& xOptPaint)                                   { aOptBackgroundPaint = xOptPaint; };
         void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
         void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
         void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
-                                                      int xOptBackroundSizeX, int xOptBackroundSizeY, int xOptBackgroundColor, int xOptBackgroundRepeat);
+												      int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
         
     public:
 

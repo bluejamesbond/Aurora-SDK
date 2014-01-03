@@ -38,6 +38,7 @@ namespace A2D{
 			SOLID
 		};
 
+		Paint();
 		Paint(int xColor);
 		Paint(Color& xColor);
 		Paint(Color3D& xColor);
@@ -87,6 +88,8 @@ namespace A2D{
 		Color3D								aEnd;
 
 		Mode								aMode = Mode::SOLID;
+
+		static void							from(Paint& xDst, Paint& xSrc);
 
 	};
 }

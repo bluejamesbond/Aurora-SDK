@@ -129,6 +129,7 @@ namespace A2D {
 		HRESULT                         updateOnMouseDown(HWND xHwnd);
 		HRESULT                         updateOnMouseMove(HWND xHwnd);
 		HRESULT                         updateOnMouseUp(HWND xHwnd);
+		HRESULT							onSize(HWND hwnd);
 
 		void                            destroyBackgroundResources();
 		void                            destroyShadowResources();
@@ -182,7 +183,7 @@ namespace A2D {
 
 		virtual void                    render();
 		virtual void					validate();
-		HRESULT							onSize(HWND hwnd);
+
 	public:
 
 		virtual void              *     getPlatformCompatibleWindowHandle();

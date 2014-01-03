@@ -38,6 +38,8 @@ namespace A2D {
 
 	public:
 
+		Frame();
+
 		Frame(HINSTANCE xHInstance);
 
 		~Frame();

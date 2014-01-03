@@ -5,16 +5,21 @@
 
 using namespace A2D;
 
+Component::Component(){}
+
+Component::~Component(){}
+
 void Component::setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
-	int xOptBackroundSizeX,	int xOptBackroundSizeY,	int xOptBackgroundColor, int xOptBackgroundRepeat)
+	int xOptBackroundSizeX,	int xOptBackroundSizeY,	Paint& xOptBackgroundPaint, int xOptBackgroundRepeat)
 {
 	aOptBackgroundSrc = xOptBackgroundImage;
 	aOptBackgroundPosX = xOptBackroundPositionX;
 	aOptBackgroundPosY = xOptBackroundPositionY;
 	aOptBackgroundProps.aOptSizeX = xOptBackroundSizeX;
 	aOptBackgroundProps.aOptSizeY = xOptBackroundSizeY;
-	aOptBackgroundColor = xOptBackgroundColor;
 	aOptBackgroundProps.aOptRepeat = xOptBackgroundRepeat;
+
+	Paint::from(aOptBackgroundPaint, xOptBackgroundPaint);
 };
 
 void Component::paintComponent()

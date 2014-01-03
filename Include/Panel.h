@@ -51,7 +51,6 @@ namespace A2D {
 		float translationXDirectionG1 = 1;
 		float translationYDirectionG1 = 1;
 		
-
 	public:
 
 		virtual LPCWSTR                 getClass();

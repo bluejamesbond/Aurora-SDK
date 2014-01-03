@@ -61,6 +61,7 @@ namespace A2D {
 
 	public:
 
+		AbstractFrame();
 		~AbstractFrame();
 
 	private:

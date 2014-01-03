@@ -8,9 +8,9 @@ using namespace A2D;
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
-Frame::Frame(HINSTANCE xHInstance) : aHInstance(xHInstance) {}
+Frame::Frame() : AbstractFrame() {};
 
-Frame::~Frame(){}
+Frame::Frame(HINSTANCE xHInstance) : aHInstance(xHInstance) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 // ABSTRACTFRAME

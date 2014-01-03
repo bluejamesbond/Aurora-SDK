@@ -30,7 +30,7 @@ namespace A2D {
 
 	class Abstract
 	{
-
+		
 	public:
 
 		virtual HRESULT                 initialize() = 0;                           // initialize  

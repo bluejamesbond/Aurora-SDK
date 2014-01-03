@@ -7,6 +7,8 @@ using namespace A2D;
 
 int AbstractFrame::aClassInstances = -1;
 
+AbstractFrame::AbstractFrame(){}
+
 AbstractFrame::~AbstractFrame()
 {
 	DESTROY(aBackBuffer);

@@ -46,6 +46,8 @@ namespace A2D {
 	class RootPane : public Panel
 	{
 
+
+
 	private:
 
 		bool							aLockDimensions = false;
