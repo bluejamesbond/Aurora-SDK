@@ -99,9 +99,7 @@ namespace A2D {
 		Gdiplus::TextureBrush              *     aRightShadowBrush = NULL;
 		Gdiplus::TextureBrush              *     aBottomShadowBrush = NULL;
 		Gdiplus::TextureBrush              *     aBackgroundBrush = NULL;
-
-		Gdiplus::Graphics                  *     aGraphics = NULL;
-
+		
 		HINSTANCE                       aHInstance;
 		HWND                            aHResizeWnd;
 		HWND							aHMoveWnd;
@@ -109,6 +107,7 @@ namespace A2D {
 		HCURSOR                         aCurrentCursor;
 		POINT                           aLastDraggedPoint;
 
+		Rect							aLastRect;
 		Dims							aMinSafeDims;
 
 		static int						aClassInstances;
@@ -147,8 +146,8 @@ namespace A2D {
 		void							updateBackgroundCache();
 		void							updateColorCache();
 
-		void							renderComponent();
-		void							renderComponentBorder();
+		void							paintComponent(Gdiplus::Graphics& graphics);
+		void							paintComponentBorder(Gdiplus::Graphics& graphics);
 
 		HRESULT							createResources();
 		void							destroyResources();

@@ -152,7 +152,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 	bool isParent = aParentHWnd == xHwnd;
 	float left, right, bottom, top;
-	int x, y, xRel, yRel;
+	int x, y;
 	POINT p;
 	Rect& rect = aRect;
 
@@ -256,6 +256,8 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		deltaY = static_cast<float>(aLastDraggedPoint.y - p.y);
 		deltaX = static_cast<float>(aLastDraggedPoint.x - p.x);
 		currentCursor = GetCursor();
+
+		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
 		// Process resizing.
 		if (isResizing)
@@ -778,43 +780,69 @@ void Window::destroyResources()
 	destroyColorResources();
 }
 
-void Window::renderComponentBorder()
+void Window::paintComponentBorder(Gdiplus::Graphics& graphics)
 {
-	if (aOptBorderWidth > 0)
-	{
-		Gdiplus::Pen borderPen(*aBorderColor, aOptBorderWidth);
+	float padding = aPadding;
+	float optBorderWidth = aOptBorderWidth;
+	float realWidth = aRealWidth;
+	float realHeight = aRealHeight;
 
-		aGraphics->DrawRectangle(&borderPen, aPadding + aOptBorderWidth / 2, aPadding + aOptBorderWidth / 2, aRealWidth + aOptBorderWidth, aRealHeight + aOptBorderWidth);
+	Gdiplus::Color& borderColor = *aBorderColor;
+
+	if (optBorderWidth > 0)
+	{
+		Gdiplus::Pen borderPen(borderColor, optBorderWidth);
+
+		graphics.DrawRectangle(&borderPen, padding + optBorderWidth / 2, padding + optBorderWidth / 2, aRealWidth + optBorderWidth, realHeight + optBorderWidth);
 
 		DeleteObject(&borderPen);
 	}
 }
 
-void Window::renderComponent()
+void Window::paintComponent(Gdiplus::Graphics& graphics)
 {
-	aTopShadowBrush->ResetTransform();
-	aLeftShadowBrush->ResetTransform();
-	aRightShadowBrush->ResetTransform();
-	aBottomShadowBrush->ResetTransform();
+	float padding = aPadding;
+	float optBorderWidth = aOptBorderWidth;
+	float shadowPadding = aShadowPadding;
+	float relativeWidth = aRelativeWidth;
+	float relativeHeight = aRelativeHeight;
+	float realWidth = aRealWidth;
+	float realHeight = aRealHeight;
 
-	aTopShadowBrush->TranslateTransform(aShadowPadding, FLT_ZERO);
-	aGraphics->FillRectangle(aTopShadowBrush, aShadowPadding, FLT_ZERO, aRelativeWidth - aShadowPadding * 2, aPadding);
+	Gdiplus::TextureBrush * topShadowBrush = aTopShadowBrush;
+	Gdiplus::TextureBrush * leftShadowBrush = aLeftShadowBrush;
+	Gdiplus::TextureBrush * rightShadowBrush = aRightShadowBrush;
+	Gdiplus::TextureBrush * bottomShadowBrush = aBottomShadowBrush;
+	Gdiplus::TextureBrush * backgroundBrush = aBackgroundBrush;
 
-	aLeftShadowBrush->TranslateTransform(FLT_ZERO, aShadowPadding);
-	aGraphics->FillRectangle(aLeftShadowBrush, FLT_ZERO, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
+	Gdiplus::Image * topLeftShadow = aTopLeftShadow;
+	Gdiplus::Image * bottomLeftShadow = aBottomLeftShadow;
+	Gdiplus::Image * topRightShadow = aTopRightShadow;
+	Gdiplus::Image * bottomRightShadow = aBottomRightShadow;
 
-	aRightShadowBrush->TranslateTransform(aRelativeWidth - aPadding, aShadowPadding);
-	aGraphics->FillRectangle(aRightShadowBrush, aRelativeWidth - aPadding, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
+	topShadowBrush->ResetTransform();
+	leftShadowBrush->ResetTransform();
+	rightShadowBrush->ResetTransform();
+	bottomShadowBrush->ResetTransform();
 
-	aBottomShadowBrush->TranslateTransform(aShadowPadding, aRelativeHeight - aPadding);
-	aGraphics->FillRectangle(aBottomShadowBrush, aShadowPadding, aRelativeHeight - aPadding, aRelativeWidth - aShadowPadding * 2, aPadding);
+	topShadowBrush->TranslateTransform(shadowPadding, FLT_ZERO);
+	graphics.FillRectangle(topShadowBrush, shadowPadding, FLT_ZERO, relativeWidth - shadowPadding * 2, padding);
 
-	aGraphics->DrawImage(aTopLeftShadow, FLT_ZERO, FLT_ZERO, aShadowPadding, aShadowPadding);
-	aGraphics->DrawImage(aBottomLeftShadow, FLT_ZERO, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-	aGraphics->DrawImage(aTopRightShadow, aRelativeWidth - aShadowPadding, FLT_ZERO, aShadowPadding, aShadowPadding);
-	aGraphics->DrawImage(aBottomRightShadow, aRelativeWidth - aShadowPadding, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
+	leftShadowBrush->TranslateTransform(FLT_ZERO, shadowPadding);
+	graphics.FillRectangle(leftShadowBrush, FLT_ZERO, shadowPadding, padding, relativeHeight - shadowPadding * 2);
 
-	aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aRealWidth + aOptBorderWidth, aRealHeight + aOptBorderWidth);
+	rightShadowBrush->TranslateTransform(relativeWidth - padding, shadowPadding);
+	graphics.FillRectangle(rightShadowBrush, relativeWidth - padding, shadowPadding, padding, relativeHeight - shadowPadding * 2);
+
+	bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
+	graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
+
+	graphics.DrawImage(topLeftShadow, FLT_ZERO, FLT_ZERO, shadowPadding, shadowPadding);
+	graphics.DrawImage(bottomLeftShadow, FLT_ZERO, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
+	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, FLT_ZERO, shadowPadding, shadowPadding);
+	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
+
+	graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1103,41 +1131,67 @@ void Window::render()
 	// Cache variables to ensure that these variables
 	// won't be changed in the middle of update() via concurrent
 	// threads.
-	aRealX = aRect.aX + aOptBorderWidth;
-	aRealY = aRect.aY + aOptBorderWidth;
-	aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
-	aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
-	aRelativeX = aRect.aX - aPadding;
-	aRelativeY = aRect.aY - aPadding;
-	aRelativeWidth = aRect.aWidth + aPadding * 2;
-	aRelativeHeight = aRect.aHeight + aPadding * 2;
+
+	float padding = aPadding;
+	float optBorderWidth = aOptBorderWidth;
+
+	float realX = aRealX = aRect.aX + aOptBorderWidth;
+	float realY = aRealY = aRect.aY + aOptBorderWidth;
+	float realWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
+	float realHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
+	float relativeX = aRelativeX = aRect.aX - aPadding;
+	float relativeY = aRelativeY = aRect.aY - aPadding;
+	float relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;
+	float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
 
 	/***********************************************/
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(aRelativeX), static_cast<int>(aRelativeY), static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(relativeX), static_cast<int>(relativeY), static_cast<int>(relativeWidth), static_cast<int>(relativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	/***********************************************/
 
-	SIZE size = { static_cast<long>(aRelativeWidth), static_cast<long>(aRelativeHeight) };
+	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
 	HDC hwndDC = GetDC(aParentHWnd);
 	HDC memDC = CreateCompatibleDC(hwndDC);
-	POINT ptDst = { static_cast<long>(aRelativeX), static_cast<long>(aRelativeY) };
+	HDC memDCChild = CreateCompatibleDC(hwndDC);
+	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) };
 	POINT ptSrc = { 0, 0 };
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight));
+	// Create secondary DC
+	HBITMAP memBitmapChild = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
+	SelectObject(memDCChild, memBitmapChild);
+
+	// Request copy of frameBuffer
+	PrintWindow(aChildHWnd, memDCChild, 0);
+
+	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
 	SelectObject(memDC, memBitmap);
 
-	aGraphics = new Gdiplus::Graphics(memDC);
+	Gdiplus::Graphics graphics(memDC);
 
 	/***********************************************/
 
-	renderComponent();
-	renderComponentBorder();
+	paintComponent(graphics);
+	paintComponentBorder(graphics);
 	
 	/***********************************************/
-	
+
+	// Paint from frameBuffer of the child HWND into the 
+	// the parent HWND
+	StretchBlt(memDC, aOptBorderWidth + aPadding,
+		aOptBorderWidth + aPadding,
+		realWidth,
+		realHeight,
+		memDCChild,
+		0, 0,
+		aLastRect.aWidth - aOptBorderWidth*2,
+		aLastRect.aHeight - aOptBorderWidth * 2,
+		SRCCOPY);
+
+	/***********************************************/
+
 	BLENDFUNCTION blendFunction;
 	blendFunction.AlphaFormat = AC_SRC_ALPHA;
 	blendFunction.BlendFlags = 0;
@@ -1148,20 +1202,19 @@ void Window::render()
 
 	/***********************************************/
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	// Reisze the child only after requesting frameBuffer
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(realX), static_cast<int>(realY), static_cast<int>(realWidth), static_cast<int>(realHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	EndDeferWindowPos(hdwp);
-
-	// SetWindowPos(aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
-
+	
 	/***********************************************/
 
-	aGraphics->ReleaseHDC(memDC);
-	delete aGraphics;
-	aGraphics = 0;
+	graphics.ReleaseHDC(memDC);
 
 	DeleteObject(memBitmap);
-	ReleaseDC(NULL, memDC);
+	DeleteObject(memBitmapChild);
+	ReleaseDC(aParentHWnd, memDCChild);
+	ReleaseDC(aParentHWnd, memDC);
 	ReleaseDC(aParentHWnd, hwndDC);
 	DeleteDC(hwndDC);
 	DeleteDC(memDC);
