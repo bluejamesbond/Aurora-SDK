@@ -15,7 +15,7 @@ Graphics::Graphics(BackBuffer * xBackBuffer)
 Graphics::~Graphics()
 {
 	DESTROY(aQuadFactory);
-	DESTROY(aTextureShader);
+	DESTROY(aColoredTextureShader);
 	DESTROY(aViewMatrix);
 	DESTROY(aWorldMatrix);
 	DESTROY(aProjection2DMatrix);
@@ -36,7 +36,7 @@ Dims * Graphics::getDrawableDimensions()
 
 void Graphics::setClip(Rect * xClip, float xDepth)
 {
-	aQuadFactory->setConstraints(NULL, aClip = xClip, xDepth);
+	aQuadFactory->setConstraints(aClip = xClip, xDepth);
 }
 
 void Graphics::validate()
@@ -44,16 +44,16 @@ void Graphics::validate()
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
 
-	G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
+	// G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
 	G_SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 	
-	aTextureShader->loadMatrices();
+	AbstractTextureShader::reloadProjectionMatrix();
 }
 
 void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool xRepeat)
 {
 	Texture * texture;
-	QuadData * quadData;
+	QuadData<ColoredTextureVertex> * quadData;
 
 	if (*xPipeline == NULL)
 	{
@@ -62,7 +62,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool 
 		*xPipeline = new Pipeline();
 
 		texture = new Texture(aDXDevice, xSrc);
-		quadData = new QuadData();
+		quadData = new QuadData<ColoredTextureVertex>();
 		
 		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &quadData->aVertexBuffer, 6);
 
@@ -77,14 +77,14 @@ void Graphics::drawImage(Pipeline ** xPipeline, LPCWSTR xSrc, Rect& aRect, bool 
 	}
 
 	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData*>((*xPipeline)->aPipelineComps[1]);
+	quadData = static_cast<QuadData<ColoredTextureVertex>*>((*xPipeline)->aPipelineComps[1]);
 	
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
 	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture->GetClip(), texture->GetSize(), xRepeat);
-	aTextureShader->setTexture(texture);
+	aColoredTextureShader->setTexture(texture);
 				
-	aQuadFactory->RenderQuad(quadData);
-	aTextureShader->renderTexture();
+	aQuadFactory->renderQuad(quadData->aVertexBuffer);
+	aColoredTextureShader->renderTexture();
 }
 
 LPCWSTR Graphics::getClass()
@@ -116,8 +116,12 @@ HRESULT Graphics::initialize()
 	aQuadFactory = new QuadFactory(device, aBackBufferDims);
 	SAFELY(aQuadFactory->initialize());
 
-	aTextureShader = new TextureShader(device, &aWorldMatrix, &aViewMatrix, &aProjection2DMatrix);
-	SAFELY(aTextureShader->initialize());
+	aColoredTextureShader = new ColoredTextureShader(device);
+	SAFELY(aColoredTextureShader->initialize());
+
+	AbstractTextureShader::setViewMatrix(&aViewMatrix);
+	AbstractTextureShader::setProjectionMatrix(&aProjection2DMatrix);
+	AbstractTextureShader::setWorldMatrix(&aWorldMatrix);
 
 	return S_OK;
 }

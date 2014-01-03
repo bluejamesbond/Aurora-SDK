@@ -23,7 +23,6 @@
 #include "Abstract.h"
 #include "Graphics.h"
 #include "Renderable.h"
-#include "Pipelineable.h"
 #include "AbstractTexture.h"
 #include "RootPane.h"
 #include "CameraProperties.h"

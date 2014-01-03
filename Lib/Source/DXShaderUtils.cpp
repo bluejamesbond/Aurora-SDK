@@ -4,7 +4,7 @@
 
 using namespace A2D;
 
-HRESULT DXShaderUtils::LoadShaderFromFile(LPCWSTR xFilename, ID3D10Device * aDXDevice, ID3D10Effect ** xEffect)
+HRESULT DXShaderUtils::LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * aDXDevice, ID3D10Effect ** xEffect)
 {
 	ID3D10Blob* errorMessage;
 
@@ -42,3 +42,21 @@ HRESULT DXShaderUtils::CreatePNGCompatibleBlendStates(ID3D10Device * aDXDevice, 
 
 	return S_OK;
 }
+
+HRESULT DXShaderUtils::loadTechniqueFromEffect(ID3D10Device * xDevice, ID3D10Effect * xEffect, ID3D10InputLayout ** xLayout, ID3D10EffectTechnique ** xTechnqiue, D3D10_INPUT_ELEMENT_DESC * xPolygonLayout, LPCSTR xName, unsigned int xElements)
+{
+	D3D10_PASS_DESC passDesc;
+
+	// Get a pointer to the technique inside the shader.
+	NULLCHECK((*xTechnqiue = xEffect->GetTechniqueByName(xName)));
+	
+	// Get the description of the first pass 
+	// described in the shader technique.
+	(*xTechnqiue)->GetPassByIndex(0)->GetDesc(&passDesc);
+
+	// Create the input layout.
+	SAFELY(xDevice->CreateInputLayout(xPolygonLayout, xElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, xLayout));
+
+	return S_OK;
+}
+

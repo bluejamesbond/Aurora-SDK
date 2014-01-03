@@ -23,7 +23,7 @@
 #include "Common.h"
 #include "TextureVertex.h"
 #include "BackBuffer.h"
-#include "TextureShader.h"
+#include "ColoredTextureShader.h"
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
@@ -78,7 +78,7 @@ namespace A2D {
 		CameraProperties				aCameraProperties;
 		Rect				 *			aClip;
 		QuadFactory			 *			aQuadFactory;
-		TextureShader		 *			aTextureShader;
+		AbstractTextureShader*			aColoredTextureShader;
 		TextureBuffer        *			aTextureBuffer;
 		TextureBuffer        *			aBlurBuffer;
 

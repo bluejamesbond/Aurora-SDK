@@ -25,6 +25,7 @@
 #include "Rect.h"
 #include "QuadData.h"
 #include "ColoredTextureVertex.h"
+#include "ColorVertex.h"
 
 namespace A2D {
 
@@ -63,12 +64,16 @@ namespace A2D {
 
 		///////////////////////////////////////////////////////////
 	
-		static void						memcpySSE2QuadTextureVertex(TextureVertex * xDest, const TextureVertex * xSrc);
-		static void						memcpySSE2QuadColoredTextureVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
-		HRESULT							updateVertexBuffer(QuadData * aQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, bool xRepeat);
-		void							RenderQuad(QuadData * aQuadData);
-		bool							setConstraints(QuadData * aQuadData, Rect * xContraints, float xZ);
+		static void						memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc);
+		static void						memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
+		static void						memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc);
+		HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, bool xRepeat);
+		HRESULT							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, bool xRepeat);
+		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Rect * xTextureClip, Dims * xTextureDims, bool xRepeat);
+
 		void							setDepth(float xZ);
+		void							renderQuad(ID3D10Buffer * xVertexBuffer);
+		bool							setConstraints(Rect * xContraints, float xZ);
 
 	public:
 
@@ -80,7 +85,10 @@ namespace A2D {
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
 	};
+
 }
+
+
 
 
 #endif

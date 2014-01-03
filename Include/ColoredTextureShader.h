@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PIPELINEABLE_H__
-#define __PIPELINEABLE_H__
+#ifndef __TEXTURESHADER_H__
+#define __TEXTURESHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      PIPELINEABLE
+//  Class: 
+//      TEXTURESHADER
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Texture quad.
 //
 //------------------------------------------------------------------------------
 
@@ -21,16 +20,32 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "Abstract.h"
+#include "DXShaderUtils.h"
+#include "AbstractTextureShader.h"
 
 namespace A2D {
+
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
+
+	class Abstract;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Pipelineable
+	class ColoredTextureShader : public AbstractTextureShader
 	{
+	public:
+
+		ColoredTextureShader(ID3D10Device ** xDXDevice);
+
+	protected:
+
+		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout);
+		virtual unsigned int			getPolygonLayoutElementCount();
+		virtual	LPCSTR					getTechniqueName();
 
 	};
 }

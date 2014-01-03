@@ -22,7 +22,6 @@
 
 #include "ExtLibs.h"
 #include "Abstract.h"
-#include "Pipelineable.h"
 #include "Common.h"
 
 namespace A2D {

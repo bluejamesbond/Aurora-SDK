@@ -21,27 +21,39 @@ SamplerState SampleType
 //////////////
 // TYPEDEFS //
 //////////////
-struct VertexInput
+struct ColoredTextureVertex
 {
 	float4 position : POSITION;
 	float2 tex : TEXCOORD0;
 	float4 color : COLOR;
 };
 
-struct PixelInput
+struct ColoredTexturePixel
 {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 	float4 color : COLOR;
 };
 
+struct TextureVertex
+{
+	float4 position : POSITION;
+	float2 tex : TEXCOORD0;
+};
+
+struct TexturePixel
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInput TextureVertexShader(VertexInput input)
+ColoredTexturePixel TextureVertexShader(ColoredTextureVertex input)
 {
-	PixelInput output;
+	ColoredTexturePixel output;
 	
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
@@ -61,7 +73,7 @@ PixelInput TextureVertexShader(VertexInput input)
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 TexturePixelShader(PixelInput input) : SV_Target
+float4 TexturePixelShader(ColoredTexturePixel input) : SV_Target
 {
 	float4 textureColor;
 	float4 alphaComposite;
@@ -78,11 +90,10 @@ float4 TexturePixelShader(PixelInput input) : SV_Target
 	return alphaComposite;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Technique
 ////////////////////////////////////////////////////////////////////////////////
-technique10 MainTechnique
+technique10 ColoredTextureTechnique
 {
 	pass pass0
 	{
@@ -91,3 +102,4 @@ technique10 MainTechnique
 		SetGeometryShader(NULL);
 	}
 }
+

@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __TEXTURESHADER_H__
-#define __TEXTURESHADER_H__
+#ifndef __ABSTRACTTEXTURESHADER_H__
+#define __ABSTRACTTEXTURESHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      TEXTURESHADER
+//      ABSTRACTTEXTURESHADER
 //
 //  Synopsis:
 //      Texture quad.
@@ -35,39 +35,50 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class TextureShader : public DXShaderUtils
+	class AbstractTextureShader
 	{
 	public:
-		TextureShader(ID3D10Device ** xDXDevice, float ** xWorldMatrixPtr, float ** xViewMatrix, float ** xProjectionMatrix);
-		~TextureShader();
+
+		AbstractTextureShader(ID3D10Device ** xDXDevice);
+		~AbstractTextureShader();
 
 	private:
 
 		// Pull out and cache device
 		ID3D10Device				**	aDXDevice;
 
-		float						**	aWorldMatrix;
-		float						**	aViewMatrix;
-		float						**	aProjectionMatrix;
 
-		ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
-		ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
-		ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
 		ID3D10EffectShaderResourceVariable	*	aTexturePtr;
 
-		ID3D10Effect				*	aEffect;
+		ID3D10EffectTechnique		*	aTextureTechnique;
 		ID3D10EffectTechnique		*	aTechnique;
 		ID3D10InputLayout			*	aLayout;
-		ID3D10BlendState			*	aBlendState;
-		ID3D10BlendState			*	aBlendDisabledState;
 
-		Texture					*	aTexture;
+		Texture						*	aTexture;
+
+		static ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
+		static ID3D10Effect			*	aTextureEffect;
+		static ID3D10BlendState		*	aBlendState;
+		static ID3D10BlendState		*	aBlendDisabledState;
+
+		static float				**	aProjectionMatrix;
 
 	public:
 
 		void							setTexture(Texture * xTexture);
-		void							loadMatrices();
 		void							renderTexture();
+		static void						setViewMatrix(float ** xMatrix);
+		static void						setWorldMatrix(float ** xMatrix);
+		static void						setProjectionMatrix(float ** xMatrix);
+		static void						reloadProjectionMatrix();
+
+	protected:
+
+		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout) = 0;
+		virtual unsigned int			getPolygonLayoutElementCount() = 0;
+		virtual	LPCSTR					getTechniqueName() = 0;
 
 	public:
 

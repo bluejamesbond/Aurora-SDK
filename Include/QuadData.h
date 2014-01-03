@@ -25,7 +25,6 @@
 #include "ColoredTextureVertex.h"
 #include "ImageProperties.h"
 #include "Rect.h"
-#include "Pipelineable.h"
 
 namespace A2D {
 
@@ -33,7 +32,8 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	struct QuadData : public Pipelineable
+	template<class T>
+	struct QuadData
 	{
 		// Before adjusting the ID3D10Buffer
 		// check if any of these values are different
@@ -45,7 +45,7 @@ namespace A2D {
 		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
-		ColoredTextureVertex			aVertices[6];
+		T				aVertices[6];
 
 		// Vertex buffer can change (but change only as needed)
 		ID3D10Buffer		*			aVertexBuffer;
