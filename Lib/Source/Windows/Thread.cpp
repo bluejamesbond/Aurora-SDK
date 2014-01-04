@@ -130,8 +130,11 @@ DWORD WINAPI Thread::initThread(void * xParam)
 {
 	Thread * thread = reinterpret_cast<Thread*>(xParam);
 
+	// If thread exists
 	if (thread)
     {   
+		// Fire the thread which is defined in 
+		// super class : AbstracThread
 		thread->fire();
 
         return 0;
