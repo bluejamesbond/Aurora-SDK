@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __COMPONENTEVENT_H__
+#define __COMPONENTEVENT_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      EVENTQUEUE
+//  Class: 
+//      COMPONENTEVENT
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Abstract event class for component events.
 //
 //------------------------------------------------------------------------------
 
@@ -21,11 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
-#include "../Runnable.h"
-#include "../Abstract.h"
-#include "../AbstractEventQueue.h"
+#include "AbstractEvent.h"
+#include "Renderable.h"
 
 using namespace std;
 
@@ -35,47 +31,48 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
 	class Abstract;
-	class Thread;
+	class AbstractEvent;
+	class Component;
+	class AbstractComponent;
+	class EventSource;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DEFINE
+	////////////////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class ComponentEvent : public AbstractEvent
 	{
 	public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+		virtual ~ComponentEvent();
 
-		EventQueue::~EventQueue();
+	protected:
 
-	private:
-
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
+		ComponentEvent();
+		ComponentEvent(Component * xEventSource, int xID);
 
 	public:
 
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
-
+		virtual Component	    *	GetComponent();
+		
 	public:
 
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACT
-		////////////////////////////////////////////////////////////////////////////////
-
-	public:
-
+		virtual HRESULT                 initialize();
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
+
 	};
+
 }
+
 
 #endif

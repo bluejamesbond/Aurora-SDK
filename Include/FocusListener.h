@@ -1,0 +1,92 @@
+////////////////////////////////////////////////////////////////////////////////
+// GAURDS
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef __FOCUSLISTENER_H__
+#define __FOCUSLISTENER_H__
+
+//+-----------------------------------------------------------------------------
+//
+//  Class: 
+//      FOCUSLISTENER
+//
+//  Synopsis:
+//      Listener class for in keyboard focus events.
+//
+//------------------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE
+////////////////////////////////////////////////////////////////////////////////
+
+#include "ExtLibs.h"
+#include "FocusEvent.h"
+#include "AbstractListener.h"
+
+using namespace std;
+
+namespace A2D {
+
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
+
+	class AbstractListener;
+	class FocusEvent;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DEFINE
+	////////////////////////////////////////////////////////////////////////////////
+
+	#define _LISTENER_FOCUS			0x6000
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
+
+	class FocusListener : public AbstractListener
+	{
+	public:
+		FocusListener();
+		FocusListener(string xString);
+		virtual ~FocusListener();
+
+
+		void							Notify(FocusEvent * xEvent);
+
+		virtual void					FocusGained(FocusEvent * xEvent);
+		virtual void					FocusLost(FocusEvent * xEvent);
+
+
+		void							Print() const;
+
+	public:
+
+
+	protected:
+		virtual void					Notify(AbstractEvent * xEvent);
+
+	private:
+		FocusListener(const FocusListener&);
+		FocusListener& operator()(const FocusListener&);
+
+		string							aName;
+
+	public:
+
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
+
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
+	};
+
+
+}
+
+
+
+
+#endif

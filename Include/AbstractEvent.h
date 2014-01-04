@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __ABSTRACTEVENT_H__
+#define __ABSTRACTEVENT_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      EVENTQUEUE
+//  Class: 
+//      ABSTRACTEVENT
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Abstract event class for events happening.
 //
 //------------------------------------------------------------------------------
 
@@ -21,13 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
-#include "../Runnable.h"
-#include "../Abstract.h"
-#include "../AbstractEventQueue.h"
+#include "Common.h"
+#include "Abstract.h"
 
-using namespace std;
 
 namespace A2D {
 
@@ -35,47 +30,50 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
+	using namespace std;
 	class Abstract;
-	class Thread;
+	class EventSource;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class AbstractEvent : public Abstract
 	{
 	public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+		virtual ~AbstractEvent();
 
-		EventQueue::~EventQueue();
+	protected:
 
-	private:
-
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
+		AbstractEvent();
+		AbstractEvent(EventSource * xEventSource, int xID);
 
 	public:
 
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
+		EventSource			*	GetSource();
+		void					ChangeSource(EventSource * xEventSource);
+		int						GetID();
+
+	protected:
+
+		EventSource				   *	aEventSource; // AbstractComp or not?
+		int								aID;
 
 	public:
 
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+		//////////////////////////////////////////////////////////
+		// A2DABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACT
-		////////////////////////////////////////////////////////////////////////////////
-
-	public:
-
+		virtual HRESULT                 initialize();
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
+
 	};
 }
+
+
+
 
 #endif
