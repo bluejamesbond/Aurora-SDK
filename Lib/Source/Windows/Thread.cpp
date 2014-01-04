@@ -41,7 +41,7 @@ bool Thread::start()
 	SetThreadPriority(aHThread, THREAD_PRIORITY_TIME_CRITICAL);
 
 	// Get the handle from OrderedList and store it
-	aListHandle = aThreadHandles.push_back(aHThread);
+	aThreadHandles.push_back(aHThread, &aListHandle);
 
 	// Increment parent activeCount
 	AbstractThread::aActiveCount++;
@@ -92,7 +92,7 @@ void Thread::stop()
 		aHThread = NULL;
 
 		// Request remove of the list handle
-		aThreadHandles.remove_request(aListHandle);
+		aThreadHandles.remove_request(&aListHandle);
 		
 		// Decrement parent activeCount
 		AbstractThread::aActiveCount--;

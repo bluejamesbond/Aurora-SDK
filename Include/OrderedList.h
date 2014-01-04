@@ -377,7 +377,7 @@ namespace A2D{
 		* - insert(T t, int index)
 		**************************************************************/
 
-		void * insert(T t, int index)
+		void insert(T t, int index, void ** ptr)
 		{
 			m_arrayed = false;
 
@@ -385,11 +385,11 @@ namespace A2D{
 
 			if (index == 0)
 			{
-				return push_front(t);
+				return push_front(t, ptr);
 			}
 			else if (index >= m_size)
 			{
-				return push_back(t);
+				return push_back(t, ptr);
 			}
 			else
 			{
@@ -433,12 +433,15 @@ namespace A2D{
 				// Increase size
 				m_size++;
 
-				return next_node;
+				if (ptr)
+				{
+					*ptr = next_node;
+				}
 			}
 		}
 
 		// Add to the back
-		void* push_back(T t)
+		void push_back(T t, void ** ptr)
 		{
 			m_arrayed = false;
 
@@ -475,10 +478,13 @@ namespace A2D{
 			// Increase size
 			m_size++;
 
-			return node;
+			if (ptr)
+			{
+				*ptr = node;
+			}
 		}
 
-		void* push_front(T t)
+		void push_front(T t, void ** ptr)
 		{
 			m_arrayed = false;
 
@@ -514,7 +520,10 @@ namespace A2D{
 			// Increase size
 			m_size++;
 
-			return next_node;
+			if (ptr)
+			{
+				*ptr = next_node;
+			}
 		}
 
 		// Convert to string
@@ -627,9 +636,10 @@ namespace A2D{
 			splice(i, 1);
 		}
 
-		void remove_request(void * x)
+		void remove_request(void ** x)
 		{
-			remove_node(static_cast<Node<T>*>(x));
+			remove_node(static_cast<Node<T>*>(*x));
+			*x = NULL;
 		}
 
 		// Splice portions of list

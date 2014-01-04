@@ -160,7 +160,7 @@ void AbstractEventQueue::popEvent()
 
 void AbstractEventQueue::pushEvent(Runnable * xRunnable)
 {
-	aEventQueue.push_back(xRunnable);
+	aEventQueue.push_back(xRunnable, NULL);
 }
 
 bool AbstractEventQueue::hasEvent()

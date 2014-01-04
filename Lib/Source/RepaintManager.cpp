@@ -50,7 +50,7 @@ HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 	{
 		while (maxZ++ <= neededZ)
 		{
-			aOpaqueDepthTracker.push_back(peerComponents = new UnorderedList<Component*>());
+			aOpaqueDepthTracker.push_back(peerComponents = new UnorderedList<Component*>(), NULL);
 		}
 
 		peerComponents->push(&xComponent);

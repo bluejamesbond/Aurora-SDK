@@ -107,7 +107,7 @@ Rect * Component::_getBounds()
 
 void Component::_add(Component& xContainer)
 {
-	aChildren.push_back(&xContainer);
+	aChildren.push_back(&xContainer, NULL);
 }
 
 void Component::_remove(Component& xContainer)
