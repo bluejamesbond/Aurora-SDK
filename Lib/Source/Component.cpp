@@ -28,7 +28,8 @@ void Component::paintComponent()
 
 	if (aOptBackgroundSrc != NULL)
 	{
-		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc,  Paint::GREEN_SEA_TO_POMEGRANATE_VERTICAL, false);
+		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
+		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, aOptBackgroundPaint, repeat);
 	}
 }
 
@@ -57,7 +58,7 @@ void Component::paintComponentBorder(){}
 
 Component& Component::getParent()
 {
-	return *aParentComp;
+	return *aParent;
 }
 
 float Component::getDepth()
@@ -145,7 +146,7 @@ void Component::validated()
 
 void Component::validate()
 {
-	Component * parentComp = aParentComp;
+	Component * parentComp = aParent;
 	bool hasParent = parentComp != NULL;
 
 	Rect& compRect = aOptRegion;
