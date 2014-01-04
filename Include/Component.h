@@ -25,6 +25,7 @@
 #include "Pipeline.h"
 #include "Rect.h"
 #include "Paint.h"
+#include "EventSource.h"
 
 namespace A2D {
 
@@ -36,13 +37,14 @@ namespace A2D {
     class Abstract;
 	class Graphics;
 	class Component;
+	class EventSource;
 	struct ImageProperties;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
-    class Component : public Abstract
+    class Component : public EventSource
     {
 	public:
 

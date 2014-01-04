@@ -33,6 +33,7 @@
 #include "GXSettings.h"
 #include "RepaintManager.h"
 #include "Rect.h"
+#include "EventSource.h"
 
 namespace A2D {
 	
@@ -51,12 +52,13 @@ namespace A2D {
 	struct	BufferData;
 	class	MatrixFactory;
 	class	RootPane;
-	
+	class	EventSource;
+
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame : public Abstract, public Runnable
+	class AbstractFrame : public Runnable, public EventSource
 	{
 
 	public:
