@@ -273,7 +273,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
 						p.y += static_cast<long>(deltaY);
-						aResizingTop = true;
+						aFramebufferInterpolation = true;
 					}
 				}
 				else
@@ -292,7 +292,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
 						p.x += static_cast<long>(deltaX);
-						aResizingLeft = true;
+						aFramebufferInterpolation = true;
 					}
 				}
 				else
@@ -313,7 +313,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
 						p.x += static_cast<long>(deltaX);
-						aResizingBottomLeft = true;
+						aFramebufferInterpolation = true;
 
 					}
 				}
@@ -326,7 +326,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
 						p.y += static_cast<long>(deltaY);
-						aResizingTopRight = true;
+						aFramebufferInterpolation = true;
 					}
 				}
 			}
@@ -341,7 +341,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
 						p.x += static_cast<long>(deltaX);
-						aResizingTopLeft = true;
+						aFramebufferInterpolation = true;
 					}
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
 						rect.aHeight + deltaY < aMaxDims.aHeight)
@@ -349,7 +349,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
 						p.y += static_cast<long>(deltaY);
-						aResizingTopLeft = true;
+						aFramebufferInterpolation = true;
 					}
 
 				}
@@ -401,11 +401,7 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	isResizing = false;
 	isMoving = false;
 
-	aResizingBottomLeft = false;
-	aResizingLeft = false;
-	aResizingTopLeft = false;
-	aResizingTop = false;
-	aResizingTopRight = false;
+	aFramebufferInterpolation = false;
 
 	return S_OK;
 }
@@ -1172,18 +1168,20 @@ void Window::render()
 	/***********************************************/
 
 	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
-	HDC hwndDC = GetDC(aParentHWnd);
-	HDC memDC = CreateCompatibleDC(hwndDC);
-	HDC memDCChild = CreateCompatibleDC(hwndDC);
-	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) };
-	POINT ptSrc = { 0, 0 };
+	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
+	HBITMAP memBitmapChild;
+	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
 
-	// Create secondary DC
-	HBITMAP memBitmapChild = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
-	SelectObject(memDCChild, memBitmapChild);
+	if (aFramebufferInterpolation)
+	{
+		memDCChild = CreateCompatibleDC(hwndDC);
+		// Create secondary DC
+		memBitmapChild = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
+		SelectObject(memDCChild, memBitmapChild);
 
-	// Request copy of frameBuffer
-	PrintWindow(aChildHWnd, memDCChild, 0);
+		// Request copy of frameBuffer
+		PrintWindow(aChildHWnd, memDCChild, 0);
+	}
 
 	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
 	SelectObject(memDC, memBitmap);
@@ -1197,17 +1195,23 @@ void Window::render()
 	
 	/***********************************************/
 
-	// Paint from frameBuffer of the child HWND into the 
-	// the parent HWND
-	StretchBlt(memDC, aOptBorderWidth + aPadding,
-		aOptBorderWidth + aPadding,
-		realWidth,
-		realHeight,
-		memDCChild,
-		0, 0,
-		aLastRect.aWidth - aOptBorderWidth*2,
-		aLastRect.aHeight - aOptBorderWidth * 2,
-		SRCCOPY);
+	if (aFramebufferInterpolation)
+	{
+		// Paint from frameBuffer of the child HWND into the 
+		// the parent HWND
+		StretchBlt(memDC, aOptBorderWidth + aPadding,
+			aOptBorderWidth + aPadding,
+			realWidth,
+			realHeight,
+			memDCChild,
+			0, 0,
+			aLastRect.aWidth - aOptBorderWidth * 2,
+			aLastRect.aHeight - aOptBorderWidth * 2,
+			SRCCOPY);
+
+		DeleteObject(memBitmapChild);
+		ReleaseDC(aParentHWnd, memDCChild);
+	}
 
 	/***********************************************/
 
@@ -1229,10 +1233,7 @@ void Window::render()
 	/***********************************************/
 
 	graphics.ReleaseHDC(memDC);
-
 	DeleteObject(memBitmap);
-	DeleteObject(memBitmapChild);
-	ReleaseDC(aParentHWnd, memDCChild);
 	ReleaseDC(aParentHWnd, memDC);
 	ReleaseDC(aParentHWnd, hwndDC);
 	DeleteDC(hwndDC);

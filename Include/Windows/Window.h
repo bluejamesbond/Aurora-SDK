@@ -80,11 +80,7 @@ namespace A2D {
 		bool							isMoving = false;
 		bool                            aWinMoveRes = false;
 
-		bool							aResizingBottomLeft = false;
-		bool							aResizingLeft = false;
-		bool							aResizingTopLeft = false;
-		bool							aResizingTop = false;
-		bool							aResizingTopRight = false;
+		bool							aFramebufferInterpolation = false;
 
 		Gdiplus::Color					  * 	aBorderColor = NULL;
 		Gdiplus::Color					  * 	aBackgroundColor = NULL;
