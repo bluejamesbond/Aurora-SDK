@@ -273,6 +273,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
 						p.y += static_cast<long>(deltaY);
+						aResizingTop = true;
 					}
 				}
 				else
@@ -291,6 +292,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
 						p.x += static_cast<long>(deltaX);
+						aResizingLeft = true;
 					}
 				}
 				else
@@ -311,6 +313,8 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
 						p.x += static_cast<long>(deltaX);
+						aResizingBottomLeft = true;
+
 					}
 				}
 				else
@@ -322,6 +326,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
 						p.y += static_cast<long>(deltaY);
+						aResizingTopRight = true;
 					}
 				}
 			}
@@ -336,6 +341,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
 						p.x += static_cast<long>(deltaX);
+						aResizingTopLeft = true;
 					}
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
 						rect.aHeight + deltaY < aMaxDims.aHeight)
@@ -343,7 +349,9 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
 						p.y += static_cast<long>(deltaY);
+						aResizingTopLeft = true;
 					}
+
 				}
 				else
 				{
@@ -392,6 +400,12 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	isDragged = false;
 	isResizing = false;
 	isMoving = false;
+
+	aResizingBottomLeft = false;
+	aResizingLeft = false;
+	aResizingTopLeft = false;
+	aResizingTop = false;
+	aResizingTopRight = false;
 
 	return S_OK;
 }
