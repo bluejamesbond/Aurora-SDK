@@ -45,24 +45,30 @@ namespace A2D {
 
 	private:
 
-		ID3D10EffectShaderResourceVariable*        aTexturePtr;
-
-		Texture						*	aTexture;
-
-		static ID3D10Effect			*	aTextureEffect;
+		static Texture						*	aTexture;
+		static float						**	aProjectionMatrix;
+		static ID3D10Effect					*	aTextureEffect;
+		static ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
+		static ID3D10EffectShaderResourceVariable*   aTexturePtr;
 
 	public:
 
-		void							setTexture(Texture * xTexture);
+		void									setTexture(Texture * xTexture);
+		static void								setViewMatrix(float ** xMatrix);
+		static void								setWorldMatrix(float ** xMatrix);
+		static void								setProjectionMatrix(float ** xMatrix);
+		static void								reloadProjectionMatrix();
 
 	protected:
 
-		virtual ID3D10Effect		**	getEffect();
-		virtual LPCWSTR					getEffectName();
-		virtual HRESULT					getUsableVariablePointers(ID3D10Effect * xEffect);
-		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout) = 0;
-		virtual unsigned int			getPolygonLayoutElementCount() = 0;
-		virtual	LPCSTR					getTechniqueName() = 0;
+		virtual ID3D10Effect				**	getEffect();
+		virtual LPCWSTR							getEffectName();
+		virtual HRESULT							getUsableVariablePointers(ID3D10Effect * xEffect);
+		virtual HRESULT							createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout) = 0;
+		virtual unsigned int					getPolygonLayoutElementCount() = 0;
+		virtual	LPCSTR							getTechniqueName() = 0;
 
 	public:
 

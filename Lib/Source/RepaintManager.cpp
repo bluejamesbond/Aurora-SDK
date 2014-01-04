@@ -24,12 +24,13 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 		return E_FAIL;
 	}
 
-	xChild._setDepth(++depth);
+	xChild._setParent(xParent);
+	xChild._setDepth(--depth);
 	xChild._setGraphics(xParent.getGraphics());
 
-	xChild.invalidate();
+	xChild.revalidate(); // force validation asap
 
-	if (addToDepthTracker(xChild, depth))
+	if (addToDepthTracker(xChild, abs(depth)))
 	{
 		xParent._add(xChild);
 
@@ -85,7 +86,7 @@ void RepaintManager::update()
 			heapSize = containers->heap_size();
 			size = containers->size();
 
-			for (i = --size; i > -1; i--)
+			for (i = 0; i < size; i++)
 			{
 				if ((component = containers->get(i)) != NULL)
 				{

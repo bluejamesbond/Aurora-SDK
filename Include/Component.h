@@ -37,7 +37,6 @@ namespace A2D {
     class Abstract;
 	class Graphics;
 	class Component;
-	class EventSource;
 	struct ImageProperties;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -55,9 +54,8 @@ namespace A2D {
 
 		float							aDepth = FLT_MIN;
 		AbstractFrame		    *		aFrame;
-		Component			    *		aParent;
+		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
-		Component				*       aParentComp = NULL;
 		Pipeline				*		aPipeline = NULL;
 
     protected:
@@ -124,7 +122,7 @@ namespace A2D {
         void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
         void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
         void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
-		void                            setBackgroundPaint(Paint& xOptPaint)                                   { aOptBackgroundPaint = xOptPaint; };
+		void                            setBackgroundPaint(Paint& xOptPaint)                                   { Paint::from(aOptBackgroundPaint, xOptPaint); };
         void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
         void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
         void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 

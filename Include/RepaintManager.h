@@ -42,6 +42,9 @@ namespace A2D {
 
 	class RepaintManager
 	{
+
+	public:
+
 		Dims										*  aWindowDims;
 		Graphics									*  aFrameGraphics;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;

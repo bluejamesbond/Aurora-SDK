@@ -27,6 +27,8 @@
 #include "../Rect.h"
 #include "../Dims.h"
 #include "../AbstractWindow.h"
+#include "../UnorderedList.h"
+#include "../MouseEvent.h"
 
 namespace A2D {
 
@@ -116,11 +118,20 @@ namespace A2D {
 
 		std::wstring				*	aClassName;
 
+		// Listener stuff
+		OrderedList<UnorderedList<Component*>*> aComponentLocations;
+
+		MouseEvent					*	aMouseDown;
+		MouseEvent					*	aMouseUp;
+		MouseEvent					*	aMouseMove;
+
 	public:
 
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 	private:
+
+		void							processPointLocation(POINT xPoint, int xMouseID);
 
 		HWND                            createCompatibleWindow(bool isParent);
 		HRESULT                         createBackgroundResources();

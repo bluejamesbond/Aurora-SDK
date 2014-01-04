@@ -54,3 +54,4 @@ LPCWSTR ColoredTextureShader::getClass()
 {
 	return L"ColoredTextureShader";
 }
+

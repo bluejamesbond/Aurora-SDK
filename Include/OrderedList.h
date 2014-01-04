@@ -82,7 +82,8 @@ namespace A2D{
 	class OrderedList
 	{
 
-	private:
+	public:
+
 
 		// Internal node system
 		template <class T>
@@ -92,8 +93,6 @@ namespace A2D{
 			Node<T> * left = NULL;
 			Node<T> * right = NULL;
 		};
-
-	public:
 
 		template<class T>
 		struct Iterator
@@ -125,7 +124,7 @@ namespace A2D{
 
 			bool has_next()
 			{
-				return m_node != NULL;
+				return m_node != NULL && m_size;
 			}
 
 			T  previous()
@@ -140,7 +139,7 @@ namespace A2D{
 
 			bool has_previous()
 			{
-				return  m_node != NULL;
+				return  m_node != NULL && m_size;
 			}
 		};
 
@@ -193,19 +192,25 @@ namespace A2D{
 		// to fragment cache
 		void remove_node(Node<T> * node)
 		{
+			// Remove the value
+			node->value = 0;
+
 			// If node is m_head
 			if (node == m_head)
 			{
-				node->value = 0;
 				m_head = node->right;
+				m_head->left = NULL; // Enforce
 			}
 			// If node is anything else
 			else
 			{
-				node->value = 0;
 				node->left->right = node->right;
 				node->right->left = node->left;
 			}
+
+			// Disable the current node
+			node->left = NULL;
+			node->right = NULL;
 
 			// Add from heap fragments to m_fragments.
 			// This is a basic queue
@@ -368,6 +373,9 @@ namespace A2D{
 			m_head = &m_heap[--m_heap_free];
 			// Head should point to m_end
 			m_end = m_head;
+
+			// Enfore the the left of the head to be null -DOUBLECHEK IF NEEDED
+			// m_head->left = NULL;
 		}
 
 		/*************************************************************
@@ -744,6 +752,16 @@ namespace A2D{
 		T peek()
 		{
 			return m_head->value;
+		}
+
+		Node<T> * _head()
+		{
+			return m_head;
+		}
+
+		Node<T> * _end()
+		{
+			return m_end->left;
 		}
 
 		void pop();

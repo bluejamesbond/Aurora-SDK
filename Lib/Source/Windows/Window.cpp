@@ -94,9 +94,58 @@ HWND Window::createCompatibleWindow(bool isParent)
 	return hWnd;
 }
 
+void Window::processPointLocation(POINT xPoint, int xMouseID)
+{
+	int size = aComponentLocations.size();
+	if (!size) return;
+	Rect * bounds;
+	UnorderedList<Component*> * comps;
+	Component * comp;
+	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = aComponentLocations._end();
+	while (node)
+	{
+		comps = node->value;
+		size = comps->size();
+		for (int i = 0; i < size; i += 1)
+		{
+			comp = comps->get(i);
+			bounds = &comp->getBounds(); // ask if we need to cache bounds (only accessed once)
+			if (xPoint.x >= bounds->aX && xPoint.x <= bounds->aX + bounds->aWidth &&
+				xPoint.y >= bounds->aY && xPoint.y <= bounds->aY + bounds->aHeight)
+			{
+				if (xMouseID == MouseEvent::MOUSE_MOVE)
+				{
+					aMouseMove->ChangeSource(comp);
+					comp->processMouseEvent(aMouseMove);
+				}
+				else if (xMouseID == MouseEvent::MOUSE_PRESSED)
+				{
+					aMouseMove->ChangeSource(comp);
+					comp->processMouseEvent(aMouseDown);
+				}
+				else if (xMouseID == MouseEvent::MOUSE_RELEASED)
+				{
+					aMouseMove->ChangeSource(comp);
+					comp->processMouseEvent(aMouseUp);
+				}
+				return;
+			}
+		}
+	}
+}
+
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
 	SetForegroundWindow(xHwnd);
+
+	if (xHwnd == aChildHWnd)
+	{
+		POINT p;
+		GetCursorPos(&p);
+		ScreenToClient(aChildHWnd, &p);
+		processPointLocation(p, MouseEvent::MOUSE_PRESSED);
+	}
+
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
@@ -141,6 +190,14 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 
 HRESULT Window::updateOnMouseMove(HWND xHwnd)
 {
+	if (xHwnd == aChildHWnd)
+	{
+		POINT p;
+		GetCursorPos(&p);
+		ScreenToClient(aChildHWnd, &p);
+		processPointLocation(p, MouseEvent::MOUSE_MOVE);
+	}
+
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		if (xHwnd == aParentHWnd)
@@ -391,6 +448,14 @@ HRESULT Window::onSize(HWND hwnd)
 
 HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
+	if (xHwnd == aChildHWnd)
+	{
+		POINT p;
+		GetCursorPos(&p);
+		ScreenToClient(aChildHWnd, &p);
+		processPointLocation(p, MouseEvent::MOUSE_RELEASED);
+	}
+
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
@@ -1108,6 +1173,9 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 	AbstractFrame& frame = *aFrame;
 	AbstractEventQueue& eventQueue = *xEventQueue;
 
+	// Get pointer to all components.
+	aComponentLocations = aFrame->getRepaintManager()->aComponentDepthTracker;
+
 	while (true)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -1269,6 +1337,13 @@ HRESULT Window::initialize()
 	SAFELY(createResources());
 
 	update();
+
+	// Initialize mouse events /2bemoved/
+	POINT p;
+	p.x = aRect.aX; p.y = aRect.aY;
+	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
+	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
+	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);
 
 	return S_OK;
 }
