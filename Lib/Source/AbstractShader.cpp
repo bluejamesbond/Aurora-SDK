@@ -6,20 +6,12 @@ using namespace A2D;
 
 ID3D10BlendState * AbstractShader::aBlendState = NULL;
 ID3D10BlendState * AbstractShader::aBlendDisabledState = NULL;
-ID3D10EffectMatrixVariable	*	AbstractShader::aWorldMatrixPtr = NULL;
-ID3D10EffectMatrixVariable	*	AbstractShader::aViewMatrixPtr = NULL;
-ID3D10EffectMatrixVariable	*	AbstractShader::aProjectionMatrixPtr = NULL;
-
-float ** AbstractShader::aProjectionMatrix = NULL;
 
 AbstractShader::AbstractShader(ID3D10Device ** xDevice) : aDevice(xDevice) {}
 
 AbstractShader::~AbstractShader()
 {
 	DESTROY(aTechnique);
-	DESTROY(aWorldMatrixPtr);
-	DESTROY(aViewMatrixPtr);
-	DESTROY(aProjectionMatrixPtr);
 }
 
 HRESULT AbstractShader::initialize()
@@ -45,50 +37,12 @@ HRESULT AbstractShader::initialize()
 	SAFELY(createPolygonLayout(polygonLayout));
 
 	SAFELY(DXShaderUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));
-
-	// Get pointers to the three matrices inside the 
-	// shader so we can update them from this class.
-	aWorldMatrixPtr = (*effect)->GetVariableByName("worldMatrix")->AsMatrix();
-	aViewMatrixPtr = (*effect)->GetVariableByName("viewMatrix")->AsMatrix();
-	aProjectionMatrixPtr = (*effect)->GetVariableByName("projectionMatrix")->AsMatrix();
-
+	
 	SAFELY(getUsableVariablePointers(*effect));
 
 	DESTROY(polygonLayout);
 
 	return S_OK;
-}
-
-void AbstractShader::setWorldMatrix(float ** xMatrix)
-{
-	// Set the world matrix variable 
-	// inside the shader.
-	aWorldMatrixPtr->SetMatrix(*xMatrix);
-
-}
-
-void AbstractShader::setViewMatrix(float ** xMatrix)
-{
-
-	// Set the view matrix variable 
-	// minside the shader.
-	aViewMatrixPtr->SetMatrix(*xMatrix);
-}
-
-void AbstractShader::setProjectionMatrix(float ** xMatrix)
-{
-
-	// Set the projection matrix variable 
-	// inside the shader.
-	aProjectionMatrixPtr->SetMatrix(*(aProjectionMatrix = xMatrix));
-}
-
-void AbstractShader::reloadProjectionMatrix()
-{
-
-	// Set the projection matrix variable 
-	// inside the shader.
-	aProjectionMatrixPtr->SetMatrix(*aProjectionMatrix);
 }
 
 void AbstractShader::renderShader()

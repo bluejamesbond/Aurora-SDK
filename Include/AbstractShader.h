@@ -52,23 +52,13 @@ namespace A2D {
 
 
 	private:
-
-		static ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
-		static ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
-		static ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
+		
 		static ID3D10BlendState		*	aBlendState;
 		static ID3D10BlendState		*	aBlendDisabledState;
-
-		static float				**	aProjectionMatrix;
-
+		
 	public:
 
 		void							renderShader();
-
-		static void						setViewMatrix(float ** xMatrix);
-		static void						setWorldMatrix(float ** xMatrix);
-		static void						setProjectionMatrix(float ** xMatrix);
-		static void						reloadProjectionMatrix();
 
 	protected:
 

@@ -43,7 +43,21 @@ namespace A2D {
 		ColorShader(ID3D10Device ** xDevice);
 		virtual ~ColorShader();
 		
+	private:
+
 		static ID3D10Effect			*	aColorEffect;
+
+		static float				**	aProjectionMatrix;
+		static ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
+		static ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
+
+	public:
+
+		static void								setViewMatrix(float ** xMatrix);
+		static void								setWorldMatrix(float ** xMatrix);
+		static void								setProjectionMatrix(float ** xMatrix);
+		static void								reloadProjectionMatrix();
 
 	protected:
 

@@ -28,7 +28,7 @@ void Component::paintComponent()
 
 	if (aOptBackgroundSrc != NULL)
 	{
-		graphics.fillRect(&aPipeline, aOptBackgroundRegion, Paint::ALIZARIN_TO_POMEGRANATE_VERTICAL);
+		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc,  Paint::GREEN_SEA_TO_POMEGRANATE_VERTICAL, false);
 	}
 }
 

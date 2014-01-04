@@ -46,8 +46,9 @@ void Graphics::validate()
 
 	// G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
 	G_SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
-	
-	AbstractTextureShader::reloadProjectionMatrix();
+
+	ColorShader::reloadProjectionMatrix();
+	TextureShader::reloadProjectionMatrix();
 }
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
@@ -190,9 +191,14 @@ HRESULT Graphics::initialize()
 	aColorShader = new ColorShader(device);
 	SAFELY(aColorShader->initialize());
 
-	AbstractTextureShader::setViewMatrix(&aViewMatrix);
-	AbstractTextureShader::setProjectionMatrix(&aProjection2DMatrix);
-	AbstractTextureShader::setWorldMatrix(&aWorldMatrix);
+	TextureShader::setViewMatrix(&aViewMatrix);
+	ColorShader::setViewMatrix(&aViewMatrix);
+
+	TextureShader::setProjectionMatrix(&aProjection2DMatrix);
+	ColorShader::setProjectionMatrix(&aProjection2DMatrix);
+
+	TextureShader::setWorldMatrix(&aWorldMatrix);
+	ColorShader::setWorldMatrix(&aWorldMatrix);
 
 	return S_OK;
 }
