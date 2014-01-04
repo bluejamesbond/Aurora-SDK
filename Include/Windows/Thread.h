@@ -24,6 +24,7 @@
 #include "../Abstract.h"
 #include "../Runnable.h"
 #include "../AbstractThread.h"
+#include "../OrderedList.h"
 
 using namespace std;
 
@@ -39,14 +40,15 @@ namespace A2D {
 	public:
 
 		Thread(Runnable * xRunnable);
-		~Thread();
+		virtual ~Thread();
 
 	private:
 
 		HANDLE aHThread;
-		DWORD aThreadID;
+		DWORD aId;
 
-		static HANDLE aHandles[50];
+		void * aListHandle;
+		static OrderedList<HANDLE> aThreadHandles;
 
 	public:
 
@@ -62,6 +64,8 @@ namespace A2D {
 	protected:
 
 		static AbstractThread * aClassInstance;
+
+	private:
 
 		static DWORD WINAPI initThread(void * xParam);
 

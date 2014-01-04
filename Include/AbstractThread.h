@@ -36,7 +36,7 @@ namespace A2D {
 	public:
 
 		AbstractThread(Runnable * xRunnable);
-		~AbstractThread();
+		virtual ~AbstractThread() = 0;
 
 	private:
 

@@ -8,7 +8,7 @@
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      QUICKLIST
+//      ORDEREDLIST
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -377,7 +377,7 @@ namespace A2D{
 		* - insert(T t, int index)
 		**************************************************************/
 
-		void insert(T t, int index)
+		void * insert(T t, int index)
 		{
 			m_arrayed = false;
 
@@ -385,11 +385,11 @@ namespace A2D{
 
 			if (index == 0)
 			{
-				push_front(t);
+				return push_front(t);
 			}
 			else if (index >= m_size)
 			{
-				push_back(t);
+				return push_back(t);
 			}
 			else
 			{
@@ -432,11 +432,13 @@ namespace A2D{
 
 				// Increase size
 				m_size++;
+
+				return next_node;
 			}
 		}
 
 		// Add to the back
-		void push_back(T t)
+		void* push_back(T t)
 		{
 			m_arrayed = false;
 
@@ -472,9 +474,11 @@ namespace A2D{
 
 			// Increase size
 			m_size++;
+
+			return node;
 		}
 
-		void push_front(T t)
+		void* push_front(T t)
 		{
 			m_arrayed = false;
 
@@ -509,6 +513,8 @@ namespace A2D{
 
 			// Increase size
 			m_size++;
+
+			return next_node;
 		}
 
 		// Convert to string
@@ -619,6 +625,11 @@ namespace A2D{
 		void remove_index(int i)
 		{
 			splice(i, 1);
+		}
+
+		void remove_request(void * x)
+		{
+			remove_node(static_cast<Node<T>*>(x));
 		}
 
 		// Splice portions of list

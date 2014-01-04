@@ -8,7 +8,7 @@
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      QUICKLIST
+//      UNORDEREDLIST
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
