@@ -52,15 +52,13 @@
 
 // Debugging
 
-#define SYSOUT_FLT(x)										  _RPT1( 0, "[Aurora -SDK] %f\n", x )
-#define SYSOUT_INT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
-#define SYSOUT_HEX(x)										  _RPT1( 0, "[Aurora -SDK] 0x%X\n", x )
-#define SYSOUT_STR(x)										  _RPT1( 0, "[Aurora -SDK] %s\n", x )
-#define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora -SDK] " f, __VA_ARGS__ )
-
+#define SYSOUT_FLT(x)										  _RPT1( 0, "[Aurora - SDK] %f\n", x )
+#define SYSOUT_INT(x)										  _RPT1( 0, "[Aurora - SDK] %d\n", x )
+#define SYSOUT_HEX(x)										  _RPT1( 0, "[Aurora - SDK] 0x%X\n", x )
+#define SYSOUT_STR(x)										  _RPT1( 0, "[Aurora - SDK] %s\n", x )
+#define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora - SDK] " f, __VA_ARGS__ )
 
 #define FLT_255			255.0f
-
 
 #define	DESTROY(x)		if(x) { delete x; x = 0; }
 #define D3DDESTROY(x)   if(x) { x->Release(); x = 0; }

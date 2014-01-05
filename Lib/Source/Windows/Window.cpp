@@ -25,15 +25,11 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 	AbstractEventQueue& eventQueue = *xEventQueue;
 
 	// Get pointer to all components.
-	//aComponentLocations = aFrame->getRepaintManager()->aComponentDepthTracker;
-	aComponentLocations = aFrame->getRepaintManager()->aOpaqueDepthTracker;
 
 	while (true)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			//TranslateMessage(&msg);
-			//DispatchMessage(&msg);
 			eventHandler(msg, &eventQueue); 
 		}
 
@@ -55,8 +51,6 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			}
 			else if (GetMessage(&msg, NULL, 0, 0) > 0)
 			{
-				//TranslateMessage(&msg);
-				//DispatchMessage(&msg);
 				eventHandler(msg, &eventQueue);
 			}
 		}
@@ -67,9 +61,6 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 {
 	if (xMsg.message == WM_CREATE)
 	{
-		//CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
-		//aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
-		//SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
 		return S_OK;
 	}
 	else
@@ -78,13 +69,10 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		switch (xMsg.message)
 		{
 			POINT p;
-
-
 		case WM_LBUTTONDOWN:
 
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
-			//SYSOUT_F("x: %d, y: %d\n", static_cast<int>(p.x), static_cast<int>(p.y));
 			aMouseDown->GetLocation() = p;
 
 			xEventQueue->processMouseEvent(aMouseDown);
@@ -94,7 +82,6 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
-			//SYSOUT_F("x: %d, y: %d\n", static_cast<int>(p.x), static_cast<int>(p.y));
 			aMouseMove->GetLocation() = p;
 
 			xEventQueue->processMouseEvent(aMouseMove);
@@ -104,7 +91,6 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
-			//SYSOUT_F("x: %d, y: %d\n", static_cast<int>(p.x), static_cast<int>(p.y));
 			aMouseUp->GetLocation() = p;
 
 			xEventQueue->processMouseEvent(aMouseUp);
@@ -147,31 +133,10 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 	{
 		switch (xMessage)
 		{
-		case WM_LBUTTONDOWN:
-		{					
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->updateOnMouseDown(xHwnd);
-		}
-		case WM_MOUSEMOVE:
-		{
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->updateOnMouseMove(xHwnd);
-		}
-		case WM_LBUTTONUP:
-		{
-				 aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				 return aWindow->updateOnMouseUp(xHwnd);
-		}
-		case WM_CLOSE:
-		{
-				DestroyWindow(xHwnd);
-				return S_OK;
-		}
 		case WM_SIZE:
 		{
 				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				return aWindow->onSize(xHwnd);
-
 		}
 		case WM_ERASEBKGND:
 		{
@@ -182,7 +147,6 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
-
 	}
 }
 
@@ -213,53 +177,6 @@ HWND Window::createCompatibleWindow(bool isParent)
 	}
 
 	return hWnd;
-}
-
-void Window::processPointLocation(POINT xPoint, int xMouseID)
-{
-	int size = aComponentLocations.size();
-	if (!size) return;
-	Rect * bounds;
-	HRESULT isDone;
-	UnorderedList<Component*> * comps;
-	Component * comp;
-	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = aComponentLocations._end();
-	clock_t tStart = clock();
-	while (node)
-	{
-		comps = node->value;
-		size = comps->size();
-		for (int i = 0; i < size; i += 1)
-		{
-			comp = comps->get(i);
-			bounds = &comp->getBounds(); // ask if we need to cache bounds (only accessed once)
-			if (xPoint.x >= bounds->aX && xPoint.x <= bounds->aX + bounds->aWidth &&
-				xPoint.y >= bounds->aY && xPoint.y <= bounds->aY + bounds->aHeight)
-			{
-				if (xMouseID == MouseEvent::MOUSE_MOVE)
-				{
-					aMouseMove->ChangeSource(comp);
-					isDone = comp->processMouseEvent(aMouseMove);
-				}
-				else if (xMouseID == MouseEvent::MOUSE_PRESSED)
-				{
-					aMouseDown->ChangeSource(comp);
-					isDone = comp->processMouseEvent(aMouseDown);
-				}
-				else if (xMouseID == MouseEvent::MOUSE_RELEASED)
-				{
-					aMouseUp->ChangeSource(comp);
-					isDone = comp->processMouseEvent(aMouseUp);
-				}
-				if (isDone == S_OK)
-				{
-					return;
-				}
-			}
-		}
-		node = node->left;
-	}
-	SYSOUT_F("Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
@@ -1397,7 +1314,8 @@ HRESULT Window::initialize()
 
 	// Initialize mouse events /2bemoved/
 	POINT p;
-	p.x = aRect.aX; p.y = aRect.aY;
+	p.x = static_cast<long>(aRect.aX); 
+	p.y = static_cast<long>(aRect.aY);
 	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
 	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
 	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);

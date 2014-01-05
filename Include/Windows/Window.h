@@ -119,7 +119,6 @@ namespace A2D {
 		std::wstring				*	aClassName;
 
 		// Listener stuff
-		OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
 		MouseEvent					*	aMouseDown;
 		MouseEvent					*	aMouseUp;
@@ -132,8 +131,6 @@ namespace A2D {
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 	private:
-
-		void							processPointLocation(POINT xPoint, int xMouseID);
 
 		HWND                            createCompatibleWindow(bool isParent);
 		HRESULT                         createBackgroundResources();
