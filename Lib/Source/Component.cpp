@@ -170,28 +170,30 @@ void Component::validate()
 		aCalculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
 		
 		// Reduce the size based on parent x, y
-		aCalculatedRegion.aWidth = compRect.aWidth + (parentRect.aX < 0 ? (max(0, compRect.aX) + parentRect.aX) : 0.0);
-		aCalculatedRegion.aHeight = compRect.aHeight + (parentRect.aY < 0 ? (max(0, compRect.aY) + parentRect.aY) : 0.0);
-
-		// Account for negative x, y of this
-		aCalculatedRegion.aWidth += compRect.aX < 0 ? compRect.aX : 0.0;
-		aCalculatedRegion.aHeight += compRect.aY < 0 ? compRect.aY : 0.0;
+		aCalculatedRegion.aWidth = FLOAT(((compRect.aWidth + (parentCalculatedRegion.aX < 0 ? (max(0, compRect.aX) + parentCalculatedRegion.aX) : 0.0))));
+		aCalculatedRegion.aHeight = FLOAT(((compRect.aHeight + (parentCalculatedRegion.aY < 0 ? (max(0, compRect.aY) + parentCalculatedRegion.aY) : 0.0))));
 		
+		// Account for negative x, y of this
+		// Note: This can be appended to previous section
+		// but it is placed here for readability
+		aCalculatedRegion.aWidth += ifneg(compRect.aX);
+		aCalculatedRegion.aHeight += ifneg(compRect.aY);
+
 		// Account for larger than parent
 		aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
 		aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
 
 		// Account for positive shift
-		aCalculatedRegion.aWidth -= (sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0;
-		aCalculatedRegion.aHeight -= (sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0;
+		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0);
+		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0);
 		
 		// Set the visible x and y based on previous
 		aVisibleRegion.aX = parentVisibleRegion.aX + max(0, min(aCalculatedRegion.aX, compRect.aX));
 		aVisibleRegion.aY = parentVisibleRegion.aY + max(0, min(aCalculatedRegion.aY, compRect.aY));
 
 		// Set the region based on if it is even visible
-		aVisibleRegion.aWidth = (aCalculatedRegion.aX + compRect.aWidth) >= 0 ? aCalculatedRegion.aWidth : 0.0;
-		aVisibleRegion.aHeight = (aCalculatedRegion.aY + compRect.aHeight) >= 0 ? aCalculatedRegion.aHeight : 0.0;
+		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0 ? aCalculatedRegion.aWidth : 0.0);
+		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0 ? aCalculatedRegion.aHeight : 0.0);
 	}
 
 	aValidatedContents = true;

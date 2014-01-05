@@ -60,8 +60,6 @@ namespace A2D {
 
     protected:
 
-		float							aRunningX = 0.0f;
-		float							aRunningY = 0.0f;
 		Graphics                *       aGraphics;
 		bool                            aValidatedContents;
 		Rect                            aOptRegion;
