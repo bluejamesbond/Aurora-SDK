@@ -53,7 +53,7 @@ namespace A2D {
 		Window(AbstractFrame * xFrame, HINSTANCE  xHInstance);
 
 		~Window();
-
+		
 	protected:
 
 		HWND                            aChildHWnd;

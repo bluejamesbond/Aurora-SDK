@@ -32,6 +32,10 @@ void Component::paintComponent()
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
 		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, aOptBackgroundPaint, repeat);
 	}
+	else
+	{
+		graphics.fillRect(&aPipeline, aOptBackgroundRegion, aOptBackgroundPaint);
+	}
 }
 
 void Component::update()
@@ -195,7 +199,49 @@ void Component::validate()
 		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0 ? aCalculatedRegion.aHeight : 0.0);
 	}
 
+	doLayout();
+
 	aValidatedContents = true;
+}
+
+void Component::doLayout()
+{
+	float height, width, x = 0, y = 0;
+	int size = aChildren.size();
+	OrderedList<Component*>::Node<Component*> * start = aChildren._head();
+	Component* component;
+	Rect& compRect = aOptRegion;
+
+	while (start && size--)
+	{
+		component = start->value;
+
+		// Get width and height based on children requirements
+		width = component->aSizeWidthUnits == Styles::PERCENTAGE ? compRect.aWidth * (component->aSizeWidth / 100) : component->aSizeWidth;
+		height = component->aSizeHeightUnits == Styles::PERCENTAGE ? compRect.aHeight* (component->aSizeHeight / 100) : component->aSizeHeight;
+
+		component->setBounds(x, y, width, height);
+
+		// increment only if display: block
+		y = component->aDisplay == Styles::BLOCK || x > compRect.aWidth ? y + height : y;
+		x = component->aDisplay == Styles::INLINE_BLOCK && x <= compRect.aWidth ? x + width : 0;
+		
+		start = start->right;
+	}
+}
+
+void Component::setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight)
+{
+	aSizeWidthUnits = xWidthUnits;
+	aSizeHeightUnits = xHeightUnits;
+
+	aSizeWidth = xWidth;
+	aSizeHeight = xHeight;
+}
+
+void Component::setDisplay(Styles::Display xDisplay)
+{
+	aDisplay = xDisplay;
 }
 
 void Component::setBounds(float xX, float xY, float xWidth, float xHeight)

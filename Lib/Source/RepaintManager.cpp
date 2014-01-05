@@ -27,12 +27,11 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 	xChild._setParent(xParent);
 	xChild._setDepth(--depth);
 	xChild._setGraphics(xParent.getGraphics());
-
-	xChild.revalidate(); // force validation asap
-
+	
 	if (addToDepthTracker(xChild, abs(depth)))
 	{
 		xParent._add(xChild);
+		xParent.revalidate(); // force validation asap
 
 		return S_OK;
 	}
@@ -40,7 +39,7 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 	return E_FAIL;
 }
 
-HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
+bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 {
 	UnorderedList<Component*> * peerComponents;
 
@@ -62,7 +61,7 @@ HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 	}
 
 
-	return S_OK;
+	return 1;
 }
 
 void RepaintManager::update()
@@ -100,9 +99,44 @@ void RepaintManager::update()
 	backBuffer->swap();
 }
 
+void RepaintManager::update_forward()
+{
+	BackBuffer * backBuffer = aBackBuffer;
+
+	backBuffer->setActive();
+	backBuffer->clear();
+	//backBuffer->setZBuffer(false);
+
+	int i, heapSize = 0, size = 0;
+	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.iterator();
+	Component * component;
+
+	while (iterator.has_next())
+	{
+		UnorderedList<Component*> * containers = iterator.next();
+
+		if (containers->size() > 0)
+		{
+			heapSize = containers->heap_size();
+			size = containers->size();
+
+			for (i = 0; i < size; i++)
+			{
+				if ((component = containers->get(i)) != NULL)
+				{
+					component->update();
+				}
+			}
+		}
+	}
+
+	//backBuffer->setZBuffer(true);
+	backBuffer->swap();
+}
+
 void RepaintManager::validate()
 {
-
+	// aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
 }
 
 HRESULT RepaintManager::initialize()
@@ -117,8 +151,6 @@ HRESULT RepaintManager::initialize()
 	root._setGraphics(*aGraphics);
 
 	addToDepthTracker(root, 0.0f);
-	root.setBounds(0, 0, 500, 500);
-	root.revalidate();
 
 	return S_OK;
 }

@@ -247,6 +247,8 @@ HRESULT AbstractFrame::createResources()
 	aWindow = createPlatformCompatibleWindow();
 	SAFELY(aWindow->initialize());
 	
+	aWindowDims = aWindow->_getSize();
+
 	aBackBuffer = new BackBuffer(aWindow, &aGXSettings);
 	SAFELY(aBackBuffer->initialize());
 	
@@ -261,11 +263,11 @@ HRESULT AbstractFrame::createResources()
 
 void AbstractFrame::validate()
 {
+	aRootPane.setBounds(0, 0, aWindowDims->aWidth, aWindowDims->aHeight);
+
 	aBackBuffer->validate();
 
 	aGraphics->validate();
-
-	// aRepaintManager->validate();
 	
 	aValidatedContents = true;
 }
@@ -287,6 +289,10 @@ void AbstractFrame::update()
 		validate();
 
 		if (!aValidatedContents)	return;
+		
+		aRepaintManager->update_forward();
+
+		return;
 	}
 
 	aRepaintManager->update();

@@ -42,7 +42,7 @@ namespace A2D {
 
 	class RepaintManager
 	{
-		Dims										*  aWindowDims;
+		Dims										*  aBackBufferDims;
 		Graphics									*  aFrameGraphics;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
 		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
@@ -60,9 +60,10 @@ namespace A2D {
 
 		HRESULT add(Component& xParent, Component& xChild);
 
-		HRESULT addToDepthTracker(Component& xComponent, float xZ);
+		bool addToDepthTracker(Component& xComponent, float xZ);
 
 		void update();
+		void update_forward();
 
 	public:
 

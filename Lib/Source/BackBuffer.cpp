@@ -338,10 +338,10 @@ void BackBuffer::clear()
 {
 	float color[4];
 
-	color[0] = 0.17f;
-	color[1] = 0.17f;
-	color[2] = 0.18f;
-	color[3] = 1.0f;
+	color[0] = 0.0f;
+	color[1] = 0.0f;
+	color[2] = 0.0f;
+	color[3] = 0.0f;
 
 	// Clear the back buffer.
 	aDevice->ClearRenderTargetView(aDXRenderTargetView, color);
@@ -356,7 +356,7 @@ void BackBuffer::swap()
 	// rendering is complete.
 
 	// Lock to screen refresh rate or present as fast as possible
-	aDXGISwapChain->Present(0, 0);
+	aDXGISwapChain->Present(1, 0);
 }
 
 ID3D10Device ** BackBuffer::getDevice()

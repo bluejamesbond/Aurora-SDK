@@ -66,6 +66,7 @@ namespace A2D {
 		AbstractWindow	  	   *		aWindow;
 		AbstractEventQueue	   *		aEventQueue = NULL;
 		Graphics			   * 		aGraphics;
+		Dims				   *		aWindowDims;
 
 		int								aId;
 		static int						aClassInstances;

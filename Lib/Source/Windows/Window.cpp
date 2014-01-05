@@ -256,7 +256,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		deltaY = static_cast<float>(aLastDraggedPoint.y - p.y);
 		deltaX = static_cast<float>(aLastDraggedPoint.x - p.x);
 		currentCursor = GetCursor();
-
+		
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
 		// Process resizing.
@@ -400,7 +400,7 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	isDragged = false;
 	isResizing = false;
 	isMoving = false;
-
+	
 	aFramebufferInterpolation = false;
 
 	return S_OK;

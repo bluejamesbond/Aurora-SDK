@@ -25,6 +25,7 @@
 #include "Pipeline.h"
 #include "Rect.h"
 #include "Paint.h"
+#include "Styles.h"
 
 namespace A2D {
 
@@ -57,6 +58,24 @@ namespace A2D {
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
 
+	protected:
+
+		Styles::Units					aSizeWidthUnits = Styles::Units::PIXEL;
+		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;		
+		Styles::Display					aDisplay = Styles::Display::BLOCK;
+
+		float							aSizeWidth;
+		float							aSizeHeight;
+
+	public:
+		
+		void							setPosition(Styles::Position xPosition);
+		void							setDisplay(Styles::Display xDisplay);
+		void							setFloat(Styles::Float xFloat);
+		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
+		void							setPositioning(Styles::Units xUnit, float xLeft, float xTop, float xRight, float, float xBottom);
+		
+		void							doLayout();
 
     protected:
 
@@ -105,6 +124,7 @@ namespace A2D {
 		void							update();
 		Rect                            getBounds();
 		void                            setBounds(Rect& xRect);
+
 		void                            add(Component& xComponent);
 		void                            remove(Component& xComponent);
 		void                            setBounds(float xX, float xY, float xWidth, float xHeight);
