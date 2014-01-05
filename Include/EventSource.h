@@ -73,13 +73,15 @@ namespace A2D {
 
 		EventSource();
 
-	private:
+	protected:
 		
 		AbstractListener 	 *	findListener(const int xListenerID);
 		HRESULT					fireListener(AbstractEvent * xEvent, int xListenerID);
 
 		HRESULT					addListener(AbstractListener * xListener); // slow 
 		HRESULT					removeListener(AbstractListener * xListener); // slow
+
+	private:
 
 		map<int, AbstractListener *> aListenerMap;
 
