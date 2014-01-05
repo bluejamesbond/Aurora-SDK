@@ -158,8 +158,8 @@ void Component::validate()
 		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
 		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
 
-		aNegativeOffsetX = 0;
-		aNegativeOffsetY = 0;
+		aCalculatedNegativeDeltaX = 0;
+		aCalculatedNegativeDeltaY = 0;
 	}
 	else
 	{
@@ -171,20 +171,13 @@ void Component::validate()
 		// Running x and y
 		aCalculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
 		aCalculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
-
-		aNegativeOffsetX = parentComp->aNegativeOffsetX + min(0, compRect.aX);
-		aNegativeOffsetY = parentComp->aNegativeOffsetY + min(0, compRect.aY);
 		
 		// Reduce the size based on parent x, y
-		aCalculatedRegion.aWidth = compRect.aWidth;
-		aCalculatedRegion.aHeight = compRect.aHeight;
-		
 		// Account for negative x, y of this
-		// Note: This can be appended to previous section
-		// but it is placed here for readability
-		aCalculatedRegion.aWidth += aNegativeOffsetX;
-		aCalculatedRegion.aHeight += aNegativeOffsetY;
-
+		// Accumulate negatives
+		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min(0, compRect.aX));
+		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min(0, compRect.aY));
+		
 		// Account for larger than parent
 		aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
 		aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
