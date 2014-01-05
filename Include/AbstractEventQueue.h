@@ -99,12 +99,16 @@ namespace A2D{
 		void							popEvent();
 		bool							hasEvent();
 
+	public:
+
 		// Event handling
 		void							processMouseEvent(MouseEvent * xEvent);
 		void							processFocusEvent(FocusEvent * xEvent);
 		void							processActionEvent(ActionEvent * xEvent);
 
 	private:
+
+		bool							isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs);
 
 		MouseEvent					*	aMouseEvent; // check performance to see
 		FocusEvent					*	aFocusEvent;

@@ -209,11 +209,14 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	HRESULT isDone;
 	POINT point;
 	UnorderedList<Component*> * comps;
+	OrderedList<Rect*> invalidLocs;
 	Component * comp;
 	
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
 	point = xEvent->getLocation();
+
 	SYSOUT_F("x: %d, y: %d\n", point.x, point.y);
+
 	while (node)
 	{
 		comps = node->value;
@@ -222,7 +225,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		{
 			comp = comps->get(i);
 			visibleRegion = comp->getVisibleRegion(); // ask if we need to cache bounds (only accessed once)
-			if (point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
+			if (!isInvalidLocation(point, &invalidLocs) &&
+				point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
 				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight)
 			{
 				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
@@ -245,11 +249,32 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 					return;
 				}
+				else
+				{
+					invalidLocs.push_back(visibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
+				}
 			}
 		}
 		node = node->left;
 	}
 	SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+}
+
+bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)
+{
+	Rect * loc;
+	OrderedList<Rect*>::Node<Rect*> * node = xInvalidLocs->_end();
+	while (node)
+	{
+		loc = node->value;
+		if (xPoint.x >= loc->aX && xPoint.x <= loc->aX + loc->aWidth &&
+			xPoint.y >= loc->aY && xPoint.y <= loc->aY + loc->aHeight)
+		{
+			return true;
+		}
+		node = node->left;
+	}
+	return false;
 }
 
 void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
