@@ -22,11 +22,9 @@
 
 #include "Abstract.h"
 #include "Graphics.h"
-#include "Renderable.h"
 #include "AbstractTexture.h"
 #include "RootPane.h"
 #include "CameraProperties.h"
-#include "RenderData.h"
 #include "BackBuffer.h"
 #include "MatrixFactory.h"
 #include "AbstractWindow.h"
@@ -41,15 +39,10 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class	Abstract;
-	class	Renderable;
 	class	Container;
-	class	Camera;
 	struct	CameraProperties;
-	struct	RenderData;
 	class	MatrixFactory;
 	class	BackBuffer;
-	struct	BufferData;
-	class	MatrixFactory;
 	class	RootPane;
 	
 	////////////////////////////////////////////////////////////////////////////////

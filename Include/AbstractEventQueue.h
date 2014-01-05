@@ -21,7 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Abstract.h"
-#include "Renderable.h"
 #include "AbstractThread.h"
 #include "OrderedList.h"
 #include "Toolkit.h"

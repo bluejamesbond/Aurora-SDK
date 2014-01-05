@@ -19,7 +19,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "RenderData.h"
 #include "BackBuffer.h"
 #include "AbstractTexture.h"
 #include "Rect.h"

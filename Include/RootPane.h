@@ -20,7 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "RenderData.h"
 #include "BackBuffer.h"
 #include "Texture.h"
 #include "Panel.h"
@@ -32,8 +31,6 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Abstract;
-	class Renderable;
-	class Camera;
 	struct CameraProperties;
 	class BackBuffer;
 	class Window;

@@ -42,9 +42,7 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Abstract;
-	class Renderable;
 	class Container;
-	class Camera;
 	struct CameraProperties;
 	class BackBuffer;
 	class MatrixFactory;
