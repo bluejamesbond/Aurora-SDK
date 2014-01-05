@@ -42,3 +42,4 @@
 #include <GdiPlusGraphics.h>
 #include <windowsx.h>
 #include <map>
+#include <time.h>

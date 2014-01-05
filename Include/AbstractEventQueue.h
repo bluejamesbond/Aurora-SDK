@@ -28,6 +28,8 @@
 #include "Runnable.h"
 #include "Rect.h"
 
+#include "ExtLibs.h"
+
 #include "MouseEvent.h"
 #include "ActionEvent.h"
 #include "FocusEvent.h"

@@ -77,18 +77,36 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		HWND xHwnd = xMsg.hwnd;
 		switch (xMsg.message)
 		{
+			POINT p;
+
+
 		case WM_LBUTTONDOWN:
+
+			GetCursorPos(&p);
+			ScreenToClient(aChildHWnd, &p);
+			//SYSOUT_F("x: %d, y: %d\n", static_cast<int>(p.x), static_cast<int>(p.y));
+			aMouseDown->GetLocation() = p;
 
 			xEventQueue->processMouseEvent(aMouseDown);
 			return updateOnMouseDown(xHwnd);
 		
 		case WM_MOUSEMOVE:
-		
+
+			GetCursorPos(&p);
+			ScreenToClient(aChildHWnd, &p);
+			//SYSOUT_F("x: %d, y: %d\n", static_cast<int>(p.x), static_cast<int>(p.y));
+			aMouseMove->GetLocation() = p;
+
 			xEventQueue->processMouseEvent(aMouseMove);
 			return updateOnMouseMove(xHwnd);
 		
 		case WM_LBUTTONUP:
-		
+
+			GetCursorPos(&p);
+			ScreenToClient(aChildHWnd, &p);
+			//SYSOUT_F("x: %d, y: %d\n", static_cast<int>(p.x), static_cast<int>(p.y));
+			aMouseUp->GetLocation() = p;
+
 			xEventQueue->processMouseEvent(aMouseUp);
 			return updateOnMouseUp(xHwnd);
 		
@@ -206,6 +224,7 @@ void Window::processPointLocation(POINT xPoint, int xMouseID)
 	UnorderedList<Component*> * comps;
 	Component * comp;
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = aComponentLocations._end();
+	clock_t tStart = clock();
 	while (node)
 	{
 		comps = node->value;
@@ -240,19 +259,12 @@ void Window::processPointLocation(POINT xPoint, int xMouseID)
 		}
 		node = node->left;
 	}
+	SYSOUT_F("Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
 	SetForegroundWindow(xHwnd);
-
-	if (xHwnd == aChildHWnd)
-	{
-		POINT p;
-		GetCursorPos(&p);
-		ScreenToClient(aChildHWnd, &p);
-		processPointLocation(p, MouseEvent::MOUSE_PRESSED);
-	}
 
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
@@ -298,14 +310,6 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 
 HRESULT Window::updateOnMouseMove(HWND xHwnd)
 {
-	if (xHwnd == aChildHWnd)
-	{
-		POINT p;
-		GetCursorPos(&p);
-		ScreenToClient(aChildHWnd, &p);
-		processPointLocation(p, MouseEvent::MOUSE_MOVE);
-	}
-
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		if (xHwnd == aParentHWnd)
@@ -556,14 +560,6 @@ HRESULT Window::onSize(HWND hwnd)
 
 HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
-	if (xHwnd == aChildHWnd)
-	{
-		POINT p;
-		GetCursorPos(&p);
-		ScreenToClient(aChildHWnd, &p);
-		processPointLocation(p, MouseEvent::MOUSE_RELEASED);
-	}
-
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;

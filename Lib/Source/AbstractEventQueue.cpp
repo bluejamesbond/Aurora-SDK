@@ -130,6 +130,14 @@ void AbstractEventQueue::run(int xThreadId)
 	// Create frame resources inside EDT
 	aFrame->createResources();
 
+	// Create event handling resources
+	POINT p;
+	Component comp;
+	p.x = p.y = 0;
+	aMouseEvent = new MouseEvent(aFrame, MouseEvent::MOUSE_ENTERED,p,1);
+	aFocusEvent = new FocusEvent(&comp, FocusEvent::FOCUS_FIRST);
+	aActionEvent = new ActionEvent(aFrame, ActionEvent::ACTION_FIRST, "init");
+
 	// Start platform compatible message loop which will
 	// embed the event dispatcher
 	aFrame->getWindow()->initPlatformCompatibleEventDispatcher(this);
@@ -190,15 +198,19 @@ bool AbstractEventQueue::dispatchNextEvent()
 
 void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 {
+	clock_t tStart = clock();
 	OrderedList<UnorderedList<Component*>*> componentLocations;
+	componentLocations = aFrame->getRepaintManager()->aOpaqueDepthTracker;
+
 	int size = componentLocations.size();
 	if (!size) return;
+
 	Rect * bounds;
 	HRESULT isDone;
 	POINT point;
 	UnorderedList<Component*> * comps;
 	Component * comp;
-
+	
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
 	point = xEvent->GetLocation();
 
@@ -230,12 +242,14 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				}
 				if (isDone == S_OK)
 				{
+					SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 					return;
 				}
 			}
 		}
 		node = node->left;
 	}
+	SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
