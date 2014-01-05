@@ -57,13 +57,17 @@ namespace A2D {
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
 
+
     protected:
 
+		float							aRunningX = 0.0f;
+		float							aRunningY = 0.0f;
 		Graphics                *       aGraphics;
 		bool                            aValidatedContents;
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;
 		Rect                            aCalculatedRegion;
+		Rect                            aVisibleRegion;
 
         ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
         LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)

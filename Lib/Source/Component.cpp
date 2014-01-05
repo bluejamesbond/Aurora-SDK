@@ -2,6 +2,7 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Component.h"
 #include "../../include/Graphics.h"
+#include "time.h"
 
 using namespace A2D;
 
@@ -42,13 +43,13 @@ void Component::update()
 		validate();
 	}
 
-	graphics.setClip(&aCalculatedRegion, aDepth);
+	graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the current component
 	paintComponent();
 
 	// Force region
-	graphics.setClip(&aCalculatedRegion, aDepth);
+	graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the currect component border
 	paintComponentBorder();
@@ -159,29 +160,38 @@ void Component::validate()
 	}
 	else
 	{
+		float sX, sY;
 		Rect& parentRect = parentComp->aOptRegion;
 		Rect& parentCalculatedRegion = parentComp->aCalculatedRegion;
-		float cX, cY, sX, sY;
-
-		// Get x and y
-		aCalculatedRegion.aX = parentCalculatedRegion.aX + (cX = max(0, min(parentRect.aX + compRect.aX, compRect.aX)));
-		aCalculatedRegion.aY = parentCalculatedRegion.aY + (cY = max(0, min(parentRect.aY + compRect.aY, compRect.aY)));
-
-		// Account for negative x, y of parent
+		Rect& parentVisibleRegion = parentComp->aVisibleRegion;
+				
+		// Running x and y
+		aCalculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
+		aCalculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
+		
+		// Reduce the size based on parent x, y
 		aCalculatedRegion.aWidth = compRect.aWidth + (parentRect.aX < 0 ? (max(0, compRect.aX) + parentRect.aX) : 0.0);
 		aCalculatedRegion.aHeight = compRect.aHeight + (parentRect.aY < 0 ? (max(0, compRect.aY) + parentRect.aY) : 0.0);
 
 		// Account for negative x, y of this
 		aCalculatedRegion.aWidth += compRect.aX < 0 ? compRect.aX : 0.0;
 		aCalculatedRegion.aHeight += compRect.aY < 0 ? compRect.aY : 0.0;
-
+		
 		// Account for larger than parent
-		// aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentRect.aWidth + min(0, parentRect.aX));
-		// aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentRect.aHeight + min(0, parentRect.aY));
+		aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
+		aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
 
 		// Account for positive shift
-		aCalculatedRegion.aWidth -= (sX = (cX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0;
-		aCalculatedRegion.aHeight -= (sY = (cY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0;
+		aCalculatedRegion.aWidth -= (sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0;
+		aCalculatedRegion.aHeight -= (sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0;
+		
+		// Set the visible x and y based on previous
+		aVisibleRegion.aX = parentVisibleRegion.aX + max(0, min(aCalculatedRegion.aX, compRect.aX));
+		aVisibleRegion.aY = parentVisibleRegion.aY + max(0, min(aCalculatedRegion.aY, compRect.aY));
+
+		// Set the region based on if it is even visible
+		aVisibleRegion.aWidth = (aCalculatedRegion.aX + compRect.aWidth) >= 0 ? aCalculatedRegion.aWidth : 0.0;
+		aVisibleRegion.aHeight = (aCalculatedRegion.aY + compRect.aHeight) >= 0 ? aCalculatedRegion.aHeight : 0.0;
 	}
 
 	aValidatedContents = true;

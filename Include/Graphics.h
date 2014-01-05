@@ -46,7 +46,6 @@ namespace A2D {
 	class Container;
 	class Camera;
 	struct CameraProperties;
-	struct RenderData;
 	class BackBuffer;
 	class MatrixFactory;
 	class RootPane;
@@ -58,7 +57,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Graphics : public RenderData, public Abstract
+	class Graphics : public Abstract
 	{
 	public:
 
