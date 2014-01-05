@@ -84,7 +84,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			ScreenToClient(aChildHWnd, &p);
 			aMouseMove->GetLocation() = p;
 
-			xEventQueue->processMouseEvent(aMouseMove);
+			//xEventQueue->processMouseEvent(aMouseMove);
 			return updateOnMouseMove(xHwnd);
 		
 		case WM_LBUTTONUP:
@@ -157,12 +157,12 @@ HWND Window::createCompatibleWindow(bool isParent)
 	DWORD           lStyle, lExStyle;
 	LPCWSTR titleName;
 
-	left = static_cast<int>(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
-	top = static_cast<int>(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
-	width = static_cast<int>(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
-	height = static_cast<int>(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = static_cast<int>(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
-	lExStyle = static_cast<int>(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	left = INT(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
+	top = INT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
+	width = INT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
+	height = INT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
+	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
+	lExStyle = INT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
 	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
 	titleName = aName;
 

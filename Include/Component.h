@@ -60,11 +60,16 @@ namespace A2D {
 
     protected:
 
-		Graphics                *       aGraphics;
 		bool                            aValidatedContents;
+		float							aCalculatedNegativeDeltaX;
+		float							aCalculatedNegativeDeltaY;
+
+		Graphics                *       aGraphics;
+		
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;
 		Rect                            aCalculatedRegion;
+		Rect							aVisibleRegion;
 
         ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
         LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)

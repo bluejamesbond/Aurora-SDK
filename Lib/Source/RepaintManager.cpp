@@ -45,7 +45,7 @@ HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;
-	int neededZ = static_cast<int>(xZ);
+	int neededZ = INT(xZ);
 
 	if (maxZ <= neededZ)
 	{
@@ -118,7 +118,7 @@ HRESULT RepaintManager::initialize()
 
 	addToDepthTracker(root, 0.0f);
 	root.setBounds(0, 0, 500, 500);
-	root.invalidate();
+	root.revalidate();
 
 	return S_OK;
 }

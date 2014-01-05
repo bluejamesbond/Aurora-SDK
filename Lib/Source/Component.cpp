@@ -42,13 +42,13 @@ void Component::update()
 		validate();
 	}
 
-	graphics.setClip(&aCalculatedRegion, aDepth);
+	graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the current component
 	paintComponent();
 
 	// Force region
-	graphics.setClip(&aCalculatedRegion, aDepth);
+	graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the currect component border
 	paintComponentBorder();
@@ -147,16 +147,52 @@ void Component::validated()
 void Component::validate()
 {
 	Component * parentComp = aParent;
+	Rect& compRect = aOptRegion;
 	bool hasParent = parentComp != NULL;
 
-	Rect& compRect = aOptRegion;
-	Rect * parentRect = hasParent ? &parentComp->aOptRegion : NULL;
-	Rect * parentGraphicsClip = hasParent ? &parentComp->aCalculatedRegion : NULL;
+	if (!hasParent)
+	{
+		aCalculatedRegion.aX = max(0, compRect.aX);
+		aCalculatedRegion.aY = max(0, compRect.aY);
+		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
+		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
 
-	aCalculatedRegion.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect.aX;
-	aCalculatedRegion.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect.aY;
-	aCalculatedRegion.aWidth = min(compRect.aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
-	aCalculatedRegion.aHeight = min(compRect.aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
+		aCalculatedNegativeDeltaX = 0;
+		aCalculatedNegativeDeltaY = 0;
+	}
+	else
+	{
+		float sX, sY;
+		Rect& parentRect = parentComp->aOptRegion;
+		Rect& parentCalculatedRegion = parentComp->aCalculatedRegion;
+		Rect& parentVisibleRegion = parentComp->aVisibleRegion;
+
+		// Running x and y
+		aCalculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
+		aCalculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
+
+		// Reduce the size based on parent x, y
+		// Account for negative x, y of this
+		// Accumulate negatives
+		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min(0, compRect.aX));
+		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min(0, compRect.aY));
+
+		// Account for larger than parent
+		aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
+		aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
+
+		// Account for positive shift
+		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0);
+		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0);
+
+		// Set the visible x and y based on previous
+		aVisibleRegion.aX = parentVisibleRegion.aX + max(0, min(aCalculatedRegion.aX, compRect.aX));
+		aVisibleRegion.aY = parentVisibleRegion.aY + max(0, min(aCalculatedRegion.aY, compRect.aY));
+
+		// Set the region based on if it is even visible
+		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0 ? aCalculatedRegion.aWidth : 0.0);
+		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0 ? aCalculatedRegion.aHeight : 0.0);
+	}
 
 	aValidatedContents = true;
 }
