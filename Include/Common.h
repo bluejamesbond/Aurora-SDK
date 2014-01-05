@@ -67,7 +67,8 @@
 #define D3DDESTROY(x)   if(x) { x->Release(); x = 0; }
 #define THREAD_DESTROY(x)  if(x) { x->stop(); delete x; x = 0; }
 #define FLOAT(x)		static_cast<float>(x)
-#define INT(x)			INT(x)
+#define INT(x)			static_cast<int>(x)
+#define UINT(x)			static_cast<UINT>(x)
 
 #define ifneg(x)		(x < 0 ? x : 0)
 

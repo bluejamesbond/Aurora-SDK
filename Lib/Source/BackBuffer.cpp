@@ -51,7 +51,8 @@ HRESULT BackBuffer::initialize()
 	Dims& windowDims = aWindow->getSize();
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
-	int videoCardMemory, width = windowDims.aWidth, height = windowDims.aHeight;
+	int videoCardMemory;
+	float width = windowDims.aWidth, height = windowDims.aHeight;
 	char videoCardDescription[128];
 
 	// Create a DirectX graphics interface factory.
@@ -123,8 +124,8 @@ HRESULT BackBuffer::initialize()
 	swapChainDesc.BufferCount = 1;
 
 	// Set the width and height of the back buffer.
-	swapChainDesc.BufferDesc.Width = width;
-	swapChainDesc.BufferDesc.Height = height;
+	swapChainDesc.BufferDesc.Width = UINT(width);
+	swapChainDesc.BufferDesc.Height = UINT(height);
 
 	// Set regular 32-bit surface for the back buffer.
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -197,8 +198,8 @@ HRESULT BackBuffer::initialize()
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 
 	// Set up the description of the depth buffer.
-	depthBufferDesc.Width = width;
-	depthBufferDesc.Height = height;
+	depthBufferDesc.Width = UINT(width);
+	depthBufferDesc.Height = UINT(height);
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -281,8 +282,8 @@ HRESULT BackBuffer::initialize()
 	device->RSSetState(aDXRasterState);
 	
 	// Setup the viewport for rendering.
-	viewport.Width = aDims.aWidth = width;
-	viewport.Height = aDims.aHeight = height;
+	viewport.Width = UINT(aDims.aWidth = width);
+	viewport.Height = UINT(aDims.aHeight = height);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
@@ -411,14 +412,14 @@ void BackBuffer::validate()
 	D3DDESTROY(backBuffer);
 	
 	// Update depth buffer description
-	depthBufferDesc.Width = windowDims.aWidth;
-	depthBufferDesc.Height = windowDims.aHeight;
+	depthBufferDesc.Width = UINT(windowDims.aWidth);
+	depthBufferDesc.Height = UINT(windowDims.aHeight);
 
 	G_SAFELY(device->CreateTexture2D(&depthBufferDesc, 0, &aDXDepthStencilBuffer));
 	G_SAFELY(device->CreateDepthStencilView(aDXDepthStencilBuffer, 0, &aDXDepthStencilView));
 
-	viewport.Width = aDims.aWidth = windowDims.aWidth;
-	viewport.Height = aDims.aHeight = windowDims.aHeight;
+	viewport.Width = UINT(aDims.aWidth = windowDims.aWidth);
+	viewport.Height = UINT(aDims.aHeight = windowDims.aHeight);
 
 	device->RSSetViewports(1, &viewport);
 }
