@@ -187,3 +187,18 @@ bool AbstractEventQueue::dispatchNextEvent()
 
 	return false;
 }
+
+void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
+{
+
+}
+
+void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
+{
+	xEvent->GetSource()->processActionEvent(xEvent);
+}
+
+void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
+{
+	xEvent->GetSource()->processFocusEvent(xEvent);
+}

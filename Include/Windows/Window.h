@@ -125,6 +125,8 @@ namespace A2D {
 		MouseEvent					*	aMouseUp;
 		MouseEvent					*	aMouseMove;
 
+		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
+
 	public:
 
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);

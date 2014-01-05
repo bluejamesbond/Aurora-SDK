@@ -28,6 +28,10 @@
 #include "Runnable.h"
 #include "Rect.h"
 
+#include "MouseEvent.h"
+#include "ActionEvent.h"
+#include "FocusEvent.h"
+
 namespace A2D{
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +88,6 @@ namespace A2D{
 		static AbstractEventQueue*		aClassInstance;
 		static AbstractEventQueue*		getInstance();
 
-
 	public:
 
 		// Queue
@@ -93,6 +96,17 @@ namespace A2D{
 		Runnable *						peekEvent();
 		void							popEvent();
 		bool							hasEvent();
+
+		// Event handling
+		void							processMouseEvent(MouseEvent * xEvent);
+		void							processFocusEvent(FocusEvent * xEvent);
+		void							processActionEvent(ActionEvent * xEvent);
+
+	private:
+
+		MouseEvent					*	aMouseEvent;
+		FocusEvent					*	aFocusEvent;
+		ActionEvent					*	aActionEvent;
 
 	protected:
 

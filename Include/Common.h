@@ -60,11 +60,13 @@
 
 #define FLT_255			255.0f
 
-#define G_SAFELY(hr)    if(hr != 0)	return;
-#define SAFELY(hr)		if(hr != 0)	return E_FAIL
-#define NULLCHECK(hr)	if(!hr)	return E_FAIL
+
 #define	DESTROY(x)		if(x) { delete x; x = 0; }
 #define D3DDESTROY(x)   if(x) { x->Release(); x = 0; }
 #define THREAD_DESTROY(x)  if(x) { x->stop(); delete x; x = 0; }
+
+#define G_SAFELY(hr) if(hr != 0) { SYSOUT_STR("Failure detected."); return; }
+#define SAFELY(hr) if(hr != 0) { SYSOUT_STR("Failure detected."); return E_FAIL; }
+#define NULLCHECK(hr) if(!hr) { SYSOUT_STR("Failure detected."); return E_FAIL; }
 
 #endif

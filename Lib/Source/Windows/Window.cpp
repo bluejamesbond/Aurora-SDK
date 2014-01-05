@@ -11,6 +11,109 @@ using namespace A2D;
 
 Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xFrame), aHInstance(xHInstance){}
 
+void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
+{
+	MSG msg;
+	bool& resizing = isResizing;
+	bool& visible = aVisible;
+
+	int defaultAllotedAnimationFrames = 10;
+	int currentAnimationFrame = 0;
+	int counter = 0;
+
+	AbstractFrame& frame = *aFrame;
+	AbstractEventQueue& eventQueue = *xEventQueue;
+
+	// Get pointer to all components.
+	//aComponentLocations = aFrame->getRepaintManager()->aComponentDepthTracker;
+	aComponentLocations = aFrame->getRepaintManager()->aOpaqueDepthTracker;
+
+	while (true)
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			//TranslateMessage(&msg);
+			//DispatchMessage(&msg);
+			eventHandler(msg, &eventQueue); 
+		}
+
+		if (visible)
+		{
+			// Forced updating of rendering for now
+			if (eventQueue.dispatchNextEvent())
+			{
+				currentAnimationFrame = defaultAllotedAnimationFrames;
+			}
+			else if (currentAnimationFrame > 0)
+			{
+				currentAnimationFrame--;
+				frame.update();
+			}
+			else if (resizing)
+			{
+				frame.update();
+			}
+			else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			{
+				//TranslateMessage(&msg);
+				//DispatchMessage(&msg);
+				eventHandler(msg, &eventQueue);
+			}
+		}
+	}
+}
+
+LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
+{
+	if (xMsg.message == WM_CREATE)
+	{
+		//CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
+		//aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
+		//SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
+		return S_OK;
+	}
+	else
+	{
+		HWND xHwnd = xMsg.hwnd;
+		switch (xMsg.message)
+		{
+		case WM_LBUTTONDOWN:
+
+			xEventQueue->processMouseEvent(aMouseDown);
+			return updateOnMouseDown(xHwnd);
+		
+		case WM_MOUSEMOVE:
+		
+			xEventQueue->processMouseEvent(aMouseMove);
+			return updateOnMouseMove(xHwnd);
+		
+		case WM_LBUTTONUP:
+		
+			xEventQueue->processMouseEvent(aMouseUp);
+			return updateOnMouseUp(xHwnd);
+		
+		case WM_CLOSE:
+		
+			DestroyWindow(xHwnd);
+			return S_OK;
+		
+		case WM_SIZE:
+					
+			onSize(xHwnd);
+			return S_OK;
+		
+		case WM_ERASEBKGND:
+			// OS must not erase background. DirectX and
+			// OpenGL will automatically do its parent
+			// (aChildHWnd) window.
+			return S_OK;
+		
+		default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
+		}
+
+	}
+} 
+
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
 	Window * aWindow;
@@ -99,6 +202,7 @@ void Window::processPointLocation(POINT xPoint, int xMouseID)
 	int size = aComponentLocations.size();
 	if (!size) return;
 	Rect * bounds;
+	HRESULT isDone;
 	UnorderedList<Component*> * comps;
 	Component * comp;
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = aComponentLocations._end();
@@ -116,21 +220,22 @@ void Window::processPointLocation(POINT xPoint, int xMouseID)
 				if (xMouseID == MouseEvent::MOUSE_MOVE)
 				{
 					aMouseMove->ChangeSource(comp);
-					comp->processMouseEvent(aMouseMove);
+					isDone = comp->processMouseEvent(aMouseMove);
 				}
 				else if (xMouseID == MouseEvent::MOUSE_PRESSED)
 				{
 					aMouseMove->ChangeSource(comp);
-					comp->processMouseEvent(aMouseDown);
+					isDone = comp->processMouseEvent(aMouseDown);
 				}
 				else if (xMouseID == MouseEvent::MOUSE_RELEASED)
 				{
 					aMouseMove->ChangeSource(comp);
-					comp->processMouseEvent(aMouseUp);
+					isDone = comp->processMouseEvent(aMouseUp);
 				}
 				return;
 			}
 		}
+		node = node->left;
 	}
 }
 
@@ -1160,54 +1265,7 @@ void* Window::getPlatformCompatibleWindowHandle()
 	return static_cast<void*>(&aChildHWnd);
 }
 
-void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
-{
-	MSG msg;
-	bool& resizing = isResizing;
-	bool& visible = aVisible;
 
-	int defaultAllotedAnimationFrames = 10;
-	int currentAnimationFrame = 0;
-	int counter = 0;
-
-	AbstractFrame& frame = *aFrame;
-	AbstractEventQueue& eventQueue = *xEventQueue;
-
-	// Get pointer to all components.
-	aComponentLocations = aFrame->getRepaintManager()->aComponentDepthTracker;
-
-	while (true)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		if (visible)
-		{
-			// Forced updating of rendering for now
-			if (eventQueue.dispatchNextEvent())
-			{
-				currentAnimationFrame = defaultAllotedAnimationFrames;
-			}
-			else if (currentAnimationFrame > 0)
-			{
-				currentAnimationFrame--;
-				frame.update();
-			}
-			else if (resizing)
-			{
-				frame.update();
-			}
-			else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
-	}
-}
 
 void Window::render()
 {

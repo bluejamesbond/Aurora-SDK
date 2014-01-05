@@ -229,7 +229,7 @@ HRESULT AbstractFrame::initialize()
 
 	SAFELY(aRootPane.initialize());
 
-	aEventQueue = createPlatformCompatibleEventQueue();
+	aEventQueue = createPlatformCompatibleEventQueue(); // fails
 	SAFELY(aEventQueue->initialize());	
 	
 	aEventQueue->startDispatchingThread();
