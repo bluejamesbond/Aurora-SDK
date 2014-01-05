@@ -61,11 +61,23 @@ namespace A2D {
 	protected:
 
 		Styles::Units					aSizeWidthUnits = Styles::Units::PIXEL;
-		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;		
+		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;	
+
+
+		Styles::Units					aPositionLeftUnits = Styles::Units::PIXEL;
+		Styles::Units					aPositionTopUnits = Styles::Units::PIXEL;
+		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
+		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
+
 		Styles::Display					aDisplay = Styles::Display::BLOCK;
 
-		float							aSizeWidth;
-		float							aSizeHeight;
+		float							aSizeWidth = 0.0f;
+		float							aSizeHeight = 0.0f;
+
+		float							aPositionLeft = 0.0f;
+		float							aPositionTop = 0.0f;
+		float							aPositionBottom = 0.0f;
+		float							aPositionRight = 0.0f;
 
 	public:
 		
@@ -73,7 +85,7 @@ namespace A2D {
 		void							setDisplay(Styles::Display xDisplay);
 		void							setFloat(Styles::Float xFloat);
 		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
-		void							setPositioning(Styles::Units xUnit, float xLeft, float xTop, float xRight, float, float xBottom);
+		void							setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
 		
 		void							doLayout();
 

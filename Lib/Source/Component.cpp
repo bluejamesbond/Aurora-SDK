@@ -30,7 +30,7 @@ void Component::paintComponent()
 	if (aOptBackgroundSrc != NULL)
 	{
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
-		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, aOptBackgroundPaint, repeat);
+		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, aOptBackgroundPaint, false);
 	}
 	else
 	{
@@ -216,6 +216,9 @@ void Component::doLayout()
 	{
 		component = start->value;
 
+		y += x == 0 ? (component->aPositionTopUnits == Styles::PERCENTAGE ? compRect.aHeight * (component->aPositionTop / 100) : component->aPositionTop) : 0;
+		x += component->aPositionLeftUnits == Styles::PERCENTAGE ? compRect.aWidth * (component->aPositionLeft / 100) : component->aPositionLeft;
+
 		// Get width and height based on children requirements
 		width = component->aSizeWidthUnits == Styles::PERCENTAGE ? compRect.aWidth * (component->aSizeWidth / 100) : component->aSizeWidth;
 		height = component->aSizeHeightUnits == Styles::PERCENTAGE ? compRect.aHeight* (component->aSizeHeight / 100) : component->aSizeHeight;
@@ -242,6 +245,19 @@ void Component::setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units x
 void Component::setDisplay(Styles::Display xDisplay)
 {
 	aDisplay = xDisplay;
+}
+
+void Component::setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom)
+{
+	aPositionLeftUnits = xLeftUnits;
+	aPositionTopUnits = xTopUnits;
+	aPositionBottomUnits = xRightUnits;
+	aPositionRightUnits = xBottomUnits;
+
+	aPositionLeft = xLeft;
+	aPositionTop = xTop;
+	aPositionBottom = xBottom;
+	aPositionRight = xRight;
 }
 
 void Component::setBounds(float xX, float xY, float xWidth, float xHeight)

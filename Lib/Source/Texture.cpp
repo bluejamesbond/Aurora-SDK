@@ -46,36 +46,22 @@ ID3D10ShaderResourceView* Texture::aStaticResource;
 HRESULT Texture::initialize()
 {
 	D3DX10_IMAGE_LOAD_INFO loadInfo;
+	D3DX10_IMAGE_INFO srcInfo;
 
-	if (aStaticResource == NULL)
-	{
-		D3DX10_IMAGE_INFO srcInfo;
-		loadInfo.pSrcInfo = &srcInfo;
+	loadInfo.pSrcInfo = &srcInfo;
 
-		SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDevice, aSrc, &loadInfo, NULL, &aStaticResource, NULL));
+	SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDevice, aSrc, &loadInfo, NULL, &aStaticResource, NULL));
 		
-		aResource = aStaticResource;
+	aResource = aStaticResource;
 
-		// Load the texture in.
-		// Store the texture properties
-		aClip.aX = 0;
-		aClip.aY = 0;
-		aClip.aWidth = aDims.aWidth = (float)srcInfo.Width;
-		aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
+	// Load the texture in.
+	// Store the texture properties
+	aClip.aX = 0;
+	aClip.aY = 0;
+	aClip.aWidth = aDims.aWidth = (float)srcInfo.Width;
+	aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
 
-	}
-	 else
-	 {
-		 D3DXIMAGE_INFO srcInfoFromFile;
-		 D3DXGetImageInfoFromFile(aSrc, &srcInfoFromFile);
-		 aResource = aStaticResource;
-
-		 aClip.aX = 0;
-		 aClip.aY = 0;
-		 aClip.aWidth = aDims.aWidth = (float)srcInfoFromFile.Width;
-		 aClip.aHeight = aDims.aHeight = (float)srcInfoFromFile.Height;
-	 }
-
+	
 	return S_OK;
 }
 
