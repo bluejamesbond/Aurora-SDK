@@ -118,7 +118,7 @@ HRESULT RepaintManager::initialize()
 
 	addToDepthTracker(root, 0.0f);
 	root.setBounds(0, 0, 500, 500);
-	root.invalidate();
+	root.revalidate();
 
 	return S_OK;
 }

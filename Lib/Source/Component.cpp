@@ -147,16 +147,42 @@ void Component::validated()
 void Component::validate()
 {
 	Component * parentComp = aParent;
+	Rect& compRect = aOptRegion;
 	bool hasParent = parentComp != NULL;
 
-	Rect& compRect = aOptRegion;
-	Rect * parentRect = hasParent ? &parentComp->aOptRegion : NULL;
-	Rect * parentGraphicsClip = hasParent ? &parentComp->aCalculatedRegion : NULL;
+	if (!hasParent)
+	{
+		aCalculatedRegion.aX = max(0, compRect.aX);
+		aCalculatedRegion.aY = max(0, compRect.aY);
+		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
+		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
+	}
+	else
+	{
+		Rect& parentRect = parentComp->aOptRegion;
+		Rect& parentCalculatedRegion = parentComp->aCalculatedRegion;
+		float cX, cY, sX, sY;
 
-	aCalculatedRegion.aX = (hasParent ? parentGraphicsClip->aX : 0) + compRect.aX;
-	aCalculatedRegion.aY = (hasParent ? parentGraphicsClip->aY : 0) + compRect.aY;
-	aCalculatedRegion.aWidth = min(compRect.aWidth, (hasParent ? parentRect->aWidth : INT_MAX));
-	aCalculatedRegion.aHeight = min(compRect.aHeight, (hasParent ? parentRect->aHeight : INT_MAX));
+		// Get x and y
+		aCalculatedRegion.aX = parentCalculatedRegion.aX + (cX = max(0, min(parentRect.aX + compRect.aX, compRect.aX)));
+		aCalculatedRegion.aY = parentCalculatedRegion.aY + (cY = max(0, min(parentRect.aY + compRect.aY, compRect.aY)));
+
+		// Account for negative x, y of parent
+		aCalculatedRegion.aWidth = compRect.aWidth + (parentRect.aX < 0 ? (max(0, compRect.aX) + parentRect.aX) : 0.0);
+		aCalculatedRegion.aHeight = compRect.aHeight + (parentRect.aY < 0 ? (max(0, compRect.aY) + parentRect.aY) : 0.0);
+
+		// Account for negative x, y of this
+		aCalculatedRegion.aWidth += compRect.aX < 0 ? compRect.aX : 0.0;
+		aCalculatedRegion.aHeight += compRect.aY < 0 ? compRect.aY : 0.0;
+
+		// Account for larger than parent
+		// aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentRect.aWidth + min(0, parentRect.aX));
+		// aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentRect.aHeight + min(0, parentRect.aY));
+
+		// Account for positive shift
+		aCalculatedRegion.aWidth -= (sX = (cX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0;
+		aCalculatedRegion.aHeight -= (sY = (cY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0;
+	}
 
 	aValidatedContents = true;
 }
