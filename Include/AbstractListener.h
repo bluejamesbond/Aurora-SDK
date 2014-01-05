@@ -45,18 +45,20 @@ namespace A2D {
 	{
 	public:
 
-	virtual ~AbstractListener();
-	virtual void notify(AbstractEvent * xEvent) = 0;
+		virtual ~AbstractListener();
+		virtual void notify(AbstractEvent * xEvent) = 0;
 
 	protected:
-	// Constructor is protected because this class is abstract.
-	AbstractListener(int xID);
+		// Constructor is protected because this class is abstract.
+		AbstractListener(int xID);
 
 	public:
 
-	const int						aID;
+		bool operator==(const AbstractListener& xListener);
 
 	public:
+
+		const int					aID;
 
 	//////////////////////////////////////////////////////////
 	// ABSTRACT IMPLEMENTATION

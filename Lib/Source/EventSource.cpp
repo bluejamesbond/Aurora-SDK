@@ -79,20 +79,28 @@ HRESULT EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 
 AbstractListener * EventSource::findListener(const int xListenerID)
 {
-	map<int, AbstractListener*>::iterator temp;
+	//map<int, AbstractListener*>::iterator temp;
 
-	temp = aListenerMap.find(xListenerID);
+	//temp = aListenerMap.find(xListenerID);
 
-	if (temp == aListenerMap.end())
+	//if (temp == aListenerMap.end())
+	//{
+	//	// Not found.
+	//	return NULL;
+	//}
+	//else
+	//{
+	//	// Found you!
+	//	return aListenerMap.at(xListenerID);
+	//}
+
+	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();
+	while (node)
 	{
-		// Not found.
-		return NULL;
+		if (node->value->aID == xListenerID) return node->value; // listener found!
+		node = node->left;
 	}
-	else
-	{
-		// Found you!
-		return aListenerMap.at(xListenerID);
-	}
+	return NULL;
 }
 
 HRESULT EventSource::addMouseListener(MouseListener * xListener)
@@ -137,37 +145,61 @@ HRESULT EventSource::removeMouseMotionListener(MouseMotionListener * xListener)
 
 HRESULT EventSource::addListener(AbstractListener * xListener)
 {
-	if (aListenerMap.find(xListener->aID) == aListenerMap.end())
+	//if (aListenerMap.find(xListener->aID) == aListenerMap.end())
+	//{
+	//	// Listener not found!
+	//	aListenerMap.insert(pair<int, AbstractListener*>(xListener->aID, xListener));
+	//	return S_OK;
+	//}
+	//else
+	//{
+	//	// It was found so we won't replace it aka just return.
+	//	// cout << "Listener already exists inside map.\n";
+	//	return S_FALSE;
+	//}
+
+	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();
+	while (node)
 	{
-		// Listener not found!
-		aListenerMap.insert(pair<int, AbstractListener*>(xListener->aID, xListener));
-		return S_OK;
+		if (node->value == xListener) return S_FALSE; // Listener already there so return;
+		node = node->left;
 	}
-	else
-	{
-		// It was found so we won't replace it aka just return.
-		// cout << "Listener already exists inside map.\n";
-		return S_FALSE;
-	}
+	// Listener not found so we add to list.
+	aListenerList.push_back(xListener, NULL);
+	return S_OK;
 }
 
 HRESULT EventSource::removeListener(AbstractListener * xListener)
 {
-	map<int, AbstractListener*>::iterator temp;
+	//map<int, AbstractListener*>::iterator temp;
 
-	temp = aListenerMap.find(xListener->aID);
+	//temp = aListenerMap.find(xListener->aID);
 
-	if (temp == aListenerMap.end())
+	//if (temp == aListenerMap.end())
+	//{
+	//	// Listener not found, thus we can't remove it.
+	//	return S_FALSE;
+	//}
+	//else
+	//{
+	//	// Found you!
+	//	aListenerMap.erase(temp);
+	//	return S_OK;
+	//}
+
+	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();
+	while (node)
 	{
-		// Listener not found, thus we can't remove it.
-		return S_FALSE;
+		if (node->value == xListener)
+		{
+			// Listener found so we can remove it
+			aListenerList.remove(xListener);
+			return S_OK;
+		}
+		node = node->left;
 	}
-	else
-	{
-		// Found you!
-		aListenerMap.erase(temp);
-		return S_OK;
-	}
+	// Listener not found so we can't remove.
+	return S_FALSE;
 }
 
 /////////////////////////////////////////////////////////////////////////////

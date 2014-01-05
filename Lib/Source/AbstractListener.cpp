@@ -26,6 +26,14 @@ LPCWSTR AbstractListener::toString()
 
 HRESULT AbstractListener::initialize()
 {
-
 	return NULL;
+}
+
+bool AbstractListener::operator==(const AbstractListener& xListener)
+{
+	if (this->aID == xListener.aID)
+	{
+		return true;
+	}
+	else return false;
 }

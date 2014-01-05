@@ -22,6 +22,7 @@
 
 #include "ExtLibs.h"
 #include "Abstract.h"
+#include "OrderedList.h"
 
 #include "AbstractListener.h"
 #include "MouseListener.h"
@@ -84,7 +85,7 @@ namespace A2D {
 	private:
 
 		map<int, AbstractListener *> aListenerMap;
-
+		OrderedList<AbstractListener *> aListenerList;
 
 	public:
 
