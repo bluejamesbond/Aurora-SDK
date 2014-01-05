@@ -1328,14 +1328,14 @@ void Window::render()
 	{
 		// Paint from frameBuffer of the child HWND into the 
 		// the parent HWND
-		StretchBlt(memDC, aOptBorderWidth + aPadding,
-			aOptBorderWidth + aPadding,
-			realWidth,
-			realHeight,
+		StretchBlt(memDC, static_cast<int>(aOptBorderWidth + aPadding),
+			static_cast<int>(aOptBorderWidth + aPadding),
+			static_cast<int>(realWidth),
+			static_cast<int>(realHeight),
 			memDCChild,
 			0, 0,
-			aLastRect.aWidth - aOptBorderWidth * 2,
-			aLastRect.aHeight - aOptBorderWidth * 2,
+			static_cast<int>(aLastRect.aWidth - aOptBorderWidth * 2),
+			static_cast<int>(aLastRect.aHeight - aOptBorderWidth * 2),
 			SRCCOPY);
 
 		DeleteObject(memBitmapChild);
