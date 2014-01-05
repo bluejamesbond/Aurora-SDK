@@ -72,12 +72,12 @@ HWND Window::createCompatibleWindow(bool isParent)
 	DWORD           lStyle, lExStyle;
 	LPCWSTR titleName;
 
-	left = static_cast<int>(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
-	top = static_cast<int>(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
-	width = static_cast<int>(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
-	height = static_cast<int>(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = static_cast<int>(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
-	lExStyle = static_cast<int>(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	left = INT(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
+	top = INT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
+	width = INT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
+	height = INT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
+	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
+	lExStyle = INT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
 	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
 	titleName = aName;
 
@@ -646,10 +646,10 @@ void  Window::applyHorizontalblur(Gdiplus::BitmapData * srcPixels, Gdiplus::Bitm
 				b += blurFactor * (float)pixelSrcRow[position * 4];
 			}
 
-			ca = static_cast<int>(a + 0.5f);
-			cr = static_cast<int>(r + 0.5f);
-			cg = static_cast<int>(g + 0.5f);
-			cb = static_cast<int>(b + 0.5f);
+			ca = INT(a + 0.5f);
+			cr = INT(r + 0.5f);
+			cg = INT(g + 0.5f);
+			cb = INT(b + 0.5f);
 
 			ca = ca > 255 ? 255 : ca;
 			cr = cr > 255 ? 255 : cr;
@@ -692,9 +692,9 @@ HRESULT Window::createShadowResources()
 	float realDim = radius * 3;
 	float relativeDim = realDim + radius * 2;
 
-	int radiusAsInt = static_cast<int>(radius);
-	int radiusSafetyAsInt = static_cast<int>(radiusSafety);
-	int relativeDimAsInt = static_cast<int>(relativeDim);
+	int radiusAsInt = INT(radius);
+	int radiusSafetyAsInt = INT(radiusSafety);
+	int relativeDimAsInt = INT(relativeDim);
 
 	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
 	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
@@ -1163,7 +1163,7 @@ void Window::render()
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(relativeX), static_cast<int>(relativeY), static_cast<int>(relativeWidth), static_cast<int>(relativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	/***********************************************/
 
@@ -1176,14 +1176,14 @@ void Window::render()
 	{
 		memDCChild = CreateCompatibleDC(hwndDC);
 		// Create secondary DC
-		memBitmapChild = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
+		memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
 		SelectObject(memDCChild, memBitmapChild);
 
 		// Request copy of frameBuffer
 		PrintWindow(aChildHWnd, memDCChild, 0);
 	}
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(relativeWidth), static_cast<int>(relativeHeight));
+	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
 	SelectObject(memDC, memBitmap);
 
 	Gdiplus::Graphics graphics(memDC);
@@ -1226,7 +1226,7 @@ void Window::render()
 	/***********************************************/
 
 	// Reisze the child only after requesting frame
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(realX), static_cast<int>(realY), static_cast<int>(realWidth), static_cast<int>(realHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY), INT(realWidth), INT(realHeight), SWP_NOZORDER | SWP_NOACTIVATE);
 
 	EndDeferWindowPos(hdwp);
 	

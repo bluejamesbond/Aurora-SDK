@@ -64,7 +64,7 @@ void Thread::interrupt()
 int Thread::id()
 {
 	//return an integer format of thread id
-	return static_cast<int>(aId);
+	return INT(aId);
 }
 
 void Thread::resume()
@@ -119,7 +119,7 @@ void Thread::waitAll()
 int Thread::getCurrentThreadId()
 {
 	// returns the current thread from the kernel level
-	return static_cast<int>(GetCurrentThreadId());
+	return INT(GetCurrentThreadId());
 }
 
 // This static method is used as the logic loop behind

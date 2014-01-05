@@ -50,18 +50,18 @@ Color3D::Color3D(Color& xSrc)
 
 void Color3D::from(Color3D& xDst, int xColor)
 {
-	xDst.aAlpha = static_cast<float>(((xColor >> 24) & 0xFF) / FLT_255);
-	xDst.aRed = static_cast<float>(((xColor >> 16) & 0xFF) / FLT_255);
-	xDst.aGreen = static_cast<float>(((xColor >> 8) & 0xFF) / FLT_255);
-	xDst.aBlue = static_cast<float>((xColor & 0xFF) / FLT_255);
+	xDst.aAlpha = FLOAT(((xColor >> 24) & 0xFF) / FLT_255);
+	xDst.aRed = FLOAT(((xColor >> 16) & 0xFF) / FLT_255);
+	xDst.aGreen = FLOAT(((xColor >> 8) & 0xFF) / FLT_255);
+	xDst.aBlue = FLOAT((xColor & 0xFF) / FLT_255);
 }
 
 void Color3D::from(Color3D& xDest, Color& xSrc)
 {
-	xDest.aAlpha = static_cast<float>(xSrc.aAlpha) / FLT_255;
-	xDest.aRed = static_cast<float>(xSrc.aRed) / FLT_255;
-	xDest.aBlue = static_cast<float>(xSrc.aBlue) / FLT_255;
-	xDest.aGreen = static_cast<float>(xSrc.aGreen) / FLT_255;
+	xDest.aAlpha = FLOAT(xSrc.aAlpha) / FLT_255;
+	xDest.aRed = FLOAT(xSrc.aRed) / FLT_255;
+	xDest.aBlue = FLOAT(xSrc.aBlue) / FLT_255;
+	xDest.aGreen = FLOAT(xSrc.aGreen) / FLT_255;
 }
 
 void Color3D::from(Color3D& xDst, Color3D& xSrc)

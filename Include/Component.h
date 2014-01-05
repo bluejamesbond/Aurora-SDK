@@ -60,8 +60,10 @@ namespace A2D {
 
     protected:
 
-		Graphics                *       aGraphics;
 		bool                            aValidatedContents;
+		float							aNegativeOffsetX;
+		float							aNegativeOffsetY;
+		Graphics                *       aGraphics;
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;
 		Rect                            aCalculatedRegion;
