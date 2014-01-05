@@ -52,22 +52,22 @@ namespace A2D {
 		MouseListener(string xString);
 		virtual ~MouseListener();
 
-		void							Notify(MouseEvent * xEvent);
+		void							notify(MouseEvent * xEvent);
 
-		virtual void					MousePressed(MouseEvent * xEvent);
-		virtual void					MouseReleased(MouseEvent * xEvent);
-		virtual void					MouseClicked(MouseEvent * xEvent);
-		virtual void					MouseExited(MouseEvent * xEvent);
-		virtual void					MouseEntered(MouseEvent * xEvent);
+		virtual void					mousePressed(MouseEvent * xEvent);
+		virtual void					mouseReleased(MouseEvent * xEvent);
+		virtual void					mouseClicked(MouseEvent * xEvent);
+		virtual void					mouseExited(MouseEvent * xEvent);
+		virtual void					mouseEntered(MouseEvent * xEvent);
 
-		void							Print() const;
+		void							print() const;
 
 	public:
 
 
 	protected:
 
-		virtual void					Notify(AbstractEvent * xEvent);
+		virtual void					notify(AbstractEvent * xEvent);
 
 	private:
 		MouseListener(const MouseListener&);

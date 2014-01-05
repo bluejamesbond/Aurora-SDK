@@ -13,12 +13,12 @@ AbstractListener(_LISTENER_MOUSEMOTION), aName(xString)
 
 MouseMotionListener::~MouseMotionListener(){}
 
-void MouseMotionListener::Notify(AbstractEvent * xEvent)
+void MouseMotionListener::notify(AbstractEvent * xEvent)
 {
-	Notify((MouseEvent*)xEvent);
+	notify((MouseEvent*)xEvent);
 }
 
-void MouseMotionListener::Notify(MouseEvent * xEvent)
+void MouseMotionListener::notify(MouseEvent * xEvent)
 {
 	//// do the good stuff here
 	//cout << "Handling action with : ";
@@ -30,13 +30,13 @@ void MouseMotionListener::Notify(MouseEvent * xEvent)
 	if (id == MouseEvent::MOUSE_MOVE)
 	{
 		// Do something
-		MouseMoved(xEvent);
+		mouseMoved(xEvent);
 
 	}
 	else if (id == MouseEvent::MOUSE_DRAGGED)
 	{
 		// Do something
-		MouseDragged(xEvent);
+		mouseDragged(xEvent);
 	}
 	else
 	{
@@ -45,19 +45,19 @@ void MouseMotionListener::Notify(MouseEvent * xEvent)
 	}
 }
 
-void MouseMotionListener::MouseDragged(MouseEvent * xEvent)
+void MouseMotionListener::mouseDragged(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	 SYSOUT_STR("Handling mouse dragged.");
 }
 
-void MouseMotionListener::MouseMoved(MouseEvent * xEvent)
+void MouseMotionListener::mouseMoved(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	 SYSOUT_STR("Handling mouse moved.");
 	
 }
-void MouseMotionListener::Print() const
+void MouseMotionListener::print() const
 {
 	cout << aName.c_str();
 }

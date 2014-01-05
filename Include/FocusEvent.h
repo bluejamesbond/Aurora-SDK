@@ -58,16 +58,16 @@ namespace A2D {
 
 	public:
 
-		bool							IsTemporary();
-		Component				*	GetOppositeComponent();
-		void							Print() const;
+		bool							isTemporary();
+		Component				*		getOppositeComponent();
+		void							print() const;
 
 	private:
 
 		// Source and ID is in AbstractEvent.
 		string							aFocusName;
 		bool							aTemporary;
-		Component				*	aOpposite;
+		Component				*		aOpposite;
 
 	public:
 

@@ -14,27 +14,27 @@ aName(xString), AbstractListener(_LISTENER_FOCUS)
 
 FocusListener::~FocusListener(){}
 
-void FocusListener::Notify(AbstractEvent * xEvent)
+void FocusListener::notify(AbstractEvent * xEvent)
 {
-	Notify((FocusEvent*)xEvent);
+	notify((FocusEvent*)xEvent);
 }
 
-void FocusListener::Notify(FocusEvent * xEvent)
+void FocusListener::notify(FocusEvent * xEvent)
 {
 	// do the good stuff here
 	cout << "Handling action with : ";
 	cout << aName.c_str() << ":\n";
-	xEvent->Print();
+	xEvent->print();
 	
 	int id = xEvent->getID();
 
 	if (id == FocusEvent::FOCUS_GAINED)
 	{
-		FocusGained(xEvent);
+		focusGained(xEvent);
 	}
 	else if (id == FocusEvent::FOCUS_LOST)
 	{
-		FocusLost(xEvent);
+		focusLost(xEvent);
 	}
 	else
 	{
@@ -42,20 +42,20 @@ void FocusListener::Notify(FocusEvent * xEvent)
 	}
 }
 
-void FocusListener::FocusGained(FocusEvent * xEvent)
+void FocusListener::focusGained(FocusEvent * xEvent)
 {
 	// do something
 	SYSOUT_STR("Handling focus gained.");
 
 }
 
-void FocusListener::FocusLost(FocusEvent * xEvent)
+void FocusListener::focusLost(FocusEvent * xEvent)
 {
 	// do something
 	SYSOUT_STR("Handling focus lost.");
 }
 
-void FocusListener::Print() const
+void FocusListener::print() const
 {
 	cout << aName.c_str();
 }

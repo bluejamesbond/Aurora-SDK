@@ -52,19 +52,19 @@ namespace A2D {
 		virtual ~FocusListener();
 
 
-		void							Notify(FocusEvent * xEvent);
+		void							notify(FocusEvent * xEvent);
 
-		virtual void					FocusGained(FocusEvent * xEvent);
-		virtual void					FocusLost(FocusEvent * xEvent);
+		virtual void					focusGained(FocusEvent * xEvent);
+		virtual void					focusLost(FocusEvent * xEvent);
 
 
-		void							Print() const;
+		void							print() const;
 
 	public:
 
 
 	protected:
-		virtual void					Notify(AbstractEvent * xEvent);
+		virtual void					notify(AbstractEvent * xEvent);
 
 	private:
 		FocusListener(const FocusListener&);

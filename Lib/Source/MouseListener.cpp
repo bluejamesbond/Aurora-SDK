@@ -13,12 +13,12 @@ AbstractListener(_LISTENER_MOUSE), aName(xString)
 
 MouseListener::~MouseListener(){}
 
-void MouseListener::Notify(AbstractEvent * xEvent)
+void MouseListener::notify(AbstractEvent * xEvent)
 {
-	Notify((MouseEvent*)xEvent);
+	notify((MouseEvent*)xEvent);
 }
 
-void MouseListener::Notify(MouseEvent * xEvent)
+void MouseListener::notify(MouseEvent * xEvent)
 {
 	//// do the good stuff here
 	//cout << "Handling action with : ";
@@ -29,23 +29,23 @@ void MouseListener::Notify(MouseEvent * xEvent)
 
 	if (id == MouseEvent::MOUSE_CLICKED)
 	{
-		MouseClicked(xEvent);
+		mouseClicked(xEvent);
 	}
 	else if (id == MouseEvent::MOUSE_PRESSED)
 	{
-		MousePressed(xEvent);
+		mousePressed(xEvent);
 	}
 	else if (id == MouseEvent::MOUSE_RELEASED)
 	{
-		MouseReleased(xEvent);
+		mouseReleased(xEvent);
 	}
 	else if (id == MouseEvent::MOUSE_EXITED)
 	{
-		MouseExited(xEvent);
+		mouseExited(xEvent);
 	}
 	else if (id == MouseEvent::MOUSE_ENTERED)
 	{
-		MouseEntered(xEvent);
+		mouseEntered(xEvent);
 	}
 	else
 	{
@@ -54,37 +54,37 @@ void MouseListener::Notify(MouseEvent * xEvent)
 	}
 }
 
-void MouseListener::MousePressed(MouseEvent * xEvent)
+void MouseListener::mousePressed(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	SYSOUT_STR("Handling pressed.");
 }
 
-void MouseListener::MouseReleased(MouseEvent * xEvent)
+void MouseListener::mouseReleased(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	SYSOUT_STR("Handling released.");
 }
 
-void MouseListener::MouseClicked(MouseEvent * xEvent)
+void MouseListener::mouseClicked(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	SYSOUT_STR("Handling clicked.");
 }
 
-void MouseListener::MouseExited(MouseEvent * xEvent)
+void MouseListener::mouseExited(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	SYSOUT_STR("Handling exited.");
 }
 
-void MouseListener::MouseEntered(MouseEvent * xEvent)
+void MouseListener::mouseEntered(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
 	SYSOUT_STR("Handling entered.");
 }
 
-void MouseListener::Print() const
+void MouseListener::print() const
 {
 	cout << aName.c_str();
 }

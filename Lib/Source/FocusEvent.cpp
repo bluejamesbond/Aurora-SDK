@@ -24,17 +24,17 @@ ComponentEvent(xSource, xEventID), aTemporary(xTemporary), aOpposite(xOpposite)
 FocusEvent::~FocusEvent(){}
 
 
-bool FocusEvent::IsTemporary()
+bool FocusEvent::isTemporary()
 {
 	return aTemporary;
 }
 
-Component * FocusEvent::GetOppositeComponent()
+Component * FocusEvent::getOppositeComponent()
 {
 	return aOpposite;
 }
 
-void FocusEvent::Print() const
+void FocusEvent::print() const
 {
 	cout << aFocusName.c_str() << "\n";
 }

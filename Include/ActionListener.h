@@ -51,16 +51,16 @@ namespace A2D {
 		ActionListener(string xString);
 		virtual ~ActionListener();
 
-		void							Notify(ActionEvent * xEvent);
-		void							Print() const;
-		virtual void					ActionPerformed(ActionEvent * xEvent);
+		void							notify(ActionEvent * xEvent);
+		void							print() const;
+		virtual void					actionPerformed(ActionEvent * xEvent);
 
 	public:
 
 
 	protected:
 
-		virtual void					Notify(AbstractEvent * xEvent);
+		virtual void					notify(AbstractEvent * xEvent);
 
 	private:
 		ActionListener(const ActionListener&);

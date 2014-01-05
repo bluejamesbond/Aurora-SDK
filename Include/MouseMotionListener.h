@@ -53,19 +53,19 @@ namespace A2D {
 		MouseMotionListener(string xString);
 		virtual ~MouseMotionListener();
 
-		void							Notify(MouseEvent * xEvent);
+		void							notify(MouseEvent * xEvent);
 
-		virtual void					MouseDragged(MouseEvent * xEvent);
-		virtual void					MouseMoved(MouseEvent * xEvent);
+		virtual void					mouseDragged(MouseEvent * xEvent);
+		virtual void					mouseMoved(MouseEvent * xEvent);
 
-		void							Print() const;
+		void							print() const;
 
 	public:
 
 
 	protected:
 
-		virtual void					Notify(AbstractEvent * xEvent);
+		virtual void					notify(AbstractEvent * xEvent);
 
 	private:
 		MouseMotionListener(const MouseMotionListener&);

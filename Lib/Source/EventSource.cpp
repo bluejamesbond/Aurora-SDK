@@ -58,19 +58,19 @@ HRESULT EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 	{
 		if (xListenerID == _LISTENER_MOUSE)
 		{
-			(static_cast<MouseListener*>(listener))->Notify(static_cast<MouseEvent*>(xEvent)); // REPLACE NOTIFY FUNCTION NAME LATER.
+			(static_cast<MouseListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent)); // REPLACE NOTIFY FUNCTION NAME LATER.
 		}
 		else if (xListenerID == _LISTENER_FOCUS)
 		{
-			(static_cast<FocusListener*>(listener))->Notify(static_cast<FocusEvent*>(xEvent)); // REPLACE NOTIFY FUNCTION NAME LATER.
+			(static_cast<FocusListener*>(listener))->notify(static_cast<FocusEvent*>(xEvent)); // REPLACE NOTIFY FUNCTION NAME LATER.
 		}
 		else if (xListenerID == _LISTENER_ACTION)
 		{
-			(static_cast<ActionListener*>(listener))->Notify(static_cast<ActionEvent*>(xEvent));
+			(static_cast<ActionListener*>(listener))->notify(static_cast<ActionEvent*>(xEvent));
 		}
 		else if (xListenerID == _LISTENER_MOUSEMOTION)
 		{
-			(static_cast<MouseMotionListener*>(listener))->Notify(static_cast<MouseEvent*>(xEvent));
+			(static_cast<MouseMotionListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
 		}
 		return S_OK;
 	}

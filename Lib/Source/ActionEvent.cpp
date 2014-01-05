@@ -17,7 +17,7 @@ AbstractEvent(xSource, xEventID), aCommand(xCommand), aModifier(xModifiers)
 
 ActionEvent::~ActionEvent(){}
 
-void ActionEvent::Print() const
+void ActionEvent::print() const
 {
 	cout << aActionName.c_str() << "\n";
 }

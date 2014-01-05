@@ -48,7 +48,7 @@ namespace A2D {
 		ActionEvent(EventSource * xSource, int xEventID, string xString, int xModifiers);
 		virtual ~ActionEvent();
 
-		void Print() const;
+		void print() const;
 
 	public:
 		

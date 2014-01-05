@@ -14,23 +14,23 @@ AbstractListener(_LISTENER_ACTION), aName(xString)
 
 ActionListener::~ActionListener(){}
 
-void ActionListener::Notify(AbstractEvent * xEvent)
+void ActionListener::notify(AbstractEvent * xEvent)
 {
-	Notify((ActionEvent*)xEvent);
+	notify((ActionEvent*)xEvent);
 }
 
-void ActionListener::Notify(ActionEvent * xEvent)
+void ActionListener::notify(ActionEvent * xEvent)
 {
-	ActionPerformed(xEvent);
+	actionPerformed(xEvent);
 }
 
-void ActionListener::ActionPerformed(ActionEvent * xEvent)
+void ActionListener::actionPerformed(ActionEvent * xEvent)
 {
 	// FILL THIS OUT
 	SYSOUT_STR("Handling action performed");
 }
 
-void ActionListener::Print() const
+void ActionListener::print() const
 {
 	cout << aName.c_str();
 
