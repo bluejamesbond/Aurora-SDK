@@ -190,7 +190,52 @@ bool AbstractEventQueue::dispatchNextEvent()
 
 void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 {
+	OrderedList<UnorderedList<Component*>*> componentLocations;
+	int size = componentLocations.size();
+	if (!size) return;
+	Rect * bounds;
+	HRESULT isDone;
+	POINT point;
+	UnorderedList<Component*> * comps;
+	Component * comp;
 
+	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
+	point = xEvent->GetLocation();
+
+	while (node)
+	{
+		comps = node->value;
+		size = comps->size();
+		for (int i = 0; i < size; i += 1)
+		{
+			comp = comps->get(i);
+			bounds = &comp->getBounds(); // ask if we need to cache bounds (only accessed once)
+			if (point.x >= bounds->aX && point.x <= bounds->aX + bounds->aWidth &&
+				point.y >= bounds->aY && point.y <= bounds->aY + bounds->aHeight)
+			{
+				if (xEvent->GetID() == MouseEvent::MOUSE_MOVE)
+				{
+					aMouseEvent->ChangeSource(comp);
+					isDone = comp->processMouseEvent(aMouseEvent);
+				}
+				else if (xEvent->GetID() == MouseEvent::MOUSE_PRESSED)
+				{
+					aMouseEvent->ChangeSource(comp);
+					isDone = comp->processMouseEvent(aMouseEvent);
+				}
+				else if (xEvent->GetID() == MouseEvent::MOUSE_RELEASED)
+				{
+					aMouseEvent->ChangeSource(comp);
+					isDone = comp->processMouseEvent(aMouseEvent);
+				}
+				if (isDone == S_OK)
+				{
+					return;
+				}
+			}
+		}
+		node = node->left;
+	}
 }
 
 void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)

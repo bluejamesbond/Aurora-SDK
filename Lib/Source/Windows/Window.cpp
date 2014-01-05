@@ -224,15 +224,18 @@ void Window::processPointLocation(POINT xPoint, int xMouseID)
 				}
 				else if (xMouseID == MouseEvent::MOUSE_PRESSED)
 				{
-					aMouseMove->ChangeSource(comp);
+					aMouseDown->ChangeSource(comp);
 					isDone = comp->processMouseEvent(aMouseDown);
 				}
 				else if (xMouseID == MouseEvent::MOUSE_RELEASED)
 				{
-					aMouseMove->ChangeSource(comp);
+					aMouseUp->ChangeSource(comp);
 					isDone = comp->processMouseEvent(aMouseUp);
 				}
-				return;
+				if (isDone == S_OK)
+				{
+					return;
+				}
 			}
 		}
 		node = node->left;

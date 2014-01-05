@@ -104,9 +104,11 @@ namespace A2D{
 
 	private:
 
-		MouseEvent					*	aMouseEvent;
+		MouseEvent					*	aMouseEvent; // check performance to see
 		FocusEvent					*	aFocusEvent;
 		ActionEvent					*	aActionEvent;
+
+		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
 	protected:
 
