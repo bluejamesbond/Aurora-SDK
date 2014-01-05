@@ -205,15 +205,15 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	int size = componentLocations.size();
 	if (!size) return;
 
-	Rect * bounds;
+	Rect * visibleRegion;
 	HRESULT isDone;
 	POINT point;
 	UnorderedList<Component*> * comps;
 	Component * comp;
 	
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
-	point = xEvent->GetLocation();
-
+	point = xEvent->getLocation();
+	SYSOUT_F("x: %d, y: %d\n", point.x, point.y);
 	while (node)
 	{
 		comps = node->value;
@@ -221,23 +221,23 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		for (int i = 0; i < size; i += 1)
 		{
 			comp = comps->get(i);
-			bounds = &comp->getBounds(); // ask if we need to cache bounds (only accessed once)
-			if (point.x >= bounds->aX && point.x <= bounds->aX + bounds->aWidth &&
-				point.y >= bounds->aY && point.y <= bounds->aY + bounds->aHeight)
+			visibleRegion = comp->getVisibleRegion(); // ask if we need to cache bounds (only accessed once)
+			if (point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
+				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight)
 			{
-				if (xEvent->GetID() == MouseEvent::MOUSE_MOVE)
+				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 				{
-					aMouseEvent->ChangeSource(comp);
+					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
 					isDone = comp->processMouseEvent(aMouseEvent);
 				}
-				else if (xEvent->GetID() == MouseEvent::MOUSE_PRESSED)
+				else if (xEvent->getID() == MouseEvent::MOUSE_PRESSED)
 				{
-					aMouseEvent->ChangeSource(comp);
+					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_PRESSED);
 					isDone = comp->processMouseEvent(aMouseEvent);
 				}
-				else if (xEvent->GetID() == MouseEvent::MOUSE_RELEASED)
+				else if (xEvent->getID() == MouseEvent::MOUSE_RELEASED)
 				{
-					aMouseEvent->ChangeSource(comp);
+					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_RELEASED);
 					isDone = comp->processMouseEvent(aMouseEvent);
 				}
 				if (isDone == S_OK)
@@ -254,10 +254,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 {
-	xEvent->GetSource()->processActionEvent(xEvent);
+	xEvent->getSource()->processActionEvent(xEvent);
 }
 
 void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 {
-	xEvent->GetSource()->processFocusEvent(xEvent);
+	xEvent->getSource()->processFocusEvent(xEvent);
 }

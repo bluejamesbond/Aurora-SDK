@@ -25,7 +25,7 @@ void MouseListener::Notify(MouseEvent * xEvent)
 	//cout << aName.c_str() << ":\n";
 	//xEvent->Print();
 
-	int id = xEvent->GetID();
+	int id = xEvent->getID();
 
 	if (id == MouseEvent::MOUSE_CLICKED)
 	{

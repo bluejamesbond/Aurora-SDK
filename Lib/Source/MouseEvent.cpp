@@ -25,38 +25,43 @@ AbstractEvent(xSource, xEventID), aPoint(xPoint), aClickCount(xClickCount), aBut
 
 MouseEvent::~MouseEvent(){}
 
-long MouseEvent::GetX()
+long MouseEvent::getX()
 {
 	return aPoint.x;
 }
 
-long MouseEvent::GetY()
+long MouseEvent::getY()
 {
 	return aPoint.y;
 }
 
-int MouseEvent::GetButton()
+int MouseEvent::getButton()
 {
 	return aButton;
 }
 
-int MouseEvent::GetClickCount()
+int MouseEvent::getClickCount()
 {
 	return aClickCount;
 }
 
-POINT MouseEvent::GetLocation()
+POINT MouseEvent::getLocation()
 {
 	return aPoint;
+}
+
+void MouseEvent::setLocation(POINT xPoint)
+{
+	aPoint = xPoint;
 }
 
 // Will do this later + constructor - Brent.
-POINT MouseEvent::GetAbsoluteLocation()
+POINT MouseEvent::getAbsoluteLocation()
 {
 	return aPoint;
 }
 
-void MouseEvent::Print() const
+void MouseEvent::print() const
 {
 	cout << aMouseName.c_str() << "\n";
 }

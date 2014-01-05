@@ -27,8 +27,8 @@ HRESULT EventSource::processMouseEvent(MouseEvent * xEvent)
 	//	return S_FALSE;
 	//}
 	int ID;
-	if (xEvent->GetID() == MouseEvent::MOUSE_DRAGGED ||
-		xEvent->GetID() == MouseEvent::MOUSE_MOVE)
+	if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED ||
+		xEvent->getID() == MouseEvent::MOUSE_MOVE)
 	{
 		ID = _LISTENER_MOUSEMOTION;
 	}

@@ -51,9 +51,11 @@ namespace A2D {
 
 	public:
 
-		EventSource			*	GetSource();
-		void					ChangeSource(EventSource * xEventSource);
-		int						GetID();
+		EventSource			*	getSource();
+		int						getID();
+
+		void					setSource(EventSource * xEventSource);
+		void					setProperties(EventSource * xEventSource, int xID);
 
 	protected:
 

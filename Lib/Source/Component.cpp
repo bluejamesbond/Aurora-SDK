@@ -106,6 +106,11 @@ Rect * Component::_getBounds()
 	return &aOptRegion;
 }
 
+Rect * Component::getVisibleRegion()
+{
+	return &aVisibleRegion;
+}
+
 void Component::_add(Component& xContainer)
 {
 	aChildren.push_back(&xContainer, NULL);

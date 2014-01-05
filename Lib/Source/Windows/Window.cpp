@@ -73,7 +73,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
-			aMouseDown->GetLocation() = p;
+			aMouseDown->setLocation(p);
 
 			xEventQueue->processMouseEvent(aMouseDown);
 			return updateOnMouseDown(xHwnd);
@@ -82,7 +82,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
-			aMouseMove->GetLocation() = p;
+			aMouseMove->setLocation(p);
 
 			//xEventQueue->processMouseEvent(aMouseMove);
 			return updateOnMouseMove(xHwnd);
@@ -91,7 +91,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
-			aMouseUp->GetLocation() = p;
+			aMouseUp->setLocation(p);
 
 			xEventQueue->processMouseEvent(aMouseUp);
 			return updateOnMouseUp(xHwnd);

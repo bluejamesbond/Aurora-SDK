@@ -13,7 +13,7 @@ ComponentEvent::~ComponentEvent(){}
 
 Component * ComponentEvent::GetComponent()
 {
-	return (Component*)GetSource();
+	return (Component*)getSource();
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -49,7 +49,7 @@ namespace A2D {
 		MouseEvent(EventSource * xSource, int xEventID, POINT xPoint, int xClickCount, int xButton);
 		virtual ~MouseEvent();
 
-		void Print() const;
+		void print() const;
 
 	public:
 		
@@ -65,12 +65,14 @@ namespace A2D {
 		const static int BUTTON2 = 0x500B;
 		const static int BUTTON3 = 0x500C;
 
-		long							GetX();
-		long							GetY();
-		int								GetButton();
-		int								GetClickCount();
-		POINT							GetLocation();			// might change POINT later
-		POINT							GetAbsoluteLocation();
+		long							getX();
+		long							getY();
+		int								getButton();
+		int								getClickCount();
+		POINT							getLocation();			// might change POINT later
+		POINT							getAbsoluteLocation();
+
+		void							setLocation(POINT xPoint);
 
 	private:
 

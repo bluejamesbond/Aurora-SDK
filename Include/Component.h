@@ -103,6 +103,7 @@ namespace A2D {
 		Component&						getParent();
 		Component&						getRoot();
 		AbstractFrame&					getFrame();
+		Rect *							getVisibleRegion();
 
 		void							update();
 		Rect                            getBounds();

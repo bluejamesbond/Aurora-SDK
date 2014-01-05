@@ -11,19 +11,25 @@ aID(xID), aEventSource(xEventSource)
 
 AbstractEvent::~AbstractEvent(){}
 
-EventSource * AbstractEvent::GetSource()
+EventSource * AbstractEvent::getSource()
 {
 	return aEventSource;
 }
 
-void AbstractEvent::ChangeSource(EventSource * xEventSource)
+int AbstractEvent::getID()
+{
+	return aID;
+}
+
+void AbstractEvent::setSource(EventSource * xEventSource)
 {
 	aEventSource = xEventSource;
 }
 
-int AbstractEvent::GetID()
+void AbstractEvent::setProperties(EventSource * xEventSource, int xID)
 {
-	return aID;
+	aEventSource = xEventSource;
+	aID = xID;
 }
 
 /////////////////////////////////////////////////////////////////////////////

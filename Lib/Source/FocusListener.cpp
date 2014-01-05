@@ -26,7 +26,7 @@ void FocusListener::Notify(FocusEvent * xEvent)
 	cout << aName.c_str() << ":\n";
 	xEvent->Print();
 	
-	int id = xEvent->GetID();
+	int id = xEvent->getID();
 
 	if (id == FocusEvent::FOCUS_GAINED)
 	{
