@@ -8,7 +8,7 @@ FocusListener("DefaultFocusListener")
 {}
 
 FocusListener::FocusListener(string xString) :
-aName(xString), AbstractListener(_LISTENER_FOCUS)
+aName(xString), AbstractListener(A2D_LISTENER_FOCUS)
 {}
 
 

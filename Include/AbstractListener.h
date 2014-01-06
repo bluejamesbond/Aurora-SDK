@@ -21,6 +21,7 @@
 
 #include "ExtLibs.h"
 #include "Abstract.h"
+//#include "EventSource.h"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ namespace A2D {
 
 	class Abstract;
 	class AbstractEvent;
+	class EventSource;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DEFINE
@@ -44,6 +46,8 @@ namespace A2D {
 	class AbstractListener : public Abstract
 	{
 	public:
+
+		friend						EventSource;
 
 		virtual ~AbstractListener();
 		virtual void notify(AbstractEvent * xEvent) = 0;
@@ -59,6 +63,12 @@ namespace A2D {
 	public:
 
 		const int					aID;
+
+	private:
+
+		void					*	aRemoveTicket;
+
+		
 
 	//////////////////////////////////////////////////////////
 	// ABSTRACT IMPLEMENTATION

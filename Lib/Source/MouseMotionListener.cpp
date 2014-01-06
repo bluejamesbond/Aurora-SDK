@@ -8,7 +8,7 @@ MouseMotionListener("DefaultMouseMotionListener")
 {}
 
 MouseMotionListener::MouseMotionListener(string xString) :
-AbstractListener(_LISTENER_MOUSEMOTION), aName(xString)
+AbstractListener(A2D_LISTENER_MOUSEMOTION), aName(xString)
 {}
 
 MouseMotionListener::~MouseMotionListener(){}

@@ -8,7 +8,7 @@ ActionListener("DefaultActionListener")
 {}
 
 ActionListener::ActionListener(string xString) :
-AbstractListener(_LISTENER_ACTION), aName(xString)
+AbstractListener(A2D_LISTENER_ACTION), aName(xString)
 {}
 
 

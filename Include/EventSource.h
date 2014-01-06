@@ -65,11 +65,6 @@ namespace A2D {
 		HRESULT					addActionListener(ActionListener * xListener);
 		HRESULT					addFocusListener(FocusListener * xListener);
 
-		HRESULT					removeMouseListener(MouseListener * xListener); // will probably make a replaceListener
-		HRESULT					removeFocusListener(FocusListener * xListener);
-		HRESULT					removeActionListener(ActionListener * xListener);
-		HRESULT					removeMouseMotionListener(MouseMotionListener * xListener);
-
 	protected:
 
 		EventSource();
@@ -81,7 +76,6 @@ namespace A2D {
 
 		HRESULT					addListener(AbstractListener * xListener); // slow 
 		HRESULT					removeListener(AbstractListener * xListener); // slow
-
 	private:
 
 		map<int, AbstractListener *> aListenerMap;

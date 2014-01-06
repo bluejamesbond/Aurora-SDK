@@ -8,7 +8,7 @@ MouseListener("DefaultMouseListener")
 {}
 
 MouseListener::MouseListener(string xString) :
-AbstractListener(_LISTENER_MOUSE), aName(xString)
+AbstractListener(A2D_LISTENER_MOUSE), aName(xString)
 {}
 
 MouseListener::~MouseListener(){}
@@ -57,6 +57,7 @@ void MouseListener::notify(MouseEvent * xEvent)
 void MouseListener::mousePressed(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
+	print();
 	SYSOUT_STR("Handling pressed.");
 }
 
@@ -86,6 +87,7 @@ void MouseListener::mouseEntered(MouseEvent * xEvent)
 
 void MouseListener::print() const
 {
+	SYSOUT_F("%s", aName.c_str());
 	cout << aName.c_str();
 }
 
