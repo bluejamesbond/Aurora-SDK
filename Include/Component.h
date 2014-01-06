@@ -25,6 +25,7 @@
 #include "Pipeline.h"
 #include "Rect.h"
 #include "Paint.h"
+
 #include "EventSource.h"
 
 namespace A2D {
@@ -36,7 +37,7 @@ namespace A2D {
 	class AbstractFrame;
     class Abstract;
 	class Graphics;
-	class Component;
+	class EventSource;
 	struct ImageProperties;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -134,9 +135,21 @@ namespace A2D {
         void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
 														int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
 
-		HRESULT							addListenerThroughChildren(AbstractListener * xListener);
-		HRESULT							removeListenerThroughChildren(AbstractListener * xListener);
+		HRESULT							addListenerThroughChildren(AbstractListener * xListener); // doesnt work as intended
+		HRESULT							removeListenerThroughChildren(AbstractListener * xListener); // doesnt work as intended
         
+		// Components are the only we that can use the focus system
+	public:
+
+		friend							FocusListener;
+		
+		void							requestFocus();
+		void							setFocus(bool xFocus);
+		void							setFocusable(bool xFocusable);
+
+		bool							isFocused = false;
+		bool							isFocusable = true;
+
     public:
 
         virtual HRESULT                 initialize();

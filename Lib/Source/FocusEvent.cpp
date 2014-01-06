@@ -20,9 +20,13 @@ FocusEvent::FocusEvent(Component * xSource, int xEventID, bool xTemporary, Compo
 ComponentEvent(xSource, xEventID), aTemporary(xTemporary), aOpposite(xOpposite)
 {}
 
-
 FocusEvent::~FocusEvent(){}
 
+void FocusEvent::setProperties(Component * xSource, int xEventID, Component * xOpposite)
+{
+	AbstractEvent::setProperties((EventSource*)xSource, xEventID);
+	aOpposite = xOpposite;
+}
 
 bool FocusEvent::isTemporary()
 {

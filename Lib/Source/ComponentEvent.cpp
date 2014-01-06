@@ -32,6 +32,5 @@ LPCWSTR ComponentEvent::toString()
 
 HRESULT ComponentEvent::initialize()
 {
-
 	return NULL;
 }

@@ -229,10 +229,29 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
 				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight)
 			{
+				// If we are not done, we need to keep firing by checking the parent of each component
+				// Note: we are not doing this!!
 				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 				{
 					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
 					isDone = comp->processMouseEvent(aMouseEvent);
+					if (comp->isFocusable && !comp->isFocused) // Check if already focused/focusable.
+					{
+						bool focusProcessed;
+						// Prepare focus event for component focused gained and component focus lost.
+						aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
+						// Fire focus event.
+						// If the component succesfully gained focus then we fire focus lost on opposite component.
+						focusProcessed = comp->processFocusEvent(aFocusEvent);
+						if (focusProcessed)
+						{
+							aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_GAINED, comp);
+							// If no component was focused before, aLastFocusedComp can be NULL.
+							if (aLastFocusedComp) aLastFocusedComp->processFocusEvent(aFocusEvent);
+							// For last we set the last focused component to the one that just gained the focus.
+							aLastFocusedComp = comp;
+						}
+					}
 				}
 				else if (xEvent->getID() == MouseEvent::MOUSE_PRESSED)
 				{
