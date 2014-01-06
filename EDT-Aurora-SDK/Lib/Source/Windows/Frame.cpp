@@ -16,9 +16,9 @@ Frame::~Frame(){}
 // ABSTRACTFRAME
 ////////////////////////////////////////////////////////////////////////////////
 
-AbstractWindow * Frame::createPlatformCompatibleWindow()
+void Frame::createPlatformCompatibleWindow(void ** xWindow)
 {
-    return new XWindow(this);
+    *xWindow = new XWindow(this);
 }
 
 /*AbstractEventQueue * Frame::createPlatformCompatibleEventQueue()
