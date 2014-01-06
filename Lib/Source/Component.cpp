@@ -2,7 +2,6 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Component.h"
 #include "../../include/Graphics.h"
-#include "time.h"
 
 using namespace A2D;
 
@@ -213,105 +212,6 @@ void Component::forceBounds(bool xForce)
 	aForced = xForce;
 }
 
-#define UNITS(unit, value, range) ((unit == Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value)) 
-
-void Component::applyCascadingStyleLayout()
-{
-	int size = aChildren.size();	
-	OrderedList<Component*>::Node<Component*> * start = aChildren._head();
-	
-	float height, width, rX = 0, rY = 0, aX = 0, aY = 0, 
-		last_height = 0.0f, left, top, right, bottom;
-	Styles::Display display;
-	Styles::Position position;
-	Rect& compRect = aOptRegion;
-	Component* component;
-
-	while (start && size--)
-	{
-		component = start->value;
-
-		if (component->aForced)
-		{
-			start = start->right;
-			continue;
-		}
-
-		// Get width and height based on children requirements
-		display = component->aDisplay;
-		position = component->aPosition;
-		width = UNITS(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
-		height = UNITS(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
-		left = UNITS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
-		top = UNITS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
-
-		if (position == Styles::RELATIVE_)
-		{
-			if (display == Styles::INLINE_BLOCK)
-			{
-				if ((left + rX + width) > (compRect.aWidth + FLT_ONE))
-				{
-					rX = left;
-					rY = rY + last_height + top;
-				}
-				else/*if (display == Styles::BLOCK)*/
-				{
-					rX = rX + left;
-					rY = top;
-				}
-			}
-			else/*if (display == Styles::BLOCK)*/
-			{
-				rX += left;
-				rY += top;
-			}
-		}
-		else/*if (position == Styles::ABSOLUTE_)*/
-		{
-			aX = UNITS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
-			aY = UNITS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
-		}
-
-		if (position == Styles::RELATIVE_)
-		{
-			/***********************************************/
-			component->setBounds(rX, rY, width, height);
-			/***********************************************/
-
-			if (display == Styles::INLINE_BLOCK)
-			{
-				// If beyound edge width
-				if (rX + width >= compRect.aWidth)
-				{
-					rX = FLT_ZERO;
-					rY = rY + height;
-				}
-				else
-				{
-					rX = rX + width;
-					rY = rY;
-				}
-
-				// Inline block uses last_height
-				last_height = height;
-			}
-			else/*if (display == Styles::BLOCK)*/
-			{
-				rX = FLT_ZERO;
-				rY = rY + height;
-			}
-		}
-		else/*if (position == Styles::ABSOLUTE_)*/
-		{
-			/***********************************************/
-			component->setBounds(aX, aY, width, height);
-			/***********************************************/
-		}
-		
-		start = start->right;
-	}
-}
-
 void Component::setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight)
 {
 	aSizeWidthUnits = xWidthUnits;
@@ -326,6 +226,19 @@ void Component::setDisplay(Styles::Display xDisplay)
 	aDisplay = xDisplay;
 }
 
+void Component::setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom)
+{
+	aMarginLeftUnits = xLeftUnits;
+	aMarginTopUnits = xTopUnits;
+	aMarginBottomUnits = xRightUnits;
+	aMarginRightUnits = xBottomUnits;
+
+	aMarginLeft = xLeft;
+	aMarginTop = xTop;
+	aMarginBottom = xBottom;
+	aMarginRight = xRight;
+}
+
 void Component::setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom)
 {
 	aPositionLeftUnits = xLeftUnits;
@@ -337,6 +250,11 @@ void Component::setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Un
 	aPositionTop = xTop;
 	aPositionBottom = xBottom;
 	aPositionRight = xRight;
+}
+
+void Component::setPosition(Styles::Position xPosition)
+{
+	aPosition = xPosition;
 }
 
 void Component::setBounds(float xX, float xY, float xWidth, float xHeight)

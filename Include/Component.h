@@ -65,20 +65,29 @@ namespace A2D {
 
 	protected:
 
+		Styles::Display					aDisplay = Styles::Display::BLOCK;
+		Styles::Position				aPosition = Styles::Position::RELATIVE_;
+
 		Styles::Units					aSizeWidthUnits = Styles::Units::PIXEL;
 		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;	
-
+		
+		Styles::Units					aMarginLeftUnits = Styles::Units::PIXEL;
+		Styles::Units					aMarginTopUnits = Styles::Units::PIXEL;
+		Styles::Units					aMarginBottomUnits = Styles::Units::PIXEL;
+		Styles::Units					aMarginRightUnits = Styles::Units::PIXEL;
 
 		Styles::Units					aPositionLeftUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionTopUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
 
-		Styles::Display					aDisplay = Styles::Display::BLOCK;
-		Styles::Position				aPosition = Styles::Position::RELATIVE_;
-
 		float							aSizeWidth = 0.0f;
 		float							aSizeHeight = 0.0f;
+
+		float							aMarginLeft = 0.0f;
+		float							aMarginTop = 0.0f;
+		float							aMarginBottom = 0.0f;
+		float							aMarginRight = 0.0f;
 
 		float							aPositionLeft = 0.0f;
 		float							aPositionTop = 0.0f;
@@ -91,12 +100,13 @@ namespace A2D {
 		void							setDisplay(Styles::Display xDisplay);
 		void							setFloat(Styles::Float xFloat);
 		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
+		void							setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
 		void							setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
-		
+
 		void							applyCascadingStyleLayout();
 		void							forceBounds(bool xForce);
 	
-	private:
+	public:
 
 		Rect *							getBoundsAtPtr();
 		void							setDepth(float xDepth);
@@ -105,8 +115,7 @@ namespace A2D {
 		void							setFrame(AbstractFrame& xFrame);
 		void							add(Component& xComponent);
 		void							remove(Component& xComponent);
-
-
+		
     protected:
 
 		bool                            aValidatedContents;

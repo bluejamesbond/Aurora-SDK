@@ -53,6 +53,8 @@ namespace A2D{
 			PERCENTAGE
 		};
 
+		static float AUTO;
+
 	};
 }
 

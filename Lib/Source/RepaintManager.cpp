@@ -24,6 +24,8 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 		return E_FAIL;
 	}
 
+	static float val = -0.01f;
+
 	xChild.setParent(xParent);
 	xChild.setDepth(--depth);
 	xChild.setGraphics(xParent.getGraphics());
