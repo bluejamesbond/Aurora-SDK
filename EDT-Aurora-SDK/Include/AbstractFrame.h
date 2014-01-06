@@ -116,7 +116,7 @@ namespace A2D {
 
 	protected:
 
-        virtual AbstractWindow *		createPlatformCompatibleWindow() = 0;
+        virtual void		createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
 //		virtual AbstractEventQueue*		createPlatformCompatibleEventQueue() = 0;
 		
 	public:
