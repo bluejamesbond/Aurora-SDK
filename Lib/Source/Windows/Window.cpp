@@ -85,7 +85,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			ScreenToClient(aChildHWnd, &p);
 			aMouseMove->setLocation(p);
 
-			//xEventQueue->processMouseEvent(aMouseMove);
+			xEventQueue->processMouseEvent(aMouseMove);
 			return updateOnMouseMove(xHwnd);
 		
 		case WM_LBUTTONUP:

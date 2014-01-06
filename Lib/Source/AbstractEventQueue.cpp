@@ -208,13 +208,14 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	Rect * visibleRegion;
 	HRESULT isConsumedMouse;
 	bool isConsumedFocus = false;
-	POINT point;
+	POINT point; int ID;
 	UnorderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
 	Component * comp;
 	
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
 	point = xEvent->getLocation();
+	ID = xEvent->getID();
 
 	SYSOUT_F("x: %d, y: %d\n", point.x, point.y);
 
@@ -235,17 +236,28 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				Component * parent = comp;
 				while (parent)
 				{
-					if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+					if (ID == MouseEvent::MOUSE_MOVE)
 					{
 						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_MOVE);
 						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
+
+						if (parent != aLastCheckedComponent)
+						{
+							// We've entered a new component
+							aMouseEvent->setProperties(aLastCheckedComponent, MouseEvent::MOUSE_EXITED);
+							if (aLastCheckedComponent) aLastCheckedComponent->processMouseEvent(aMouseEvent);
+							
+							aMouseEvent->setProperties(parent, MouseEvent::MOUSE_ENTERED);
+							parent->processMouseEvent(aMouseEvent);
+						}
+						aLastCheckedComponent = parent;
 					}
-					else if (xEvent->getID() == MouseEvent::MOUSE_PRESSED)
+					else if (ID == MouseEvent::MOUSE_PRESSED)
 					{
 						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_PRESSED);
 						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
 					}
-					else if (xEvent->getID() == MouseEvent::MOUSE_RELEASED)
+					else if (ID == MouseEvent::MOUSE_RELEASED)
 					{
 						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_RELEASED);
 						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
@@ -268,6 +280,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 						processActionEvent(aActionEvent);
 
 					}
+
 					if (isConsumedMouse == S_OK)
 					{
 						SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
