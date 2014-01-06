@@ -50,6 +50,8 @@ namespace A2D {
 
 		void print() const;
 
+		void							setCommand(string xCommand);
+
 	public:
 		
 		const static int ACTION_FIRST	  =		0x7111;

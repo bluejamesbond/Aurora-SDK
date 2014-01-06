@@ -78,7 +78,6 @@ namespace A2D {
 		HRESULT					removeListener(AbstractListener * xListener); // slow
 	private:
 
-		map<int, AbstractListener *> aListenerMap;
 		OrderedList<AbstractListener *> aListenerList;
 
 	public:

@@ -226,9 +226,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		{
 			comp = comps->get(i);
 			visibleRegion = comp->getVisibleRegion(); // ask if we need to cache bounds (only accessed once)
-			if (!isInvalidLocation(point, &invalidLocs) &&
-				point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
-				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight)
+			if (point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
+				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight &&
+				!isInvalidLocation(point, &invalidLocs)
+				)
 			{
 				// If we are not done, we need to keep firing by checking the parent of each component
 				// Note: we are not doing this!!
@@ -254,11 +255,17 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					{
 						// Only the top level components can get focus.
 						isConsumedFocus = true;
-						comp->requestFocus();
+						//comp->requestFocus();
 						// Prepare focus event for component focused gained and component focus lost.
 						aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
 						processFocusEvent(aFocusEvent);						
 					}
+					
+					// Action event handling AFTER CLICKED
+					// Will work more on this later, not sure how it works with current components.
+					aActionEvent->setSource(comp);
+					processActionEvent(aActionEvent);
+
 				}
 				if (isConsumedMouse == S_OK)
 				{
@@ -295,6 +302,7 @@ bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xI
 
 void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 {
+	// Need to know when ActionEvents are fired, and what it contains.
 	xEvent->getSource()->processActionEvent(xEvent);
 }
 

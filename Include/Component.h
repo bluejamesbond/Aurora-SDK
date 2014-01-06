@@ -38,6 +38,7 @@ namespace A2D {
     // FORWARD DECLARATIONS
     ////////////////////////////////////////////////////////////////////////////////
 
+	using namespace std;
 	class AbstractFrame;
     class Abstract;
 	class Graphics;
@@ -152,8 +153,6 @@ namespace A2D {
 
 		bool							isFocused = false; //<-- can only be accessed by event handler.
 		bool							isFocusable = true;
-
-
 
     public:
 

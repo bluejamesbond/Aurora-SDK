@@ -17,6 +17,11 @@ AbstractEvent(xSource, xEventID), aCommand(xCommand), aModifier(xModifiers)
 
 ActionEvent::~ActionEvent(){}
 
+void ActionEvent::setCommand(string xCommand)
+{
+	aCommand = xCommand;
+}
+
 void ActionEvent::print() const
 {
 	cout << aActionName.c_str() << "\n";
