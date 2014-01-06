@@ -1,0 +1,27 @@
+
+#include "../../../Include/Windows/Frame.h"
+#include "../../../Include/Windows/Window.h"
+
+using namespace A2D;
+
+////////////////////////////////////////////////////////////////////////////////
+// PLATFORM COMPATIBLE IMPLEMENTATION
+////////////////////////////////////////////////////////////////////////////////
+
+Frame::Frame() : AbstractFrame() {};
+
+Frame::Frame(HINSTANCE xHInstance) : aHInstance(xHInstance) {}
+
+////////////////////////////////////////////////////////////////////////////////
+// ABSTRACTFRAME
+////////////////////////////////////////////////////////////////////////////////
+
+AbstractWindow * Frame::createPlatformCompatibleWindow()
+{
+	return new Window(this, aHInstance);
+}
+
+AbstractEventQueue * Frame::createPlatformCompatibleEventQueue()
+{
+	return new EventQueue(this);
+}

@@ -21,13 +21,27 @@ SamplerState SampleType
 //////////////
 // TYPEDEFS //
 //////////////
-struct VertexInputType
+struct ColoredTextureVertex
+{
+	float4 position : POSITION;
+	float2 tex : TEXCOORD0;
+	float4 color : COLOR;
+};
+
+struct ColoredTexturePixel
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+	float4 color : COLOR;
+};
+
+struct TextureVertex
 {
 	float4 position : POSITION;
 	float2 tex : TEXCOORD0;
 };
 
-struct PixelInputType
+struct TexturePixel
 {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
@@ -37,10 +51,51 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType TextureVertexShader(VertexInputType input)
+ColoredTexturePixel ColoredTextureVertexShader(ColoredTextureVertex input)
 {
-	PixelInputType output;
+	ColoredTexturePixel output;
+	
+	// Change the position vector to be 4 units for proper matrix calculations.
+	input.position.w = 1.0f;
 
+	// Calculate the position of the vertex against the world, view, and projection matrices.
+	output.position = mul(input.position, worldMatrix);
+	output.position = mul(output.position, viewMatrix);
+	output.position = mul(output.position, projectionMatrix);
+
+	output.tex = input.tex;
+	output.color = input.color;
+
+	return output;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 ColoredTexturePixelShader(ColoredTexturePixel input) : SV_Target
+{
+	float4 textureColor;
+	float4 alphaComposite;
+	float4 inputColor;
+
+	inputColor = input.color;
+	textureColor = shaderTexture.Sample(SampleType, input.tex);
+	
+	// Porter and Duff equations for calculating
+	// alpha composite.
+	alphaComposite.a = textureColor.a + inputColor.a * (1.0 - textureColor.a);
+	alphaComposite.rgb = (textureColor.a * textureColor.rgb + (inputColor.a * inputColor.rgb) * (1.0 - textureColor.a)) / alphaComposite.a;
+	
+	return alphaComposite;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Vertex Shader
+////////////////////////////////////////////////////////////////////////////////
+TexturePixel TextureVertexShader(TextureVertex input)
+{
+	TexturePixel output;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
@@ -50,7 +105,6 @@ PixelInputType TextureVertexShader(VertexInputType input)
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
-	// Store the texture coordinates for the pixel shader.
 	output.tex = input.tex;
 
 	return output;
@@ -60,7 +114,7 @@ PixelInputType TextureVertexShader(VertexInputType input)
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 TexturePixelShader(PixelInputType input) : SV_Target
+float4 TexturePixelShader(TexturePixel input) : SV_Target
 {
 	float4 textureColor;
 
@@ -73,11 +127,23 @@ float4 TexturePixelShader(PixelInputType input) : SV_Target
 	return textureColor;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Technique
+////////////////////////////////////////////////////////////////////////////////
+technique10 ColoredTextureTechnique
+{
+	pass pass0
+	{
+		SetVertexShader(CompileShader(vs_4_0, ColoredTextureVertexShader()));
+		SetPixelShader(CompileShader(ps_4_0, ColoredTexturePixelShader()));
+		SetGeometryShader(NULL);
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Technique
 ////////////////////////////////////////////////////////////////////////////////
-technique10 MainTechnique
+technique10 TextureTechnique
 {
 	pass pass0
 	{
@@ -86,3 +152,6 @@ technique10 MainTechnique
 		SetGeometryShader(NULL);
 	}
 }
+
+
+

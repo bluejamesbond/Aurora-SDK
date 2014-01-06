@@ -40,7 +40,7 @@ public:
 	~BorderlessShadowWindow();
 
 	// Register the window class and call methods for instantiating drawing resources
-	HRESULT Initialize();
+	HRESULT initialize();
 
 	// Process and dispatch messages
 	void RunMessageLoop();
