@@ -127,7 +127,7 @@ namespace A2D {
 		AbstractEventQueue			*	aEventQueue;
 
 		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
-
+		friend							Component;
 
 	public:
 

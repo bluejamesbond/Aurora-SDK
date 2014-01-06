@@ -246,11 +246,13 @@ HRESULT Component::removeListenerThroughChildren(AbstractListener * xListener)
 
 HRESULT Component::requestFocus()
 {
+	// We are forcing Window here, msg Brent for suggestions in changing this.
+	// Also it's broken, as aFrame is not initialized.
 	if (isFocusable && !isFocused)
 	{
 		FocusEvent * focusRequest = new FocusEvent(this, FocusEvent::FOCUS_GAINED);
-		processFocusEvent(focusRequest);
-		isFocused = true;
+		Window * win = (Window*)aFrame->getWindow();
+		win->aEventQueue->processFocusEvent(focusRequest);
 	}
 	return S_OK;
 }

@@ -254,26 +254,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					{
 						// Only the top level components can get focus.
 						isConsumedFocus = true;
-
+						comp->requestFocus();
 						// Prepare focus event for component focused gained and component focus lost.
 						aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
-
-						// We enable focus regardless of a component's focusListener (if it has one or not).
-						comp->isFocused = true;
-
-						// Fire focus gained event from component that gained focus.
-						comp->processFocusEvent(aFocusEvent);
-
-						if (aLastFocusedComp)
-						{
-							// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
-							aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
-							// We are not doing a check here. Possible errors may come.
-							aLastFocusedComp = false; 
-							aLastFocusedComp->processFocusEvent(aFocusEvent);
-						}
-						// Set newly focused component.
-						aLastFocusedComp = comp;
+						processFocusEvent(aFocusEvent);						
 					}
 				}
 				if (isConsumedMouse == S_OK)
@@ -316,6 +300,23 @@ void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 
 void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 {
-	// NOTE: This will be the handler of focus events.
-	xEvent->getSource()->processFocusEvent(xEvent);
+	Component * comp = xEvent->GetComponent();
+
+	// We enable focus regardless of the component's focusListener (if it has one or not).
+	comp->isFocused = true;
+
+	// Fire focus gained event from component that gained focus.
+	comp->processFocusEvent(aFocusEvent);
+
+	if (aLastFocusedComp)
+	{
+		// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
+		aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
+		// We are not doing a check here. Possible errors may come.
+		aLastFocusedComp->isFocused = false;
+		aLastFocusedComp->processFocusEvent(aFocusEvent);
+	}
+	// Set newly focused component.
+	aLastFocusedComp = comp;
+
 }

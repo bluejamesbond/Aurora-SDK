@@ -30,6 +30,8 @@
 #include "AbstractEventQueue.h"
 //#include "AbstractFrame.h"
 
+#include "Windows\Window.h" // FORCING: @requestFocus()
+
 namespace A2D {
 
     ////////////////////////////////////////////////////////////////////////////////
