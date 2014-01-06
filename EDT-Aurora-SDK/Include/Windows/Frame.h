@@ -52,7 +52,7 @@ namespace A2D {
 
 	protected:
 
-        virtual void		createPlatformCompatibleWindow(void ** xWindow);
+        virtual void		createPlatformCompatibleWindow(AbstractWindow ** xWindow);
 //		virtual AbstractEventQueue*	createPlatformCompatibleEventQueue();
 
     };
