@@ -55,7 +55,7 @@ void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
+bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -70,7 +70,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 	float rectWidth = xRect->aWidth;
 	float rectHeight = xRect->aHeight;
 
-	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return S_OK;
+	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
 
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
@@ -136,7 +136,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 	vertices[5].color = D3DXVECTOR4(bottomRightColor.aRed, bottomRightColor.aGreen, bottomRightColor.aBlue, bottomRightColor.aAlpha);
 
 	// Lock the vertex buffer.
-	SAFELY(xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices)));
+	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
 
 	// Copy data using SSE2 accelerated method
 	QuadFactory::memcpySSE2QuadVertex(static_cast<ColoredTextureVertex*>(mappedVertices), vertices);
@@ -144,11 +144,11 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 	// Unlock the vertex buffer.
 	xQuadData->aVertexBuffer->Unmap();
 
-	return S_OK;
+	return true;
 
 }
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
+bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -162,22 +162,8 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rec
 	float rectY = xRect->aY;
 	float rectWidth = xRect->aWidth;
 	float rectHeight = xRect->aHeight;
-
-	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return S_OK;
-
-	/*
-	// Compare using built in accelerated-function
-	rectChange = memcmp(&xQuadData->aPreviousRect, xRect, sizeof(Rect));
-	imagePropertiesChange = memcmp(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
-	imagePropertiesChange = memcmp(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(ImageProperties));
-
-	if (!(rectChange | imagePropertiesChange) && !aContraintsChanged)	return hr;
-
-	// Transfer all previous constraints over using accelerated functions
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousRect, xRect, sizeof(Rect));
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
-	x_aligned_memcpy_sse2(&xQuadData->aPreviousImageProperties, xImageProperties, sizeof(Rect));
-	*/
+	
+	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
 
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
@@ -232,7 +218,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rec
 	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
 
 	// Lock the vertex buffer.
-	SAFELY(xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices)));
+	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
 
 	// Copy data using SSE2 accelerated method
 	QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
@@ -240,11 +226,11 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rec
 	// Unlock the vertex buffer.
 	xQuadData->aVertexBuffer->Unmap();
 
-	return S_OK;
+	return true;
 
 }
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint)
+bool QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint)
 {
 	Rect& constraints = aConstraints;
 
@@ -258,7 +244,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 	float rectWidth = xRect->aWidth;
 	float rectHeight = xRect->aHeight;
 
-	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight)	return S_OK;
+	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
 	
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, right, top, bottom, depth = aDepth;
@@ -304,7 +290,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 	vertices[5].color = D3DXVECTOR4(bottomRightColor.aRed, bottomRightColor.aGreen, bottomRightColor.aBlue, bottomRightColor.aAlpha);
 
 	// Lock the vertex buffer.
-	SAFELY(xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices)));
+	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
 
 	// Copy data using SSE2 accelerated method
 	QuadFactory::memcpySSE2QuadVertex(static_cast<ColorVertex*>(mappedVertices), vertices);
@@ -312,7 +298,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 	// Unlock the vertex buffer.
 	xQuadData->aVertexBuffer->Unmap();
 
-	return S_OK;
+	return true;
 
 }
 

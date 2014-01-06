@@ -80,11 +80,12 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 	quadData = static_cast<QuadData<TextureVertex>*>((*xPipeline)->aPipelineComps[1]);
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat);
-	aTextureShader->setTexture(texture);
-
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-	aTextureShader->renderShader();
+	if (aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat))
+	{
+		aTextureShader->setTexture(texture);
+		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+		aTextureShader->renderShader();
+	}
 }
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
@@ -117,11 +118,12 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 	quadData = static_cast<QuadData<ColoredTextureVertex>*>((*xPipeline)->aPipelineComps[1]);
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xPaint, xRepeat);
-	aColoredTextureShader->setTexture(texture);
-
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColoredTextureVertex));
-	aColoredTextureShader->renderShader();
+	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xPaint, xRepeat))
+	{
+		aColoredTextureShader->setTexture(texture);
+		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColoredTextureVertex));
+		aColoredTextureShader->renderShader();
+	}
 }
 
 void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
@@ -147,10 +149,11 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 
 	quadData = static_cast<QuadData<ColorVertex>*>((*xPipeline)->aPipelineComps[0]);
 	
-	aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint);
-
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
-	aColorShader->renderShader();
+	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint))
+	{
+		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
+		aColorShader->renderShader();
+	}
 }
 
 LPCWSTR Graphics::getClass()

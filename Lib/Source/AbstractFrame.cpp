@@ -287,8 +287,6 @@ void AbstractFrame::update()
 	if (!aValidatedContents)
 	{
 		validate();
-
-		if (!aValidatedContents)	return;
 		
 		aRepaintManager->update_forward();
 

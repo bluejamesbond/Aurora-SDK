@@ -53,6 +53,9 @@ namespace A2D {
 	private:
 
 		float							aDepth = FLT_MIN;
+
+		bool							aForced = false;
+
 		AbstractFrame		    *		aFrame;
 		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
@@ -70,6 +73,7 @@ namespace A2D {
 		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
 
 		Styles::Display					aDisplay = Styles::Display::BLOCK;
+		Styles::Position				aPosition = Styles::Position::RELATIVE_;
 
 		float							aSizeWidth = 0.0f;
 		float							aSizeHeight = 0.0f;
@@ -87,13 +91,14 @@ namespace A2D {
 		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
 		void							setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
 		
-		void							doLayout();
+		void							applyCascadingStyleLayout();
+		void							forceBounds(bool xForce);
 
     protected:
 
 		bool                            aValidatedContents;
-		float							aCalculatedNegativeDeltaX;
-		float							aCalculatedNegativeDeltaY;
+		float							aCalculatedNegativeDeltaX = 0.0f;
+		float							aCalculatedNegativeDeltaY = 0.0f;
 		Graphics                *       aGraphics;
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;

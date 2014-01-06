@@ -30,7 +30,7 @@ void Component::paintComponent()
 	if (aOptBackgroundSrc != NULL)
 	{
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
-		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, aOptBackgroundPaint, false);
+		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, false);
 	}
 	else
 	{
@@ -48,7 +48,7 @@ void Component::update()
 	}
 
 	graphics.setClip(&aVisibleRegion, aDepth);
-
+	
 	// Render the current component
 	paintComponent();
 
@@ -162,8 +162,8 @@ void Component::validate()
 		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
 		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
 
-		aCalculatedNegativeDeltaX = 0;
-		aCalculatedNegativeDeltaY = 0;
+		aCalculatedNegativeDeltaX = 0.0;
+		aCalculatedNegativeDeltaY = 0.0;
 	}
 	else
 	{
@@ -179,55 +179,134 @@ void Component::validate()
 		// Reduce the size based on parent x, y
 		// Account for negative x, y of this
 		// Accumulate negatives
-		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min(0, compRect.aX));
-		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min(0, compRect.aY));
+		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min(FLT_ZERO, compRect.aX));
+		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min(FLT_ZERO, compRect.aY));
 		
 		// Account for larger than parent
 		aCalculatedRegion.aWidth = min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
 		aCalculatedRegion.aHeight = min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
 
 		// Account for positive shift
-		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0);
-		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0);
+		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : FLT_ZERO);
+		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : FLT_ZERO);
 		
+		// Account for negative height
+		aCalculatedRegion.aWidth = max(FLT_ZERO, aCalculatedRegion.aWidth);
+		aCalculatedRegion.aHeight = max(FLT_ZERO, aCalculatedRegion.aHeight);
+
 		// Set the visible x and y based on previous
-		aVisibleRegion.aX = parentVisibleRegion.aX + max(0, min(aCalculatedRegion.aX, compRect.aX));
-		aVisibleRegion.aY = parentVisibleRegion.aY + max(0, min(aCalculatedRegion.aY, compRect.aY));
+		aVisibleRegion.aX = parentVisibleRegion.aX + max(FLT_ZERO, min(aCalculatedRegion.aX, compRect.aX));
+		aVisibleRegion.aY = parentVisibleRegion.aY + max(FLT_ZERO, min(aCalculatedRegion.aY, compRect.aY));
 
 		// Set the region based on if it is even visible
-		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0 ? aCalculatedRegion.aWidth : 0.0);
-		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0 ? aCalculatedRegion.aHeight : 0.0);
+		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= FLT_ZERO ? aCalculatedRegion.aWidth : FLT_ZERO);
+		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= FLT_ZERO ? aCalculatedRegion.aHeight : FLT_ZERO);		
 	}
 
-	doLayout();
+	applyCascadingStyleLayout();
 
 	aValidatedContents = true;
 }
 
-void Component::doLayout()
+void Component::forceBounds(bool xForce)
 {
-	float height, width, x = 0, y = 0;
-	int size = aChildren.size();
+	aForced = xForce;
+}
+
+#define UNITS(unit, value, range) ((unit == Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value)) 
+
+void Component::applyCascadingStyleLayout()
+{
+	int size = aChildren.size();	
 	OrderedList<Component*>::Node<Component*> * start = aChildren._head();
-	Component* component;
+	
+	float height, width, rX = 0, rY = 0, aX = 0, aY = 0, 
+		last_height = 0.0f, left, top, right, bottom;
+	Styles::Display display;
+	Styles::Position position;
 	Rect& compRect = aOptRegion;
+	Component* component;
 
 	while (start && size--)
 	{
 		component = start->value;
 
-		y += x == 0 ? (component->aPositionTopUnits == Styles::PERCENTAGE ? compRect.aHeight * (component->aPositionTop / 100) : component->aPositionTop) : 0;
-		x += component->aPositionLeftUnits == Styles::PERCENTAGE ? compRect.aWidth * (component->aPositionLeft / 100) : component->aPositionLeft;
+		if (component->aForced)
+		{
+			start = start->right;
+			continue;
+		}
 
 		// Get width and height based on children requirements
-		width = component->aSizeWidthUnits == Styles::PERCENTAGE ? compRect.aWidth * (component->aSizeWidth / 100) : component->aSizeWidth;
-		height = component->aSizeHeightUnits == Styles::PERCENTAGE ? compRect.aHeight* (component->aSizeHeight / 100) : component->aSizeHeight;
+		display = component->aDisplay;
+		position = component->aPosition;
+		width = UNITS(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
+		height = UNITS(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
+		left = UNITS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
+		top = UNITS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
 
-		component->setBounds(x, y, width, height);
+		if (position == Styles::RELATIVE_)
+		{
+			if (display == Styles::INLINE_BLOCK)
+			{
+				if ((left + rX + width) > (compRect.aWidth + FLT_ONE))
+				{
+					rX = left;
+					rY = rY + last_height + top;
+				}
+				else/*if (display == Styles::BLOCK)*/
+				{
+					rX = rX + left;
+					rY = top;
+				}
+			}
+			else/*if (display == Styles::BLOCK)*/
+			{
+				rX += left;
+				rY += top;
+			}
+		}
+		else/*if (position == Styles::ABSOLUTE_)*/
+		{
+			aX = UNITS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
+			aY = UNITS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
+		}
 
-		// increment only if display: block
-		y = component->aDisplay == Styles::BLOCK || x > compRect.aWidth ? y + height : y;
-		x = component->aDisplay == Styles::INLINE_BLOCK && x <= compRect.aWidth ? x + width : 0;
+		if (position == Styles::RELATIVE_)
+		{
+			/***********************************************/
+			component->setBounds(rX, rY, width, height);
+			/***********************************************/
+
+			if (display == Styles::INLINE_BLOCK)
+			{
+				// If beyound edge width
+				if (rX + width >= compRect.aWidth)
+				{
+					rX = FLT_ZERO;
+					rY = rY + height;
+				}
+				else
+				{
+					rX = rX + width;
+					rY = rY;
+				}
+
+				// Inline block uses last_height
+				last_height = height;
+			}
+			else/*if (display == Styles::BLOCK)*/
+			{
+				rX = FLT_ZERO;
+				rY = rY + height;
+			}
+		}
+		else/*if (position == Styles::ABSOLUTE_)*/
+		{
+			/***********************************************/
+			component->setBounds(aX, aY, width, height);
+			/***********************************************/
+		}
 		
 		start = start->right;
 	}
