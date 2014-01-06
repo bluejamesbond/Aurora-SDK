@@ -1,4 +1,3 @@
-
 //#include "../../Include/ExtLibs.h"
 #include "../../Include/GLXExtLibs.h"
 #include "../../Include/AbstractFrame.h"
@@ -245,7 +244,7 @@ RootPane& AbstractFrame::getRootPane()
 
 HRESULT AbstractFrame::createResources()
 {	
-	aWindow = createPlatformCompatibleWindow();
+	createPlatformCompatibleWindow(&aWindow);
 	SAFELY(aWindow->initialize());
 	
 	aBackBuffer = new BackBuffer(aWindow, &aGXSettings);
