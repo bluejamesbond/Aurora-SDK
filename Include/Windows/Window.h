@@ -124,7 +124,10 @@ namespace A2D {
 		MouseEvent					*	aMouseUp;
 		MouseEvent					*	aMouseMove;
 
+		AbstractEventQueue			*	aEventQueue;
+
 		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
+
 
 	public:
 

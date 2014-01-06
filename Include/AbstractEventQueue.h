@@ -30,8 +30,6 @@
 
 #include "ExtLibs.h"
 
-//#include "Component.h"
-
 #include "MouseEvent.h"
 #include "ActionEvent.h"
 #include "FocusEvent.h"
@@ -48,6 +46,7 @@ namespace A2D{
 	class AbstractFrame;
 	class AbstractWindow;
 	class Window;
+	class Component;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -111,8 +110,6 @@ namespace A2D{
 		void							processFocusEvent(FocusEvent * xEvent);
 		void							processActionEvent(ActionEvent * xEvent);
 
-		//friend							HRESULT Component::requestFocus();
-
 	private:
 
 		bool							isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs);
@@ -121,7 +118,7 @@ namespace A2D{
 		FocusEvent					*	aFocusEvent;
 		ActionEvent					*	aActionEvent;
 
-		Component					*	aLastFocusedComp;
+		Component					*	aLastFocusedComp = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
 	protected:

@@ -264,10 +264,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 						// Fire focus gained event from component that gained focus.
 						comp->processFocusEvent(aFocusEvent);
 
-						// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
-						aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
 						if (aLastFocusedComp)
 						{
+							// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
+							aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
 							// We are not doing a check here. Possible errors may come.
 							aLastFocusedComp = false; 
 							aLastFocusedComp->processFocusEvent(aFocusEvent);

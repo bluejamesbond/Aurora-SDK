@@ -2,6 +2,7 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/Component.h"
 #include "../../include/Graphics.h"
+#include "../../Include/AbstractFrame.h"
 
 using namespace A2D;
 
@@ -245,8 +246,10 @@ HRESULT Component::removeListenerThroughChildren(AbstractListener * xListener)
 
 HRESULT Component::requestFocus()
 {
-	if (isFocusable)
+	if (isFocusable && !isFocused)
 	{
+		FocusEvent * focusRequest = new FocusEvent(this, FocusEvent::FOCUS_GAINED);
+		processFocusEvent(focusRequest);
 		isFocused = true;
 	}
 	return S_OK;

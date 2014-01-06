@@ -23,6 +23,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 	AbstractFrame& frame = *aFrame;
 	AbstractEventQueue& eventQueue = *xEventQueue;
+	aEventQueue = xEventQueue; // replace later
 
 	// Get pointer to all components.
 
@@ -30,7 +31,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			eventHandler(msg, &eventQueue); 
+			eventHandler(msg, aEventQueue);
 		}
 
 		if (visible)
@@ -51,7 +52,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			}
 			else if (GetMessage(&msg, NULL, 0, 0) > 0)
 			{
-				eventHandler(msg, &eventQueue);
+				eventHandler(msg, aEventQueue);
 			}
 		}
 	}

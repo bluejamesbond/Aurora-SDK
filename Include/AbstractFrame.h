@@ -33,7 +33,6 @@
 #include "GXSettings.h"
 #include "RepaintManager.h"
 #include "Rect.h"
-#include "EventSource.h"
 
 namespace A2D {
 	
