@@ -50,13 +50,13 @@ namespace A2D{
 
 	private:
 
-		OrderedList<Runnable*>		 aEventQueue;
-		Runnable               *     aImmediateRunnable = NULL;
-		AbstractThread		   *     aThread = NULL;
+		OrderedList<Runnable*>			aEventQueue;
+		Runnable               *		aImmediateRunnable = NULL;
+		AbstractThread		   *		aThread = NULL;
 
 	protected:
 
-		AbstractFrame		  *		aFrame;
+		AbstractFrame		  *			aFrame;
 
 	public:
 

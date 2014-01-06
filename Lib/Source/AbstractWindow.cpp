@@ -71,18 +71,6 @@ LPCWSTR AbstractWindow::getName()
 }
 
 /**
-* returns the reference Frame of the specified Window object
-*
-* @param void
-* @return AbstractFrame
-the Frame that is associated with the window
-*/
-AbstractFrame *  AbstractWindow::getFrame()
-{
-	return aFrame;
-}
-
-/**
 * returns a pointer to the Rect object associated with
 * the AbstractWindow object referenced
 *
@@ -95,7 +83,7 @@ Rect AbstractWindow::getBounds()
 	return aRect;
 }
 
-Dims * AbstractWindow::_getSize()
+Dims * AbstractWindow::getSizeAsPtr()
 {
 	return static_cast<Dims*>(&aRect);
 }

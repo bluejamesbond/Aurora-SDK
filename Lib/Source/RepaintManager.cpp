@@ -24,13 +24,13 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 		return E_FAIL;
 	}
 
-	xChild._setParent(xParent);
-	xChild._setDepth(--depth);
-	xChild._setGraphics(xParent.getGraphics());
+	xChild.setParent(xParent);
+	xChild.setDepth(--depth);
+	xChild.setGraphics(xParent.getGraphics());
 	
 	if (addToDepthTracker(xChild, abs(depth)))
 	{
-		xParent._add(xChild);
+		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
 
 		return S_OK;
@@ -147,8 +147,8 @@ HRESULT RepaintManager::initialize()
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
 
-	root._setDepth(0.0f);
-	root._setGraphics(*aGraphics);
+	root.setDepth(0.0f);
+	root.setGraphics(*aGraphics);
 
 	addToDepthTracker(root, 0.0f);
 

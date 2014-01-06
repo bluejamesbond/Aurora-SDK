@@ -186,9 +186,6 @@ namespace A2D {
 
 		virtual void                    render();
 		virtual void					validate();
-
-	public:
-
 		virtual void              *     getPlatformCompatibleWindowHandle();
 		virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue);
 

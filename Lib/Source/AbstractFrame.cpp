@@ -247,7 +247,7 @@ HRESULT AbstractFrame::createResources()
 	aWindow = createPlatformCompatibleWindow();
 	SAFELY(aWindow->initialize());
 	
-	aWindowDims = aWindow->_getSize();
+	aWindowDims = aWindow->getSizeAsPtr();
 
 	aBackBuffer = new BackBuffer(aWindow, &aGXSettings);
 	SAFELY(aBackBuffer->initialize());

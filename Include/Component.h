@@ -44,7 +44,9 @@ namespace A2D {
     ////////////////////////////////////////////////////////////////////////////////
 
     class Component : public Abstract
-    {
+	{
+		friend class RepaintManager;
+
 	public:
 
 		Component();
@@ -93,6 +95,17 @@ namespace A2D {
 		
 		void							applyCascadingStyleLayout();
 		void							forceBounds(bool xForce);
+	
+	private:
+
+		Rect *							getBoundsAtPtr();
+		void							setDepth(float xDepth);
+		void							setGraphics(Graphics& xGraphics);
+		void                            setParent(Component& xComponent);
+		void							setFrame(AbstractFrame& xFrame);
+		void							add(Component& xComponent);
+		void							remove(Component& xComponent);
+
 
     protected:
 
@@ -124,14 +137,6 @@ namespace A2D {
 		void							validated();
 		void							invalidate();
 
-		Rect *							_getBounds();
-		void							_setDepth(float xDepth);
-		void							_setGraphics(Graphics& xGraphics);
-		void                            _setParent(Component& xComponent);
-		void							_setFrame(AbstractFrame& xFrame);
-		void							_add(Component& xComponent);
-		void							_remove(Component& xComponent);
-
 		float							getDepth();
 		Graphics&						getGraphics();
 		Component&						getParent();
@@ -142,8 +147,6 @@ namespace A2D {
 		Rect                            getBounds();
 		void                            setBounds(Rect& xRect);
 
-		void                            add(Component& xComponent);
-		void                            remove(Component& xComponent);
 		void                            setBounds(float xX, float xY, float xWidth, float xHeight);
 
         bool                            isDoubleBuffered();

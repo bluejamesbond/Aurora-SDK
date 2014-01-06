@@ -41,6 +41,10 @@ namespace A2D {
 
 	class AbstractWindow : public Abstract
 	{
+	
+		friend class AbstractFrame;
+		friend class AbstractEventQueue;
+		friend class BackBuffer;
 
 	public:
 
@@ -51,20 +55,20 @@ namespace A2D {
 		Dims                         aMinDims;
 		Dims                         aMaxDims;
 
-		float                           aOptShadowRadius;
-		float                           aOptBorderWidth;
+		float                        aOptShadowRadius;
+		float                        aOptBorderWidth;
 
 		Color                        aOptBorderColor;
 		Color                        aOptBackgroundColor;
 		Color                        aOptShadowColor;
 
-		int                             aDefaultCloseOperation;
+		int                          aDefaultCloseOperation;
 
-		bool                            aVisible;
-		bool                            aShadowed;
-		bool                            aUndecorated;
+		bool                         aVisible;
+		bool                         aShadowed;
+		bool                         aUndecorated;
 
-		LPCWSTR							aName;
+		LPCWSTR						aName;
 
 		Rect                         aRect;
 		AbstractFrame          *     aFrame = NULL;
@@ -76,9 +80,9 @@ namespace A2D {
 
 	public:
 
-		void                            update();
-		void							invalidate();
-		void							revalidate();
+		void                         update();
+		void						 invalidate();
+		void						 revalidate();
 
 	protected:
 
@@ -86,22 +90,21 @@ namespace A2D {
 
 	public:
 
-		Dims					  *		_getSize(); // internal use only
-		Dims                         getMinimumSize();
-		Dims                         getMaximumSize();
-		Rect                         getBounds();
+		Dims					  *		getSizeAsPtr(); // internal use only
+		Dims							getMinimumSize();
+		Dims							getMaximumSize();
+		Rect							getBounds();
 		Dims					  		getSize();
 		LPCWSTR                         getName();
-		AbstractFrame          *     getFrame();
 		bool                            isUndecorated();
 		int                             getDefaultCloseOperation();
-		AbstractWindow         *     getLocationRelativeTo();
+		AbstractWindow         *		getLocationRelativeTo();
 		bool                            isVisible();
 		bool                            isShadowed();
-		Color                        getBorderColor();
+		Color							getBorderColor();
 		float                           getShadowRadius();
-		Color                        getShadowColor();
-		Color                        getBackgroundColor();
+		Color							getShadowColor();
+		Color							getBackgroundColor();
 		float                           getBorderWidth();
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -112,9 +115,6 @@ namespace A2D {
 
 		virtual void                    render() = 0;
 		virtual void					validate() = 0;
-
-	public:
-
 		virtual void              *     getPlatformCompatibleWindowHandle() = 0;
 		virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) = 0;
 

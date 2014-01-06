@@ -76,7 +76,7 @@ AbstractFrame& Component::getFrame()
 	return *aFrame;
 }
 
-void Component::_setGraphics(Graphics& xGraphics)
+void Component::setGraphics(Graphics& xGraphics)
 {
 	aGraphics = &xGraphics;
 }
@@ -86,17 +86,17 @@ Graphics& Component::getGraphics()
 	return *aGraphics;
 }
 
-void Component::_setDepth( float xDepth)
+void Component::setDepth( float xDepth)
 {
 	aDepth = xDepth;
 }
 
-void Component::_setFrame(AbstractFrame& xFrame)
+void Component::setFrame(AbstractFrame& xFrame)
 {
 	aFrame = &xFrame;
 }
 
-void Component::_setParent(Component& xParent)
+void Component::setParent(Component& xParent)
 {
 	aParent = &xParent;
 }
@@ -106,17 +106,17 @@ Rect Component::getBounds()
 	return aOptRegion;
 }
 
-Rect * Component::_getBounds()
+Rect * Component::getBoundsAtPtr()
 {
 	return &aOptRegion;
 }
 
-void Component::_add(Component& xContainer)
+void Component::add(Component& xContainer)
 {
 	aChildren.push_back(&xContainer, NULL);
 }
 
-void Component::_remove(Component& xContainer)
+void Component::remove(Component& xContainer)
 {
 	aChildren.remove(&xContainer);
 }
