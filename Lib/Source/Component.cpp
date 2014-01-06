@@ -241,6 +241,22 @@ HRESULT Component::removeListenerThroughChildren(AbstractListener * xListener)
 	return hr;
 }
 
+// Focus system
+
+HRESULT Component::requestFocus()
+{
+	if (isFocusable)
+	{
+		isFocused = true;
+	}
+	return S_OK;
+}
+
+void Component::setFocusable(bool xFocusable)
+{
+	isFocusable = xFocusable;
+}
+
 LPCWSTR Component::getClass()
 {
 	return L"Camera";

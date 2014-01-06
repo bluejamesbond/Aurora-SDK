@@ -1,5 +1,6 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/FocusListener.h"
+#include "../../Include/Component.h"
 
 using namespace A2D;
 
@@ -46,7 +47,6 @@ void FocusListener::focusGained(FocusEvent * xEvent)
 {
 	// do something
 	SYSOUT_STR("Handling focus gained.");
-
 }
 
 void FocusListener::focusLost(FocusEvent * xEvent)

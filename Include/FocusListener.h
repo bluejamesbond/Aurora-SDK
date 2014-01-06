@@ -22,6 +22,7 @@
 #include "ExtLibs.h"
 #include "FocusEvent.h"
 #include "AbstractListener.h"
+//#include "Component.h"
 
 using namespace std;
 
@@ -33,6 +34,7 @@ namespace A2D {
 
 	class AbstractListener;
 	class FocusEvent;
+	class Component;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DEFINE
@@ -67,6 +69,9 @@ namespace A2D {
 		virtual void					notify(AbstractEvent * xEvent);
 
 	private:
+
+		void							setFocus(bool xFocus);
+
 		FocusListener(const FocusListener&);
 		FocusListener& operator()(const FocusListener&);
 

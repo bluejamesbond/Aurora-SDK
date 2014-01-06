@@ -58,6 +58,7 @@ namespace A2D {
 
 	public:
 
+		void							setProperties(Component * xSource, int xEventID, Component * xOpposite);
 		bool							isTemporary();
 		Component				*		getOppositeComponent();
 		void							print() const;

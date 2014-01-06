@@ -206,7 +206,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	if (!size) return;
 
 	Rect * visibleRegion;
-	HRESULT isDone;
+	HRESULT isConsumedMouse;
+	bool isConsumedFocus = false;
 	POINT point;
 	UnorderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
@@ -234,36 +235,48 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 				{
 					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
-					isDone = comp->processMouseEvent(aMouseEvent);
-					if (comp->isFocusable && !comp->isFocused) // Check if already focused/focusable.
-					{
-						bool focusProcessed;
-						// Prepare focus event for component focused gained and component focus lost.
-						aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
-						// Fire focus event.
-						// If the component succesfully gained focus then we fire focus lost on opposite component.
-						focusProcessed = comp->processFocusEvent(aFocusEvent);
-						if (focusProcessed)
-						{
-							aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_GAINED, comp);
-							// If no component was focused before, aLastFocusedComp can be NULL.
-							if (aLastFocusedComp) aLastFocusedComp->processFocusEvent(aFocusEvent);
-							// For last we set the last focused component to the one that just gained the focus.
-							aLastFocusedComp = comp;
-						}
-					}
+					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
+
 				}
 				else if (xEvent->getID() == MouseEvent::MOUSE_PRESSED)
 				{
 					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_PRESSED);
-					isDone = comp->processMouseEvent(aMouseEvent);
+					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
 				}
 				else if (xEvent->getID() == MouseEvent::MOUSE_RELEASED)
 				{
 					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_RELEASED);
-					isDone = comp->processMouseEvent(aMouseEvent);
+					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
+
+					// Focus event handling AFTER CLICKED (aka mouseUpRelease)
+					// NOTE: We may change this later once we have keyboard listeners.
+					if (comp->isFocusable && !comp->isFocused && !isConsumedFocus) // Check if already focused/focusable.
+					{
+						// Only the top level components can get focus.
+						isConsumedFocus = true;
+
+						// Prepare focus event for component focused gained and component focus lost.
+						aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
+
+						// We enable focus regardless of a component's focusListener (if it has one or not).
+						comp->isFocused = true;
+
+						// Fire focus gained event from component that gained focus.
+						comp->processFocusEvent(aFocusEvent);
+
+						// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
+						aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
+						if (aLastFocusedComp)
+						{
+							// We are not doing a check here. Possible errors may come.
+							aLastFocusedComp = false; 
+							aLastFocusedComp->processFocusEvent(aFocusEvent);
+						}
+						// Set newly focused component.
+						aLastFocusedComp = comp;
+					}
 				}
-				if (isDone == S_OK)
+				if (isConsumedMouse == S_OK)
 				{
 					SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 					return;
@@ -303,5 +316,6 @@ void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 
 void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 {
+	// NOTE: This will be the handler of focus events.
 	xEvent->getSource()->processFocusEvent(xEvent);
 }

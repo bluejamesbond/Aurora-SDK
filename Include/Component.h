@@ -27,6 +27,7 @@
 #include "Paint.h"
 
 #include "EventSource.h"
+#include "AbstractEventQueue.h"
 
 namespace A2D {
 
@@ -141,14 +142,17 @@ namespace A2D {
 		// Components are the only we that can use the focus system
 	public:
 
-		friend							FocusListener;
-		
-		void							requestFocus();
-		void							setFocus(bool xFocus);
+		friend							AbstractEventQueue;
+
+		HRESULT							requestFocus();
 		void							setFocusable(bool xFocusable);
+
+	private:
 
 		bool							isFocused = false;
 		bool							isFocusable = true;
+
+
 
     public:
 
