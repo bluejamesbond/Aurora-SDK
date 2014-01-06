@@ -17,10 +17,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
-#include "A2DFrame.h"
-#include "A2DAbstract.h"
-#include "A2DRect.h"
-#include "A2DAbstractWindow.h"
+//#include "A2DFrame.h"
+//#include "A2DAbstract.h"
+#include "/home/syk435/Aurora-SDK/Include/A2DRect.h"
+//#include "A2DAbstractWindow.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -38,6 +38,7 @@ class A2DAbstractWindow;
 #define S_OK 0
 #define E_FAIL 1
 #define FAILED(x) !x
+#define LPCWSTR string
 
 typedef struct
 {
@@ -52,9 +53,7 @@ typedef struct
 // DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-using namespace Gdiplus;
-
-class A2DXWindow : public A2DAbstractWindow     //Xlib implemntation of Window, extends AbstractWindow
+class A2DXWindow //: public A2DAbstractWindow     //Xlib implemntation of Window, extends AbstractWindow
 {
 
 protected:
@@ -78,7 +77,7 @@ protected:
     LPCWSTR                         aName;          //name of window
 
     A2DRect                         aRect;          //rect enclosure of window (diff. from Dims how?)
-    A2DAbstractFrame          *     aFrame;         //Frame overarching object (controller)
+   // A2DAbstractFrame          *     aFrame;         //Frame overarching object (controller)
     A2DXWindow                *     aRelativeWindow;    //related window (not sure what relationship)
 
 private:

@@ -1,7 +1,7 @@
 #include "../../include/A2DExtLibs.h"
 #include "../../include/A2DGLAbstractTexture.h"
 
-A2DGLAbstractTexture::A2DGLAbstractTexture(A2DBackBuffer * xBackBuffer) :
+A2DGLAbstractTexture::A2DGLAbstractTexture(A2DGLBackBuffer * xBackBuffer) :
 aBackBuffer(xBackBuffer),
 aResource(NULL) {}
 

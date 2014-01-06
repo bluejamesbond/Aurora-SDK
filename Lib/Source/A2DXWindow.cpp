@@ -1,4 +1,4 @@
-#include "../../include/A2DXWindow.h"
+#include "../../Include/A2DXWindow.h"
 
 //IF ANY VIRTUAL METHODS (OTHER THAN PURE VIRTUAL), CALL PARENT FUNCTION FIRST INSIDE IT (IF APPLICABLE)
 /*Also Available: int XMoveWindow(Display *display, Window w, int x, y);

@@ -60,7 +60,7 @@
  If your name should be here but isn't, let Sean know.
 
 */
-#include "../../include/A2DGLImageLoader.h"
+#include "../../Include/A2DGLImageLoader.h"
 
 #ifndef STBI_INCLUDE_STB_IMAGE_H
 #define STBI_INCLUDE_STB_IMAGE_H

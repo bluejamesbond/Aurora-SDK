@@ -55,10 +55,10 @@ public:
         ~A2DGLTexture();
 
         // Variables
-        string                                        *                aSrc;
+        char                                        *                aSrc;
 
         // Accessors
-        string                                        *                GetSrc();
+        char                                        *                GetSrc();
 
         // Mutators
         // { NONE }
