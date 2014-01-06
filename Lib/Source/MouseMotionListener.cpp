@@ -54,7 +54,7 @@ void MouseMotionListener::mouseDragged(MouseEvent * xEvent)
 void MouseMotionListener::mouseMoved(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	 SYSOUT_STR("Handling mouse moved.");
+	 //SYSOUT_STR("Handling mouse moved.");
 	
 }
 void MouseMotionListener::print() const

@@ -233,50 +233,56 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				)
 			{
 				// If we are not done, we need to keep firing by checking the parent of each component
-				Component * parent = comp;
-				while (parent)
+				while (comp)
 				{
 					if (ID == MouseEvent::MOUSE_MOVE)
 					{
-						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_MOVE);
-						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
+						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
+						isConsumedMouse = comp->processMouseEvent(aMouseEvent);
 
-						if (parent != aLastCheckedComponent)
+						if (aLastComponent && isConsumedMouse)
 						{
-							// We've entered a new component
-							aMouseEvent->setProperties(aLastCheckedComponent, MouseEvent::MOUSE_EXITED);
-							if (aLastCheckedComponent) aLastCheckedComponent->processMouseEvent(aMouseEvent);
-							
-							aMouseEvent->setProperties(parent, MouseEvent::MOUSE_ENTERED);
-							parent->processMouseEvent(aMouseEvent);
+							Rect * lastVisRegion = &aLastComponent->aVisibleRegion;
+							bool inSameRegion = (point.x >= lastVisRegion->aX && point.x <= lastVisRegion->aX + lastVisRegion->aWidth &&
+								point.y >= lastVisRegion->aY && point.y <= lastVisRegion->aY + lastVisRegion->aHeight);
+
+							if (!inSameRegion)
+							{
+								// We've entered a new component
+								aMouseEvent->setProperties(aLastComponent, MouseEvent::MOUSE_EXITED);
+								aLastComponent->processMouseEvent(aMouseEvent);
+
+								aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
+								comp->processMouseEvent(aMouseEvent);
+							}
 						}
-						aLastCheckedComponent = parent;
+						
 					}
 					else if (ID == MouseEvent::MOUSE_PRESSED)
 					{
-						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_PRESSED);
-						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
+						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_PRESSED);
+						isConsumedMouse = comp->processMouseEvent(aMouseEvent);
 					}
 					else if (ID == MouseEvent::MOUSE_RELEASED)
 					{
-						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_RELEASED);
-						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
+						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_RELEASED);
+						isConsumedMouse = comp->processMouseEvent(aMouseEvent);
 
 						// Focus event handling AFTER CLICKED (aka mouseUpRelease)
 						// NOTE: We may change this later once we have keyboard listeners.
-						if (parent->isFocusable && !parent->isFocused && !isConsumedFocus) // Check if already focused/focusable.
+						if (comp->isFocusable && !comp->isFocused && !isConsumedFocus) // Check if already focused/focusable.
 						{
 							// Only the top level components can get focus.
 							isConsumedFocus = true;
 							//comp->requestFocus();
 							// Prepare focus event for component focused gained and component focus lost.
-							aFocusEvent->setProperties(parent, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
+							aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
 							processFocusEvent(aFocusEvent);
 						}
 
 						// Action event handling AFTER CLICKED
 						// Will work more on this later, not sure how it works with current components.
-						aActionEvent->setSource(parent);
+						aActionEvent->setSource(comp);
 						processActionEvent(aActionEvent);
 
 					}
@@ -284,19 +290,21 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					if (isConsumedMouse == S_OK)
 					{
 						SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+						aLastComponent = comp;
 						return;
 					}
 					else
 					{
-						invalidLocs.push_back(&parent->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
-						parent = parent->aParent;
+						invalidLocs.push_back(&comp->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
+						comp = comp->aParent;
 					}
 				}		
 			}
 		}
 		node = node->left;
 	}
-	SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+	comp = aLastComponent;
+	//SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)

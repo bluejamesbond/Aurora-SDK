@@ -120,7 +120,8 @@ namespace A2D{
 		ActionEvent					*	aActionEvent;
 
 		Component					*	aLastFocusedComp = 0;
-		Component					*	aLastCheckedComponent = 0;
+		Component					*	aLastComponent = 0;
+		Rect						*	aLastVisibleRegion = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
 	protected:
