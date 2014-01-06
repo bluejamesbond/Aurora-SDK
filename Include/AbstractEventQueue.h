@@ -112,6 +112,7 @@ namespace A2D{
 
 	private:
 
+
 		bool							isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs);
 
 		MouseEvent					*	aMouseEvent; // check performance to see
@@ -119,6 +120,7 @@ namespace A2D{
 		ActionEvent					*	aActionEvent;
 
 		Component					*	aLastFocusedComp = 0;
+		Component					*	aLastCheckedComponent = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
 	protected:

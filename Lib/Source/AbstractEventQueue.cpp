@@ -232,50 +232,53 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				)
 			{
 				// If we are not done, we need to keep firing by checking the parent of each component
-				// Note: we are not doing this!!
-				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+				Component * parent = comp;
+				while (parent)
 				{
-					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
-					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-
-				}
-				else if (xEvent->getID() == MouseEvent::MOUSE_PRESSED)
-				{
-					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_PRESSED);
-					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-				}
-				else if (xEvent->getID() == MouseEvent::MOUSE_RELEASED)
-				{
-					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_RELEASED);
-					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-
-					// Focus event handling AFTER CLICKED (aka mouseUpRelease)
-					// NOTE: We may change this later once we have keyboard listeners.
-					if (comp->isFocusable && !comp->isFocused && !isConsumedFocus) // Check if already focused/focusable.
+					if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 					{
-						// Only the top level components can get focus.
-						isConsumedFocus = true;
-						//comp->requestFocus();
-						// Prepare focus event for component focused gained and component focus lost.
-						aFocusEvent->setProperties(comp, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
-						processFocusEvent(aFocusEvent);						
+						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_MOVE);
+						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
 					}
-					
-					// Action event handling AFTER CLICKED
-					// Will work more on this later, not sure how it works with current components.
-					aActionEvent->setSource(comp);
-					processActionEvent(aActionEvent);
+					else if (xEvent->getID() == MouseEvent::MOUSE_PRESSED)
+					{
+						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_PRESSED);
+						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
+					}
+					else if (xEvent->getID() == MouseEvent::MOUSE_RELEASED)
+					{
+						aMouseEvent->setProperties(parent, MouseEvent::MOUSE_RELEASED);
+						isConsumedMouse = parent->processMouseEvent(aMouseEvent);
 
-				}
-				if (isConsumedMouse == S_OK)
-				{
-					SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
-					return;
-				}
-				else
-				{
-					invalidLocs.push_back(visibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
-				}
+						// Focus event handling AFTER CLICKED (aka mouseUpRelease)
+						// NOTE: We may change this later once we have keyboard listeners.
+						if (parent->isFocusable && !parent->isFocused && !isConsumedFocus) // Check if already focused/focusable.
+						{
+							// Only the top level components can get focus.
+							isConsumedFocus = true;
+							//comp->requestFocus();
+							// Prepare focus event for component focused gained and component focus lost.
+							aFocusEvent->setProperties(parent, FocusEvent::FOCUS_GAINED, aLastFocusedComp);
+							processFocusEvent(aFocusEvent);
+						}
+
+						// Action event handling AFTER CLICKED
+						// Will work more on this later, not sure how it works with current components.
+						aActionEvent->setSource(parent);
+						processActionEvent(aActionEvent);
+
+					}
+					if (isConsumedMouse == S_OK)
+					{
+						SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+						return;
+					}
+					else
+					{
+						invalidLocs.push_back(&parent->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
+						parent = parent->aParent;
+					}
+				}		
 			}
 		}
 		node = node->left;
