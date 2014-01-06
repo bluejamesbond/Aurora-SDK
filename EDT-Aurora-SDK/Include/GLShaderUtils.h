@@ -35,6 +35,18 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
+#ifndef GLERROR_H
+#define GLERROR_H
+
+///
+/// Usage
+/// [... some opengl calls]
+/// glCheckError();
+///
+#define check_gl_error() _check_gl_error(__FILE__,__LINE__)
+
+#endif // GLERROR_H
+
 
 	class GLShaderUtils
 	{

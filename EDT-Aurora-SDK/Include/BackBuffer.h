@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Abstract.h"
-#include "GXSettings.h"
+//#include "GXSettings.h"
 #include "AbstractWindow.h"
 //#include "Graphics.h"
 
@@ -50,8 +50,9 @@ namespace A2D {
 
 	public:
 
-		BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
-		~BackBuffer();
+//		BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
+        BackBuffer(AbstractWindow * xWindow);
+        ~BackBuffer();
 
 	private:
 /*
@@ -70,22 +71,24 @@ namespace A2D {
 
 		Dims					 	   aDims;
 		AbstractWindow			  *    aWindow;
-		GXSettings				       aSettings;
-        GLuint vertexbuffer;
-        unsigned int vt_vbo;
-        GLuint vao;
-        GLuint TextureID;
-        unsigned int tex = 0;
-        Graphics* aGraphics;
+//		GXSettings				       aSettings;
+        GLuint                         vertexbuffer;
+        unsigned int                   vt_vbo;
+        GLuint                         vao;
+        GLuint                         TextureID;
+        unsigned int                   tex = 0;
+        Graphics                  *    aGraphics;
 
-//		ID3D10Device              **    getDevice();
+        //functions
+
 		void							validate();
 		Dims					  *		getSize();
-		GXSettings				  *		getSettings();
+//		GXSettings				  *		getSettings();
 		void                            setActive();
 		void                            swap();
 		void                            clear();
 		void                            setZBuffer(bool val);
+        void                            setGraphics(Graphics* xGraphics);
 
 	public:
 

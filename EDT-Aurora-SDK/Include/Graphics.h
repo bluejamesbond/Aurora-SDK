@@ -68,6 +68,15 @@ namespace A2D {
 		Graphics(BackBuffer * xBackBuffer);
 		~Graphics();
 
+
+        GLuint                          programID;
+        GLuint                          MatrixID;
+        unsigned char       *           image_data;
+        int                             x;
+        int                             y;
+        int                             n;
+        char                *           file_name;
+
 //    private:
 /*
 		float                *			aViewMatrix;
@@ -75,15 +84,11 @@ namespace A2D {
 		float                *			aProjection2DMatrix;
 		float                *			aProjection3DMatrix;
 */
-        glm::mat4 MVP;
+        glm::mat4                       MVP;
 		BackBuffer			 *			aBackBuffer;
-        XWindow              *          aWindow;
-/*		Dims				 *			aBackBufferDims;
-		GXSettings			 *			aBackBufferSettings;
-
-		CameraProperties				aCameraProperties;
-		Rect				 *			aClip;
-		QuadFactory			 *			aQuadFactory;
+        AbstractWindow              *          aWindow;
+/*
+        QuadFactory			 *			aQuadFactory;
 		TextureBuffer        *			aTextureBuffer;
 		TextureBuffer        *			aBlurBuffer;
 
@@ -92,30 +97,20 @@ namespace A2D {
 		AbstractTextureShader*			aColoredTextureShader;
 		AbstractTextureShader*			aTextureShader;
 
-		ID3D10Device		**			aDevice;
-
 	public:
 
 		Dims*							getDrawableDimensions();
-		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
-		
 		void							validate();
-
-        void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
-        void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat);
         void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
-
         void							setClip(Rect * aRect, float xZ);
 */
-        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
-
+        BackBuffer           *          getBackBuffer();
+        void                            setWindow(AbstractWindow* xWindow);
+        void                            setBackBuffer(BackBuffer* xBackBuffer);
+//        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
+        void                            drawImage();
 	public:
-        GLuint programID;
-        GLuint MatrixID;
-        unsigned char* image_data;
-        int x, y, n;
-        char* file_name;
 
 		virtual HRESULT                 initialize();
 		virtual LPCWSTR                 getClass();

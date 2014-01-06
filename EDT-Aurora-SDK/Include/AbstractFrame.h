@@ -64,66 +64,21 @@ namespace A2D {
 	public:
 
 		AbstractFrame();
-		~AbstractFrame();
+        virtual ~AbstractFrame();
 
-	private:
-
-//		RepaintManager		   *		aRepaintManager;
-//		RootPane                		aRootPane;
-		GXSettings			  			aGXSettings;
-		BackBuffer			   *		aBackBuffer;
+    private:
         AbstractWindow	  	   *		aWindow;
-//		AbstractEventQueue	   *		aEventQueue = NULL;
-        Graphics			   * 		aGraphics;
-
-		int								aId;
-		static int						aClassInstances;
 
 		bool							aValidatedContents;
 
 	public:
 
-		RootPane&               		getRootPane();
-		HRESULT                         createResources();
-		void                            update();
-		void							dispose();
-		void							invalidate();
-		// void							revalidate(); --- Unsafe for AbstractFrame!!!
-
-	protected:
-		void							validated();
-		void							validate();
-
-	public:
-		int								id();
-//		void							setBackground(byte xRed, byte xGreen, byte xBlue);
-//		void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
-//		void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
-		void							setVisible(bool xVisibility);
-		void							setName(LPCWSTR  xName);
-		void							setBounds(Rect * xRect);
-		void							setBounds(float xLeft, float xTop, float xWidth, float xHeight);
-		void							setSize(float xWidth, float xHeight);
-		void							setSize(Dims * xDims);
-		void							setUndecorated(bool xDecorated);
-		void							setLocationRelativeTo(AbstractFrame * xFrame);
-		void							setVsync(bool xVsync);
-		void							setDefaultCloseOperation(int xOperation);
-        AbstractWindow			*		getWindow();
-		void							run(int xThreadId);
-//		RepaintManager*					getRepaintManager();
-
+        HRESULT                         createResources();
 
 	protected:
 
-        virtual void		createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
-//		virtual AbstractEventQueue*		createPlatformCompatibleEventQueue() = 0;
-		
-	public:
+        virtual void                    createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
 
-		virtual HRESULT                 initialize();
-		virtual LPCWSTR                 getClass();
-		virtual LPCWSTR                 toString();
 
 	};
 }

@@ -1,7 +1,6 @@
 
 #include "../../../Include/GLXExtLibs.h"
 #include "../../../Include/Windows/XWindow.h"
-//#include "../../../Include/Windows/Frame.h"
 
 using namespace A2D;
 
@@ -10,1224 +9,185 @@ using namespace A2D;
 ////////////////////////////////////////////////////////////////////////////////
 
 XWindow::XWindow(AbstractFrame * xFrame) : AbstractWindow(xFrame){}
-/*
-LRESULT CALLBACK XWindow::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
+
+HRESULT XWindow::isExtensionSupported(const char *extList, const char *extension)
 {
-	Window * aWindow;
 
-	if (xMessage == WM_CREATE)
-	{
-		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
-		aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
-		SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
-		return S_OK;
-	}
-	else
-	{
-		switch (xMessage)
-		{
-		case WM_LBUTTONDOWN:
-		{					
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->updateOnMouseDown(xHwnd);
-		}
-		case WM_MOUSEMOVE:
-		{
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->updateOnMouseMove(xHwnd);
-		}
-		case WM_LBUTTONUP:
-		{
-				 aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				 return aWindow->updateOnMouseUp(xHwnd);
-		}
-		case WM_CLOSE:
-		{
-				DestroyWindow(xHwnd);
-				return S_OK;
-		}
-		case WM_SIZE:
-		{
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->onSize(xHwnd);
+  const char *start;
+  const char *where, *terminator;
 
-		}
-		case WM_ERASEBKGND:
-		{
-				// OS must not erase background. DirectX and
-				// OpenGL will automatically do its parent
-				// (aChildHWnd) window.
-				return S_OK;
-		}
-		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
-		}
+  /* Extension names should not have spaces. */
+  where = strchr(extension, ' ');
+  if ( where || *extension == '\0' )
+    return 0;
 
-	}
+  /* It takes a bit of care to be fool-proof about parsing the
+     OpenGL extensions string. Don't be fooled by sub-strings,
+     etc. */
+  for ( start = extList; ; ) {
+    where = strstr( start, extension );
+
+    if ( !where )
+      break;
+
+    terminator = where + strlen( extension );
+
+    if ( where == start || *(where - 1) == ' ' )
+      if ( *terminator == ' ' || *terminator == '\0' )
+        return 1;
+
+    start = terminator;
+  }
+  return 0;
 }
 
-*/
-Window XWindow::createCompatibleWindow(bool isParent)
+
+Window  XWindow::createCompatibleWindow(bool isParent)
 {
-    Window            hWnd, hwndParent;/*
-	int             left, top, width, height;
-//	DWORD           lStyle, lExStyle;
-	LPCWSTR titleName;
+        aParent = isParent;
+        int doubleBufferVisual[] = { GLX_RGBA,GLX_DEPTH_SIZE, 24,GLX_DOUBLEBUFFER, None };
+        XTextProperty tp;
+        XSizeHints sh;
+
+        aDis = XOpenDisplay( NULL );
+
+        if( !aDis )
+        return 0;
+
+        // make sure OpenGL's GLX extension supported
+        int errorBase, eventBase;
+        if( !glXQueryExtension( aDis, &errorBase, &eventBase ) )
+        return 0;
+
+        XVisualInfo *visualInfo = glXChooseVisual( aDis, DefaultScreen(aDis), doubleBufferVisual );
+        if( visualInfo == NULL )
+        return 0;
+
+        GLXContext hRC = glXCreateContext( aDis, visualInfo, NULL, GL_TRUE );
+        if( hRC == NULL )
+        return 0;
+
+        winAttr.colormap = XCreateColormap( aDis, RootWindow(aDis, visualInfo->screen), visualInfo->visual, AllocNone );
+        winAttr.event_mask = KeyPressMask;
+        winAttr.border_pixel = BlackPixel( aDis, visualInfo->screen );
+        winAttr.background_pixel = BlackPixel( aDis, visualInfo->screen );
+        int winattr_flags = CWColormap | CWEventMask | CWBorderPixel | CWBackPixel;
+
+        aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, 512, 512, 0,
+        visualInfo->depth, InputOutput, visualInfo->visual, winattr_flags, &winAttr );
+
+        //Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
+
+        if( !aWin )
+        return 0;
+
+        XStringListToTextProperty(&aName, 1, &tp);
+        sh.flags = USPosition | USSize;
+        XSetWMProperties(aDis, aWin, &tp, &tp, 0, 0, &sh, 0, 0);
+
+        XMapWindow( aDis, aWin );
+
+
+    #define GLX_CONTEXT_MAJOR_VERSION_ARB       0x2091
+    #define GLX_CONTEXT_MINOR_VERSION_ARB       0x2092
+    render_context = NULL;
+    if( isExtensionSupported( glXQueryExtensionsString(aDis, DefaultScreen(aDis)), "GLX_ARB_create_context" ) ) {
+        typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+        glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
+        if( glXCreateContextAttribsARB ) {
+            int context_attribs[] =
+            {
+                GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
+                GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+                //GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+                None
+            };
+            XSync( aDis, False );
+        } else {
+            fputs("glXCreateContextAttribsARB could not be retrieved", stderr);
+        }
+    } else {
+            fputs("glXCreateContextAttribsARB not supported", stderr);
+    }
+
+        glXMakeCurrent( aDis, aWin, hRC );
 
-	left = static_cast<int>(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
-	top = static_cast<int>(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
-	width = static_cast<int>(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
-	height = static_cast<int>(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = static_cast<int>(isParent ? WS_POPUP | WS_OVERLAPPED : WS_POPUP);
-	lExStyle = static_cast<int>(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
-	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
-	titleName = aName;
-
-	hWnd = CreateWindowEx(lExStyle, aClassName->c_str(), titleName, lStyle, left, top, width, height, hwndParent, NULL, aHInstance, this);
-
-	aStyle = WS_EX_APPWINDOW;
-
-	if (aChildHWnd && aParentHWnd)
-	{
-		// Force the child on top of parent!
-		SetWindowPos(aChildHWnd, aParentHWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-	}
-*/
-    return hWnd;
-}
-/*
-HRESULT XWindow::updateOnMouseDown(HWND xHwnd)
-{
-	if (aHResizeWnd != xHwnd)
-	{
-		return 0;
-	}
-
-	SetCapture(xHwnd);
-
-	bool isParent = aParentHWnd == xHwnd;
-	float left, right, bottom, top;
-	int x, y;
-	POINT p;
-
-	GetCursorPos(&p);
-
-	x = p.x;
-	y = p.y;
-
-	isDragged = true;
-
-	left = (isParent ? aRelativeX + aPadding : aRealX);
-	top = (isParent ? aRelativeY + aPadding : aRealY);
-	bottom = top + aRect.aHeight;
-	right = left + aRect.aWidth;
-
-	if ((x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE ||
-		x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE ||
-		y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE ||
-		y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
-		!isResizing)
-	{
-		isResizing = true;
-	}
-
-	SetCursor(aCurrentCursor);
-
-	return S_OK;
-}
-
-HRESULT XWindow::updateOnMouseMove(HWND xHwnd)
-{
-	if (aHResizeWnd != xHwnd)
-	{
-		return 0;
-	}
-
-	bool isParent = aParentHWnd == xHwnd;
-	float left, right, bottom, top;
-	int x, y;
-	POINT p;
-	Rect& rect = aRect;
-
-	GetCursorPos(&p);
-
-	x = p.x;
-	y = p.y;
-
-	left = (isParent ? aRelativeX + aPadding : aRealX);
-	top = (isParent ? aRelativeY + aPadding : aRealY);
-	bottom = top + aRect.aHeight;
-	right = left + aRect.aWidth;
-
-	if (!isResizing)
-	{
-		//bottom left corner
-		if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
-			aWinMoveRes = true;
-		}
-		//bottom right corner
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
-			aWinMoveRes = false;
-		}
-		//top left corner
-		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
-			aWinMoveRes = true;
-		}
-		//top right corner
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
-			aWinMoveRes = false;
-		}
-		//left border
-		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
-			aWinMoveRes = true;
-		}
-		//right border
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
-			aWinMoveRes = false;
-		}
-		//bottom border
-		else if (y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
-			aWinMoveRes = false;
-		}
-		//top border
-		else if (y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
-			aWinMoveRes = true;
-		}
-		//default
-		else
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_ARROW);
-			aWinMoveRes = false;
-		}
-
-		SetCursor(aCurrentCursor);
-	}
-
-	if (!isDragged)
-	{
-		GetCursorPos(&aLastDraggedPoint);
-		ScreenToClient(xHwnd, &aLastDraggedPoint);
-	}
-
-	if (isDragged && isResizing)
-	{
-		float deltaY, deltaX;
-		HCURSOR currentCursor;
-
-		GetCursorPos(&p);
-		ScreenToClient(xHwnd, &p);
-
-		deltaY = static_cast<float>(aLastDraggedPoint.y - p.y);
-		deltaX = static_cast<float>(aLastDraggedPoint.x - p.x);
-		currentCursor = GetCursor();
-
-		// Process resizing.
-
-		// Resize up and down.
-		if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
-		{
-			if (aWinMoveRes)
-			{
-				if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-					rect.aHeight + deltaY < aMaxDims.aHeight)
-				{
-					rect.aY -= (deltaY);
-					rect.aHeight += (deltaY);
-					p.y += static_cast<long>(deltaY);
-				}
-			}
-			else
-			{
-				rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
-			}
-		}
-		// Resize left and right.
-		else if (currentCursor == LoadCursor(NULL, IDC_SIZEWE))
-		{
-			if (aWinMoveRes)
-			{
-				if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-					rect.aWidth + deltaX < aMaxDims.aWidth)
-				{
-					rect.aX -= (deltaX);
-					rect.aWidth += (deltaX);
-					p.x += static_cast<long>(deltaX);
-				}
-			}
-			else
-			{
-				rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-			}
-
-		}
-		// Resize upper right and lower left corners.
-		else if (currentCursor == LoadCursor(NULL, IDC_SIZENESW))
-		{
-			if (aWinMoveRes)
-			{
-				rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
-				if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-					rect.aWidth + deltaX < aMaxDims.aWidth)
-				{
-					rect.aX -= (deltaX);
-					rect.aWidth += (deltaX);
-					p.x += static_cast<long>(deltaX);
-				}
-			}
-			else
-			{
-				rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-				if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-					rect.aHeight + deltaY < aMaxDims.aHeight)
-				{
-					rect.aY -= (deltaY);
-					rect.aHeight += (deltaY);
-					p.y += static_cast<long>(deltaY);
-				}
-			}
-		}
-		// Resize upper left and lower right corners.
-		else if (currentCursor == LoadCursor(NULL, IDC_SIZENWSE))
-		{
-			if (aWinMoveRes)
-			{
-				if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-					rect.aWidth + deltaX < aMaxDims.aWidth)
-				{
-					rect.aX -= (deltaX);
-					rect.aWidth += (deltaX);
-					p.x += static_cast<long>(deltaX);
-				}
-				if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-					rect.aHeight + deltaY < aMaxDims.aHeight)
-				{
-					rect.aY -= (deltaY);
-					rect.aHeight += (deltaY);
-					p.y += static_cast<long>(deltaY);
-				}
-			}
-			else
-			{
-				rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-				rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
-			}
-
-		}
-		// DEFER REGION //
-
-
-		render(); // For performance
-
-		// DEFER REGION //
-
-		aLastDraggedPoint = p;
-	}
-	return S_OK;
-}
-
-HRESULT XWindow::onSize(HWND hwnd)
-{
-	if (hwnd == aChildHWnd)
-		aFrame->invalidate();
-
-	return S_OK;
-}
-
-HRESULT XWindow::updateOnMouseUp(HWND xHwnd)
-{
-	if (aHResizeWnd != xHwnd)
-	{
-		return 0;
-	}
-
-	ReleaseCapture();
-	isDragged = false;
-	isResizing = false;
-
-	return S_OK;
-}
-
-int XWindow::aClassInstances = 0;
-
-ATOM XWindow::registerClass()
-{
-	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
-	wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wcex.lpfnWndProc = XWindow::wndProc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = aHInstance;
-	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = CreateSolidBrush(RGB(aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue));;
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = aClassName->c_str();
-	wcex.hIconSm = LoadIcon(aHInstance, IDI_APPLICATION);
-
-	return RegisterClassEx(&wcex);
-}
-
-void XWindow::updateBackgroundCache()
-{
-	destroyBackgroundResources();
-	createBackgroundResources();
-
-	HBRUSH brush = CreateSolidBrush(RGB(aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue));
-	SetClassLongPtr(aParentHWnd, GCLP_HBRBACKGROUND, (LONG)brush);
-}
-
-void XWindow::updateShadowCache()
-{
-	destroyShadowResources();
-	createShadowResources();
-}
-
-void XWindow::destroyShadowResources()
-{
-	if (aTopLeftShadow)
-	{
-		delete aTopLeftShadow;
-		aTopLeftShadow = 0;
-	}
-
-	if (aBottomLeftShadow)
-	{
-		delete aBottomLeftShadow;
-		aBottomLeftShadow = 0;
-	}
-
-	if (aTopRightShadow)
-	{
-		delete aTopRightShadow;
-		aTopRightShadow = 0;
-	}
-
-	if (aBottomRightShadow)
-	{
-		delete aBottomRightShadow;
-		aBottomRightShadow = 0;
-	}
-
-	if (aTopShadow)
-	{
-		delete aTopShadow;
-		aTopShadow = 0;
-	}
-
-	if (aLeftShadow)
-	{
-		delete aLeftShadow;
-		aLeftShadow = 0;
-	}
-	if (aRightShadow)
-	{
-		delete aRightShadow;
-		aRightShadow = 0;
-	}
-
-	if (aBottomShadow)
-	{
-		delete aBottomShadow;
-		aBottomShadow = 0;
-	}
-
-
-	if (aTopShadowBrush)
-	{
-		delete aTopShadowBrush;
-		aTopShadowBrush = 0;
-	}
-	if (aLeftShadowBrush)
-	{
-		delete aLeftShadowBrush;
-		aLeftShadowBrush = 0;
-	}
-
-	if (aRightShadowBrush)
-	{
-		delete aRightShadowBrush;
-		aRightShadowBrush = 0;
-	}
-
-	if (aBottomShadowBrush)
-	{
-		delete aBottomShadowBrush;
-		aBottomShadowBrush = 0;
-	}
-}
-
-void XWindow::spliceToNinePatch(Gdiplus::Image * src, Gdiplus::Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
-{
-	Gdiplus::Graphics graphics(dest);
-
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
-}
-
-float* XWindow::getGaussianKernel(int xRadius)
-{
-	if (xRadius < 1)
-	{
-		return NULL;
-	}
-
-	int dataLength = xRadius * 2 + 1;
-
-	float * data = new float[dataLength];
-
-	float sigma = xRadius / 3.0f;
-	float twoSigmaSquare = 2.0f * sigma * sigma;
-	float sigmaRoot = (float)sqrt(twoSigmaSquare * M_PI);
-	float total = 0.0f;
-
-	for (int i = -xRadius; i <= xRadius; i++)
-	{
-		float distance = (float)(i * i);
-		int index = i + xRadius;
-		data[index] = (float)exp(-distance / twoSigmaSquare) / sigmaRoot;
-		total += data[index];
-	}
-
-	for (int i = 0; i < dataLength; i++)
-	{
-		data[i] /= total;
-	}
-
-	return data;
-}
-
-Gdiplus::Bitmap * XWindow::applyGaussianBlur(Gdiplus::Bitmap * src, int radius)
-{
-	// NOTE: There could be memory leaks if the Gdiplus::BitmapData is NULL
-	// PLEASE FIX!
-
-	float * kernel;
-	Gdiplus::Bitmap * blurred, *rotated;
-	Gdiplus::BitmapData * rotatedData, *srcData, *blurredData;
-
-	kernel = getGaussianKernel(radius);
-
-	blurred = new Gdiplus::Bitmap(src->GetWidth(), src->GetHeight());
-	rotated = new Gdiplus::Bitmap(src->GetHeight(), src->GetWidth());
-
-	// horizontal pass 0
-	srcData = getLockedBitmapData(src);
-	if (!srcData) return NULL;
-
-	blurredData = getLockedBitmapData(blurred);
-	if (!blurredData) return NULL;
-
-	applyHorizontalblur(srcData, blurredData, kernel, radius);
-
-	src->UnlockBits(srcData);
-
-	blurred->UnlockBits(blurredData);
-	blurred->RotateFlip(Gdiplus::Rotate90FlipNone);
-
-	delete srcData;
-	delete blurredData;
-
-	blurredData = getLockedBitmapData(blurred);
-	if (!blurredData) return NULL;
-
-	rotatedData = getLockedBitmapData(rotated);
-	if (!rotatedData) return NULL;
-
-	// horizontal pass 1
-	applyHorizontalblur(blurredData, rotatedData, kernel, radius);
-
-	blurred->UnlockBits(blurredData);
-	rotated->UnlockBits(rotatedData);
-
-	delete rotatedData;
-	delete blurredData;
-
-	delete blurred;
-	delete kernel;
-
-	return rotated;
-}
-
-void  XWindow::applyHorizontalblur(Gdiplus::BitmapData * srcPixels, Gdiplus::BitmapData * dstPixels, float * kernel, int radius)
-{
-	int ca = 0, cr = 0, cg = 0, cb = 0;
-	float a = 0, r = 0, g = 0, b = 0;
-
-	int width = srcPixels->Width;
-	int height = srcPixels->Height;
-
-	for (int y = 0; y < height; y++)
-	{
-		byte* pixelSrcRow = (byte *)srcPixels->Scan0 + (y * srcPixels->Stride);
-		byte* pixelDstRow = (byte *)dstPixels->Scan0 + (y * dstPixels->Stride);
-
-		for (int x = 0; x < width; x++)
-		{
-			a = r = g = b = 0.0f;
-
-			for (int i = -radius; i <= radius; i++)
-			{
-				int subOffset = x + i;
-
-				if (subOffset < 0 || subOffset >= width)
-				{
-					subOffset = (x + width) % width;
-				}
-
-				float blurFactor = kernel[radius + i];
-
-				int position = subOffset;
-
-				a += blurFactor * (float)pixelSrcRow[position * 4 + 3];
-				r += blurFactor * (float)pixelSrcRow[position * 4 + 2];
-				g += blurFactor * (float)pixelSrcRow[position * 4 + 1];
-				b += blurFactor * (float)pixelSrcRow[position * 4];
-			}
-
-			ca = static_cast<int>(a + 0.5f);
-			cr = static_cast<int>(r + 0.5f);
-			cg = static_cast<int>(g + 0.5f);
-			cb = static_cast<int>(b + 0.5f);
-
-			ca = ca > 255 ? 255 : ca;
-			cr = cr > 255 ? 255 : cr;
-			cg = cg > 255 ? 255 : cg;
-			cb = ca > 255 ? 255 : cb;
-
-			pixelDstRow[x * 4 + 3] = ca;
-			pixelDstRow[x * 4 + 2] = cr;
-			pixelDstRow[x * 4 + 1] = cg;
-			pixelDstRow[x * 4] = cb;
-		}
-	}
-}
-
-Gdiplus::BitmapData * XWindow::getLockedBitmapData(Gdiplus::Bitmap * src)
-{
-	int srcWidth = src->GetWidth();
-	int srcHeight = src->GetHeight();
-
-	Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData();
-
-	Gdiplus::Status ret = src->LockBits(new Gdiplus::Rect(0, 0, srcWidth, srcHeight),
-		Gdiplus::ImageLockMode::ImageLockModeRead | Gdiplus::ImageLockMode::ImageLockModeWrite,
-		src->GetPixelFormat(),
-		bitmapData);
-
-	if (ret) return NULL;
-
-	return bitmapData;
-}
-
-HRESULT XWindow::createShadowResources()
-{
-	Gdiplus::Bitmap * solid, *blurred;
-	Gdiplus::Graphics * graphics;
-	Gdiplus::SolidBrush blackBrush(*aShadowColor);
-
-	float radius = aOptShadowRadius;
-	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
-	float realDim = radius * 3;
-	float relativeDim = realDim + radius * 2;
-
-	int radiusAsInt = static_cast<int>(radius);
-	int radiusSafetyAsInt = static_cast<int>(radiusSafety);
-	int relativeDimAsInt = static_cast<int>(relativeDim);
-
-	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aTopRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-
-	aTopShadow = new Gdiplus::Bitmap(1, radiusAsInt);
-	aLeftShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
-	aRightShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
-	aBottomShadow = new Gdiplus::Bitmap(1, radiusAsInt);
-
-	solid = new Gdiplus::Bitmap(relativeDimAsInt, relativeDimAsInt);
-	graphics = new Gdiplus::Graphics(solid);
-
-	// Draw base shape
-
-	graphics->FillRectangle(&blackBrush, radius, radius, realDim, realDim);
-
-	// Create box shadow
-
-	blurred = applyGaussianBlur(solid, radiusAsInt);
-
-	// Cache as 9-patch
-
-	spliceToNinePatch(blurred, aTopLeftShadow, FLT_ZERO, FLT_ZERO, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomLeftShadow, FLT_ZERO, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomRightShadow, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aTopRightShadow, relativeDim - radiusSafety, FLT_ZERO, radiusSafety, radiusSafety);
-
-	spliceToNinePatch(blurred, aTopShadow, radiusSafety, FLT_ZERO, FLT_ONE, radius);
-	spliceToNinePatch(blurred, aLeftShadow, FLT_ZERO, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, FLT_ONE, radius);
-
-	aTopShadowBrush = new Gdiplus::TextureBrush(aTopShadow);
-	aLeftShadowBrush = new Gdiplus::TextureBrush(aLeftShadow);
-	aRightShadowBrush = new Gdiplus::TextureBrush(aRightShadow);
-	aBottomShadowBrush = new Gdiplus::TextureBrush(aBottomShadow);
-
-	// update values
-	aPadding = radius;
-	aShadowPadding = radiusSafety;
-
-	delete graphics;
-	delete blurred;
-	delete solid;
-
-	return S_OK;
 }
 
 HRESULT XWindow::createBackgroundResources()
 {
-	aBackground = new Gdiplus::Bitmap(1, 1);
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        fprintf(stderr, "Failed to initialize GLEW\n");
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+        return -1;
+    }
 
-	Gdiplus::Graphics graphics(aBackground);
-	Gdiplus::SolidBrush blackBrush(*aBackgroundColor);
 
-	graphics.FillRectangle(&blackBrush, 0, 0, 1, 1);
+    const GLubyte* renderer = glGetString (GL_RENDERER); // get renderer string
+    const GLubyte* version = glGetString (GL_VERSION); // version as a string
+    printf ("Renderer: %s\n", renderer);
+    printf ("OpenGL version supported %s\n", version);
 
-	aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
+    // tell GL to only draw onto a pixel if the shape is closer to the viewer
+    glEnable (GL_DEPTH_TEST); // enable depth-testing
+    //glDepthFunc (GL_LESS); // depth-testing interprets a smaller value as "closer"
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LEQUAL);
+    glDepthRange(0.0f, 1.0f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	return S_OK;
+    return S_OK;
+}
+
+void XWindow::render()
+{
+    int keep_running = 1;
+        XEvent event;
+
+        while (keep_running) {
+            XNextEvent(aDis, &event);
+
+            switch(event.type) {
+                case ClientMessage:
+                    if (event.xclient.message_type == XInternAtom(aDis, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(aDis, "WM_DELETE_WINDOW", 1))
+                        keep_running = 0;
+
+                    break;
+
+                default:
+                    break;
+            }
+
+            glXSwapBuffers( aDis, aWin);
+
+        }
+
+    return;
 }
 
 void XWindow::destroyBackgroundResources()
 {
-	if (aBackground)
-	{
-		delete aBackground;
-		aBackground = 0;
-	}
-
-	if (aBackgroundBrush)
-	{
-		delete aBackgroundBrush;
-		aBackgroundBrush = 0;
-	}
-}
-
-HRESULT XWindow::createResources()
-{
-	SAFELY(createColorResources());
-	SAFELY(createBackgroundResources());
-	SAFELY(createShadowResources());
-
-	return S_OK;
+    /*
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDeleteBuffers(1, &vertexbuffer);
+    glDeleteBuffers(1, &vt_vbo);
+    glDeleteProgram(programID);
+    glDeleteTextures(1, &TextureID);
+    glDeleteVertexArrays(1, &vao);
+    */
 }
 
 void XWindow::destroyResources()
 {
-	destroyShadowResources();
-	destroyBackgroundResources();
-	destroyColorResources();
-}
+    XDestroyWindow(aDis, aWin);
+    XCloseDisplay(aDis);
+    glClearColor(0, 0, 0, 0);
 
-void XWindow::renderComponentBorder()
-{
-	if (aOptBorderWidth > 0)
-	{
-        //Gdiplus::Pen borderPen(*aBorderColor, aOptBorderWidth);
+    // Clear the screen and depth buffer.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //aGraphics->DrawRectangle(&borderPen, aPadding + aOptBorderWidth / 2, aPadding + aOptBorderWidth / 2, aRealWidth + aOptBorderWidth, aRealHeight + aOptBorderWidth);
-
-		//DeleteObject(&borderPen);
-	}
-}
-
-void XWindow::renderComponent()
-{
-	aTopShadowBrush->ResetTransform();
-	aLeftShadowBrush->ResetTransform();
-	aRightShadowBrush->ResetTransform();
-	aBottomShadowBrush->ResetTransform();
-
-	aTopShadowBrush->TranslateTransform(aShadowPadding, FLT_ZERO);
-	aGraphics->FillRectangle(aTopShadowBrush, aShadowPadding, FLT_ZERO, aRelativeWidth - aShadowPadding * 2, aPadding);
-
-	aLeftShadowBrush->TranslateTransform(FLT_ZERO, aShadowPadding);
-	aGraphics->FillRectangle(aLeftShadowBrush, FLT_ZERO, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
-
-	aRightShadowBrush->TranslateTransform(aRelativeWidth - aPadding, aShadowPadding);
-	aGraphics->FillRectangle(aRightShadowBrush, aRelativeWidth - aPadding, aShadowPadding, aPadding, aRelativeHeight - aShadowPadding * 2);
-
-	aBottomShadowBrush->TranslateTransform(aShadowPadding, aRelativeHeight - aPadding);
-	aGraphics->FillRectangle(aBottomShadowBrush, aShadowPadding, aRelativeHeight - aPadding, aRelativeWidth - aShadowPadding * 2, aPadding);
-
-	aGraphics->DrawImage(aTopLeftShadow, FLT_ZERO, FLT_ZERO, aShadowPadding, aShadowPadding);
-	aGraphics->DrawImage(aBottomLeftShadow, FLT_ZERO, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-	aGraphics->DrawImage(aTopRightShadow, aRelativeWidth - aShadowPadding, FLT_ZERO, aShadowPadding, aShadowPadding);
-	aGraphics->DrawImage(aBottomRightShadow, aRelativeWidth - aShadowPadding, aRelativeHeight - aShadowPadding, aShadowPadding, aShadowPadding);
-
-	aGraphics->FillRectangle(aBackgroundBrush, aPadding, aPadding, aRealWidth + aOptBorderWidth, aRealHeight + aOptBorderWidth);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACTWINDOW
-////////////////////////////////////////////////////////////////////////////////
-
-void XWindow::setName(LPCWSTR xName)
-{
-	aName = xName;
-
-	SetWindowText(aChildHWnd, aName);
-	SetWindowText(aParentHWnd, aName);
-}
-
-void XWindow::setUndecorated(bool xUndecorated)
-{
-	// we cannot just use WS_POPUP style
-	// WS_THICKFRAME: without this the window cannot be resized and so aero snap, de-maximizing and minimizing won't work
-	// WS_SYSMENU: enables the context menu with the move, close, maximize, minize... commands (shift + right-click on the task bar item)
-	// HOWEVER, this also enables the menu with the maximize buttons in the title bar, which will exist inside your client area and are clickable. 
-	// WS_CAPTION: enables aero minimize animation/transition
-	// WS_MAXIMIZEBOX, WS_MINIMIZEBOX: enable minimize/maximize
-
-	aUndecorated = xUndecorated;
-
-	// Window has not been set up, return
-	if (!aParentHWnd)   return;
-
-	LONG lStyle, lExStyle;
-
-	lStyle = GetWindowLongPtr(aParentHWnd, GWL_STYLE);
-	lExStyle = GetWindowLongPtr(aParentHWnd, GWL_EXSTYLE);
-
-	lStyle &= aUndecorated ? ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU) : (WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
-	lStyle |= aUndecorated ? (WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP) : 0;
-	lExStyle |= aUndecorated ? (WS_EX_LAYERED | WS_EX_APPWINDOW) : WS_EX_LAYERED;
-
-	SetWindowLongPtr(aParentHWnd, GWL_STYLE, lStyle);
-	SetWindowLongPtr(aParentHWnd, GWL_EXSTYLE, lExStyle);
-
-	SetWindowPos(aParentHWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
-}
-
-void XWindow::setDefaultCloseOperation(int xDefaultCloseOperation)
-{
-	aDefaultCloseOperation = xDefaultCloseOperation;
-}
-
-void XWindow::setLocationRelativeTo(AbstractWindow * xRelativeWindow)
-{
-	aRelativeWindow = xRelativeWindow;
-
-	if (aRelativeWindow == NULL)
-	{
-		aRect.aX = (GetSystemMetrics(SM_CXSCREEN) - aRect.aWidth) / 2;
-		aRect.aY = (GetSystemMetrics(SM_CYSCREEN) - aRect.aHeight) / 2;
-	}
-}
-
-void XWindow::setVisible(bool xVisible)
-{
-	aVisible = xVisible;
-
-	if (aVisible)
-	{
-		update();
-
-		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
-		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
-	}
-	else
-	{
-		ShowWindow(aChildHWnd, SW_HIDE);
-		ShowWindow(aParentHWnd, SW_HIDE);
-	}
-}
-
-void XWindow::setMinimumSize(Dims * xSize)
-{
-	aMinDims.aWidth = xSize->aWidth;
-	aMinDims.aHeight = xSize->aHeight;
-}
-
-void XWindow::setMaximumSize(Dims * xSize)
-{
-	aMaxDims.aWidth = xSize->aWidth;
-	aMaxDims.aHeight = xSize->aHeight;
-}
-
-void XWindow::setSize(Dims * xSize)
-{
-	aRect.aWidth = xSize->aWidth;
-	aRect.aHeight = xSize->aHeight;
-}
-
-void XWindow::setMinimumSize(float xWidth, float xHeight)
-{
-	aMinDims.aWidth = xWidth;
-	aMinDims.aHeight = xHeight;
-}
-
-void XWindow::setMaximumSize(float xWidth, float xHeight)
-{
-	aMaxDims.aWidth = xWidth;
-	aMaxDims.aHeight = xHeight;
-}
-
-void XWindow::setSize(float xWidth, float xHeight)
-{
-	aRect.aWidth = xWidth;
-	aRect.aHeight = xHeight;
-}
-
-void XWindow::setBorderWidth(float xBorderWidth)
-{
-	aOptBorderWidth = xBorderWidth;
-}
-
-void XWindow::setShadowRadius(float xShadowRadius)
-{
-	aOptShadowRadius = xShadowRadius;
-}
-
-void XWindow::setShadow(Color * xShadowColor, float xShadowRadius)
-{
-	aOptShadowColor = *xShadowColor;
-	aOptShadowRadius = xShadowRadius;
-}
-
-void XWindow::setBorder(Color * xBorderColor, float xBorderWidth)
-{
-	aOptBorderColor = *xBorderColor;
-	aOptBorderWidth = xBorderWidth;
-}
-
-void XWindow::setBounds(Rect * xRect)
-{
-	aRect.aWidth = xRect->aWidth;
-	aRect.aX = xRect->aX;
-	aRect.aY = xRect->aY;
-	aRect.aHeight = xRect->aHeight;
-}
-
-void XWindow::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
-{
-	aRect.aWidth = xWidth;
-	aRect.aX = xLeft;
-	aRect.aY = xTop;
-	aRect.aHeight = xHeight;
-}
-
-void XWindow::validate()
-{
-	// Minimum dimensions has to be greater than border and shadow safety region
-	aMinDims.aWidth = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-	aMinDims.aHeight = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
-
-	// Minimum dimensions has to be greater than or equal to minimum size
-	aMaxDims.aWidth = max(aMinDims.aWidth, aMaxDims.aWidth);
-	aMaxDims.aHeight = max(aMinDims.aHeight, aMaxDims.aHeight);
-
-	// Constrain the rect to between min and max
-	aRect.aWidth = min(max(aMinDims.aWidth, aRect.aWidth), aMaxDims.aWidth);
-	aRect.aHeight = min(max(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
-
-	// Create resize window pointer.
-	aHResizeWnd = aOptBorderWidth < _WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
-
-	// Update caches
-	updateColorCache();
-	updateBackgroundCache();
-	updateShadowCache();
-
-	// Mark as validated
-	validated();
-}
-
-HRESULT XWindow::createColorResources()
-{
-	aBackgroundColor = new Gdiplus::Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
-	aShadowColor = new Gdiplus::Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
-	aBorderColor = new Gdiplus::Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
-
-	return S_OK;
-}
-
-
-void XWindow::destroyColorResources()
-{
-	if (aBackgroundColor)
-	{
-		delete aBackgroundColor;
-		aBackgroundColor = 0;
-	}
-
-	if (aShadowColor)
-	{
-		delete aShadowColor;
-		aShadowColor = 0;
-	}
-
-	if (aBorderColor)
-	{
-		delete aBorderColor;
-		aBorderColor = 0;
-	}
-}
-
-void XWindow::updateColorCache()
-{
-	destroyColorResources();
-	createColorResources();
-}
-
-void XWindow::setBorderColor(Color * xBorderColor)
-{
-	aOptBorderColor = *xBorderColor;
-}
-
-void XWindow::setShadowed(bool xShadowed)
-{
-	aShadowed = xShadowed;
-
-	setShadowRadius(FLT_ZERO);
-}
-
-void XWindow::setShadowColor(Color * xShadowColor)
-{
-	aOptShadowColor = *xShadowColor;
-}
-
-void XWindow::setBackgroundColor(Color * xBackgroundColor)
-{
-	aOptBackgroundColor = *xBackgroundColor;
-}
-
-void* XWindow::getPlatformCompatibleWindowHandle()
-{
-	return static_cast<void*>(&aChildHWnd);
-}
-
-void XWindow::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
-{
-	MSG msg;
-	bool& resizing = isResizing;
-	bool& visible = aVisible;
-
-	int defaultAllotedAnimationFrames = 10;
-	int currentAnimationFrame = 0;
-	int counter = 0;
-
-	AbstractFrame& frame = *aFrame;
-	AbstractEventQueue& eventQueue = *xEventQueue;
-
-	while (true)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		if (visible)
-		{
-			// Forced updating of rendering for now
-			if (eventQueue.dispatchNextEvent())
-			{
-				currentAnimationFrame = defaultAllotedAnimationFrames;
-			}
-			else if (currentAnimationFrame > 0)
-			{
-				currentAnimationFrame--;
-				frame.update();
-			}
-			else if (resizing)
-			{
-				frame.update();
-			}
-		}
-	}
-}
-*/
-void XWindow::render()
-{
-	// Cache variables to ensure that these variables
-	// won't be changed in the middle of update() via concurrent
-	// threads.
-	aRealX = aRect.aX + aOptBorderWidth;
-	aRealY = aRect.aY + aOptBorderWidth;
-	aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
-	aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
-	aRelativeX = aRect.aX - aPadding;
-	aRelativeY = aRect.aY - aPadding;
-	aRelativeWidth = aRect.aWidth + aPadding * 2;
-	aRelativeHeight = aRect.aHeight + aPadding * 2;
-
-	/***********************************************/
-
-    int doubleBufferVisual[] = { GLX_RGBA,GLX_DEPTH_SIZE, 24,GLX_DOUBLEBUFFER, None };
-    XTextProperty tp;
-    XSizeHints sh;
-
-    aDis = XOpenDisplay( NULL );
-
-    if( !aDis )
     return;
-
-    // make sure OpenGL's GLX extension supported
-    int errorBase, eventBase;
-    if( !glXQueryExtension( aDis, &errorBase, &eventBase ) )
-    return;
-
-    XVisualInfo *visualInfo = glXChooseVisual( aDis, DefaultScreen(aDis), doubleBufferVisual );
-    if( visualInfo == NULL )
-    return;
-
-    GLXContext hRC = glXCreateContext( aDis, visualInfo, NULL, GL_TRUE );
-    if( hRC == NULL )
-    return;
-
-    winAttr.colormap = XCreateColormap( aDis, RootWindow(aDis, visualInfo->screen), visualInfo->visual, AllocNone );
-    winAttr.event_mask = KeyPressMask;
-    winAttr.border_pixel = BlackPixel( aDis, visualInfo->screen );
-    winAttr.background_pixel = BlackPixel( aDis, visualInfo->screen );
-    int winattr_flags = CWColormap | CWEventMask | CWBorderPixel | CWBackPixel;
-
-    aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, 512, 512, 0,
-    visualInfo->depth, InputOutput, visualInfo->visual, winattr_flags, &winAttr );
-
-    //Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
-
-    if( !aWin )
-    return;
-
-    XStringListToTextProperty(&aName, 1, &tp);
-    sh.flags = USPosition | USSize;
-    XSetWMProperties(aDis, aWin, &tp, &tp, 0, 0, &sh, 0, 0);
-
-    glXMakeCurrent( aDis, aWin, hRC );
-
-    XMapWindow( aDis, aWin );
-/*
-	HDWP hdwp = BeginDeferWindowPos(2);
-
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, static_cast<int>(aRelativeX), static_cast<int>(aRelativeY), static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
-
-
-
-	SIZE size = { static_cast<long>(aRelativeWidth), static_cast<long>(aRelativeHeight) };
-	HDC hwndDC = GetDC(aParentHWnd);
-	HDC memDC = CreateCompatibleDC(hwndDC);
-	POINT ptDst = { static_cast<long>(aRelativeX), static_cast<long>(aRelativeY) };
-	POINT ptSrc = { 0, 0 };
-
-	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, static_cast<int>(aRelativeWidth), static_cast<int>(aRelativeHeight));
-	SelectObject(memDC, memBitmap);
-
-	aGraphics = new Gdiplus::Graphics(memDC);
-*/
-	/***********************************************/
-
-//	renderComponent();
-//	renderComponentBorder();
-	
-	/***********************************************/
-/*
-	BLENDFUNCTION blendFunction;
-	blendFunction.AlphaFormat = AC_SRC_ALPHA;
-	blendFunction.BlendFlags = 0;
-	blendFunction.BlendOp = AC_SRC_OVER;
-	blendFunction.SourceConstantAlpha = 255;
-
-	UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
-
-
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
-
-	EndDeferWindowPos(hdwp);
-
-	// SetWindowPos(aChildHWnd, aParentHWnd, static_cast<int>(aRealX), static_cast<int>(aRealY), static_cast<int>(aRealWidth), static_cast<int>(aRealHeight), SWP_NOZORDER | SWP_NOACTIVATE);
-
-
-	aGraphics->ReleaseHDC(memDC);
-	delete aGraphics;
-	aGraphics = 0;
-
-	DeleteObject(memBitmap);
-	ReleaseDC(NULL, memDC);
-	ReleaseDC(aParentHWnd, hwndDC);
-	DeleteDC(hwndDC);
-	DeleteDC(memDC);
- */
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// ABSTRACT
-////////////////////////////////////////////////////////////////////////////////
-
-HRESULT XWindow::initialize()
-{
-
-    /*// Change class name
-	aClassInstances++;
-
-	// Update class name
-	std::ostringstream stream;
-	stream << "Window - " << aClassInstances;
-	std::string className(stream.str());
-	aClassName = new std::wstring(className.begin(), className.end());
-
-	// Super
-	AbstractWindow::initialize();
-
-	NULLCHECK(registerClass());
-	NULLCHECK((aParentHWnd = createCompatibleWindow(true)));
-	NULLCHECK((aChildHWnd = createCompatibleWindow(false)));
-	SAFELY(createResources());
-
-	update();
-*/
-	return S_OK;
-}
-
-XWindow::~XWindow()
-{
-    /*destroyResources();
-
-	aParentHWnd = NULL;
-	aChildHWnd = NULL;
-
-	delete aClassName;
-	aClassName = 0;
-*/
-    aWin = NULL;
-    aDis = NULL;
-}
-
-LPCWSTR XWindow::getClass()
-{
-    return "Window";
-}
-
-LPCWSTR XWindow::toString()
-{
-    return "Window";
 }

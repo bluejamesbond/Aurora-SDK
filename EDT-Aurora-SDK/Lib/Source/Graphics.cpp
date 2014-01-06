@@ -10,6 +10,7 @@ Graphics::Graphics(BackBuffer * xBackBuffer)
 	aDevice = xBackBuffer->getDevice();
 	aBackBufferDims = xBackBuffer->getSize();
     aBackBufferSettings = xBackBuffer->getSettings();*/
+    aBackBuffer = xBackBuffer;
 }
 
 Graphics::~Graphics()
@@ -23,33 +24,28 @@ Graphics::~Graphics()
 	DESTROY(aTextureBuffer);
     DESTROY(aBlurBuffer);*/
 }
-/*
+
 BackBuffer * Graphics::getBackBuffer()
 {
 	return aBackBuffer;
 }
 
-Dims * Graphics::getDrawableDimensions()
+void Graphics::setBackBuffer(BackBuffer * xBackBuffer)
 {
-	return aBackBufferDims;
+    aBackBuffer = xBackBuffer;
 }
 
+void Graphics::setWindow(AbstractWindow *xWindow)
+{
+    aWindow = xWindow;
+}
+
+/*
 void Graphics::setClip(Rect * xClip, float xDepth)
 {
 	aQuadFactory->setConstraints(aClip = xClip, xDepth);
 }
 
-void Graphics::validate()
-{
-	GXSettings* settings = aBackBufferSettings;
-	Dims* size = aBackBufferDims;
-
-	// G_SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-//	G_SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
-
-//	ColorShader::reloadProjectionMatrix();
-//	TextureShader::reloadProjectionMatrix();
-}
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
@@ -87,7 +83,8 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
     aTextureShader->renderShader();
 }
 */
-void Graphics::drawImage( Rect& xRect, LPCWSTR& xSrc, bool xRepeat)
+
+void Graphics::drawImage()
 {
     do{
 
@@ -117,70 +114,7 @@ void Graphics::drawImage( Rect& xRect, LPCWSTR& xSrc, bool xRepeat)
         } // Check if the ESC key was pressed or the window was closed
         while( true );
 
-    /*Texture * texture;
-	QuadData<ColoredTextureVertex> * quadData;
-
-	if (*xPipeline == NULL)
-	{
-		// Intialize the pipeline
-
-		*xPipeline = new Pipeline();
-
-		texture = new Texture(aDevice, xSrc);
-		quadData = new QuadData<ColoredTextureVertex>();
-
-		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-		texture->initialize();
-
-		(*xPipeline)->aPipelineComps[0] = texture;
-		(*xPipeline)->aPipelineComps[1] = quadData;
-
-		(*xPipeline)->aLength = 2;
-
-		return;
-	}
-
-    texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<ColoredTextureVertex>*>((*xPipeline)->aPipelineComps[1]);
-
-	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xPaint, xRepeat);
-	aColoredTextureShader->setTexture(texture);
-
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColoredTextureVertex));
-	aColoredTextureShader->renderShader();
-    */
 }
-/*
-void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
-{
-	QuadData<ColorVertex> * quadData;
-
-	if (*xPipeline == NULL)
-	{
-		// Intialize the pipeline
-
-		*xPipeline = new Pipeline();
-
-		quadData = new QuadData<ColorVertex>();
-
-		DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-		(*xPipeline)->aPipelineComps[0] = quadData;
-
-		(*xPipeline)->aLength = 2;
-
-		return;
-	}
-
-	quadData = static_cast<QuadData<ColorVertex>*>((*xPipeline)->aPipelineComps[0]);
-	
-	aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint);
-
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
-	aColorShader->renderShader();
-}*/
 
 LPCWSTR Graphics::getClass()
 {

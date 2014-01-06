@@ -4,9 +4,9 @@
 #include "../../Include/Graphics.h"
 using namespace A2D;
 
-BackBuffer::BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings)
+BackBuffer::BackBuffer(AbstractWindow * xWindow)
 {
-	memcpy(&aSettings, xGXSettings, sizeof(GXSettings));
+//	memcpy(&aSettings, xGXSettings, sizeof(GXSettings));
 	aWindow = xWindow;
 }
 
@@ -19,17 +19,6 @@ BackBuffer::~BackBuffer()
     glDeleteProgram(aGraphics->programID);
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &vao);
-
-    /*
-	D3DDESTROY(aDXDepthStencilState);
-	D3DDESTROY(aDXRasterState);
-	D3DDESTROY(aDXDepthStencilView);
-	D3DDESTROY(aDXDepthStencilState);
-	D3DDESTROY(aDXDepthStencilBuffer);
-	D3DDESTROY(aDXRenderTargetView);
-	D3DDESTROY(aDXGISwapChain);
-	D3DDESTROY(aDevice);
-    */
 }
 
 Dims * BackBuffer::getSize()
@@ -37,10 +26,11 @@ Dims * BackBuffer::getSize()
 	return &aDims;
 }
 
-GXSettings * BackBuffer::getSettings()
+void BackBuffer::setGraphics(Graphics* xGraphics)
 {
-	return &aSettings;
+    aGraphics = xGraphics;
 }
+
 
 HRESULT BackBuffer::initialize()
 {
@@ -66,6 +56,7 @@ HRESULT BackBuffer::initialize()
         glActiveTexture (GL_TEXTURE0);
         glBindTexture (GL_TEXTURE_2D, tex);
         TextureID  = glGetUniformLocation(aGraphics->programID, "basic_texture");
+
         glTexImage2D (
           GL_TEXTURE_2D,
           0,
@@ -481,46 +472,5 @@ LPCWSTR BackBuffer::toString()
 
 void BackBuffer::validate()
 {
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
-/*
-	Dims& windowDims = aWindow->getSize();
-	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance
-	D3D10_VIEWPORT& viewport = aViewport;
-	ID3D10Texture2D* backBuffer;
-	ID3D10Device * device = aDevice;
-	IDXGISwapChain  *  swapChain = aDXGISwapChain;
 
-	aDXRenderTargetView->Release();
-	aDXDepthStencilView->Release();
-	aDXDepthStencilBuffer->Release();
-
-	// Resize the swap chain and recreate the 
-	// render target view.
-	G_SAFELY(swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0));
-	G_SAFELY(swapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), reinterpret_cast<void**>(&backBuffer)));
-	G_SAFELY(device->CreateRenderTargetView(backBuffer, 0, &aDXRenderTargetView));
-	
-	D3DDESTROY(backBuffer);
-	
-	// Update depth buffer description
-	depthBufferDesc.Width = windowDims.aWidth;
-	depthBufferDesc.Height = windowDims.aHeight;
-
-	G_SAFELY(device->CreateTexture2D(&depthBufferDesc, 0, &aDXDepthStencilBuffer));
-	G_SAFELY(device->CreateDepthStencilView(aDXDepthStencilBuffer, 0, &aDXDepthStencilView));
-
-	viewport.Width = aDims.aWidth = windowDims.aWidth;
-	viewport.Height = aDims.aHeight = windowDims.aHeight;
-
-	device->RSSetViewports(1, &viewport);
-    */
 }

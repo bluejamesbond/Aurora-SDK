@@ -40,20 +40,11 @@ namespace A2D {
 
         Frame();
 
-        ~Frame();
-
-	private:
-
-//		HINSTANCE aHInstance;
-
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACTFRAME
-		////////////////////////////////////////////////////////////////////////////////
+        virtual ~Frame();
 
 	protected:
 
         virtual void		createPlatformCompatibleWindow(AbstractWindow ** xWindow);
-//		virtual AbstractEventQueue*	createPlatformCompatibleEventQueue();
 
     };
 }

@@ -97,17 +97,7 @@ GLuint GLShaderUtils::LoadEffectFromFile(LPCWSTR xVertexShader,LPCWSTR xFragment
 
     return ProgramID;
 }
-#ifndef GLERROR_H
-#define GLERROR_H
 
-///
-/// Usage
-/// [... some opengl calls]
-/// glCheckError();
-///
-#define check_gl_error() _check_gl_error(__FILE__,__LINE__)
-
-#endif // GLERROR_H
 void GLShaderUtils::_check_gl_error(const char *file, int line)
 {
         GLenum err (glGetError());
@@ -123,7 +113,7 @@ void GLShaderUtils::_check_gl_error(const char *file, int line)
                         case GL_INVALID_FRAMEBUFFER_OPERATION:  error="INVALID_FRAMEBUFFER_OPERATION";  break;
                 }
 
-//                cerr << "GL_" << error.c_str() <<" - "<<file<<":"<<line<<endl;
+                std::cerr << "GL_" << error <<" - "<<file<<":"<<line<<std::endl;
                 err=glGetError();
         }
 }
