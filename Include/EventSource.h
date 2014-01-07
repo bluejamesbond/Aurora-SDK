@@ -45,6 +45,7 @@ namespace A2D {
 	class ActionListener;
 	class ActionEvent;
 	class MouseMotionListener;
+	class WindowListener;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION

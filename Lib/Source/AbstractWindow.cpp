@@ -228,6 +228,26 @@ void AbstractWindow::revalidate()
 	validate();
 }
 
+// Window Events/Listeners
+
+HRESULT AbstractWindow::processWindowEvent(WindowEvent * xEvent)
+{
+	int id = A2D_LISTENER_WINDOW;
+	return fireListener(xEvent, id);
+}
+
+HRESULT AbstractWindow::addWindowListener(WindowListener * xListener)
+{
+	if (xListener == NULL)
+	{
+		int ID = A2D_LISTENER_WINDOW;
+		AbstractListener * listener = findListener(ID);
+		if (listener) return removeListener(listener);
+		else return S_FALSE;
+	}
+	return addListener(xListener);
+}
+
 HRESULT AbstractWindow::initialize()
 {	
 	//------------------------------------------------------------

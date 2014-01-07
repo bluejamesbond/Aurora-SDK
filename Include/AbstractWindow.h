@@ -28,6 +28,8 @@
 #include "AbstractEventQueue.h"
 #include "EventSource.h"
 
+#include "WindowListener.h"
+
 namespace A2D {
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +38,7 @@ namespace A2D {
 
 	class AbstractFrame;
 	class EventSource;
+	class WindowEvent;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -89,22 +92,27 @@ namespace A2D {
 	public:
 
 		Dims					  *		_getSize(); // internal use only
-		Dims                         getMinimumSize();
-		Dims                         getMaximumSize();
-		Rect                         getBounds();
+		Dims							getMinimumSize();
+		Dims							getMaximumSize();
+		Rect							getBounds();
 		Dims					  		getSize();
 		LPCWSTR                         getName();
-		AbstractFrame          *     getFrame();
+		AbstractFrame			  *     getFrame();
 		bool                            isUndecorated();
 		int                             getDefaultCloseOperation();
-		AbstractWindow         *     getLocationRelativeTo();
+		AbstractWindow			  *     getLocationRelativeTo();
 		bool                            isVisible();
 		bool                            isShadowed();
-		Color                        getBorderColor();
+		Color							getBorderColor();
 		float                           getShadowRadius();
-		Color                        getShadowColor();
-		Color                        getBackgroundColor();
+		Color							getShadowColor();
+		Color							getBackgroundColor();
 		float                           getBorderWidth();
+
+		// Window Events/Listeners
+
+		HRESULT							processWindowEvent(WindowEvent * xEvent);
+		HRESULT							addWindowListener(WindowListener * xListener);
 
 		////////////////////////////////////////////////////////////////////////////////
 		// PLATFORM COMPATIBLE IMPLEMENTATION

@@ -1,6 +1,8 @@
 
 #include "../../include/ExtLibs.h"
 #include "../../include/EventSource.h"
+#include "../../Include/WindowListener.h"
+
 
 using namespace A2D;
 
@@ -71,6 +73,10 @@ HRESULT EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 		else if (xListenerID == A2D_LISTENER_MOUSEMOTION)
 		{
 			(static_cast<MouseMotionListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
+		}
+		else if (xListenerID == A2D_LISTENER_WINDOW)
+		{
+			(static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
 		}
 		return S_OK;
 	}
