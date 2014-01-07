@@ -76,7 +76,7 @@ HWND Window::createCompatibleWindow(bool isParent)
 	top = INT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
 	width = INT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
 	height = INT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
+	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
 	lExStyle = INT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
 	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
 	titleName = aName;
@@ -402,6 +402,8 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	isMoving = false;
 	
 	aFramebufferInterpolation = false;
+
+	render();
 
 	return S_OK;
 }
@@ -1161,12 +1163,6 @@ void Window::render()
 
 	/***********************************************/
 
-	HDWP hdwp = BeginDeferWindowPos(2);
-
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
-
-	/***********************************************/
-
 	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
 	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
@@ -1181,6 +1177,8 @@ void Window::render()
 
 		// Request copy of frameBuffer
 		PrintWindow(aChildHWnd, memDCChild, 0);
+
+		ReleaseDC(aChildHWnd, memDCChild);
 	}
 
 	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
@@ -1192,9 +1190,8 @@ void Window::render()
 
 	paintComponent(graphics);
 	paintComponentBorder(graphics);
-	
-	/***********************************************/
 
+	/***********************************************/
 	if (aFramebufferInterpolation)
 	{
 		// Paint from frameBuffer of the child HWND into the 
@@ -1225,8 +1222,11 @@ void Window::render()
 
 	/***********************************************/
 
-	// Reisze the child only after requesting frame
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY), INT(realWidth), INT(realHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	HDWP hdwp = BeginDeferWindowPos(2);
+	
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
+	
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX) - (aFramebufferInterpolation ? 0 : 0), INT(realY) - (aFramebufferInterpolation ? 0 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS);
 
 	EndDeferWindowPos(hdwp);
 	
