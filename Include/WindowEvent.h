@@ -35,6 +35,7 @@ namespace A2D {
 	class WindowListener;
 	class AbstractEvent;
 	class EventSource;
+	class AbstractWindow;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION

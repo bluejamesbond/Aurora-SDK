@@ -33,7 +33,7 @@
 #include "MouseEvent.h"
 #include "ActionEvent.h"
 #include "FocusEvent.h"
-
+#include "WindowEvent.h"
 
 
 namespace A2D{
@@ -47,6 +47,7 @@ namespace A2D{
 	class AbstractWindow;
 	class Window;
 	class Component;
+	class WindowEvent;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
