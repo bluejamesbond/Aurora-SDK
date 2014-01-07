@@ -38,7 +38,7 @@ namespace A2D {
 	// DEFINE
 	////////////////////////////////////////////////////////////////////////////////
 
-	#define A2D_LISTENER_WINDOW			0x7000
+	#define A2D_LISTENER_WINDOW			0x9000
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -53,10 +53,14 @@ namespace A2D {
 
 		void							notify(WindowEvent * xEvent);
 		void							print() const;
-		virtual void					actionPerformed(WindowEvent * xEvent);
 
 	public:
 
+		virtual void					windowActivated(WindowEvent * xEvent);
+		virtual void					windowClosed(WindowEvent * xEvent);
+		virtual void					windowDeactivated(WindowEvent * xEvent);
+		virtual void					windowOpened(WindowEvent * xEvent);
+		virtual void					windowStateChanged(WindowEvent * xEvent);
 
 	protected:
 
