@@ -1,7 +1,7 @@
-
 #include "../../Include/GLXExtLibs.h"
 #include "../../Include/BackBuffer.h"
 #include "../../Include/Graphics.h"
+
 using namespace A2D;
 
 BackBuffer::BackBuffer(AbstractWindow * xWindow)

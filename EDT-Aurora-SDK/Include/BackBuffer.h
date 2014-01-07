@@ -32,13 +32,10 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Abstract;
-	class Renderable;
 	class Container;
-	class Camera;
 	struct CameraProperties;
 //	struct RenderData;
 	class MatrixFactory;
-	class ModelFactory;
 	class RootPane;
     class Graphics;
 	////////////////////////////////////////////////////////////////////////////////
