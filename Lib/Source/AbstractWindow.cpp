@@ -300,6 +300,14 @@ HRESULT AbstractWindow::initialize()
 	// Mark as dirty
 	invalidate();
 
+	// Initialize WindowEvent resources
+	aWindowOpened = new WindowEvent(this, WindowEvent::WINDOW_OPENED, NULL, WindowEvent::WINDOW_OPENED);
+	aWindowClosed = new WindowEvent(this, WindowEvent::WINDOW_CLOSED, NULL, WindowEvent::WINDOW_CLOSED);
+	aWindowActivated = new WindowEvent(this, WindowEvent::WINDOW_ACTIVATED, NULL, WindowEvent::WINDOW_ACTIVATED);
+	aWindowDeactivated = new WindowEvent(this, WindowEvent::WINDOW_DEACTIVATED, NULL, WindowEvent::WINDOW_DEACTIVATED);
+
+
+
 	//------------------------------------------------------------
 
 	return S_OK;

@@ -45,6 +45,32 @@ AbstractWindow * WindowEvent::getWindow()
 	return (AbstractWindow *)getSource();
 }
 
+void WindowEvent::setWindow(AbstractWindow * xWindow)
+{
+	setSource(xWindow);
+}
+
+void WindowEvent::setOppositeWindow(AbstractWindow * xOpposite)
+{
+	aOpposite = xOpposite;
+}
+
+void WindowEvent::setOldState(int xOldState)
+{
+	aOldState = xOldState;
+}
+
+void WindowEvent::setNewState(int xNewState)
+{
+	aNewState = xNewState;
+}
+
+void WindowEvent::setStates(int xNewState, int xOldState)
+{
+	aNewState = xNewState;
+	aOldState = xOldState;
+}
+
 void WindowEvent::print() const
 {
 	cout << aWindowName.c_str() << "\n";

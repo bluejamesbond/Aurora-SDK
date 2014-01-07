@@ -109,6 +109,7 @@ namespace A2D{
 		void							processMouseEvent(MouseEvent * xEvent);
 		void							processFocusEvent(FocusEvent * xEvent);
 		void							processActionEvent(ActionEvent * xEvent);
+		void							processWindowEvent(WindowEvent * xEvent);
 
 	private:
 

@@ -352,3 +352,12 @@ void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 	aLastFocusedComp = comp;
 
 }
+
+void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
+{
+	AbstractWindow * win = xEvent->getWindow();
+
+	xEvent->setOldState(win->aCurrentState);
+	win->processWindowEvent(xEvent);
+	win->aCurrentState = xEvent->getNewState();
+}

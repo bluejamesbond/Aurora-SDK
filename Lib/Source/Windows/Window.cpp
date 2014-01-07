@@ -71,7 +71,13 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		{
 			POINT p;
 		case WM_LBUTTONDOWN:
+			
+			SetForegroundWindow(xHwnd);
 
+			// Firing window event. Opposite window isnt supported yet!!
+			xEventQueue->processWindowEvent(aWindowActivated);
+
+			// Fire MouseEvent
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
 			aMouseDown->setLocation(p);
@@ -81,6 +87,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		
 		case WM_MOUSEMOVE:
 
+			// Fire MouseEvent
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
 			aMouseMove->setLocation(p);
@@ -90,6 +97,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		
 		case WM_LBUTTONUP:
 
+			// Fire MouseEvent
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
 			aMouseUp->setLocation(p);
@@ -97,8 +105,18 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			xEventQueue->processMouseEvent(aMouseUp);
 			return updateOnMouseUp(xHwnd);
 		
+		case WM_NCLBUTTONDOWN:
+
+			// Fire WindowEvent
+			xEventQueue->processWindowEvent(aWindowDeactivated);
+
+			return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
+
 		case WM_CLOSE:
 		
+			// Fire WindowEvent
+			xEventQueue->processWindowEvent(aWindowClosed);
+
 			DestroyWindow(xHwnd);
 			return S_OK;
 		
@@ -182,7 +200,6 @@ HWND Window::createCompatibleWindow(bool isParent)
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
-	SetForegroundWindow(xHwnd);
 
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
@@ -1009,11 +1026,17 @@ void Window::setVisible(bool xVisible)
 
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
+
+		// Fire WindowEvent
+		aEventQueue->processWindowEvent(aWindowOpened);
+
 	}
 	else
 	{
 		ShowWindow(aChildHWnd, SW_HIDE);
 		ShowWindow(aParentHWnd, SW_HIDE);
+		// Fire WindowEvent
+		aEventQueue->processWindowEvent(aWindowDeactivated);
 	}
 }
 

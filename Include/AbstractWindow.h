@@ -110,9 +110,18 @@ namespace A2D {
 		float                           getBorderWidth();
 
 		// Window Events/Listeners
-
+		friend							AbstractEventQueue;
 		HRESULT							processWindowEvent(WindowEvent * xEvent);
 		HRESULT							addWindowListener(WindowListener * xListener);
+
+	protected:
+
+		WindowEvent					*	aWindowOpened;
+		WindowEvent					*	aWindowClosed;
+		WindowEvent					*	aWindowActivated;
+		WindowEvent					*	aWindowDeactivated;
+
+		int								aCurrentState = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// PLATFORM COMPATIBLE IMPLEMENTATION

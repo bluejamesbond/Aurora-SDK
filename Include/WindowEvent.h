@@ -68,6 +68,12 @@ namespace A2D {
 		AbstractWindow		*	getOppositeWindow();
 		AbstractWindow		*	getWindow();
 
+		void					setWindow(AbstractWindow * xWindow);
+		void					setOppositeWindow(AbstractWindow * xOpposite);
+		void					setOldState(int xOldState);
+		void					setNewState(int xNewState);
+		void					setStates(int xNewState, int xOldState);
+
 	private:
 		// Source and ID is in AbstractEvent.
 		int						aOldState;
