@@ -1173,7 +1173,7 @@ void Window::render()
 	UpdateWindow(aChildHWnd);
 
 	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
-	HDC memDCChild, hwndDC = GetDC(NULL), memDC = CreateCompatibleDC(hwndDC);
+	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
 	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
 	RECT rect;
