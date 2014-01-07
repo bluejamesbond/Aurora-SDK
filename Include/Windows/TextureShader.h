@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __TEXTURESHADER_H__
+#define __TEXTURESHADER_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      WINDOW
+//  Class: 
+//      TEXTURESHADER
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Texture quad.
 //
 //------------------------------------------------------------------------------
 
@@ -20,12 +19,9 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Runnable.h"
-#include "../Core/AbstractEventQueue.h"
-
 #include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
+#include "DXShaderUtils.h"
+#include "AbstractTextureShader.h"
 
 namespace A2D {
 
@@ -33,37 +29,24 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
-	class Thread;
+	class Abstract;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class TextureShader : public AbstractTextureShader
 	{
 	public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+		TextureShader(ID3D10Device ** xDevice);
 
-		EventQueue::~EventQueue();
+	protected:
 
-	private:
-
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
-
-	public:
-
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
-
-	public:
-
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
-
+		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout);
+		virtual unsigned int			getPolygonLayoutElementCount();
+		virtual	LPCSTR					getTechniqueName();
+		
 	};
 }
 

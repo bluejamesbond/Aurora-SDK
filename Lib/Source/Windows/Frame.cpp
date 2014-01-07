@@ -16,12 +16,30 @@ Frame::Frame(HINSTANCE xHInstance) : aHInstance(xHInstance) {}
 // ABSTRACTFRAME
 ////////////////////////////////////////////////////////////////////////////////
 
-AbstractWindow * Frame::createPlatformCompatibleWindow()
+HRESULT	Frame::createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue)
 {
-	return new Window(this, aHInstance);
+	*xEventQueue = new EventQueue(this);
+
+	return S_OK;
+}
+HRESULT	Frame::createPlatformCompatibleWindow(AbstractWindow ** xWindow)
+{
+	*xWindow = new Window(this, aHInstance);
+
+	return S_OK;
+}
+HRESULT	Frame::createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings)
+{
+	*xBackBuffer = new BackBuffer(xWindow, xSettings);
+
+	return S_OK;
 }
 
-AbstractEventQueue * Frame::createPlatformCompatibleEventQueue()
+HRESULT	Frame::createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer)
 {
-	return new EventQueue(this);
+	*xGraphics = new Graphics(xBackbuffer);
+
+	static_cast<Graphics *>(*xGraphics)->initialize();
+
+	return S_OK;
 }

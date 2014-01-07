@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __ABSTRACTTEXTURE_H__
+#define __ABSTRACTTEXTURE_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      WINDOW
+//  Class:  
+//      ABSTRACTTEXTURE
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Texture container class.
 //
 //------------------------------------------------------------------------------
 
@@ -20,12 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Runnable.h"
-#include "../Core/AbstractEventQueue.h"
-
-#include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
+#include "../Core/Rect.h"
 
 namespace A2D {
 
@@ -33,38 +27,40 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
-	class Thread;
+	class AbstractTexture;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class AbstractTexture
 	{
-	public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+	protected:
 
-		EventQueue::~EventQueue();
-
-	private:
-
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
+		// Variables
+		Dims							aDims;
+		Rect							aClip;
 
 	public:
 
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
+		// Accessors
+		Dims					*		GetSize();
+		Rect					*		GetClip(int xIndex = 0);
+
+		// Mutators
+		void							SetClip(Rect * xClip, int xIndex = 0);
+
+		// Virtual
+		virtual void			*		getPlatformCompatibleResource() = 0;
+		virtual	bool					hasAlpha() = 0;
 
 	public:
 
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+		virtual HRESULT                 initialize() = 0;
 
 	};
+
 }
 
 #endif

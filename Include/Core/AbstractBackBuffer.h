@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __REPAINTMANAGER_H__
-#define __REPAINTMANAGER_H__
+#ifndef __ABSTRACTBACKBUFFER_H__
+#define __ABSTRACTBACKBUFFER_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Abstract Class:
-//      COMPONENTMANAGER
+//  Class:
+//      BACKBUFFER
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,12 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2D.h"
-#include "OrderedList.h"
-#include "UnorderedList.h"
+#include "GXSettings.h"
 #include "AbstractWindow.h"
-#include "AbstractBackBuffer.h"
-#include GRAPHICS__
 
 namespace A2D {
 
@@ -33,39 +29,46 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Component;
+	class Abstract;
+	class Container;
+	struct CameraProperties;
+	class MatrixFactory;
+	class RootPane;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class RepaintManager
+	class AbstractBackBuffer
 	{
-		Dims										*  aBackBufferDims;
-		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
-		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
-
-		AbstractBackBuffer						   *   aBackBuffer;
-		Component								   *   aRoot;
-		AbstractWindow	  						   *   aWindow;
-		void									   *   aGraphics;
 
 	public:
 
-		RepaintManager(void * xGraphics, Component * xRoot);
-		~RepaintManager();
+		AbstractBackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings);
+		virtual ~AbstractBackBuffer();
 
-		HRESULT										  add(Component& xParent, Component& xChild);
-		bool										  addToDepthTracker(Component& xComponent, float xZ);
-		void										  update();
-		void										  update_forward();
+	protected:
+
+		Dims					  	   aDims;
+		AbstractWindow			  *    aWindow;
+		GXSettings				       aSettings;
 
 	public:
 
-		virtual void								  validate();
-		virtual HRESULT								  initialize();
+		Dims					  *		getSizeAsPtr();
+		Dims							getSize();
+		GXSettings				  *		getSettings();
+
+		virtual void                    setActive() = 0;
+		virtual void                    swap() = 0;
+		virtual void                    clear() = 0;
+		virtual void                    setZBuffer(bool val) = 0;
+		virtual void					validate() = 0;
+
+	public:
+
+		virtual HRESULT                 initialize() = 0;
 
 	};
 }
-
 #endif

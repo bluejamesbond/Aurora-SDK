@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __REPAINTMANAGER_H__
-#define __REPAINTMANAGER_H__
+#ifndef __MATRIXFACTORY_H__
+#define __MATRIXFACTORY_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Abstract Class:
-//      COMPONENTMANAGER
+//  Class:
+//      MATRIXFACTORY
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,12 +20,9 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2D.h"
-#include "OrderedList.h"
-#include "UnorderedList.h"
-#include "AbstractWindow.h"
-#include "AbstractBackBuffer.h"
-#include GRAPHICS__
+#include "../Core/Dims.h"
+#include "../Core/GXSettings.h"
+#include "../Core/CameraProperties.h"
 
 namespace A2D {
 
@@ -33,37 +30,27 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Component;
+	class Abstract;
+	class Container;
+	struct CameraProperties;
+	class BackBuffer;
+	class MatrixFactory;
+	class RootPane;
+	class Window;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class RepaintManager
+	class MatrixFactory
 	{
-		Dims										*  aBackBufferDims;
-		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
-		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
-
-		AbstractBackBuffer						   *   aBackBuffer;
-		Component								   *   aRoot;
-		AbstractWindow	  						   *   aWindow;
-		void									   *   aGraphics;
 
 	public:
 
-		RepaintManager(void * xGraphics, Component * xRoot);
-		~RepaintManager();
-
-		HRESULT										  add(Component& xParent, Component& xChild);
-		bool										  addToDepthTracker(Component& xComponent, float xZ);
-		void										  update();
-		void										  update_forward();
-
-	public:
-
-		virtual void								  validate();
-		virtual HRESULT								  initialize();
+		static HRESULT				    createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix);
+		static HRESULT					createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims* xWindowSize, GXSettings*  xSettings);
+		static HRESULT				    createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, Dims* xWindowSize, GXSettings* xSettings);
+		static HRESULT					createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties);
 
 	};
 }

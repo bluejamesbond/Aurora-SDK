@@ -14,7 +14,7 @@ Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xF
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
 	Window * aWindow;
-
+	
 	if (xMessage == WM_CREATE)
 	{
 		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
@@ -41,16 +41,16 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 				 aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				 return aWindow->updateOnMouseUp(xHwnd);
 		}
+		case WM_SIZE:
+		{
+						aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+						return aWindow->onSize(xHwnd);
+
+		}
 		case WM_CLOSE:
 		{
 				DestroyWindow(xHwnd);
 				return S_OK;
-		}
-		case WM_SIZE:
-		{
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->onSize(xHwnd);
-
 		}
 		case WM_ERASEBKGND:
 		{
@@ -65,6 +65,14 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 	}
 }
 
+HRESULT Window::onSize(HWND hwnd)
+{
+	if (hwnd == aChildHWnd)
+		aFrame->invalidate();
+
+	return S_OK;
+}
+
 HWND Window::createCompatibleWindow(bool isParent)
 {
 	HWND            hWnd, hwndParent;
@@ -76,7 +84,7 @@ HWND Window::createCompatibleWindow(bool isParent)
 	top = INT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
 	width = INT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
 	height = INT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP);
+	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
 	lExStyle = INT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
 	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
 	titleName = aName;
@@ -253,9 +261,15 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		GetCursorPos(&p);
 		ScreenToClient(xHwnd, &p);
 
-		deltaY = static_cast<float>(aLastDraggedPoint.y - p.y);
-		deltaX = static_cast<float>(aLastDraggedPoint.x - p.x);
+		aOffsetY = deltaY = FLOAT(aLastDraggedPoint.y - p.y);
+		aOffsetX = deltaX = FLOAT(aLastDraggedPoint.x - p.x);
 		currentCursor = GetCursor();
+		
+		if (aOffsetY < -2000.0f)
+		{
+			aOffsetY = 0.0f;
+			deltaY = 0.0f;
+		}
 		
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
@@ -278,7 +292,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
 				}
 			}
 			// Resize left and right.
@@ -297,7 +311,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
 				}
 
 			}
@@ -306,7 +320,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 			{
 				if (aWinMoveRes)
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
 					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
 						rect.aWidth + deltaX < aMaxDims.aWidth)
 					{
@@ -319,7 +333,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
 						rect.aHeight + deltaY < aMaxDims.aHeight)
 					{
@@ -355,8 +369,8 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
 				}
 			}
 
@@ -381,14 +395,6 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 	return S_OK;
 }
 
-HRESULT Window::onSize(HWND hwnd)
-{
-	if (hwnd == aChildHWnd)
-		aFrame->invalidate();
-
-	return S_OK;
-}
-
 HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
@@ -402,6 +408,8 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	isMoving = false;
 	
 	aFramebufferInterpolation = false;
+
+	render();
 
 	return S_OK;
 }
@@ -1141,6 +1149,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 	}
 }
 
+
 void Window::render()
 {
 	// Cache variables to ensure that these variables
@@ -1160,20 +1169,15 @@ void Window::render()
 	float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
 
 	/***********************************************/
-
-	HDWP hdwp = BeginDeferWindowPos(2);
-
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOZORDER | SWP_NOACTIVATE);
-
-	/***********************************************/
-
+	
 	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
 	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
 	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
-
+	
 	if (aFramebufferInterpolation)
 	{
+
 		memDCChild = CreateCompatibleDC(hwndDC);
 		// Create secondary DC
 		memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
@@ -1192,9 +1196,8 @@ void Window::render()
 
 	paintComponent(graphics);
 	paintComponentBorder(graphics);
-	
-	/***********************************************/
 
+	/***********************************************/
 	if (aFramebufferInterpolation)
 	{
 		// Paint from frameBuffer of the child HWND into the 
@@ -1205,12 +1208,13 @@ void Window::render()
 			realHeight,
 			memDCChild,
 			0, 0,
-			aLastRect.aWidth - aOptBorderWidth * 2,
-			aLastRect.aHeight - aOptBorderWidth * 2,
+			INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
+			INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
 			SRCCOPY);
 
-		DeleteObject(memBitmapChild);
 		ReleaseDC(aParentHWnd, memDCChild);
+		DeleteObject(memBitmapChild);
+		DeleteObject(memDCChild);
 	}
 
 	/***********************************************/
@@ -1221,17 +1225,22 @@ void Window::render()
 	blendFunction.BlendOp = AC_SRC_OVER;
 	blendFunction.SourceConstantAlpha = 255;
 
+	/***********************************************/
+
 	UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
 	/***********************************************/
 
-	// Reisze the child only after requesting frame
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY), INT(realWidth), INT(realHeight), SWP_NOZORDER | SWP_NOACTIVATE);
+	HDWP hdwp = BeginDeferWindowPos(2);
+	
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
+	
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
 
 	EndDeferWindowPos(hdwp);
-	
-	/***********************************************/
 
+	/***********************************************/
+	
 	graphics.ReleaseHDC(memDC);
 	DeleteObject(memBitmap);
 	ReleaseDC(aParentHWnd, memDC);
@@ -1282,14 +1291,4 @@ Window::~Window()
 
 	delete aClassName;
 	aClassName = 0;
-}
-
-LPCWSTR Window::getClass()
-{
-	return L"Window";
-}
-
-LPCWSTR Window::toString()
-{
-	return L"Window";
 }
