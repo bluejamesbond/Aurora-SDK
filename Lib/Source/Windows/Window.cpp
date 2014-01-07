@@ -268,8 +268,9 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		if (aOffsetY < -2000.0f)
 		{
 			aOffsetY = 0.0f;
+			deltaY = 0.0f;
 		}
-
+		
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
 		// Process resizing.
