@@ -29,10 +29,10 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 	while (true)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			eventHandler(msg, aEventQueue);
-		}
+		//if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		//{
+		//	eventHandler(msg, aEventQueue);
+		//}
 
 		if (visible)
 		{
@@ -50,10 +50,13 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			{
 				frame.update();
 			}
-			else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			{
-				eventHandler(msg, aEventQueue);
-			}
+			//else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			//{
+			//	eventHandler(msg, aEventQueue);
+			//}
+			GetMessage(&msg, NULL, 0, 0);
+			TranslateMessage(&msg);
+			eventHandler(msg, aEventQueue);
 		}
 	}
 }
@@ -71,12 +74,16 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		{
 			POINT p;
 		case WM_LBUTTONDOWN:
-			
+
 			SetForegroundWindow(xHwnd);
 
 			// Firing window event. Opposite window isnt supported yet!!
-			xEventQueue->processWindowEvent(aWindowActivated);
-
+			// WM_ACTIVATE doesnt work in eventHandler.
+			if (aCurrentState != WindowEvent::WINDOW_ACTIVATED)
+			{
+				xEventQueue->processWindowEvent(aWindowActivated);
+			}
+		
 			// Fire MouseEvent
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
@@ -92,7 +99,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			ScreenToClient(aChildHWnd, &p);
 			aMouseMove->setLocation(p);
 
-			xEventQueue->processMouseEvent(aMouseMove);
+			xEventQueue->processMouseMotionEvent(aMouseMove);
 			return updateOnMouseMove(xHwnd);
 		
 		case WM_LBUTTONUP:
@@ -105,11 +112,18 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			xEventQueue->processMouseEvent(aMouseUp);
 			return updateOnMouseUp(xHwnd);
 		
-		case WM_NCLBUTTONDOWN:
+		//case WM_NCLBUTTONDOWN:
 
-			// Fire WindowEvent
+		//	// Fire WindowEvent
+		//	if (aCurrentState != WindowEvent::WINDOW_DEACTIVATED)
+		//	{
+		//		xEventQueue->processWindowEvent(aWindowDeactivated);
+		//	}
+
+		//	return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
+		case WM_KILLFOCUS:
+
 			xEventQueue->processWindowEvent(aWindowDeactivated);
-
 			return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
 
 		case WM_CLOSE:
@@ -152,11 +166,19 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 	{
 		switch (xMessage)
 		{
+
 		case WM_SIZE:
 		{
 				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				return aWindow->onSize(xHwnd);
 		}
+
+		case WM_KILLFOCUS:
+
+			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			aWindow->aEventQueue->processWindowEvent(aWindow->aWindowDeactivated);
+			return S_OK;
+
 		case WM_ERASEBKGND:
 		{
 				// OS must not erase background. DirectX and

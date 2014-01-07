@@ -235,30 +235,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				// If we are not done, we need to keep firing by checking the parent of each component
 				while (comp)
 				{
-					if (ID == MouseEvent::MOUSE_MOVE)
-					{
-						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
-						isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-
-						if (aLastComponent && isConsumedMouse)
-						{
-							Rect * lastVisRegion = &aLastComponent->aVisibleRegion;
-							bool inSameRegion = (point.x >= lastVisRegion->aX && point.x <= lastVisRegion->aX + lastVisRegion->aWidth &&
-								point.y >= lastVisRegion->aY && point.y <= lastVisRegion->aY + lastVisRegion->aHeight);
-
-							if (!inSameRegion)
-							{
-								// We've entered a new component
-								aMouseEvent->setProperties(aLastComponent, MouseEvent::MOUSE_EXITED);
-								aLastComponent->processMouseEvent(aMouseEvent);
-
-								aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
-								comp->processMouseEvent(aMouseEvent);
-							}
-						}
-						
-					}
-					else if (ID == MouseEvent::MOUSE_PRESSED)
+					if (ID == MouseEvent::MOUSE_PRESSED)
 					{
 						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_PRESSED);
 						isConsumedMouse = comp->processMouseEvent(aMouseEvent);
@@ -290,7 +267,6 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					if (isConsumedMouse == S_OK)
 					{
 						SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
-						aLastComponent = comp;
 						return;
 					}
 					else
@@ -303,8 +279,66 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		}
 		node = node->left;
 	}
-	comp = aLastComponent;
 	//SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+}
+
+void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
+{
+	OrderedList<UnorderedList<Component*>*> componentLocations;
+	componentLocations = aFrame->getRepaintManager()->aOpaqueDepthTracker;
+
+	int size = componentLocations.size();
+	if (!size) return;
+
+	Rect * visibleRegion;
+	HRESULT isConsumedMouse;
+
+	POINT point; int ID;
+	UnorderedList<Component*> * comps;
+	Component * comp;
+
+	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
+	point = xEvent->getLocation();
+	ID = xEvent->getID();
+
+	while (node)
+	{
+		comps = node->value;
+		size = comps->size();
+		for (int i = 0; i < size; i += 1)
+		{
+			comp = comps->get(i);
+			visibleRegion = comp->getVisibleRegion();
+			if (point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
+				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight)
+			{
+				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+				{
+					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
+					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
+					if (aLastComponent)
+					{
+						if (aLastComponent != comp)
+						{
+							// We've entered a new component
+							aMouseEvent->setProperties(aLastComponent, MouseEvent::MOUSE_EXITED);
+							aLastComponent->processMouseEvent(aMouseEvent);
+
+							aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
+							comp->processMouseEvent(aMouseEvent);
+						}
+					}
+					aLastComponent = comp;
+				}
+				if (isConsumedMouse == S_OK)
+				{
+					return;
+				}
+			}
+
+		}
+		node = node->left;
+	}
 }
 
 bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)
@@ -359,5 +393,5 @@ void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
 
 	xEvent->setOldState(win->aCurrentState);
 	win->processWindowEvent(xEvent);
-	win->aCurrentState = xEvent->getNewState();
+	win->aCurrentState = xEvent->getID();
 }
