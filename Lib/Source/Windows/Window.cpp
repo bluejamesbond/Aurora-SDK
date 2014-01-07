@@ -14,7 +14,7 @@ Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xF
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
 	Window * aWindow;
-
+	
 	if (xMessage == WM_CREATE)
 	{
 		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
@@ -1291,14 +1291,4 @@ Window::~Window()
 
 	delete aClassName;
 	aClassName = 0;
-}
-
-LPCWSTR Window::getClass()
-{
-	return L"Window";
-}
-
-LPCWSTR Window::toString()
-{
-	return L"Window";
 }

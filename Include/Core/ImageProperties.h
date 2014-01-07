@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __THREAD_H__
-#define __THREAD_H__
+#ifndef __IMAGEPROPERTIES_H__
+#define __IMAGEPROPERTIES_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Abstract Class:
-//      THREAD
+//      IMAGEPROPERTIES
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,13 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Runnable.h"
-#include "../Core/AbstractThread.h"
-#include "../Core/OrderedList.h"
-
 #include "ExtLibs.h"
-
-using namespace std;
+#include "Common.h"
 
 namespace A2D {
 
@@ -34,41 +29,17 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Thread : public AbstractThread
+
+	struct ImageProperties
 	{
+		int								aOptRepeat = _OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y;      // background-repeat (CSS)
+		int								aOptSizeX = _OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
+		int								aOptSizeY = _OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
+		int								_alignment = 0; // Use this later if you want.
 
-	public:
+		static void	memcpySSE2(ImageProperties * xDest, const ImageProperties * xSrc);
 
-		Thread(Runnable * xRunnable);
-		virtual ~Thread();
-
-	private:
-
-		HANDLE aHThread;
-		DWORD aId;
-
-		void * aListHandle;
-		static OrderedList<HANDLE> aThreadHandles;
-
-	public:
-
-		virtual bool start();
-		virtual void interrupt();
-		virtual void resume();
-		virtual void stop();
-		virtual bool isAlive();
-		virtual int	id();
-		virtual void waitAll();
-		virtual int getCurrentThreadId();
-
-	protected:
-
-		static AbstractThread * aClassInstance;
-
-	private:
-
-		static DWORD WINAPI initThread(void * xParam);
-		
 	};
 }
+
 #endif

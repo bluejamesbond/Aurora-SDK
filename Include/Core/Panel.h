@@ -1,14 +1,14 @@
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __PANEL_H__
+#define __PANEL_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      WINDOW
+//  Struct:
+//      PANEL
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,12 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Runnable.h"
-#include "../Core/AbstractEventQueue.h"
-
-#include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
+#include "Component.h"
+#include "ImageProperties.h"
 
 namespace A2D {
 
@@ -33,37 +29,27 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
-	class Thread;
-
+	class Abstract;
+	class Container;
+	class Window;
+	class Component;
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class Panel : public Component
 	{
 	public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
-
-		EventQueue::~EventQueue();
-
-	private:
-
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
-
-	public:
-
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
-
-	public:
-
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
-
+		float translationX = 0;
+		float translationXG1 = 10;
+		float translationYG1 = 10;
+		float translationY = 0;
+		float translationYDirection = 1;
+		float translationXDirection = 1;
+		float translationXDirectionG1 = 1;
+		float translationYDirectionG1 = 1;		
 	};
 }
 

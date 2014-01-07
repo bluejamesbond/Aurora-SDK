@@ -20,13 +20,13 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../Core/Common.h"
+#include "../Core/Rect.h"
+#include "../Core/Dims.h"
+#include "../Core/AbstractWindow.h"
+
 #include "ExtLibs.h"
 #include "EventQueue.h"
-#include "../Common.h"
-#include "../Abstract.h"
-#include "../Rect.h"
-#include "../Dims.h"
-#include "../AbstractWindow.h"
 
 namespace A2D {
 
@@ -35,7 +35,6 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	class Frame;
-	class Abstract;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -200,8 +199,6 @@ namespace A2D {
 	public:
 
 		virtual HRESULT                 initialize();
-		virtual LPCWSTR                 getClass();
-		virtual LPCWSTR                 toString();
 
 	};
 }

@@ -27,12 +27,3 @@ AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)
 {
 	return new Thread(xRunnable);
 }
-LPCWSTR EventQueue::getClass()
-{
-	return L"EventQueue";
-}
-
-LPCWSTR EventQueue::toString()
-{
-	return L"EventQueue";
-}

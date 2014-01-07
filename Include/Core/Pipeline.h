@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __REPAINTMANAGER_H__
-#define __REPAINTMANAGER_H__
+#ifndef __PIPELINE_H__
+#define __PIPELINE_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Abstract Class:
-//      COMPONENTMANAGER
+//  Class:
+//      PIPELINE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,12 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../A2D.h"
-#include "OrderedList.h"
-#include "UnorderedList.h"
-#include "AbstractWindow.h"
-#include "AbstractBackBuffer.h"
-#include GRAPHICS__
+#include "ExtLibs.h"
+#include "Common.h"
 
 namespace A2D {
 
@@ -33,37 +29,32 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Component;
+	class Abstract;
+	class Pipelineable;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class RepaintManager
+	class Pipeline
 	{
-		Dims										*  aBackBufferDims;
-		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
-		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
-
-		AbstractBackBuffer						   *   aBackBuffer;
-		Component								   *   aRoot;
-		AbstractWindow	  						   *   aWindow;
-		void									   *   aGraphics;
 
 	public:
 
-		RepaintManager(void * xGraphics, Component * xRoot);
-		~RepaintManager();
+		Pipeline();
 
-		HRESULT										  add(Component& xParent, Component& xChild);
-		bool										  addToDepthTracker(Component& xComponent, float xZ);
-		void										  update();
-		void										  update_forward();
+		~Pipeline();
+
+		void				  *			aPipelineComps[8];
+		int							    aLength = 0;
+		int								aLifeCycle = 0;
+		static int						aGlobalLifeCycle;
+
+		static void						nextLifeCycle();
 
 	public:
 
-		virtual void								  validate();
-		virtual HRESULT								  initialize();
+		virtual HRESULT                 initialize();
 
 	};
 }

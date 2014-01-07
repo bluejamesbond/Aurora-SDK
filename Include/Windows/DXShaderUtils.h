@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __DXSHADERUTILS_H__
+#define __DXSHADERUTILS_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      WINDOW
+//  Class: 
+//      DXSHADERUTILS
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Texture quad.
 //
 //------------------------------------------------------------------------------
 
@@ -20,12 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Runnable.h"
-#include "../Core/AbstractEventQueue.h"
-
 #include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
+#include "BackBuffer.h"
 
 namespace A2D {
 
@@ -33,38 +28,30 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
-	class Thread;
+	class Pipelineable;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class DXShaderUtils
 	{
-	public:
-
-		EventQueue::EventQueue(AbstractFrame * xFrame);
-
-		EventQueue::~EventQueue();
-
-	private:
-
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
 
 	public:
 
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
+		// Load a shader from file
+		static HRESULT					LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * xDevice, ID3D10Effect ** xEffect);
 
-	public:
+		// Create Alpha transpareny supportable PNG
+		static HRESULT					CreatePNGCompatibleBlendStates(ID3D10Device * xDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState);
 
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+		// Output Error - Use SYSOUT in the future
+		static void						SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename);
 
+		// Load technieque from shader
+		static HRESULT					loadTechniqueFromEffect(ID3D10Device * xDevice, ID3D10Effect * xEffect, ID3D10InputLayout ** xLayout, ID3D10EffectTechnique ** xTechnqiue, D3D10_INPUT_ELEMENT_DESC * xPolygonLayout, LPCSTR xName, unsigned int xElements);
 	};
 }
+
 
 #endif

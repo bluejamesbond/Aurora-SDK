@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __FRAME_H__
-#define __FRAME_H__
+#ifndef __ABSTRACTRHEAD_H__
+#define __ABSTRACTRHEAD_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      FRAME
+//  Abstract Class:
+//      ABSTRACTRHEAD
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,9 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/AbstractFrame.h"
-#include "Thread.h"
-#include "Graphics.h"
+#include "Runnable.h"
+#include "Common.h"
 
 namespace A2D {
 
@@ -30,34 +29,55 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame : public AbstractFrame
+	class AbstractThread
 	{
 
+	public:
+
+		AbstractThread(Runnable * xRunnable);
+		virtual ~AbstractThread() = 0;
+
+	private:
+
+		Runnable * aRunnable;
+
+		int aId;
+
+
+	protected:
+
+		static AbstractThread * aSingleton;
+		static int aInstanceCount;
+		static int aActiveCount;
+
+	public:
+
+		static AbstractThread* getSingleton();
+		static int instanceCount();
+		static int activeCount();
+
+		void fire();
+
+	public:
+		
+		virtual int	 id();
+		virtual bool start() = 0;
+		virtual void interrupt() = 0;
+		virtual void resume() = 0;
+		virtual void stop() = 0;
+		virtual bool isAlive() = 0;
+		virtual void waitAll() = 0;
+		virtual int getCurrentThreadId() = 0;
+
 		////////////////////////////////////////////////////////////////////////////////
-		// PLATFORM COMPATIBLE IMPLEMENTATION
+		// ABSTRACT
 		////////////////////////////////////////////////////////////////////////////////
 
 	public:
 
-		Frame();
-		Frame(HINSTANCE xHInstance);
-		~Frame();
-
-	private:
-
-		HINSTANCE aHInstance;
-
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACTFRAME
-		////////////////////////////////////////////////////////////////////////////////
-
-	protected:
-
-		virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue);
-		virtual HRESULT					createPlatformCompatibleWindow(AbstractWindow ** xWindow);
-		virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings);
-		virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer);
+		virtual HRESULT                 initialize();
 
 	};
 }
+
 #endif

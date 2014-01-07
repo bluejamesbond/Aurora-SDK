@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __FRAME_H__
-#define __FRAME_H__
+#ifndef __ROOTPANE_H__
+#define __ROOTPANE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      FRAME
+//      ROOTPANE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -20,44 +20,32 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/AbstractFrame.h"
-#include "Thread.h"
-#include "Graphics.h"
+#include "Panel.h"
 
 namespace A2D {
-
+		
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame : public AbstractFrame
+	class RootPane : public Panel
 	{
 
-		////////////////////////////////////////////////////////////////////////////////
-		// PLATFORM COMPATIBLE IMPLEMENTATION
-		////////////////////////////////////////////////////////////////////////////////
 
-	public:
-
-		Frame();
-		Frame(HINSTANCE xHInstance);
-		~Frame();
 
 	private:
 
-		HINSTANCE aHInstance;
+		bool							aLockDimensions = false;
+
+	public:
 
 		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACTFRAME
+		// PANEL
 		////////////////////////////////////////////////////////////////////////////////
 
-	protected:
-
-		virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue);
-		virtual HRESULT					createPlatformCompatibleWindow(AbstractWindow ** xWindow);
-		virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings);
-		virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer);
+		virtual void					setBounds(float xOptLeft, float xOptTop, float xOptWidth, float xOptHeight) final;
 
 	};
 }
+
 #endif

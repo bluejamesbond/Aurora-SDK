@@ -2,17 +2,16 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTQUEUE_H__
-#define __EVENTQUEUE_H__
+#ifndef __TEXTURE_H__
+#define __TEXTURE_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:
-//      WINDOW
+//  Class:  
+//      TEXTURE
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Texture container class.
 //
 //------------------------------------------------------------------------------
 
@@ -20,12 +19,10 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Runnable.h"
-#include "../Core/AbstractEventQueue.h"
+#include "../Core/Rect.h"
 
-#include "ExtLibs.h"
-#include "Thread.h"
-#include "Window.h"
+#include "BackBuffer.h"
+#include "AbstractTexture.h"
 
 namespace A2D {
 
@@ -33,36 +30,43 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
-	class Thread;
-
+	class AbstractTexture;
+	
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
+	class Texture : public AbstractTexture
 	{
 	public:
+		// Constructor
+		Texture(ID3D10Device ** xDevice, LPCWSTR xFilename);
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+		// Deconstructor
+		~Texture();
 
-		EventQueue::~EventQueue();
+		ID3D10Device			**		aDevice;
+		ID3D10ShaderResourceView*		aResource;
 
-	private:
+		static			ID3D10ShaderResourceView* aStaticResource;
 
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
+		// Variables
+		LPCTSTR							aSrc;
+
+		// Accessors
+		LPCTSTR					*		GetSrc();
+
+		// Virtual
+		HRESULT							changeTexture(LPCWSTR  xSrc);
+
+		// Virtual
+		virtual	bool					hasAlpha();
+		virtual void			*		getPlatformCompatibleResource();
 
 	public:
-
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
-
-	public:
-
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+		// Implementation
+		// { ABSTRACT }
+		virtual HRESULT                 initialize();
 
 	};
 }

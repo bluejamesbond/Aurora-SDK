@@ -142,13 +142,3 @@ DWORD WINAPI Thread::initThread(void * xParam)
 
     return -1;
 }
-
-LPCWSTR Thread::getClass()
-{
-	return L"Thread";
-}
-
-LPCWSTR Thread::toString()
-{
-	return L"Thread";
-}
