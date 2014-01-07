@@ -14,10 +14,13 @@
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
+// C RunTime Header Files
+
 #include "../Core/ExtLibs.h"
 
+#include <GdiPlus.h>
+#include <GdiPlusGraphics.h>
+#include <windowsx.h>
+
 #include <sstream>
-#include <thread>
-#include <queue>
 #include <assert.h> 
-#include <vector> 
