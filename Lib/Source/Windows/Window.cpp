@@ -253,11 +253,14 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		GetCursorPos(&p);
 		ScreenToClient(xHwnd, &p);
 
-		deltaY = static_cast<float>(aLastDraggedPoint.y - p.y);
-		deltaX = static_cast<float>(aLastDraggedPoint.x - p.x);
+		aOffsetY = deltaY = FLOAT(aLastDraggedPoint.y - p.y);
+		aOffsetX = deltaX = FLOAT(aLastDraggedPoint.x - p.x);
 		currentCursor = GetCursor();
 		
-
+		if (aOffsetY < -2000.0f)
+		{
+			aOffsetY = 0.0f;
+		}
 
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
@@ -280,7 +283,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
 				}
 			}
 			// Resize left and right.
@@ -299,7 +302,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
 				}
 
 			}
@@ -308,7 +311,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 			{
 				if (aWinMoveRes)
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
 					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
 						rect.aWidth + deltaX < aMaxDims.aWidth)
 					{
@@ -321,7 +324,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
 						rect.aHeight + deltaY < aMaxDims.aHeight)
 					{
@@ -357,8 +360,8 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? static_cast<float>(deltaX) : 0;
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? static_cast<float>(deltaY) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
 				}
 			}
 
@@ -1203,15 +1206,18 @@ void Window::render()
 			realWidth,
 			realHeight,
 			memDCChild,
-			0, 0,
-			aLastRect.aWidth - aOptBorderWidth * 2 ,
-			aLastRect.aHeight - aOptBorderWidth * 2,
+			0, 0, 
+			aLastRect.aWidth - aOptBorderWidth * 2.0 + (aOffsetX <= 0.0 ? aOffsetX : 0.0),
+			aLastRect.aHeight - aOptBorderWidth * 2.0 + (aOffsetY <= 0.0 ? aOffsetY : 0.0),
 			SRCCOPY);
 
 		ReleaseDC(aParentHWnd, memDCChild);
 		DeleteObject(memBitmapChild);
 		DeleteObject(memDCChild);
+
+		SYSOUT_FLT(aOffsetX);
 	}
+
 
 	/***********************************************/
 
@@ -1229,7 +1235,7 @@ void Window::render()
 	
 	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX) - (aFramebufferInterpolation ? 3000 : 0), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS);
 
 	EndDeferWindowPos(hdwp);
 	

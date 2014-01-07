@@ -75,6 +75,9 @@ namespace A2D {
 		float                           aRelativeWidth = 0;
 		float                           aRelativeHeight = 0;
 
+		float							aOffsetX = 0.0f;
+		float							aOffsetY = 0.0f;
+
 		bool                            isDragged = false;
 		bool                            isResizing = false;
 		bool							isMoving = false;
