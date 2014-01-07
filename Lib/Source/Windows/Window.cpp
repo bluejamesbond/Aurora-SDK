@@ -41,16 +41,16 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 				 aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				 return aWindow->updateOnMouseUp(xHwnd);
 		}
+		case WM_SIZE:
+		{
+						aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+						return aWindow->onSize(xHwnd);
+
+		}
 		case WM_CLOSE:
 		{
 				DestroyWindow(xHwnd);
 				return S_OK;
-		}
-		case WM_SIZE:
-		{
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->onSize(xHwnd);
-
 		}
 		case WM_ERASEBKGND:
 		{
@@ -63,6 +63,14 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 		}
 
 	}
+}
+
+HRESULT Window::onSize(HWND hwnd)
+{
+	if (hwnd == aChildHWnd)
+		aFrame->invalidate();
+
+	return S_OK;
 }
 
 HWND Window::createCompatibleWindow(bool isParent)
@@ -383,14 +391,6 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 		aLastDraggedPoint = p;
 	}
-	return S_OK;
-}
-
-HRESULT Window::onSize(HWND hwnd)
-{
-	if (hwnd == aChildHWnd)
-		aFrame->invalidate();
-
 	return S_OK;
 }
 
@@ -1148,6 +1148,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 	}
 }
 
+
 void Window::render()
 {
 	// Cache variables to ensure that these variables
@@ -1171,12 +1172,15 @@ void Window::render()
 	UpdateWindow(aChildHWnd);
 
 	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
-	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
+	HDC memDCChild, hwndDC = GetDC(NULL), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
 	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
+	RECT rect;
+
 
 	if (aFramebufferInterpolation)
 	{
+
 		memDCChild = CreateCompatibleDC(hwndDC);
 		// Create secondary DC
 		memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
@@ -1199,6 +1203,7 @@ void Window::render()
 	/***********************************************/
 	if (aFramebufferInterpolation)
 	{
+		GetWindowRect(aChildHWnd, &rect);
 		// Paint from frameBuffer of the child HWND into the 
 		// the parent HWND
 		StretchBlt(memDC, aOptBorderWidth + aPadding,
@@ -1206,18 +1211,15 @@ void Window::render()
 			realWidth,
 			realHeight,
 			memDCChild,
-			0, 0, 
-			aLastRect.aWidth - aOptBorderWidth * 2.0 + (aOffsetX <= 0.0 ? aOffsetX : 0.0),
-			aLastRect.aHeight - aOptBorderWidth * 2.0 + (aOffsetY <= 0.0 ? aOffsetY : 0.0),
+			0, 0,
+			INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
+			INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
 			SRCCOPY);
 
 		ReleaseDC(aParentHWnd, memDCChild);
 		DeleteObject(memBitmapChild);
 		DeleteObject(memDCChild);
-
-		SYSOUT_FLT(aOffsetX);
 	}
-
 
 	/***********************************************/
 
@@ -1227,6 +1229,8 @@ void Window::render()
 	blendFunction.BlendOp = AC_SRC_OVER;
 	blendFunction.SourceConstantAlpha = 255;
 
+	/***********************************************/
+
 	UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
 	/***********************************************/
@@ -1235,12 +1239,12 @@ void Window::render()
 	
 	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
 
 	EndDeferWindowPos(hdwp);
-	
-	/***********************************************/
 
+	/***********************************************/
+	
 	graphics.ReleaseHDC(memDC);
 	DeleteObject(memBitmap);
 	ReleaseDC(aParentHWnd, memDC);
