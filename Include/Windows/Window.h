@@ -80,6 +80,7 @@ namespace A2D {
 		bool							isMoving = false;
 		bool                            aWinMoveRes = false;
 
+
 		bool							aFramebufferInterpolation = false;
 
 		Gdiplus::Color					  * 	aBorderColor = NULL;

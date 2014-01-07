@@ -257,6 +257,8 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		deltaX = static_cast<float>(aLastDraggedPoint.x - p.x);
 		currentCursor = GetCursor();
 		
+
+
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
 		// Process resizing.
@@ -1163,6 +1165,8 @@ void Window::render()
 
 	/***********************************************/
 
+	UpdateWindow(aChildHWnd);
+
 	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
 	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
@@ -1177,8 +1181,6 @@ void Window::render()
 
 		// Request copy of frameBuffer
 		PrintWindow(aChildHWnd, memDCChild, 0);
-
-		ReleaseDC(aChildHWnd, memDCChild);
 	}
 
 	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
@@ -1202,12 +1204,13 @@ void Window::render()
 			realHeight,
 			memDCChild,
 			0, 0,
-			aLastRect.aWidth - aOptBorderWidth * 2,
+			aLastRect.aWidth - aOptBorderWidth * 2 ,
 			aLastRect.aHeight - aOptBorderWidth * 2,
 			SRCCOPY);
 
-		DeleteObject(memBitmapChild);
 		ReleaseDC(aParentHWnd, memDCChild);
+		DeleteObject(memBitmapChild);
+		DeleteObject(memDCChild);
 	}
 
 	/***********************************************/
@@ -1226,7 +1229,7 @@ void Window::render()
 	
 	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX) - (aFramebufferInterpolation ? 0 : 0), INT(realY) - (aFramebufferInterpolation ? 0 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX) - (aFramebufferInterpolation ? 3000 : 0), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS);
 
 	EndDeferWindowPos(hdwp);
 	
