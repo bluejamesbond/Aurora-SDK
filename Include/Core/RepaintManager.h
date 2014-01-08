@@ -25,7 +25,7 @@
 #include "UnorderedList.h"
 #include "AbstractWindow.h"
 #include "AbstractBackBuffer.h"
-#include GRAPHICS__
+//#include GRAPHICS__
 
 namespace A2D {
 

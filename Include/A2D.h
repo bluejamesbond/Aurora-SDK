@@ -8,7 +8,7 @@
 #endif
 
 // Required for Linux
-#ifdef _LINUX
-#include "Linux/ExtLibs.h"
+#ifdef __linux__
+#include "Linux/GLXExtLibs.h"
 #include "Linux/Frame.h"
 #endif

@@ -1,6 +1,6 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/Component.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/Component.h"
 
 using namespace A2D;
 

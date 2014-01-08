@@ -87,7 +87,7 @@ namespace A2D{
 
 
 		// Internal node system
-		template <class T>
+        template <class U>
 		struct Node
 		{
 			T value;
@@ -95,7 +95,7 @@ namespace A2D{
 			Node<T> * right;
 		};
 
-		template<class T>
+        template<class U>
 		struct Iterator
 		{
 

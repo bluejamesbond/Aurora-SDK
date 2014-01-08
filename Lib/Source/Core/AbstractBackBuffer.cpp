@@ -1,6 +1,6 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/AbstractBackBuffer.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/AbstractBackBuffer.h"
 
 using namespace A2D;
 

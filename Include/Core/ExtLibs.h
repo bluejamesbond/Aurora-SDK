@@ -21,12 +21,15 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
-#include <tchar.h>
+//#include <tchar.h>
 #include <wchar.h>
 #include <math.h>
 #include <iostream> 
 #include <fstream>
 
+#ifdef __linux__
+#include "GLXExtLibs.h"
+#endif
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MOVE THIS
 #ifdef _WIN32
 

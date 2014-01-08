@@ -87,7 +87,7 @@ namespace A2D{
 		Color3D								aStart;
 		Color3D								aEnd;
 
-		Mode								aMode = Mode::SOLID;
+        Paint::Mode								aMode = Mode::SOLID;
 
 		static void							from(Paint& xDst, Paint& xSrc);
 

@@ -1,7 +1,7 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/Toolkit.h"
-#include "../../../include/Core/AbstractEventQueue.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/Toolkit.h"
+#include "../../../Include/Core/AbstractEventQueue.h"
 
 using namespace A2D;
 

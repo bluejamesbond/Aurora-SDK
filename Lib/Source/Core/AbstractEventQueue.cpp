@@ -1,7 +1,7 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/AbstractEventQueue.h"
-#include "../../../include/Core/AbstractFrame.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/AbstractEventQueue.h"
+#include "../../../Include/Core/AbstractFrame.h"
 
 using namespace A2D;
 
@@ -50,7 +50,7 @@ int AbstractEventQueue::waitForAllDispatchingThreads()
 		aThread->initialize();
 	}
 
-	Sleep(5000);
+//	Sleep(5000);
 
 	aThread->waitAll();
 
@@ -97,7 +97,7 @@ void AbstractEventQueue::startDispatchingThread()
 
 	aThread = createPlatformCompatibleThread(this);
 	
-	G_SAFELY(aThread->initialize());	
+    G_SAFELY(aThread->initialize());
 
 	// If it fails...screwed! -FIX IT. Catch the HRESULT!
 

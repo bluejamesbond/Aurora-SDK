@@ -1,6 +1,6 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/Rect.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/Rect.h"
 
 using namespace A2D;
 
@@ -9,7 +9,7 @@ void  Rect::memcpySSE2(Rect * xDest, const Rect * xSrc)
 	// Memcpy built just for Rect and is optimized for
 	// 64 bit architecture with use of 128 bit registers.
 	// Use this for memcpy
-
+/*
 	__asm
 	{
 		mov esi, xSrc;
@@ -17,7 +17,7 @@ void  Rect::memcpySSE2(Rect * xDest, const Rect * xSrc)
 
 		movdqu xmm1, [esi];
 		movdqu[edi], xmm1;
-	}
+    }*/
 }
 
 byte Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
@@ -27,9 +27,9 @@ byte Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
 	// DO NOT USE THIS!
 
 	byte result = 0;
-
+/*
 	__asm
-	{
+    {
 		mov esi, xComp1;
 		mov edx, xComp2;
 		xor cl, cl;
@@ -45,7 +45,7 @@ byte Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
 		add cl, 1;
 	equal:
 		mov result, cl;
-	};
+    };*/
 
 	return result;
 }

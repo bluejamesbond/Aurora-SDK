@@ -1,6 +1,6 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/Color3D.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/Color3D.h"
 
 using namespace A2D;
 

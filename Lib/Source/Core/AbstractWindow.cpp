@@ -1,8 +1,8 @@
 
-#include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/AbstractWindow.h"
-#include "../../../include/Core/AbstractFrame.h"
-#include "../../../include/Core/AbstractEventQueue.h"
+#include "../../../Include/Core/ExtLibs.h"
+#include "../../../Include/Core/AbstractWindow.h"
+#include "../../../Include/Core/AbstractFrame.h"
+#include "../../../Include/Core/AbstractEventQueue.h"
 
 using namespace A2D;
 
@@ -222,8 +222,13 @@ HRESULT AbstractWindow::initialize()
 	// ABSTRACTWINDOW DEFAULTS
 	//------------------------------------------------------------
 
-	// Default name
+    // Default name
+#ifdef _WIN32
 	aName = L"Aurora-SDK Unititled";
+#endif
+#ifdef __linux__
+    aName = "Aurora-SDK Untitled";
+#endif
 
 	// Default (0,0)
 	aRect.aX = 0;

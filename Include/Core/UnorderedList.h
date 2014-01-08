@@ -310,7 +310,7 @@ namespace A2D{
 			int imax_size = m_size;
 			T * arr = m_heap;
 
-			for (int i = 0; i < max_size; i++)
+            for (int i = 0; i < imax_size; i++)
 			{
 				if (arr[i] == t)
 				{

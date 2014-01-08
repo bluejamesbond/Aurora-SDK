@@ -233,7 +233,7 @@ Panel& AbstractFrame::getRootPane()
 
 HRESULT AbstractFrame::createResources()
 {	
-	SAFELY(createPlatformCompatibleWindow(&aWindow));
+    SAFELY(createPlatformCompatibleWindow(&aWindow));
 	SAFELY(aWindow->initialize());	
 
 	SAFELY(createPlatformCompatibleBackBuffer(&aBackBuffer, aWindow, &aGXSettings));
