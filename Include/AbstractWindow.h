@@ -116,10 +116,10 @@ namespace A2D {
 
 	protected:
 
-		WindowEvent					*	aWindowOpened;
-		WindowEvent					*	aWindowClosed;
-		WindowEvent					*	aWindowActivated;
-		WindowEvent					*	aWindowDeactivated;
+		WindowEvent					*	aWindowOpened = 0;
+		WindowEvent					*	aWindowClosed = 0;
+		WindowEvent					*	aWindowActivated = 0;
+		WindowEvent					*	aWindowDeactivated = 0;
 
 		int								aCurrentState = 0;
 

@@ -173,17 +173,38 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 		switch (xMessage)
 		{
 
+		case WM_ACTIVATE:
+
+			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			if (LOWORD(xWParam) == WA_INACTIVE)
+			{
+				WindowEvent * wEvent = aWindow->aWindowDeactivated;
+				if (wEvent)
+				{
+					aWindow->processWindowEvent(aWindow->aWindowDeactivated);
+				}
+			}
+			else
+			{
+				WindowEvent * wEvent = aWindow->aWindowActivated;
+				if (wEvent)
+				{
+					aWindow->processWindowEvent(aWindow->aWindowActivated);
+				}
+			}
+			return S_OK;
+
 		case WM_SIZE:
 		{
 				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 				return aWindow->onSize(xHwnd);
 		}
 
-		case WM_KILLFOCUS:
+		//case WM_KILLFOCUS:
 
-			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-			aWindow->aEventQueue->processWindowEvent(aWindow->aWindowDeactivated);
-			return S_OK;
+		//	aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+		//	aWindow->aEventQueue->processWindowEvent(aWindow->aWindowDeactivated);
+		//	return S_OK;
 
 		case WM_ERASEBKGND:
 		{

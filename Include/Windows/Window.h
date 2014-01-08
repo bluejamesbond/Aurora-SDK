@@ -120,12 +120,12 @@ namespace A2D {
 
 		// Listener stuff // should be moved inside AbstractWindow
 
-		MouseEvent					*	aMouseDown;
-		MouseEvent					*	aMouseUp;
-		MouseEvent					*	aMouseMove;
-		MouseEvent					*	aMouseDragged;
+		MouseEvent					*	aMouseDown = 0;
+		MouseEvent					*	aMouseUp = 0;
+		MouseEvent					*	aMouseMove = 0;
+		MouseEvent					*	aMouseDragged = 0;
 
-		AbstractEventQueue			*	aEventQueue;
+		AbstractEventQueue			*	aEventQueue = 0;
 
 		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
 		friend							Component;
