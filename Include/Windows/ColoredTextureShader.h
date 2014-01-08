@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "DXShaderUtils.h"
 #include "AbstractTextureShader.h"
 
 namespace A2D {

@@ -16,8 +16,6 @@
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
-#define FLT_ZERO                                              0.0f
-#define FLT_ONE                                               1.0f
 
 #define _PIPELINE_PREPROCESS_START                         0x2510
 #define _PIPELINE_PREPROCESS_CREATE                        0x2511
@@ -50,27 +48,21 @@
 #define	_OPT_BACKGROUND_SIZE_COVER						  0x3009
 #define	_OPT_BACKGROUND_SIZE_STRETCH						  0x300A
 
+#define FLT_255												  255.0f
+#define FLT_ZERO                                              0.0f
+#define FLT_ONE                                               1.0f
+
 // Debugging
+#include "../_A2DDebug.h"
 
-#define SYSOUT_FLT(x)										  _RPT1( 0, "[Aurora -SDK] %f\n", x )
-#define SYSOUT_INT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
-#define SYSOUT_HEX(x)										  _RPT1( 0, "[Aurora -SDK] 0x%X\n", x )
-#define SYSOUT_STR(x)										  _RPT1( 0, "[Aurora -SDK] %s\n", x )
-#define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora -SDK] " f "\n", __VA_ARGS__ )
-
-#define FLT_255			255.0f
-
-#define G_SAFELY(hr)    if(hr != 0) { SYSOUT_STR("Failure detected");	return; }
-#define SAFELY(hr)		if(hr != 0){ SYSOUT_STR("Failure detected");return E_FAIL; }
-#define NULLCHECK(hr)	if(!hr){ SYSOUT_STR("Failure detected"); return E_FAIL; }
-#define	DESTROY(x)		if(x) { delete x; x = 0; }
-#define D3DDESTROY(x)   if(x) { x->Release(); x = 0; }
-#define THREAD_DESTROY(x)  if(x) { x->stop(); delete x; x = 0; }
-#define FLOAT(x)		static_cast<float>(x)
-#define INT(x)			static_cast<int>(x)
-#define UINT(x)			static_cast<UINT>(x)
-
-#define ifneg(x)		(x < 0 ? x : 0)
-
+#define G_SAFELY(hr)										  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return; }
+#define SAFELY(hr)											  if(hr != 0)	{ SYSOUT_STR("Failure detected");return E_FAIL; }
+#define NULLCHECK(hr)										  if(!hr)		{ SYSOUT_STR("Failure detected"); return E_FAIL; }
+#define	DESTROY(x)											  if(x)			{ delete x; x = 0; }
+#define D3DDESTROY(x)										  if(x)			{ x->Release(); x = 0; }
+#define THREAD_DESTROY(x)									  if(x)			{ x->stop(); delete x; x = 0; }
+#define FLOAT(x)											  static_cast<float>(x)
+#define INT(x)												  static_cast<int>(x)
+#define UINT(x)												  static_cast<UINT>(x)
 
 #endif

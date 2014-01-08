@@ -451,8 +451,8 @@ void  QuadFactory::memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex *
 
 HRESULT QuadFactory::initialize()
 {
-	SAFELY(DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
-	SAFELY(DXShapeUtils::CreateDefaultIndexBuffer(*aDevice, &aIndexBuffer, 6));
+	SAFELY(DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
+	SAFELY(DXUtils::CreateDefaultIndexBuffer(*aDevice, &aIndexBuffer, 6));
 
 	return S_OK;
 }

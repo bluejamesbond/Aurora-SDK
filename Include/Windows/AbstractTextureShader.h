@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "DXShaderUtils.h"
+#include "DXUtils.h"
 #include "Texture.h"
 #include "AbstractShader.h"
 

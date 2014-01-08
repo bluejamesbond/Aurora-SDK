@@ -34,7 +34,7 @@ class Renderable;
 class Container;
 class Camera;
 struct CameraProperties;
-class MatrixFactory;
+class DXUtils;
 struct RenderData;
 class BackBuffer;
 class ModelFactory;

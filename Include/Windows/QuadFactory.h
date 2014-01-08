@@ -23,7 +23,7 @@
 #include "../Core/Paint.h"
 
 #include "ExtLibs.h"
-#include "DXShapeUtils.h"
+#include "DXUtils.h"
 #include "Texture.h"
 #include "QuadData.h"
 #include "ColoredTextureVertex.h"

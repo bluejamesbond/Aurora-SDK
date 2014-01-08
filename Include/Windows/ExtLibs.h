@@ -15,6 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // C RunTime Header Files
+#ifndef __EXTLIBS_H_WIN__
+#define __EXTLIBS_H_WIN__
 
 #include "../Core/ExtLibs.h"
 
@@ -24,3 +26,5 @@
 
 #include <sstream>
 #include <assert.h> 
+
+#endif
