@@ -35,6 +35,11 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 		if (visible)
 		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				eventHandler(msg, &eventQueue);
+			}
+
 			// Forced updating of rendering for now
 			if (eventQueue.dispatchNextEvent())
 			{
@@ -49,13 +54,13 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			{
 				frame.update();
 			}
-			//else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			//{
-			//	eventHandler(msg, aEventQueue);
-			//}
-			GetMessage(&msg, NULL, 0, 0);
-			TranslateMessage(&msg);
-			eventHandler(msg, &eventQueue);
+			else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			{
+				eventHandler(msg, &eventQueue);
+			}
+			//GetMessage(&msg, NULL, 0, 0);
+			//TranslateMessage(&msg);
+			//eventHandler(msg, &eventQueue);
 		}
 	}
 }
