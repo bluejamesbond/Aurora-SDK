@@ -32,7 +32,7 @@ namespace A2D {
 
 	class Container;
 	struct CameraProperties;
-	class MatrixFactory;
+	class DXUtils;
 	class RootPane;
 
 	////////////////////////////////////////////////////////////////////////////////

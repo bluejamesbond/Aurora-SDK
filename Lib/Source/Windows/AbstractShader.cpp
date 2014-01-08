@@ -20,23 +20,23 @@ HRESULT AbstractShader::initialize()
 	D3D10_INPUT_ELEMENT_DESC * polygonLayout = new D3D10_INPUT_ELEMENT_DESC[polygonLayoutElements];
 	ID3D10Effect **	effect = getEffect();
 
-	// Use the DXShaderUtils to create a shader
+	// Use the DXUtils to create a shader
 	// and cache it.
 	if (!*effect)
 	{
-		SAFELY(DXShaderUtils::LoadEffectFromFile(getEffectName(), *aDevice, effect));
+		SAFELY(DXUtils::LoadEffectFromFile(getEffectName(), *aDevice, effect));
 	}
 
 	// Create alpha channel supported blend states
 	// and cache it for reuse.
 	if (!aBlendState || !aBlendDisabledState)
 	{
-		SAFELY(DXShaderUtils::CreatePNGCompatibleBlendStates(*aDevice, &aBlendState, &aBlendDisabledState));
+		SAFELY(DXUtils::CreatePNGCompatibleBlendStates(*aDevice, &aBlendState, &aBlendDisabledState));
 	}
 
 	SAFELY(createPolygonLayout(polygonLayout));
 
-	SAFELY(DXShaderUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));
+	SAFELY(DXUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));
 	
 	SAFELY(getUsableVariablePointers(*effect));
 

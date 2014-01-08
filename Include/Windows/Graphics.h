@@ -33,7 +33,7 @@
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
-#include "MatrixFactory.h"
+#include "DXUtils.h"
 #include "TextureShader.h"
 #include "ColorShader.h"
 
@@ -47,7 +47,7 @@ namespace A2D {
 	class Container;
 	struct CameraProperties;
 	class BackBuffer;
-	class MatrixFactory;
+	class DXUtils;
 	class RootPane;
 	class Window;
 	class Texture;

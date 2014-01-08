@@ -16,6 +16,9 @@
 
 // C RunTime Header Files
 
+#ifndef __EXTLIBS_H_CX__
+#define __EXTLIBS_H_CX__
+
 #define _USE_MATH_DEFINES
 
 #include <stdlib.h>
@@ -28,8 +31,7 @@
 #include <fstream>
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MOVE THIS
-#ifndef __DXLIBS__
-#define __DXLIBS__
+#ifdef _WIN32
 
 #pragma comment(lib, "d3d10.lib")
 #pragma comment(lib, "d3dx10.lib")
@@ -44,3 +46,6 @@
 
 #endif
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TO EXTLIBS.H FOR WINDOWS
+
+
+#endif
