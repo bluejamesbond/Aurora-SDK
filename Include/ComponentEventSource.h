@@ -2,8 +2,8 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EVENTSOURCE_H__
-#define __EVENTSOURCE_H__
+#ifndef __COMPONENTEVENTSOURCE_H__
+#define __COMPONENTEVENTSOURCE_H__
 
 //+-----------------------------------------------------------------------------
 //
@@ -11,7 +11,7 @@
 //      EVENTSOURCE
 //
 //  Synopsis:
-//      Class that will throw and fire events.
+//      Event source class for components only. Contains support for focus events.
 //
 //
 ////------------------------------------------------------------------------------
@@ -24,11 +24,7 @@
 #include "Abstract.h"
 #include "OrderedList.h"
 
-#include "AbstractListener.h"
-#include "MouseListener.h"
-#include "FocusListener.h"
-#include "ActionListener.h"
-#include "MouseMotionListener.h"
+#include "EventSource.h"
 
 namespace A2D {
 
@@ -36,48 +32,24 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Abstract;
-	class AbstractListener;
-	class MouseListener;
-	class MouseEvent;
-	class FocusListener;
-	class FocusEvent;
-	class ActionListener;
-	class ActionEvent;
-	class MouseMotionListener;
-	class WindowListener;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class EventSource : public Abstract
+	class ComponentEventSource : public EventSource
 	{
 	public:
 
-		~EventSource();
+		~ComponentEventSource();
 		
-		HRESULT					processMouseEvent(MouseEvent * xEvent);
-		HRESULT					processActionEvent(ActionEvent * xEvent);
+		HRESULT					processFocusEvent(FocusEvent * xEvent);
 
-		HRESULT					addMouseListener(MouseListener * xListener);
-		HRESULT					addMouseMotionListener(MouseMotionListener * xListener);
-		HRESULT					addActionListener(ActionListener * xListener);
+		HRESULT					addFocusListener(FocusListener * xListener);
 
 	protected:
 
-		EventSource();
-
-	protected:
-		
-		AbstractListener 	 *	findListener(const int xListenerID);
-		HRESULT					fireListener(AbstractEvent * xEvent, int xListenerID);
-
-		HRESULT					addListener(AbstractListener * xListener); // slow 
-		HRESULT					removeListener(AbstractListener * xListener); // slow
-	private:
-
-		OrderedList<AbstractListener *> aListenerList;
+		ComponentEventSource();
 
 	public:
 

@@ -291,13 +291,3 @@ void AbstractFrame::update()
 
 	aRepaintManager->update();
 }
-
-void AbstractFrame::addMouseListener(MouseListener * xListener)
-{
-	aRootPane.addMouseListener(xListener);
-}
-
-void AbstractFrame::addMouseMotionListener(MouseMotionListener * xListener)
-{
-	aRootPane.addMouseMotionListener(xListener);
-}

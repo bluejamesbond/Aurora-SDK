@@ -26,7 +26,7 @@
 #include "Rect.h"
 #include "Paint.h"
 
-#include "EventSource.h"
+#include "ComponentEventSource.h"
 #include "AbstractEventQueue.h"
 //#include "AbstractFrame.h"
 
@@ -42,14 +42,14 @@ namespace A2D {
 	class AbstractFrame;
     class Abstract;
 	class Graphics;
-	class EventSource;
+	class ComponentEventSource;
 	struct ImageProperties;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
-    class Component : public EventSource
+    class Component : public ComponentEventSource
     {
 	public:
 

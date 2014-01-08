@@ -39,12 +39,6 @@ HRESULT EventSource::processMouseEvent(MouseEvent * xEvent)
 	return fireListener(xEvent, ID);
 }
 
-HRESULT EventSource::processFocusEvent(FocusEvent * xEvent)
-{
-	int ID = A2D_LISTENER_FOCUS;
-	return fireListener(xEvent, ID);
-}
-
 HRESULT EventSource::processActionEvent(ActionEvent * xEvent)
 {
 	int ID = A2D_LISTENER_ACTION;
@@ -101,19 +95,6 @@ HRESULT EventSource::addMouseListener(MouseListener * xListener)
 		int ID = A2D_LISTENER_MOUSE;
 		AbstractListener * listener = findListener(ID);
 		if(listener) return removeListener(listener);
-		else return S_FALSE;
-	}
-	return addListener(xListener);
-	
-}
-
-HRESULT EventSource::addFocusListener(FocusListener * xListener)
-{
-	if (xListener == NULL)
-	{
-		int ID = A2D_LISTENER_FOCUS;
-		AbstractListener * listener = findListener(ID);
-		if (listener) return removeListener(listener);
 		else return S_FALSE;
 	}
 	return addListener(xListener);

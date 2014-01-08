@@ -88,8 +88,6 @@ namespace A2D {
 		void							dispose();
 		void							invalidate();
 		// void							revalidate(); --- Unsafe for AbstractFrame!!!
-		void							addMouseListener(MouseListener * xListener);
-		void							addMouseMotionListener(MouseMotionListener * xListener);
 
 	protected:
 		void							validated();
