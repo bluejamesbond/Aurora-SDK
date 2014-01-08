@@ -28,7 +28,8 @@
 #include <fstream>
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MOVE THIS
-#ifdef _WIN32
+#ifndef __DXLIBS__
+#define __DXLIBS__
 
 #pragma comment(lib, "d3d10.lib")
 #pragma comment(lib, "d3dx10.lib")
