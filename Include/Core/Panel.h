@@ -38,7 +38,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Panel : public Component
+    class Panel : public Component
 	{
 	public:
 

@@ -54,6 +54,7 @@
 
 //Mandatory for Linux
 #ifdef __linux__
+#include <cstdio>
 #define LPCWSTR char*
 #define HRESULT int
 #define S_OK 1
@@ -65,10 +66,10 @@
 #define max(a, b)                                             ((a < b ) ? b : a)
 
 #define USE_CHOOSE_FBCONFIG
-#define SYSOUT_FLT(x)							 			  fprintf(stderr, %f, x)
-#define SYSOUT_INT(x)										  fprintf(stderr, %d, x)
-#define SYSOUT_HEX(x)										  fprintf(stderr, %h, x)
-#define SYSOUT_STR(x)										  fprintf(stderr, %s, x)
+#define SYSOUT_FLT(x)							 			  fprintf(stderr, "%f", x)
+#define SYSOUT_INT(x)										  fprintf(stderr, "%d", x)
+#define SYSOUT_HEX(x)										  fprintf(stderr, "%a", x)
+#define SYSOUT_STR(x)										  fprintf(stderr, "%s", x)
 #define SYSOUT_F(f, ...)									  fprintf(stderr, "Failiure ")
 
 #endif
