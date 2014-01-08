@@ -93,6 +93,9 @@ namespace A2D {
 		void							validated();
 		void							validate();
 
+		HRESULT							addListener(AbstractListener * xListener);
+		HRESULT							removeListener(AbstractListener * xListener);
+
 	public:
 		int								id();
 		void							setBackground(byte xRed, byte xGreen, byte xBlue);

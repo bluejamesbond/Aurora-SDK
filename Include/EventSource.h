@@ -57,12 +57,12 @@ namespace A2D {
 
 		~EventSource();
 		
-		HRESULT					processMouseEvent(MouseEvent * xEvent);
-		HRESULT					processActionEvent(ActionEvent * xEvent);
+		virtual HRESULT			processMouseEvent(MouseEvent * xEvent);
+		virtual HRESULT			processActionEvent(ActionEvent * xEvent);
 
-		HRESULT					addMouseListener(MouseListener * xListener);
-		HRESULT					addMouseMotionListener(MouseMotionListener * xListener);
-		HRESULT					addActionListener(ActionListener * xListener);
+		virtual HRESULT			addMouseListener(MouseListener * xListener);
+		virtual HRESULT			addMouseMotionListener(MouseMotionListener * xListener);
+		virtual HRESULT			addActionListener(ActionListener * xListener);
 
 	protected:
 
@@ -73,8 +73,10 @@ namespace A2D {
 		AbstractListener 	 *	findListener(const int xListenerID);
 		HRESULT					fireListener(AbstractEvent * xEvent, int xListenerID);
 
-		HRESULT					addListener(AbstractListener * xListener); // slow 
-		HRESULT					removeListener(AbstractListener * xListener); // slow
+		virtual HRESULT			addListener(AbstractListener * xListener); // slow 
+		virtual HRESULT			removeListener(AbstractListener * xListener); // slow
+
+		void						*	aRemoveTicket;
 	private:
 
 		OrderedList<AbstractListener *> aListenerList;

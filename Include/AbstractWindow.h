@@ -114,8 +114,10 @@ namespace A2D {
 		HRESULT							processWindowEvent(WindowEvent * xEvent);
 		HRESULT							addWindowListener(WindowListener * xListener);
 
-
 	protected:
+
+		virtual HRESULT							addListener(AbstractListener * xListener);
+		virtual HRESULT							removeListener(AbstractListener * xListener);
 
 		WindowEvent					*	aWindowOpened = 0;
 		WindowEvent					*	aWindowClosed = 0;

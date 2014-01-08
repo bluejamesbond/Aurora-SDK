@@ -280,6 +280,40 @@ void AbstractFrame::validated()
 	aValidatedContents = true;
 }
 
+HRESULT AbstractFrame::addListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			break; // don't have to add, so do nothing.
+		}
+		node = node->left;
+	}
+
+	sourceList.push_back(this, &aRemoveTicket);
+
+	return EventSource::addListener(xListener);
+}
+
+HRESULT AbstractFrame::removeListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			sourceList.remove_request(&aRemoveTicket);
+		}
+		node = node->left;
+	}
+
+	return EventSource::removeListener(xListener);
+}
+
 void AbstractFrame::update()
 {
 	if (!aValidatedContents)

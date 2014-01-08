@@ -107,6 +107,9 @@ namespace A2D{
 	public:
 
 		// Event handling
+		friend							AbstractWindow;
+		friend							AbstractFrame;
+
 		void							processMouseEvent(MouseEvent * xEvent);
 		void							processFocusEvent(FocusEvent * xEvent);
 		void							processActionEvent(ActionEvent * xEvent);
@@ -128,6 +131,8 @@ namespace A2D{
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
 		bool							aMousePressed = false;
+
+		OrderedList<EventSource *>		aEventSourcesList;
 
 	protected:
 
