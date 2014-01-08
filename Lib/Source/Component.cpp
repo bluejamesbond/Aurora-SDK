@@ -158,10 +158,10 @@ void Component::validate()
 
 	if (!hasParent)
 	{
-		aCalculatedRegion.aX = max(0, compRect.aX);
-		aCalculatedRegion.aY = max(0, compRect.aY);
-		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
-		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
+		aCalculatedRegion.aX = aVisibleRegion.aX = max(0, compRect.aX);
+		aCalculatedRegion.aY = aVisibleRegion.aY = max(0, compRect.aY);
+		aCalculatedRegion.aWidth = aVisibleRegion.aWidth = max(0, compRect.aWidth);
+		aCalculatedRegion.aHeight = aVisibleRegion.aHeight = max(0, compRect.aHeight);
 
 		aCalculatedNegativeDeltaX = 0;
 		aCalculatedNegativeDeltaY = 0;
@@ -263,12 +263,12 @@ void Component::setFocusable(bool xFocusable)
 
 LPCWSTR Component::getClass()
 {
-	return L"Camera";
+	return L"Component";
 }
 
 LPCWSTR Component::toString()
 {
-	return L"Camera";
+	return L"Component";
 }
 
 HRESULT Component::initialize()

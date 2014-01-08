@@ -113,6 +113,8 @@ namespace A2D {
 		friend							AbstractEventQueue;
 		HRESULT							processWindowEvent(WindowEvent * xEvent);
 		HRESULT							addWindowListener(WindowListener * xListener);
+		void							addMouseListener(MouseListener * xListener);
+		void							addMouseMotionListener(MouseMotionListener * xListener);
 
 	protected:
 

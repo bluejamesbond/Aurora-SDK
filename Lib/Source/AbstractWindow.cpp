@@ -248,6 +248,16 @@ HRESULT AbstractWindow::addWindowListener(WindowListener * xListener)
 	return addListener(xListener);
 }
 
+void AbstractWindow::addMouseListener(MouseListener * xListener)
+{
+	aFrame->addMouseListener(xListener);
+}
+
+void AbstractWindow::addMouseMotionListener(MouseMotionListener * xListener)
+{
+	aFrame->addMouseMotionListener(xListener);
+}
+
 HRESULT AbstractWindow::initialize()
 {	
 	//------------------------------------------------------------
