@@ -250,9 +250,8 @@ HRESULT Component::requestFocus()
 	// Also it's broken, as aFrame is not initialized.
 	if (isFocusable && !isFocused)
 	{
-		FocusEvent * focusRequest = new FocusEvent(this, FocusEvent::FOCUS_GAINED);
-		Window * win = (Window*)aFrame->getWindow();
-		win->aEventQueue->processFocusEvent(focusRequest);
+		FocusEvent& focusRequest = *new FocusEvent(this, FocusEvent::FOCUS_GAINED);
+		Toolkit::getSystemEventQueue(aFrame->id())->processFocusEvent(&focusRequest);
 	}
 	return S_OK;
 }

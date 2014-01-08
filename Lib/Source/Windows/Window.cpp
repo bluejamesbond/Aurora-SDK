@@ -23,7 +23,6 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 	AbstractFrame& frame = *aFrame;
 	AbstractEventQueue& eventQueue = *xEventQueue;
-	aEventQueue = xEventQueue; // replace later
 
 	// Get pointer to all components.
 
@@ -56,7 +55,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			//}
 			GetMessage(&msg, NULL, 0, 0);
 			TranslateMessage(&msg);
-			eventHandler(msg, aEventQueue);
+			eventHandler(msg, &eventQueue);
 		}
 	}
 }
@@ -176,12 +175,13 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 		case WM_ACTIVATE:
 
 			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			
 			if (LOWORD(xWParam) == WA_INACTIVE)
 			{
 				WindowEvent * wEvent = aWindow->aWindowDeactivated;
 				if (wEvent)
 				{
-					aWindow->processWindowEvent(aWindow->aWindowDeactivated);
+					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
 				}
 			}
 			else
@@ -189,7 +189,7 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 				WindowEvent * wEvent = aWindow->aWindowActivated;
 				if (wEvent)
 				{
-					aWindow->processWindowEvent(aWindow->aWindowActivated);
+					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
 				}
 			}
 			return S_OK;
@@ -1077,7 +1077,7 @@ void Window::setVisible(bool xVisible)
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
 
 		// Fire WindowEvent
-		aEventQueue->processWindowEvent(aWindowOpened);
+		Toolkit::getSystemEventQueue(aFrame->id())->processWindowEvent(aWindowOpened);
 
 	}
 	else
@@ -1085,7 +1085,8 @@ void Window::setVisible(bool xVisible)
 		ShowWindow(aChildHWnd, SW_HIDE);
 		ShowWindow(aParentHWnd, SW_HIDE);
 		// Fire WindowEvent
-		aEventQueue->processWindowEvent(aWindowDeactivated);
+		// May be called twice so uncommented for now. Look @wndProc case ACTIVATE
+		//Toolkit::getSystemEventQueue(aFrame->id())->processWindowEvent(aWindowDeactivated);
 	}
 }
 

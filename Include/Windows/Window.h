@@ -125,8 +125,6 @@ namespace A2D {
 		MouseEvent					*	aMouseMove = 0;
 		MouseEvent					*	aMouseDragged = 0;
 
-		AbstractEventQueue			*	aEventQueue = 0;
-
 		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
 		friend							Component;
 
