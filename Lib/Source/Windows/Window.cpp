@@ -14,7 +14,7 @@ Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xF
 void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
 {
 	MSG msg;
-	bool& resizing = isResizing;
+	bool& resizing = aIsResizing;
 	bool& visible = aVisible;
 
 	int defaultAllotedAnimationFrames = 10;
@@ -99,7 +99,16 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			ScreenToClient(aChildHWnd, &p);
 			aMouseMove->setLocation(p);
 
-			xEventQueue->processMouseMotionEvent(aMouseMove);
+			if (aIsDragged)
+			{
+				aMouseDragged->setLocation(p);
+				xEventQueue->processMouseMotionEvent(aMouseDragged);
+			}
+			else
+			{
+				aMouseMove->setLocation(p);
+				xEventQueue->processMouseMotionEvent(aMouseMove);
+			}
 			return updateOnMouseMove(xHwnd);
 		
 		case WM_LBUTTONUP:
@@ -121,10 +130,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 		//	}
 
 		//	return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
-		case WM_KILLFOCUS:
 
-			xEventQueue->processWindowEvent(aWindowDeactivated);
-			return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
 
 		case WM_CLOSE:
 		
@@ -222,6 +228,7 @@ HWND Window::createCompatibleWindow(bool isParent)
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
+	aIsDragged = true;
 
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
@@ -240,8 +247,6 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 	x = p.x;
 	y = p.y;
 
-	isDragged = true;
-
 	left = (isParent ? aRelativeX + aPadding : aRealX);
 	top = (isParent ? aRelativeY + aPadding : aRealY);
 	bottom = top + aRect.aHeight;
@@ -251,13 +256,13 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 		x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE ||
 		y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE ||
 		y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
-		!isResizing)
+		!aIsResizing)
 	{
-		isResizing = xHwnd == aHResizeWnd ? true : false;
+		aIsResizing = xHwnd == aHResizeWnd ? true : false;
 	}
 	else if (y < top + _WINDOW_MOVE_BAR_DISTANCE)
 	{
-		isMoving = xHwnd == aHMoveWnd ? true : false;
+		aIsMoving = xHwnd == aHMoveWnd ? true : false;
 	}
 
 	SetCursor(aCurrentCursor);
@@ -292,7 +297,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 	bottom = top + aRect.aHeight;
 	right = left + aRect.aWidth;
 
-	if (!isResizing && !isMoving)
+	if (!aIsResizing && !aIsMoving)
 	{
 		//bottom left corner
 		if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
@@ -365,13 +370,13 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		SetCursor(aCurrentCursor);
 	}
 
-	if (!isDragged)
+	if (!aIsDragged)
 	{
 		GetCursorPos(&aLastDraggedPoint);
 		ScreenToClient(xHwnd, &aLastDraggedPoint);
 	}
 
-	if (isDragged && (isResizing || isMoving))
+	if (aIsDragged && (aIsResizing || aIsMoving))
 	{
 		float deltaY, deltaX;
 		HCURSOR currentCursor;
@@ -386,7 +391,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
 		// Process resizing.
-		if (isResizing)
+		if (aIsResizing)
 		{
 			// Resize up and down.
 			if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
@@ -488,7 +493,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 		}
 		// Process window movement.
-		else if (isMoving)
+		else if (aIsMoving)
 		{
 			rect.aX -= deltaX;
 			rect.aY -= deltaY;
@@ -517,15 +522,16 @@ HRESULT Window::onSize(HWND hwnd)
 
 HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
+	aIsDragged = false;
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
 	}
 
 	ReleaseCapture();
-	isDragged = false;
-	isResizing = false;
-	isMoving = false;
+
+	aIsResizing = false;
+	aIsMoving = false;
 
 	aFramebufferInterpolation = false;
 
@@ -1365,6 +1371,7 @@ HRESULT Window::initialize()
 	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
 	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
 	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);
+	aMouseDragged = new MouseEvent(this, MouseEvent::MOUSE_DRAGGED, p, 1);
 
 	return S_OK;
 }

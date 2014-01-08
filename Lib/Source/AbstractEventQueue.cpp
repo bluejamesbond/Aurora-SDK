@@ -263,7 +263,6 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 						processActionEvent(aActionEvent);
 
 					}
-
 					if (isConsumedMouse == S_OK)
 					{
 						SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
@@ -316,26 +315,30 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 				{
 					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
 					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-					if (aLastComponent)
-					{
-						if (aLastComponent != comp)
-						{
-							// We've entered a new component
-							aMouseEvent->setProperties(aLastComponent, MouseEvent::MOUSE_EXITED);
-							aLastComponent->processMouseEvent(aMouseEvent);
-
-							aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
-							comp->processMouseEvent(aMouseEvent);
-						}
-					}
-					aLastComponent = comp;
 				}
+				else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
+				{
+					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_DRAGGED);
+					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
+				}
+				if (aLastComponent)
+				{
+					if (aLastComponent != comp)
+					{
+						// We've entered a new component
+						aMouseEvent->setProperties(aLastComponent, MouseEvent::MOUSE_EXITED);
+						aLastComponent->processMouseEvent(aMouseEvent);
+
+						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
+						comp->processMouseEvent(aMouseEvent);
+					}
+				}
+				aLastComponent = comp;
 				if (isConsumedMouse == S_OK)
 				{
 					return;
 				}
 			}
-
 		}
 		node = node->left;
 	}

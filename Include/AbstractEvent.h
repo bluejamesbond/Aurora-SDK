@@ -56,6 +56,7 @@ namespace A2D {
 		int						getID();
 
 		void					setSource(EventSource * xEventSource);
+		void					setID(int xID);
 		void					setProperties(EventSource * xEventSource, int xID);
 
 	protected:

@@ -77,9 +77,9 @@ namespace A2D {
 		float                           aRelativeWidth = 0;
 		float                           aRelativeHeight = 0;
 
-		bool                            isDragged = false;
-		bool                            isResizing = false;
-		bool							isMoving = false;
+		bool                            aIsDragged = false;
+		bool                            aIsResizing = false;
+		bool							aIsMoving = false;
 		bool                            aWinMoveRes = false;
 
 		bool							aFramebufferInterpolation = false;
@@ -118,11 +118,12 @@ namespace A2D {
 
 		std::wstring				*	aClassName;
 
-		// Listener stuff
+		// Listener stuff // should be moved inside AbstractWindow
 
 		MouseEvent					*	aMouseDown;
 		MouseEvent					*	aMouseUp;
 		MouseEvent					*	aMouseMove;
+		MouseEvent					*	aMouseDragged;
 
 		AbstractEventQueue			*	aEventQueue;
 

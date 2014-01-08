@@ -127,6 +127,8 @@ namespace A2D{
 		Rect						*	aLastVisibleRegion = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
+		bool							aMousePressed = false;
+
 	protected:
 
 		void							pushEvent(Runnable * xRunnable);
