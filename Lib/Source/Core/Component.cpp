@@ -1,6 +1,7 @@
 
 #include "../../../Include/Core/ExtLibs.h"
 #include "../../../Include/Core/Component.h"
+#include "../../../Include/Core/Common.h"
 
 using namespace A2D;
 
@@ -110,6 +111,7 @@ void Component::validated()
 {
 	aValidatedContents = true;
 }
+#define max(a, b)                                             ((a < b ) ? b : a)
 
 void Component::validate()
 {
@@ -141,7 +143,9 @@ void Component::validate()
 		// Reduce the size based on parent x, y
 		// Account for negative x, y of this
 		// Accumulate negatives
-		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min(FLT_ZERO, compRect.aX));
+#define min(a, b)                                             ((a > b ) ? b : a)
+
+        aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min(FLT_ZERO, compRect.aX));
 		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min(FLT_ZERO, compRect.aY));
 		
 		// Account for larger than parent
@@ -246,7 +250,7 @@ void Component::paintComponent()
 	if (aOptBackgroundSrc != NULL)
 	{
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
-		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, false);
+//temp		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, false);
 	}
 	else
 	{

@@ -1,5 +1,5 @@
-#include "../../../Include/GLXExtLibs.h"
-#include "../../../Include/Windows/Frame.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/Frame.h"
 //#include "../../../Include/Windows/XWindow.h"
 
 using namespace A2D;

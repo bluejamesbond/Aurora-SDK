@@ -1,6 +1,6 @@
 
-#include "../../Include/GLXExtLibs.h"
-#include "../../Include/GLShaderUtils.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/GLShaderUtils.h"
 
 using namespace A2D;
 using namespace std;

@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //#include "ExtLibs.h"
-#include "GLXExtLibs.h"
+#include "ExtLibs.h"
 #include "BackBuffer.h"
 
 namespace A2D {

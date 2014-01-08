@@ -60,7 +60,7 @@
  If your name should be here but isn't, let Sean know.
 
 */
-#include "../../Include/GLImageLoader.h"
+#include "../../../Include/Linux/GLImageLoader.h"
 
 #ifndef STBI_INCLUDE_STB_IMAGE_H
 #define STBI_INCLUDE_STB_IMAGE_H

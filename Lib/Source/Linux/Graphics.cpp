@@ -1,6 +1,6 @@
 
-#include "../../Include/GLXExtLibs.h"
-#include "../../Include/Graphics.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/Graphics.h"
 
 using namespace A2D;
 

@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Common.h"
+#include "Common.h"
 #include "GLImageLoader.h"
 //#include "TextureVertex.h"
 #include "BackBuffer.h"
@@ -102,8 +102,8 @@ namespace A2D {
 		Dims*							getDrawableDimensions();
 		BackBuffer*						getBackBuffer();
 		void							validate();
-        void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
-        void							setClip(Rect * aRect, float xZ);
+    */    void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
+        void							setClip(Rect * aRect, float xZ);/*
 */
         BackBuffer           *          getBackBuffer();
         void                            setWindow(AbstractWindow* xWindow);

@@ -20,12 +20,11 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/ImageProperties.h"
-#include "../Core/Rect.h"
-
 #include "ExtLibs.h"
-#include "TextureVertex.h"
-#include "ColoredTextureVertex.h"
+//#include "TextureVertex.h"
+//#include "ColoredTextureVertex.h"
+//#include "ImageProperties.h"
+#include "../Core/Rect.h"
 
 namespace A2D {
 
@@ -43,13 +42,13 @@ namespace A2D {
 		Rect			aPreviousContraints;	  // cached
 		Rect			aPreviousTextureClip;	  // cached
 		Dims			aPreviousTextureSize;	  // cached
-		ImageProperties aPreviousImageProperties; // cached
+//		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
 		T				aVertices[6];
 
 		// Vertex buffer can change (but change only as needed)
-		ID3D10Buffer		*			aVertexBuffer;
+		GLuint			aVertexBuffer;
 
 		// This pretty much stays constant
 		// so it will be stored inside Quads instance.

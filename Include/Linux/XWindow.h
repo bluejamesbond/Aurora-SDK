@@ -21,14 +21,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //#include "ExtLibs.h"
-#include "../GLXExtLibs.h"
+#include "ExtLibs.h"
 //#include "EventQueue.h"
-#include "../Common.h"
-#include "../Abstract.h"
-#include "../Rect.h"
-#include "../Dims.h"
-#include "../AbstractWindow.h"
-#include "../AbstractFrame.h"
+#include "Common.h"
+#include "../Core/Rect.h"
+#include "../Core/Dims.h"
+#include "../Core/AbstractWindow.h"
+#include "../Core/AbstractFrame.h"
 
 namespace A2D {
 

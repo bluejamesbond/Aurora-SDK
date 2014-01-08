@@ -32,7 +32,7 @@ namespace A2D {
 	class Abstract;
 	class Container;
 	class Window;
-	class Component;
+    class Component;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION

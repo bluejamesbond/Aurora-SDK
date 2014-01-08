@@ -22,6 +22,7 @@
 
 //#include "GXSettings.h"
 #include "../Core/AbstractWindow.h"
+#include "ExtLibs.h"
 //#include "Graphics.h"
 
 namespace A2D {

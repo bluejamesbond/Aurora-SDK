@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../AbstractFrame.h"
+#include "../Core/AbstractFrame.h"
 //#include "Thread.h"
 
 namespace A2D {
