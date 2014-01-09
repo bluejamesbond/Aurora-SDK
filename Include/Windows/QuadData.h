@@ -32,7 +32,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	template<class T>
+	template<class T, int V>
 	struct QuadData
 	{
 		// Before adjusting the ID3D10Buffer
@@ -45,7 +45,7 @@ namespace A2D {
 		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
-		T				aVertices[6];
+		T				aVertices[V];
 
 		// Vertex buffer can change (but change only as needed)
 		ID3D10Buffer		*			aVertexBuffer;

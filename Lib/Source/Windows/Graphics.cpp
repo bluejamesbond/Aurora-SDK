@@ -54,7 +54,7 @@ void Graphics::validate()
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
 	Texture * texture;
-	QuadData<TextureVertex> * quadData;
+	QuadData<TextureVertex, 6> * quadData;
 
 	// Pipeline not initalized
 	if (*xPipeline == NULL)
@@ -62,7 +62,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 		*xPipeline = new Pipeline();
 
 		texture = new Texture(aDevice, xSrc);
-		quadData = new QuadData<TextureVertex>();
+		quadData = new QuadData<TextureVertex, 6>();
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
@@ -77,7 +77,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 	}
 
 	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<TextureVertex>*>((*xPipeline)->aPipelineComps[1]);
+	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
 	if (aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat))
@@ -91,7 +91,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
 {
 	Texture * texture;
-	QuadData<ColoredTextureVertex> * quadData;
+	QuadData<ColoredTextureVertex, 6> * quadData;
 
 	if (*xPipeline == NULL)
 	{
@@ -100,7 +100,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 		*xPipeline = new Pipeline();
 
 		texture = new Texture(aDevice, xSrc);
-		quadData = new QuadData<ColoredTextureVertex>();
+		quadData = new QuadData<ColoredTextureVertex, 6>();
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
@@ -115,7 +115,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 	}
 
 	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<ColoredTextureVertex>*>((*xPipeline)->aPipelineComps[1]);
+	quadData = static_cast<QuadData<ColoredTextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
 	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xPaint, xRepeat))
@@ -128,7 +128,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 
 void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 {
-	QuadData<ColorVertex> * quadData;
+	QuadData<ColorVertex, 6> * quadData;
 
 	if (*xPipeline == NULL)
 	{
@@ -136,7 +136,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 
 		*xPipeline = new Pipeline();
 
-		quadData = new QuadData<ColorVertex>();
+		quadData = new QuadData<ColorVertex, 6>();
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
@@ -147,7 +147,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 		return;
 	}
 
-	quadData = static_cast<QuadData<ColorVertex>*>((*xPipeline)->aPipelineComps[0]);
+	quadData = static_cast<QuadData<ColorVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
 	
 	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint))
 	{
@@ -183,6 +183,9 @@ HRESULT Graphics::initialize()
 
 	aColorShader = new ColorShader(device);
 	SAFELY(aColorShader->initialize());
+
+	aQuadExpansionShader = new QuadExpansionShader(device);
+	SAFELY(aQuadExpansionShader->initialize());
 
 	TextureShader::setViewMatrix(&aViewMatrix);
 	ColorShader::setViewMatrix(&aViewMatrix);

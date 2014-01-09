@@ -30,6 +30,7 @@
 #include "VertexTypes.h"
 #include "BackBuffer.h"
 #include "ColoredTextureShader.h"
+#include "QuadExpansionShader.h"
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
@@ -85,6 +86,7 @@ namespace A2D {
 		AbstractShader		 *			aColorShader;
 		AbstractTextureShader*			aColoredTextureShader;
 		AbstractTextureShader*			aTextureShader;
+		QuadExpansionShader  *			aQuadExpansionShader;
 
 		ID3D10Device		**			aDevice;
 
