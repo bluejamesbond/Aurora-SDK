@@ -42,7 +42,7 @@ HRESULT QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 
 	if (!aTexturePtr)
 	{
-		aTexturePtr = xEffect->GetVariableByName("texture")->AsShaderResource();
+		aTexturePtr = xEffect->GetVariableByName("shaderTexture")->AsShaderResource();
 	}
 
 	return S_OK;

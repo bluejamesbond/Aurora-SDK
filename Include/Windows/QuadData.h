@@ -24,8 +24,7 @@
 #include "../Core/Rect.h"
 
 #include "ExtLibs.h"
-#include "TextureVertex.h"
-#include "ColoredTextureVertex.h"
+#include "VertexTypes.h"
 
 namespace A2D {
 

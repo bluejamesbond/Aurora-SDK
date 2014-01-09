@@ -24,7 +24,6 @@
 #include "../Core/ImageProperties.h"
 #include "../Core/Rect.h"
 
-#include "TextureVertex.h"
 #include "BackBuffer.h"
 #include "AbstractTexture.h"
 

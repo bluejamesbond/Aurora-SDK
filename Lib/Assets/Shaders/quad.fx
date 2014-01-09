@@ -2,6 +2,8 @@
 // Filename: quad.fx
 ////////////////////////////////////////////////////////////////////////////////
 
+Texture2D shaderTexture;
+
 //////////////////
 // BLEND STATE  //
 //////////////////
@@ -15,6 +17,16 @@ BlendState SrcAlphaBlendingAdd
 	DestBlendAlpha = ZERO;
 	BlendOpAlpha = ADD;
 	RenderTargetWriteMask[0] = 0x0F;
+};
+
+///////////////////
+// SAMPLE STATES //
+///////////////////
+SamplerState SampleType
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Wrap;
+	AddressV = Wrap;
 };
 
 //////////////

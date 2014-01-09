@@ -26,8 +26,7 @@
 #include "DXUtils.h"
 #include "Texture.h"
 #include "QuadData.h"
-#include "ColoredTextureVertex.h"
-#include "ColorVertex.h"
+#include "VertexTypes.h"
 
 namespace A2D {
 
