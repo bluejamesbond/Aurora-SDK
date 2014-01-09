@@ -205,9 +205,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	int size = componentLocations.size();
 	if (!size) return;
 
-	Rect * visibleRegion;
+	Rect * eventRegion;
 	HRESULT isConsumedMouse;
 	bool isConsumedFocus = false;
+	HRESULT isConsumedAction = false;
 	bool isValidRegion = false;
 	POINT point;
 	int ID;
@@ -227,9 +228,9 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		for (int i = 0; i < size; i += 1)
 		{
 			comp = comps->get(i);
-			visibleRegion = comp->getVisibleRegion();
-			isValidRegion = point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
-				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight &&
+			eventRegion = comp->getVisibleRegion();
+			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
+				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight &&
 				!isInvalidLocation(point, &invalidLocs);
 
 			if (isValidRegion)
@@ -261,8 +262,12 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 						// Action event handling AFTER CLICKED
 						// Will work more on this later, not sure how it works with current components.
-						aActionEvent->setSource(comp);
-						processActionEvent(aActionEvent);
+						if (isConsumedAction != S_OK)
+						{
+							aActionEvent->setSource(comp);
+							isConsumedAction = processActionEvent(aActionEvent);
+						}
+
 
 					}
 					if (isConsumedMouse == S_OK)
@@ -281,7 +286,44 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		node = node->left;
 	}
 	// Now check containers.
+	// Need to make an event handler for exclusively multiple windows later on.
+	OrderedList<EventSource*>::Node<EventSource*> * nodeE = aEventSourcesList._end();
+	EventSource * source;
+	while (nodeE)
+	{
+		source = nodeE->value;
+		eventRegion = source->getEventRegion();
+		eventRegion->aX = 0;
+		eventRegion->aY = 0;
+		isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
+			point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
 
+		if (isValidRegion)
+		{
+			if (ID == MouseEvent::MOUSE_PRESSED)
+			{
+				aMouseEvent->setProperties(source, MouseEvent::MOUSE_PRESSED);
+				isConsumedMouse = source->processMouseEvent(aMouseEvent);
+			}
+			else if (ID == MouseEvent::MOUSE_RELEASED)
+			{
+				aMouseEvent->setProperties(source, MouseEvent::MOUSE_RELEASED);
+				isConsumedMouse = source->processMouseEvent(aMouseEvent);
+				if (isConsumedAction != S_OK)
+				{
+					aActionEvent->setSource(source);
+					isConsumedAction = processActionEvent(aActionEvent);
+				}
+			}
+
+			if (isConsumedMouse == S_OK)
+			{
+				SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+				return;
+			}
+		}
+		nodeE = nodeE->left;
+	}
 	//SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
@@ -332,20 +374,20 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
 				}
 
-				if (aLastComponent)
+				if (aLastSource)
 				{
-					if (aLastComponent != comp)
+					if (aLastSource != comp)
 					{
 						// We've entered a new component
-						aMouseEvent->setProperties(aLastComponent, MouseEvent::MOUSE_EXITED);
-						aLastComponent->processMouseEvent(aMouseEvent);
+						aMouseEvent->setProperties(aLastSource, MouseEvent::MOUSE_EXITED);
+						aLastSource->processMouseEvent(aMouseEvent);
 
 						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
 						comp->processMouseEvent(aMouseEvent);
 					}
 				}
 
-				aLastComponent = comp;
+				aLastSource = comp;
 
 				if (isConsumedMouse == S_OK)
 				{
@@ -356,13 +398,52 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		nodeC = nodeC->left;
 	}
 
-	// Check containers.
-
+	// Check other event sources.
 	OrderedList<EventSource*>::Node<EventSource*> * nodeE = aEventSourcesList._end();
+	EventSource * source;
 	while (nodeE)
 	{
-		eventRegion = nodeE->value->getEventRegion();
+		source = nodeE->value;
+		eventRegion = source->getEventRegion();
+		eventRegion->aX = 0;
+		eventRegion->aY = 0;
+		isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
+			point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
 
+		if (isValidRegion)
+		{
+			if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+			{
+				aMouseEvent->setProperties(source, MouseEvent::MOUSE_MOVE);
+				isConsumedMouse = source->processMouseEvent(aMouseEvent);
+			}
+			else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
+			{
+				aMouseEvent->setProperties(source, MouseEvent::MOUSE_DRAGGED);
+				isConsumedMouse = source->processMouseEvent(aMouseEvent);
+			}
+
+			if (aLastSource)
+			{
+				if (aLastSource != source)
+				{
+					// We've entered a new component
+					aMouseEvent->setProperties(aLastSource, MouseEvent::MOUSE_EXITED);
+					aLastSource->processMouseEvent(aMouseEvent);
+
+					aMouseEvent->setProperties(source, MouseEvent::MOUSE_ENTERED);
+					source->processMouseEvent(aMouseEvent);
+				}
+			}
+
+			aLastSource = source;
+
+			if (isConsumedMouse == S_OK)
+			{
+				return;
+			}
+		}
+		nodeE = nodeE->left;
 	}
 
 
@@ -385,10 +466,10 @@ bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xI
 	return false;
 }
 
-void AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
+HRESULT AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 {
 	// Need to know when ActionEvents are fired, and what it contains.
-	xEvent->getSource()->processActionEvent(xEvent);
+	return xEvent->getSource()->processActionEvent(xEvent);
 }
 
 void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)

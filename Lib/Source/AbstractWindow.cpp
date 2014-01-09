@@ -250,8 +250,8 @@ HRESULT AbstractWindow::addWindowListener(WindowListener * xListener)
 
 HRESULT AbstractWindow::addListener(AbstractListener * xListener)
 {
-	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aFrame->id())->aEventSourcesList;
-	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
+	OrderedList<EventSource*> * sourceList = &Toolkit::getSystemEventQueue(aFrame->id())->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList->_end();
 	while (node)
 	{
 		if (node->value == this) // may be broken, need to overload ==operator
@@ -261,7 +261,7 @@ HRESULT AbstractWindow::addListener(AbstractListener * xListener)
 		node = node->left;
 	}
 
-	sourceList.push_back(this, &aRemoveTicket);
+	sourceList->push_back(this, &aRemoveTicket);
 
 	return EventSource::addListener(xListener);
 }

@@ -117,8 +117,8 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT							addListener(AbstractListener * xListener);
-		virtual HRESULT							removeListener(AbstractListener * xListener);
+		virtual HRESULT					addListener(AbstractListener * xListener);
+		virtual HRESULT					removeListener(AbstractListener * xListener);
 
 		WindowEvent					*	aWindowOpened = 0;
 		WindowEvent					*	aWindowClosed = 0;

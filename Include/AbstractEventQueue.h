@@ -112,7 +112,7 @@ namespace A2D{
 
 		void							processMouseEvent(MouseEvent * xEvent);
 		void							processFocusEvent(FocusEvent * xEvent);
-		void							processActionEvent(ActionEvent * xEvent);
+		HRESULT							processActionEvent(ActionEvent * xEvent);
 		void							processWindowEvent(WindowEvent * xEvent);
 		void							processMouseMotionEvent(MouseEvent * xEvent);
 
@@ -126,7 +126,7 @@ namespace A2D{
 		ActionEvent					*	aActionEvent;
 
 		Component					*	aLastFocusedComp = 0;
-		Component					*	aLastComponent = 0;
+		EventSource					*	aLastSource = 0;
 		Rect						*	aLastVisibleRegion = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
 
