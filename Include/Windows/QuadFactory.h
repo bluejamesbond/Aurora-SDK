@@ -61,11 +61,18 @@ namespace A2D {
 		ID3D10Device	**	aDevice;
 
 		///////////////////////////////////////////////////////////
-	
+
+	private:
+
+		static float					pixelsToRelativePoint(const float xPixelDimension, const float xPixels);
+		static float					pixelsToRelativeDistance(const float xPixelDimension, const float xPixels);
+
 		static inline void				memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc);
 		static inline void				memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
 		static inline void				memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc);
-		
+
+	public:
+
 		bool							updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
 		bool							updateVertexBuffer(QuadData<ColoredTextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
 		bool							updateVertexBuffer(QuadData<TextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);

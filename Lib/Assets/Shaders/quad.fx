@@ -7,17 +7,17 @@ Texture2D shaderTexture;
 //////////////////
 // BLEND STATE  //
 //////////////////
-BlendState SrcAlphaBlendingAdd
-{
-	BlendEnable[0] = TRUE;
-	SrcBlend = SRC_ALPHA;
-	DestBlend = INV_SRC_ALPHA;
-	BlendOp = ADD;
-	SrcBlendAlpha = ZERO;
-	DestBlendAlpha = ZERO;
-	BlendOpAlpha = ADD;
-	RenderTargetWriteMask[0] = 0x0F;
-};
+//BlendState SrcAlphaBlendingAdd
+//{
+//	BlendEnable[0] = TRUE;
+//	SrcBlend = SRC_ALPHA;
+//	DestBlend = INV_SRC_ALPHA;
+//	BlendOp = ADD;
+//	SrcBlendAlpha = ZERO;
+//	DestBlendAlpha = ZERO;
+//	BlendOpAlpha = ADD;
+//	RenderTargetWriteMask[0] = 0x0F;
+//};
 
 ///////////////////
 // SAMPLE STATES //
@@ -49,7 +49,7 @@ struct QuadPixel
 {
 	float4 position : SV_POSITION;
 	float4 colorTex : COLOR;
-	nointerpolation float4 options : FLOAT4; // [texture/color/both, reseved, reserved, reserved]
+	nointerpolation float4 options : FLOAT4; // [texture/color/both, opacity, reserved, reserved]
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,17 +92,46 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	opacity = input[0].options[3];
 
 	//**********************************************************************
+	// Main
+	//**********************************************************************
+	float4 mainTexels = input[0].colorTex;
+
+	main.options = float4(1.0f, opacity, 0, 0);
+	// main.colorTex = float4(input[0].colorTex.rgb, input[0].colorTex.a * opacity);
+	
+	//bottom left
+	main.position = float4(left, bottom, z, 1);
+	main.colorTex = float4(mainTexels[0], mainTexels[3], 0, 0);
+	quadStream.Append(main);
+	//top left
+	main.position = float4(left, top, z, 1);
+	main.colorTex = float4(mainTexels[0], mainTexels[1], 0, 0);
+	quadStream.Append(main);
+	//bottom right
+	main.position = float4(right, bottom, z, 1);
+	main.colorTex = float4(mainTexels[2], mainTexels[3], 0, 0);
+	quadStream.Append(main);
+	//top right
+	main.position = float4(right, top, z, 1);
+	main.colorTex = float4(mainTexels[2], mainTexels[1], 0, 0);
+	quadStream.Append(main);
+
+	// Reset
+	quadStream.RestartStrip();
+	
+	//**********************************************************************
 	// Borders
 	//**********************************************************************
-	// 1.0 indicates color
-	// 0.0 indicates texture coordinates
+	z -= 0.000001f;
+	// 0.0 indicates color coordinates
+	// 1.0 indicates texture coordinates
 	// 2.0 indicates texture on backgroundColor
-	border.options = float4(1.0f, 0, 0, 0);
+	border.options = float4(0.0f, opacity, 0, 0);
 
 	//*******************************
 	// Left
 	//*******************************
-	border.colorTex = float4(input[0].borderLeftColor.rgb, input[0].borderLeftColor.a * opacity);
+	border.colorTex = input[0].borderLeftColor;
 
 	//bottom left
 	border.position = float4(left, bottom, z, 1);
@@ -123,7 +152,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Top
 	//*******************************
-	border.colorTex = float4(input[0].borderTopColor.rgb, input[0].borderTopColor.a * opacity);
+	border.colorTex = input[0].borderTopColor;
 
 	//bottom left
 	border.position = float4(left + borderTopWidth, top - borderTopWidth, z, 1);
@@ -144,7 +173,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Right
 	//*******************************
-	border.colorTex = float4(input[0].borderRightColor.rgb, input[0].borderRightColor.a * opacity);
+	border.colorTex = input[0].borderRightColor;
 
 	//bottom left
 	border.position = float4(right - borderRightWidth, bottom + borderRightWidth, z, 1);
@@ -165,7 +194,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Bottom
 	//*******************************
-	border.colorTex = float4(input[0].borderBottomColor.rgb, input[0].borderBottomColor.a * opacity);
+	border.colorTex = input[0].borderBottomColor;
 
 	//bottom left
 	border.position = float4(left, bottom, z, 1);
@@ -182,27 +211,6 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	// Reset
 	quadStream.Append(border);
 
-	//**********************************************************************
-	// Main
-	//**********************************************************************
-	main.options = float4(1.0f, 0, 0, 0);
-	main.colorTex = float4(input[0].colorTex.rgb, input[0].colorTex.a * opacity);
-
-	//bottom left
-	main.position = float4(left, bottom, z, 1);
-	quadStream.Append(main);
-	//top left
-	main.position = float4(left, top, z, 1);
-	quadStream.Append(main);
-	//bottom right
-	main.position = float4(right, bottom, z, 1);
-	quadStream.Append(main);
-	//top right
-	main.position = float4(right, top, z, 1);
-	quadStream.Append(main);
-
-	// Reset
-	quadStream.RestartStrip();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +218,23 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 ////////////////////////////////////////////////////////////////////////////////
 float4 QuadExpandedShader(QuadPixel input) : SV_Target
 {
-	return input.colorTex;
+	float isColorTex = input.options[0];
+	float opacity = input.options[1];
+
+	if (isColorTex == 0.0) // Color only
+	{
+		return float4(input.colorTex.rgb, input.colorTex.a * opacity);
+	}
+	else if (isColorTex == 1.0) // Texture only
+	{
+		float4 color = shaderTexture.Sample(SampleType, float2(input.colorTex[0], input.colorTex[1]));
+
+		return float4(color.rgb, color.a * opacity);
+	}
+	else // Texture and color
+	{
+		return input.colorTex;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,6 +247,6 @@ technique10 ColorTechnique
 		SetVertexShader(CompileShader(vs_4_0, QuadCollapsedShader()));
 		SetGeometryShader(CompileShader(gs_4_0, QuadExpansionShader()));
 		SetPixelShader(CompileShader(ps_4_0, QuadExpandedShader()));
-		SetBlendState(SrcAlphaBlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+		//SetBlendState(SrcAlphaBlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

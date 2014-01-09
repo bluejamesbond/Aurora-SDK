@@ -6,14 +6,15 @@ using namespace A2D;
 
 //******************* STATIC _ VARIABLES *****************//
 // These are the variables held as static for every effect file.
-// Filename: color.fx
+// Filename: quad.fx
 //
 // Why?
 // ----
 // All chidlren will automatically get these. Updating these,
 // will update the children as well.
-ID3D10Effect * QuadExpansionShader::aColorEffect = NULL;
+ID3D10Effect * QuadExpansionShader::aQuadEffect = NULL;
 ID3D10EffectShaderResourceVariable * QuadExpansionShader::aTexturePtr = NULL;
+Texture * QuadExpansionShader::aTexture = NULL;
 /***********************************************************/
 
 QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) : AbstractShader(xDevice) {}
@@ -27,7 +28,7 @@ QuadExpansionShader::~QuadExpansionShader()
 
 ID3D10Effect ** QuadExpansionShader::getEffect()
 {
-	return &aColorEffect;
+	return &aQuadEffect;
 }
 
 LPCWSTR QuadExpansionShader::getEffectName()
@@ -63,4 +64,14 @@ unsigned int QuadExpansionShader::getPolygonLayoutElementCount()
 LPCSTR QuadExpansionShader::getTechniqueName()
 {
 	return "ColorTechnique";
+}
+
+void QuadExpansionShader::setTexture(Texture * xTexture)
+{
+	aTexture = xTexture;
+	aHasAlpha = xTexture->hasAlpha();
+
+	// Bind and update the texture.
+	// Also cache the texture while doing so.!!!!
+	aTexturePtr->SetResource(static_cast<ID3D10ShaderResourceView*>(xTexture->getPlatformCompatibleResource()));
 }

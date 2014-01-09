@@ -55,6 +55,16 @@ void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
+float QuadFactory::pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
+{
+	return xPixels / xPixelDimension * 2 - 1;
+}
+
+float QuadFactory::pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
+{
+	return xPixels / xPixelDimension * 2;
+}
+
 bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
@@ -73,7 +83,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
 
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
-		left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
+		left, width, top, height, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 		texelRight, texelBottom,
 		textureWidth = textureClip->aWidth,
 		textureHeight = textureClip->aHeight,
@@ -90,11 +100,6 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
 
-	left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
-	right = left + calcWidth;
-	top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
-	bottom = top - calcHeight;
-
 	texLeft = rectX > 0 ? 0.0f : abs(rectX);
 	texTop = rectY > 0 ? 0.0f : abs(rectY);
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
@@ -105,15 +110,20 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
 	texelBottom = xRepeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
 
+	left = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + calcLeft);
+	top = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + calcTop);
+	width = pixelsToRelativeDistance(aWindowDims->aWidth, calcWidth);
+	height = pixelsToRelativeDistance(aWindowDims->aHeight, calcHeight);
+
 	// Set up vertices
-	vertices[0].aPosition = D3DXVECTOR4(-0.4f, 0.4f, 0.5f, 0.5f);
-	vertices[0].aColorTex = D3DXVECTOR4(0.0, 1.0, 0.0, 0.5f);
-	vertices[0].aBorderLeftColor = D3DXVECTOR4(1.0, 0.0, 0.0, 1.0f);
+	vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
+	vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
+	vertices[0].aBorderLeftColor = D3DXVECTOR4(1.0, 1.0, 1.0, 1.0f);
 	vertices[0].aBorderTopColor = D3DXVECTOR4(1.0, 1.0, 1.0, 1.0f);
-	vertices[0].aBorderRightColor = D3DXVECTOR4(0.0, 0.0, 1.0, 1.0f);
-	vertices[0].aBorderBottomColor = D3DXVECTOR4(1.0, 1.0, 0.0, 1.0f);
-	vertices[0].aBorderWidths = D3DXVECTOR4(0.1f, 0.05f, 0.1f, 0.1f);
-	vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.8f);
+	vertices[0].aBorderRightColor = D3DXVECTOR4(1.0, 1.0, 1.0, 1.0f);
+	vertices[0].aBorderBottomColor = D3DXVECTOR4(1.0, 1.0, 1.0, 1.0f);
+	vertices[0].aBorderWidths = D3DXVECTOR4(0.005f, 0.005f, 0.005f, 0.005f);
+	vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, 0.00001f, 1.0f);
 
 	// Lock the vertex buffer.
 	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));

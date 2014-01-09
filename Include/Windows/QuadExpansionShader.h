@@ -38,8 +38,13 @@ namespace A2D {
 		
 	private:
 
-		static ID3D10Effect			*	aColorEffect;
+		static ID3D10Effect			*	aQuadEffect;
 		static ID3D10EffectShaderResourceVariable*   aTexturePtr;
+		static Texture				*	aTexture;
+
+	public:
+
+		void									setTexture(Texture * xTexture);
 
 	protected:
 
