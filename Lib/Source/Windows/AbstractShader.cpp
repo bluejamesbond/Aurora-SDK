@@ -17,7 +17,7 @@ AbstractShader::~AbstractShader()
 HRESULT AbstractShader::initialize()
 {
 	unsigned int polygonLayoutElements = getPolygonLayoutElementCount();
-	D3D10_INPUT_ELEMENT_DESC * polygonLayout = new D3D10_INPUT_ELEMENT_DESC[polygonLayoutElements];
+	D3D10_INPUT_ELEMENT_DESC * polygonLayout;
 	ID3D10Effect **	effect = getEffect();
 
 	// Use the DXUtils to create a shader
@@ -34,13 +34,9 @@ HRESULT AbstractShader::initialize()
 		SAFELY(DXUtils::CreatePNGCompatibleBlendStates(*aDevice, &aBlendState, &aBlendDisabledState));
 	}
 
-	SAFELY(createPolygonLayout(polygonLayout));
-
-	SAFELY(DXUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));
-	
+	SAFELY(createPolygonLayout(&polygonLayout));
+	SAFELY(DXUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));	
 	SAFELY(getUsableVariablePointers(*effect));
-
-	DESTROY(polygonLayout);
 
 	return S_OK;
 }

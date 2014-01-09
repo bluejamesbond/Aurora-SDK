@@ -27,7 +27,7 @@
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
 
-#include "TextureVertex.h"
+#include "VertexTypes.h"
 #include "BackBuffer.h"
 #include "ColoredTextureShader.h"
 #include "TextureBuffer.h"

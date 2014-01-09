@@ -22,6 +22,7 @@
 #include "ExtLibs.h"
 #include "DXUtils.h"
 #include "Texture.h"
+#include "VertexTypes.h"
 
 namespace A2D {
 
@@ -56,7 +57,7 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout) = 0;
+		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) = 0;
 		virtual unsigned int			getPolygonLayoutElementCount() = 0;
 		virtual	LPCSTR					getTechniqueName() = 0;
 		virtual ID3D10Effect		**	getEffect() = 0;
