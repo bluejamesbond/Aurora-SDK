@@ -23,7 +23,6 @@
 #include "OrderedList.h"
 #include "ImageProperties.h"
 #include "Pipeline.h"
-#include "Rect.h"
 #include "Paint.h"
 
 #include "ComponentEventSource.h"
@@ -148,6 +147,7 @@ namespace A2D {
 		friend							AbstractEventQueue;
 		HRESULT							requestFocus();
 		void							setFocusable(bool xFocusable);
+		Rect						*	getEventRegion();
 
 	private:
 

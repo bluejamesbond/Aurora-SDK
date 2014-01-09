@@ -23,6 +23,7 @@
 #include "ExtLibs.h"
 #include "Abstract.h"
 #include "OrderedList.h"
+#include "Rect.h"
 
 #include "AbstractListener.h"
 #include "MouseListener.h"
@@ -63,6 +64,8 @@ namespace A2D {
 		virtual HRESULT			addMouseListener(MouseListener * xListener);
 		virtual HRESULT			addMouseMotionListener(MouseMotionListener * xListener);
 		virtual HRESULT			addActionListener(ActionListener * xListener);
+
+		virtual Rect *			getEventRegion() = 0;
 
 	protected:
 

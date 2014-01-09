@@ -261,6 +261,11 @@ void Component::setFocusable(bool xFocusable)
 	isFocusable = xFocusable;
 }
 
+Rect * Component::getEventRegion()
+{
+	return &aVisibleRegion;
+}
+
 LPCWSTR Component::getClass()
 {
 	return L"Component";

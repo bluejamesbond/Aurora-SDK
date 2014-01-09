@@ -282,6 +282,11 @@ HRESULT AbstractWindow::removeListener(AbstractListener * xListener)
 	return EventSource::removeListener(xListener);
 }
 
+Rect * AbstractWindow::getEventRegion()
+{
+	return &getBounds();
+}
+
 HRESULT AbstractWindow::initialize()
 {	
 	//------------------------------------------------------------

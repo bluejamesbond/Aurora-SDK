@@ -208,7 +208,9 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	Rect * visibleRegion;
 	HRESULT isConsumedMouse;
 	bool isConsumedFocus = false;
-	POINT point; int ID;
+	bool isValidRegion = false;
+	POINT point;
+	int ID;
 	UnorderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
 	Component * comp;
@@ -218,7 +220,6 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	ID = xEvent->getID();
 
 	SYSOUT_F("x: %d, y: %d\n", point.x, point.y);
-
 	while (node)
 	{
 		comps = node->value;
@@ -226,11 +227,12 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		for (int i = 0; i < size; i += 1)
 		{
 			comp = comps->get(i);
-			visibleRegion = comp->getVisibleRegion(); // ask if we need to cache bounds (only accessed once)
-			if (point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
+			visibleRegion = comp->getVisibleRegion();
+			isValidRegion = point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
 				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight &&
-				!isInvalidLocation(point, &invalidLocs)
-				)
+				!isInvalidLocation(point, &invalidLocs);
+
+			if (isValidRegion)
 			{
 				// If we are not done, we need to keep firing by checking the parent of each component
 				while (comp)
@@ -278,6 +280,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		}
 		node = node->left;
 	}
+	// Now check containers.
+
 	//SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
@@ -289,27 +293,33 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	int size = componentLocations.size();
 	if (!size) return;
 
-	Rect * visibleRegion;
+	Rect * eventRegion;
 	HRESULT isConsumedMouse;
 
-	POINT point; int ID;
+	POINT point; 
+	int ID;
+	bool isValidRegion;
 	UnorderedList<Component*> * comps;
 	Component * comp;
-
-	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
+	
 	point = xEvent->getLocation();
 	ID = xEvent->getID();
 
-	while (node)
+	// Check components.
+	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * nodeC = componentLocations._end();
+
+	while (nodeC)
 	{
-		comps = node->value;
+		comps = nodeC->value;
 		size = comps->size();
 		for (int i = 0; i < size; i += 1)
 		{
 			comp = comps->get(i);
-			visibleRegion = comp->getVisibleRegion();
-			if (point.x >= visibleRegion->aX && point.x <= visibleRegion->aX + visibleRegion->aWidth &&
-				point.y >= visibleRegion->aY && point.y <= visibleRegion->aY + visibleRegion->aHeight)
+			eventRegion = comp->getEventRegion();
+			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
+				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+
+			if (isValidRegion)
 			{
 				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 				{
@@ -321,6 +331,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_DRAGGED);
 					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
 				}
+
 				if (aLastComponent)
 				{
 					if (aLastComponent != comp)
@@ -333,15 +344,28 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 						comp->processMouseEvent(aMouseEvent);
 					}
 				}
+
 				aLastComponent = comp;
+
 				if (isConsumedMouse == S_OK)
 				{
 					return;
 				}
 			}
 		}
-		node = node->left;
+		nodeC = nodeC->left;
 	}
+
+	// Check containers.
+
+	OrderedList<EventSource*>::Node<EventSource*> * nodeE = aEventSourcesList._end();
+	while (nodeE)
+	{
+		eventRegion = nodeE->value->getEventRegion();
+
+	}
+
+
 }
 
 bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)

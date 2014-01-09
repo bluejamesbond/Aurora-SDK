@@ -89,10 +89,12 @@ namespace A2D {
 		void							invalidate();
 		// void							revalidate(); --- Unsafe for AbstractFrame!!!
 
+		// Listeners
+		Rect					*		getEventRegion();
+
 	protected:
 		void							validated();
 		void							validate();
-
 		HRESULT							addListener(AbstractListener * xListener);
 		HRESULT							removeListener(AbstractListener * xListener);
 

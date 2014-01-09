@@ -113,6 +113,7 @@ namespace A2D {
 		friend							AbstractEventQueue;
 		HRESULT							processWindowEvent(WindowEvent * xEvent);
 		HRESULT							addWindowListener(WindowListener * xListener);
+		Rect					  *		getEventRegion();
 
 	protected:
 

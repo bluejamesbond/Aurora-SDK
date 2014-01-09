@@ -314,6 +314,11 @@ HRESULT AbstractFrame::removeListener(AbstractListener * xListener)
 	return EventSource::removeListener(xListener);
 }
 
+Rect * AbstractFrame::getEventRegion()
+{
+	return &aWindow->getBounds();
+}
+
 void AbstractFrame::update()
 {
 	if (!aValidatedContents)
