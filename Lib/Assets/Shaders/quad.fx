@@ -39,7 +39,7 @@ struct QuadVertex
 	float4 borderWidths : POSITION2; // [leftWidth, topWidth, rightWidth, bottomWidth]
 	float4 borderRadius : POSITION3; // [leftRadius, topRadius, rightRadius, bottomRadius]
 	float4 colorTex : COLOR0;
-	float4 borderColors : COLOR1;     // [leftColor, topColor, rightColor, bottomColor]
+	uint4 borderColors : UINT0;     // [leftColor, topColor, rightColor, bottomColor]
 };
 
 struct QuadPixel
@@ -60,7 +60,7 @@ QuadVertex QuadCollapsedShader(QuadVertex input)
 //#ARGB to (Rf, Gf, Bf, Af)
 float4 ARGBtoFloat4(uint color)
 {
-	return float4((color >> 16 & 0xFF), (color >> 8 & 0xFF)/255, (color & 0xFF)/255, (color >> 24 & 0xFF)/255);
+	return float4(((color >> 24) & 0xFF) / 255, ((color >> 16) & 0xFF) / 255, ((color >> 8) & 0xFF) / 255, 1.0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

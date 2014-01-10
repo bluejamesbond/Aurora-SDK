@@ -23,6 +23,24 @@
 
 namespace A2D {
 
+	struct A2DUINT4
+	{
+		unsigned int a1;
+		unsigned int a2;
+		unsigned int a3;
+		unsigned int a4;
+
+		A2DUINT4(){};
+
+		A2DUINT4(unsigned int x, unsigned int y, unsigned int z, unsigned int w)
+		{
+			a1 = x;
+			a2 = y;
+			a3 = z;
+			a4 = w;
+		}
+	};
+
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +52,7 @@ namespace A2D {
 		D3DXVECTOR4 aBorderWidths;
 		D3DXVECTOR4 aBorderRadius;
 		D3DXVECTOR4 aColorTex;
-		D3DXVECTOR4 aBorderColors;
+		A2DUINT4 aBorderColors;
 
 		static D3D10_INPUT_ELEMENT_DESC aPolygonLayout[];
 	};

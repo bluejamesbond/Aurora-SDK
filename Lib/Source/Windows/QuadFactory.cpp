@@ -118,7 +118,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	// Set up vertices
 	vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
 	vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
-	vertices[0].aBorderColors = D3DXVECTOR4(FLOAT(0xFFFF0000), FLOAT(0xFFFF0000), FLOAT(0xFFFF0000), FLOAT(0xFFFF0000));
+	vertices[0].aBorderColors = A2DUINT4(0xFF0000FF, 0xFFFFFF00, 0x0000FF00, 0xFFFF00FF);
 	vertices[0].aBorderWidths = D3DXVECTOR4(0.005f, 0.005f, 0.005f, 0.005f);
 	vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, 0.00001f, 1.0f);
 
