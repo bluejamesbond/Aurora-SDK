@@ -34,10 +34,7 @@ namespace A2D {
 		D3DXVECTOR4 aBorderWidths;
 		D3DXVECTOR4 aBorderRadius;
 		D3DXVECTOR4 aColorTex;
-		D3DXVECTOR4 aBorderLeftColor;
-		D3DXVECTOR4 aBorderTopColor;
-		D3DXVECTOR4 aBorderRightColor;
-		D3DXVECTOR4 aBorderBottomColor;
+		D3DXVECTOR4 aBorderColors;
 
 		static D3D10_INPUT_ELEMENT_DESC aPolygonLayout[];
 	};

@@ -39,10 +39,7 @@ struct QuadVertex
 	float4 borderWidths : POSITION2; // [leftWidth, topWidth, rightWidth, bottomWidth]
 	float4 borderRadius : POSITION3; // [leftRadius, topRadius, rightRadius, bottomRadius]
 	float4 colorTex : COLOR0;
-	float4 borderLeftColor : COLOR1;
-	float4 borderTopColor : COLOR2;
-	float4 borderRightColor : COLOR3;
-	float4 borderBottomColor : COLOR4;
+	float4 borderColors : COLOR1;     // [leftColor, topColor, rightColor, bottomColor]
 };
 
 struct QuadPixel
@@ -60,6 +57,11 @@ QuadVertex QuadCollapsedShader(QuadVertex input)
 	return input;
 }
 
+//#ARGB to (Rf, Gf, Bf, Af)
+float4 ARGBtoFloat4(uint color)
+{
+	return float4((color >> 16 & 0xFF), (color >> 8 & 0xFF)/255, (color & 0xFF)/255, (color >> 24 & 0xFF)/255);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Geometry Shader
@@ -75,6 +77,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		borderRightWidth, borderBottomWidth,
 		opacity;
 
+	float4 borderLeftColor, borderTopColor, borderRightColor, borderBottomColor;
+
 	width = input[0].position[2];
 	height = input[0].position[3];
 
@@ -87,6 +91,11 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	borderTopWidth = input[0].borderWidths[1];
 	borderRightWidth = input[0].borderWidths[2];
 	borderBottomWidth = input[0].borderWidths[3];
+
+	borderLeftColor = ARGBtoFloat4(input[0].borderColors[0]);
+	borderTopColor = ARGBtoFloat4(input[0].borderColors[1]);
+	borderRightColor = ARGBtoFloat4(input[0].borderColors[2]);
+	borderBottomColor = ARGBtoFloat4(input[0].borderColors[3]);
 
 	z = input[0].options[2];
 	opacity = input[0].options[3];
@@ -131,7 +140,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Left
 	//*******************************
-	border.colorTex = input[0].borderLeftColor;
+	border.colorTex = borderLeftColor;
 
 	//bottom left
 	border.position = float4(left, bottom, z, 1);
@@ -152,7 +161,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Top
 	//*******************************
-	border.colorTex = input[0].borderTopColor;
+	border.colorTex = borderTopColor;
 
 	//bottom left
 	border.position = float4(left + borderTopWidth, top - borderTopWidth, z, 1);
@@ -173,7 +182,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Right
 	//*******************************
-	border.colorTex = input[0].borderRightColor;
+	border.colorTex = borderRightColor;
 
 	//bottom left
 	border.position = float4(right - borderRightWidth, bottom + borderRightWidth, z, 1);
@@ -194,7 +203,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Bottom
 	//*******************************
-	border.colorTex = input[0].borderBottomColor;
+	border.colorTex = borderBottomColor;
 
 	//bottom left
 	border.position = float4(left, bottom, z, 1);

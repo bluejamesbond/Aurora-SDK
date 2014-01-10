@@ -58,7 +58,7 @@ HRESULT	QuadExpansionShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPo
 
 unsigned int QuadExpansionShader::getPolygonLayoutElementCount()
 {
-	return 9;
+	return 6;
 }
 
 LPCSTR QuadExpansionShader::getTechniqueName()
