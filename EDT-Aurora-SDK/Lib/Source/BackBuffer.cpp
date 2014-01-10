@@ -14,7 +14,7 @@ BackBuffer::~BackBuffer()
 {
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
-    glDeleteBuffers(1, &vertexbuffer);
+//    glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &vt_vbo);
     glDeleteProgram(aGraphics->programID);
     glDeleteTextures(1, &TextureID);

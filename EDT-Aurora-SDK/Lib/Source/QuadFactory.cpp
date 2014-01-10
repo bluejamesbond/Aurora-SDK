@@ -7,24 +7,38 @@ using namespace A2D;
 QuadFactory::QuadFactory(Dims * xWindowDims)
 {
 //	aDXDevice = xDXDevice;
-//	aWindowDims = xWindowDims;
+    aWindowDims = xWindowDims;
 }
 
 QuadFactory::~QuadFactory()
 {
-//	D3DDESTROY(aVertexBuffer);
-//	D3DDESTROY(aIndexBuffer);
+    glDeleteBuffers(1, &aVertexBuffer);
+    DESTROY(aVertexBuffer);
+//	DESTROY(aIndexBuffer);
 }
 
-/*void QuadFactory::setDepth(float xZ)
+void QuadFactory::setDepth(float xZ)
 {
 	aDepth = xZ;
 }
 
 
-HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
+HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
 {
-	Rect& constraints = aConstraints;
+              GLfloat g_vertex_buffer_data[] = {
+                -0.75f,-0.75f, aDepth,
+                -0.75f, 0.75f, aDepth,
+                 0.75f,-0.75f, aDepth,
+                 0.75f, 0.75f, aDepth,
+                -0.75f, 0.75f, aDepth,
+                 0.75f,-0.75f, aDepth,
+               };
+
+            glGenBuffers(1, &aVertexBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, aVertexBuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+    /*Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
 	
 	int textureDimsChange = 0;
@@ -110,7 +124,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadDa
 
 	// Unlock the vertex buffer.
 	xQuadData->aVertexBuffer->Unmap();
-
+*/
 	return S_OK;
 
 }
@@ -283,152 +297,6 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 
 }
 
-void  QuadFactory::memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc)
-{
-	// Memcopy built specifically for TextureVertex (120 bytes)
-	// Unaligned D3DData
-	// @author MK - Based on William Chan and Google
-
-	__asm
-	{
-		// Store
-		mov esi, xSrc;
-		mov edi, xDest;
-
-		// No need to prefetch since the 
-		// offset is really low
-
-		// Move into Xmms - 128 bit
-		movdqu xmm0, 0[ESI];
-		movdqu xmm1, 16[ESI];
-		movdqu xmm2, 32[ESI];
-		movdqu xmm3, 48[ESI];
-		movdqu xmm4, 64[ESI];
-		movdqu xmm5, 80[ESI];
-		movdqu xmm6, 96[ESI];
-
-		movlpd xmm7, 112[ESI];
-
-		movdqu 0[EDI], xmm0;
-		movdqu 16[EDI], xmm1;
-		movdqu 32[EDI], xmm2;
-		movdqu 48[EDI], xmm3;
-		movdqu 64[EDI], xmm4;
-		movdqu 80[EDI], xmm5;
-		movdqu 96[EDI], xmm6;
-
-		movlpd 112[EDI], xmm7;
-
-	}
-}
-
-void  QuadFactory::memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc)
-{
-	// Memcopy built specifically for TextureVertex (216 bytes)
-	// Unaligned D3DData
-	// @author MK - Based on William Chan and Google
-
-	__asm
-	{
-		// Store
-		mov esi, xSrc;
-		mov edi, xDest;
-
-		prefetchnta 128[ESI]; //SSE2 prefetch
-		prefetchnta 160[ESI];
-		prefetchnta 192[ESI];
-
-		// Move into Xmms - 128 bit
-		movdqu xmm0, 0[ESI];
-		movdqu xmm1, 16[ESI];
-		movdqu xmm2, 32[ESI];
-		movdqu xmm3, 48[ESI];
-		movdqu xmm4, 64[ESI];
-		movdqu xmm5, 80[ESI];
-		movdqu xmm6, 96[ESI];
-		movdqu xmm7, 112[ESI];
-
-		movdqu 0[EDI], xmm0;
-		movdqu 16[EDI], xmm1;
-		movdqu 32[EDI], xmm2;
-		movdqu 48[EDI], xmm3;
-		movdqu 64[EDI], xmm4;
-		movdqu 80[EDI], xmm5;
-		movdqu 96[EDI], xmm6;
-		movdqu 112[EDI], xmm7;
-
-		add esi, 128;
-		add edi, 128;				// 128 bytes moved (88 left)
-
-		movdqu xmm0, 0[ESI];
-		movdqu xmm1, 16[ESI];
-		movdqu xmm2, 32[ESI];
-		movdqu xmm3, 48[ESI];
-		movdqu xmm4, 64[ESI];
-		movlpd xmm5, 80[ESI];
-
-		movdqu 0[EDI], xmm0;
-		movdqu 16[EDI], xmm1;
-		movdqu 32[EDI], xmm2;
-		movdqu 48[EDI], xmm3;
-		movdqu 64[EDI], xmm4;
-		movlpd 80[EDI], xmm5;
-	}
-}
-
-void  QuadFactory::memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc)
-{
-	// Memcopy built specifically for TextureVertex (216 bytes)
-	// Unaligned D3DData
-	// @author MK - Based on William Chan and Google
-
-	__asm
-	{
-		// Store
-		mov esi, xSrc;
-		mov edi, xDest;
-
-		prefetchnta 128[ESI]; //SSE2 prefetch
-		prefetchnta 160[ESI];
-		prefetchnta 192[ESI];
-
-		// Move into Xmms - 128 bit
-		movdqu xmm0, 0[ESI];
-		movdqu xmm1, 16[ESI];
-		movdqu xmm2, 32[ESI];
-		movdqu xmm3, 48[ESI];
-		movdqu xmm4, 64[ESI];
-		movdqu xmm5, 80[ESI];
-		movdqu xmm6, 96[ESI];
-		movdqu xmm7, 112[ESI];
-
-		movdqu 0[EDI], xmm0;
-		movdqu 16[EDI], xmm1;
-		movdqu 32[EDI], xmm2;
-		movdqu 48[EDI], xmm3;
-		movdqu 64[EDI], xmm4;
-		movdqu 80[EDI], xmm5;
-		movdqu 96[EDI], xmm6;
-		movdqu 112[EDI], xmm7;
-
-		add esi, 128;
-		add edi, 128;				// 128 bytes moved (88 left)
-
-		movdqu xmm0, 0[ESI];
-		movdqu xmm1, 16[ESI];
-		movdqu xmm2, 32[ESI];
-		movdqu xmm3, 48[ESI];
-		movdqu xmm4, 64[ESI];
-		movlpd xmm5, 80[ESI];
-
-		movdqu 0[EDI], xmm0;
-		movdqu 16[EDI], xmm1;
-		movdqu 32[EDI], xmm2;
-		movdqu 48[EDI], xmm3;
-		movdqu 64[EDI], xmm4;
-		movlpd 80[EDI], xmm5;
-	}
-}
 
 void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 {
@@ -450,20 +318,10 @@ bool QuadFactory::setConstraints(Rect * xContraints, float xZ)
 
 	Rect::memcpySSE2(&aConstraints, xContraints);
 
-	// WHy store constraints into every QuadData
-	//	if (memcmp(&xQuadData->aPreviousContraints, xContraints, sizeof(Rect)) != 0)
-	//	{
-	//		x_aligned_memcpy_sse2(&xQuadData->aPreviousContraints, xContraints, sizeof(Rect));
-	//		return aContraintsChanged = true;
-	//	}
-	//	else
-	//	{
-	//		return aContraintsChanged = false;
-	//	}
 
 	return true;
 }
-*/
+
 HRESULT QuadFactory::initialize()
 {
 //	SAFELY(DXShapeUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDXDevice, &aVertexBuffer, 6));

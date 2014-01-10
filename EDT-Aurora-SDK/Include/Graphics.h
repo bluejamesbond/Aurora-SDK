@@ -27,7 +27,7 @@
 //#include "ColoredTextureShader.h"
 //#include "TextureBuffer.h"
 //#include "Texture.h"
-#include "QuadFactory.h"
+//#include "QuadFactory.h"
 //#include "ImageProperties.h"
 //#include "Pipeline.h"
 //#include "MatrixFactory.h"

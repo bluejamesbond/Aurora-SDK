@@ -49,7 +49,7 @@ namespace A2D {
         QuadFactory(Dims * xWindowDims);
 		~QuadFactory();
 
-		GLuint				aIndexBuffer;
+//		GLuint				aIndexBuffer;
 		GLuint             	aVertexBuffer;
 		
 		float				aDepth = 0.0f;
@@ -58,22 +58,18 @@ namespace A2D {
 
 		Rect				aConstraints;
 		Dims			*	aWindowDims;
-		//ID3D10Device	**	aDXDevice;
+        //GLXContext      	aDXDevice;
 
 		///////////////////////////////////////////////////////////
-/*
-		static void						memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc);
-		static void						memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
-		static void						memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc);
-		
-		HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
-		HRESULT							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
-		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
+
+        HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
+        HRESULT							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
+        HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
 
 		void							setDepth(float xZ);
-		void							renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride);
+        void							renderQuad(GLuint xVertexBuffer, unsigned int xStride);
 		bool							setConstraints(Rect * xContraints, float xZ);
-*/
+
 	public:
 
 		//////////////////////////////////////////////////////////

@@ -145,7 +145,7 @@ HRESULT Graphics::initialize()
     // Our ModelViewProjection : multiplication of our 3 matrices
     MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
 
-    file_name = "/home/syk435/Pictures/texture_sample.png";
+    file_name = "/home/syk435/Pictures/small_texture.png";
     int force_channels = 4;
     image_data = stbi_load(file_name, &x, &y, &n, force_channels); //replaced file_name with aSrc, but i guess aSrc has to be a String
 
