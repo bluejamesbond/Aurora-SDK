@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Common.h"
+#include "../Core/../_A2DCommon.h"
 #include "../Core/Rect.h"
 #include "../Core/Dims.h"
 #include "../Core/AbstractWindow.h"

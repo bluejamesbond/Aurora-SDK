@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/Common.h"
+#include "../Core/../_A2DCommon.h"
 #include "../Core/Paint.h"
 #include "../Core/Color3D.h"
 #include "../Core/ImageProperties.h"

@@ -23,7 +23,7 @@
 #include "ExtLibs.h"
 #include "Rect.h"
 #include "Color.h"
-#include "Common.h"
+#include "../_A2DCommon.h"
 #include "AbstractEventQueue.h"
 
 namespace A2D {

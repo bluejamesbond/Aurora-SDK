@@ -15,8 +15,9 @@
 //
 //------------------------------------------------------------------------------
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
-#include "Common.h"
 #include "Color3D.h"
 
 namespace A2D{

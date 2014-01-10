@@ -66,8 +66,5 @@ void Color3D::from(Color3D& xDest, Color& xSrc)
 
 void Color3D::from(Color3D& xDst, Color3D& xSrc)
 {
-	xDst.aAlpha = xSrc.aAlpha;
-	xDst.aRed = xSrc.aRed;
-	xDst.aBlue = xSrc.aBlue;
-	xDst.aGreen = xSrc.aGreen;
+	memcpy(&xDst, &xSrc, sizeof(Color3D));
 }

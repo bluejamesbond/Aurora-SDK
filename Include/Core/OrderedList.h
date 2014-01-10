@@ -72,10 +72,6 @@
 // - Cached m_t_array is changed
 // - Check for m_arrayed - requires testing
 
-#define abs__hplist(a)     (((a) < 0) ? -(a) : (a))
-#define max__hplist(a, b)  (((a) > (b)) ? (a) : (b))
-#define min__hplist(a, b)  (((a) < (b)) ? (a) : (b))
-
 namespace A2D{
 
 	template <class T>
@@ -283,6 +279,26 @@ namespace A2D{
 			m_heapptr[m_heapptr_index++] = static_cast<void*>(m_heap);
 		}
 
+		inline void cache_request(Node<T> ** node)
+		{
+			Node<T> * next_node = NULL;
+			// Look for fragments in the heap
+
+			if (m_fragments_available_index < m_fragments_cache_total)
+			{
+				next_node = static_cast<Node<T>*>(m_fragments[m_fragments_available_index]);
+				m_fragments[m_fragments_available_index++] = NULL;
+			}
+			// Allocate heap space if there are no fragments
+			// and use these.
+			else if (m_heap_free - 1 <= -1)
+			{
+				allocate_chunk();
+			}
+
+			*node = next_node ? next_node : &m_heap[--m_heap_free];
+		}
+
 	public:
 
 		// Create OrderedList of type T
@@ -291,11 +307,11 @@ namespace A2D{
 			// Calculate ammmortization values based on 
 			// the size of T. This will soon have some performance
 			// changes.
-			m_heap_ammort_length = max__hplist(sizeof(T), 80) / sizeof(T);
+			m_heap_ammort_length = max(sizeof(T), 80) / sizeof(T);
 
 			//  Higher size T indicates more
 			// ammortizations during OrderedList lifetime.
-			m_heapptr_ammort_length = max__hplist(m_heap_ammort_length / 20, 5);
+			m_heapptr_ammort_length = max(m_heap_ammort_length / 20, 5);
 			m_fragments_ammort_length = 5;
 
 			// Malloc and prepare the OrderedList
@@ -389,7 +405,7 @@ namespace A2D{
 		{
 			m_arrayed = false;
 
-			index = min__hplist(abs__hplist(index), m_size);
+			index = min(abs(index), m_size);
 
 			if (index == 0)
 			{
@@ -781,6 +797,5 @@ namespace A2D{
 		T					    *		m_t_array;
 	};
 }
-
 
 #endif

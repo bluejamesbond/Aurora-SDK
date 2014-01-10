@@ -45,24 +45,32 @@
 #define	_OPT_BACKGROUND_POSITION_BOTTOM					  0x3007
 #define	_OPT_BACKGROUND_POSITION_LEFT					  0x3008
 
-#define	_OPT_BACKGROUND_SIZE_COVER						  0x3009
+#define	_OPT_BACKGROUND_SIZE_COVER							  0x3009
 #define	_OPT_BACKGROUND_SIZE_STRETCH						  0x300A
 
 #define FLT_255												  255.0f
 #define FLT_ZERO                                              0.0f
 #define FLT_ONE                                               1.0f
 
-// Debugging
-#include "../_A2DDebug.h"
+#ifndef max
+#define max(a,b)										(((a) > (b)) ? (a) : (b))
+#endif
 
-#define G_SAFELY(hr)										  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return; }
-#define SAFELY(hr)											  if(hr != 0)	{ SYSOUT_STR("Failure detected");return E_FAIL; }
-#define NULLCHECK(hr)										  if(!hr)		{ SYSOUT_STR("Failure detected"); return E_FAIL; }
+#ifndef min
+#define min(a,b)										(((a) < (b)) ? (a) : (b))
+#endif
+
+// Debugging
+#include "_A2DDebug.h"
+
+#define G_SAFELY(hr)										  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
+#define SAFELY(hr)											  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return E_FAIL; }
+#define NULLCHECK(hr)										  if(!hr)		{ SYSOUT_STR("Failure detected");	return E_FAIL; }
 #define	DESTROY(x)											  if(x)			{ delete x; x = 0; }
 #define D3DDESTROY(x)										  if(x)			{ x->Release(); x = 0; }
 #define THREAD_DESTROY(x)									  if(x)			{ x->stop(); delete x; x = 0; }
 #define FLOAT(x)											  static_cast<float>(x)
 #define INT(x)												  static_cast<int>(x)
-#define UINT(x)												  static_cast<UINT>(x)
+#define UINT(x)												  static_cast<unsigned int>(x)
 
 #endif

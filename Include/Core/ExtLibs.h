@@ -22,13 +22,7 @@
 #define _USE_MATH_DEFINES
 
 #include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <tchar.h>
-#include <wchar.h>
 #include <math.h>
-#include <iostream> 
-#include <fstream>
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MOVE THIS
 #ifdef _WIN32
@@ -46,6 +40,5 @@
 
 #endif
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TO EXTLIBS.H FOR WINDOWS
-
 
 #endif
