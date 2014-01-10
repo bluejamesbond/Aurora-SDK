@@ -646,6 +646,11 @@ namespace A2D{
 
 		void remove_request(void ** x)
 		{
+			if (*x = NULL)
+			{
+				return;
+			}
+
 			remove_node(static_cast<Node<T>*>(*x));
 			*x = NULL;
 		}
