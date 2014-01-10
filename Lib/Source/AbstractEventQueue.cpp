@@ -216,7 +216,9 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	UnorderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
 	Component * comp;
+	int numPanels = 0;
 	
+	// Prepare for event handling.
 	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
 	point = xEvent->getLocation();
 	ID = xEvent->getID();
@@ -230,6 +232,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		{
 			comp = comps->get(i);
 			eventRegion = comp->getVisibleRegion();
+			numPanels += 1;
 			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
 				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
 
@@ -290,6 +293,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		if (noComponent) break;
 		node = node->left; // check next depth
 	}
+
 	// Now check containers.
 	// Need to make an event handler for exclusively multiple windows later on.
 	OrderedList<EventSource*>::Node<EventSource*> * nodeE = aEventSourcesList._end();
@@ -329,7 +333,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		}
 		nodeE = nodeE->left;
 	}
-	SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+	SYSOUT_F("No listener, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
