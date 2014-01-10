@@ -112,7 +112,7 @@ namespace A2D{
 				m_size = size;
 			}
 
-			T  next()
+			inline T  next()
 			{
 				T  t = m_node->value;
 
@@ -122,12 +122,12 @@ namespace A2D{
 				return t;
 			}
 
-			bool has_next()
+			inline bool has_next()
 			{
 				return m_node != NULL && m_size;
 			}
 
-			T  previous()
+			inline T  previous()
 			{
 				T  t = m_node->value;
 
@@ -137,7 +137,7 @@ namespace A2D{
 				return t;
 			}
 
-			bool has_previous()
+			inline bool has_previous()
 			{
 				return  m_node != NULL && m_size;
 			}
@@ -781,5 +781,6 @@ namespace A2D{
 		T					    *		m_t_array;
 	};
 }
+
 
 #endif
