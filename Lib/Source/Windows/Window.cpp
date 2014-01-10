@@ -124,17 +124,6 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 			xEventQueue->processMouseEvent(aMouseUp);
 			return updateOnMouseUp(xHwnd);
-		
-		//case WM_NCLBUTTONDOWN:
-
-		//	// Fire WindowEvent
-		//	if (aCurrentState != WindowEvent::WINDOW_DEACTIVATED)
-		//	{
-		//		xEventQueue->processWindowEvent(aWindowDeactivated);
-		//	}
-
-		//	return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
-
 
 		case WM_CLOSE:
 		

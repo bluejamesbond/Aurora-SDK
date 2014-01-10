@@ -278,7 +278,9 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					else
 					{
 						invalidLocs.push_back(&comp->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
-						comp = comp->aParent;
+						//comp = comp->aParent;
+						comp = NULL;
+						i += 1;
 					}
 				}		
 			}
@@ -335,14 +337,18 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	int size = componentLocations.size();
 	if (!size) return;
 
-	Rect * eventRegion;
-	HRESULT isConsumedMouse;
+	
+	HRESULT isConsumedMouseMove = S_FALSE;
+	HRESULT isConsumedMouse = S_FALSE;
+	bool isDone = (isConsumedMouseMove == S_OK && isConsumedMouse == S_OK);
 
+	Rect * eventRegion;
 	POINT point; 
 	int ID;
 	bool isValidRegion;
+
 	UnorderedList<Component*> * comps;
-	Component * comp;
+	EventSource * source;
 	
 	point = xEvent->getLocation();
 	ID = xEvent->getID();
@@ -356,40 +362,44 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		size = comps->size();
 		for (int i = 0; i < size; i += 1)
 		{
-			comp = comps->get(i);
-			eventRegion = comp->getEventRegion();
+			source = comps->get(i);
+			eventRegion = source->getEventRegion();
 			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
 				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
 
 			if (isValidRegion)
 			{
-				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+				if (isConsumedMouseMove != S_FALSE)
 				{
-					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_MOVE);
-					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-				}
-				else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
-				{
-					aMouseEvent->setProperties(comp, MouseEvent::MOUSE_DRAGGED);
-					isConsumedMouse = comp->processMouseEvent(aMouseEvent);
-				}
-
-				if (aLastSource)
-				{
-					if (aLastSource != comp)
+					if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 					{
-						// We've entered a new component
-						aMouseEvent->setProperties(aLastSource, MouseEvent::MOUSE_EXITED);
-						aLastSource->processMouseEvent(aMouseEvent);
-
-						aMouseEvent->setProperties(comp, MouseEvent::MOUSE_ENTERED);
-						comp->processMouseEvent(aMouseEvent);
+						aMouseEvent->setProperties(source, MouseEvent::MOUSE_MOVE);
+						isConsumedMouseMove = source->processMouseEvent(aMouseEvent);
+					}
+					else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
+					{
+						aMouseEvent->setProperties(source, MouseEvent::MOUSE_DRAGGED);
+						isConsumedMouseMove = source->processMouseEvent(aMouseEvent);
 					}
 				}
+				if (isConsumedMouse == S_FALSE && aLastSource != source)
+				{
+					// We've entered a new component
+					if (aLastSource)
+					{
+						aMouseEvent->setProperties(aLastSource, MouseEvent::MOUSE_EXITED);
+						aLastSource->processMouseEvent(aMouseEvent);
+					}
 
-				aLastSource = comp;
+					aMouseEvent->setProperties(source, MouseEvent::MOUSE_ENTERED);
+					source->processMouseEvent(aMouseEvent);
 
-				if (isConsumedMouse == S_OK)
+					aLastSource = source;
+				}
+				// We only do this once, and we don't have to go through parent.
+				isConsumedMouse = S_OK;
+
+				if (isDone)
 				{
 					return;
 				}
@@ -400,7 +410,6 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 	// Check other event sources.
 	OrderedList<EventSource*>::Node<EventSource*> * nodeE = aEventSourcesList._end();
-	EventSource * source;
 	while (nodeE)
 	{
 		source = nodeE->value;
@@ -412,33 +421,38 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 		if (isValidRegion)
 		{
-			if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+			if (isConsumedMouseMove == S_FALSE)
 			{
-				aMouseEvent->setProperties(source, MouseEvent::MOUSE_MOVE);
-				isConsumedMouse = source->processMouseEvent(aMouseEvent);
-			}
-			else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
-			{
-				aMouseEvent->setProperties(source, MouseEvent::MOUSE_DRAGGED);
-				isConsumedMouse = source->processMouseEvent(aMouseEvent);
+				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
+				{
+					aMouseEvent->setProperties(source, MouseEvent::MOUSE_MOVE);
+					isConsumedMouse = source->processMouseEvent(aMouseEvent);
+				}
+				else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
+				{
+					aMouseEvent->setProperties(source, MouseEvent::MOUSE_DRAGGED);
+					isConsumedMouse = source->processMouseEvent(aMouseEvent);
+				}
 			}
 
-			if (aLastSource)
+			if (isConsumedMouse == S_FALSE && aLastSource != source)
 			{
-				if (aLastSource != source)
+				if (aLastSource)
 				{
 					// We've entered a new component
 					aMouseEvent->setProperties(aLastSource, MouseEvent::MOUSE_EXITED);
 					aLastSource->processMouseEvent(aMouseEvent);
-
-					aMouseEvent->setProperties(source, MouseEvent::MOUSE_ENTERED);
-					source->processMouseEvent(aMouseEvent);
 				}
+		
+				aMouseEvent->setProperties(source, MouseEvent::MOUSE_ENTERED);
+				source->processMouseEvent(aMouseEvent);
+
+				aLastSource = source;
 			}
+			
+			isConsumedMouse = S_OK;
 
-			aLastSource = source;
-
-			if (isConsumedMouse == S_OK)
+			if (isDone)
 			{
 				return;
 			}
