@@ -36,7 +36,7 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout);
+		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout);
 		virtual unsigned int			getPolygonLayoutElementCount();
 		virtual	LPCSTR					getTechniqueName();		
 

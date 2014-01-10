@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 
 #include "ExtLibs.h"
-#include "Common.h"
+#include "../_A2DCommon.h"
 #include "Color.h"
 
 namespace A2D{

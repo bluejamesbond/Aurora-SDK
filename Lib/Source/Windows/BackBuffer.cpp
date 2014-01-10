@@ -322,15 +322,8 @@ void BackBuffer::setActive()
 
 void BackBuffer::clear()
 {
-	float color[4];
-
-	color[0] = 1.0f;
-	color[1] = 0.0f;
-	color[2] = 0.0f;
-	color[3] = 1.0f;
-
 	// Clear the back buffer.
-	aDevice->ClearRenderTargetView(aDXRenderTargetView, color);
+	aDevice->ClearRenderTargetView(aDXRenderTargetView, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 
 	// Clear the depth buffer.
 	aDevice->ClearDepthStencilView(aDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);

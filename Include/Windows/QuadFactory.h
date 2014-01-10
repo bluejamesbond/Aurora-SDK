@@ -26,8 +26,7 @@
 #include "DXUtils.h"
 #include "Texture.h"
 #include "QuadData.h"
-#include "ColoredTextureVertex.h"
-#include "ColorVertex.h"
+#include "VertexTypes.h"
 
 namespace A2D {
 
@@ -62,14 +61,22 @@ namespace A2D {
 		ID3D10Device	**	aDevice;
 
 		///////////////////////////////////////////////////////////
-	
-		static void						memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc);
-		static void						memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
-		static void						memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc);
-		
-		bool							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
-		bool							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
-		bool							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
+
+	private:
+
+		static float					pixelsToRelativePoint(const float xPixelDimension, const float xPixels);
+		static float					pixelsToRelativeDistance(const float xPixelDimension, const float xPixels);
+
+		static inline void				memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc);
+		static inline void				memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
+		static inline void				memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc);
+
+	public:
+
+		bool							updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
+		bool							updateVertexBuffer(QuadData<ColoredTextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
+		bool							updateVertexBuffer(QuadData<TextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
+		bool							updateVertexBuffer(QuadData<ColorVertex, 6> * xQuadData, Rect * xRect, Paint * xPaint);
 
 		void							setDepth(float xZ);
 		void							renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride);

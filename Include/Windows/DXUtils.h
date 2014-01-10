@@ -21,7 +21,7 @@
 
 #include "ExtLibs.h"
 
-#include "../Core/Common.h"
+#include "../Core/../_A2DCommon.h"
 #include "../Core/Rect.h"
 #include "../Core/GXSettings.h"
 #include "../Core/CameraProperties.h"

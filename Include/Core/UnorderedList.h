@@ -72,10 +72,6 @@
 // - Cached m_t_array is changed
 // - Check for m_arrayed - requires testing
 
-#define abs__hplist(a)     (((a) < 0) ? -(a) : (a))
-#define max__hplist(a, b)  (((a) > (b)) ? (a) : (b))
-#define min__hplist(a, b)  (((a) < (b)) ? (a) : (b))
-
 namespace A2D{
 
 	template <class T>
@@ -195,11 +191,11 @@ namespace A2D{
 			// Calculate ammmortization values based on 
 			// the size of T. This will soon have some performance
 			// changes.
-			m_heap_ammort_length = max__hplist(sizeof(T), 80) / sizeof(T);
+			m_heap_ammort_length = max(sizeof(T), 80) / sizeof(T);
 
 			//  Higher size T indicates more
 			// ammortizations during UnorderedList lifetime.
-			m_heapptr_ammort_length = max__hplist(m_heap_ammort_length / 20, 5);
+			m_heapptr_ammort_length = max(m_heap_ammort_length / 20, 5);
 			m_fragments_ammort_length = 5;
 
 			// Malloc and prepare the UnorderedList

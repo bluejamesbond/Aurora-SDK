@@ -55,7 +55,86 @@ void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 	device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
-bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
+float QuadFactory::pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
+{
+	return xPixels / xPixelDimension * 2 - 1;
+}
+
+float QuadFactory::pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
+{
+	return xPixels / xPixelDimension * 2;
+}
+
+bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
+{
+	Rect& constraints = aConstraints;
+	Rect * textureClip = xTexture->GetClip();
+
+	int textureDimsChange = 0;
+	int textureClipChange = 0;
+	int rectChange = 0;
+	int imagePropertiesChange = 0;
+
+	float rectX = xRect->aX;
+	float rectY = xRect->aY;
+	float rectWidth = xRect->aWidth;
+	float rectHeight = xRect->aHeight;
+
+	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
+
+	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
+		left, width, top, height, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
+		texelRight, texelBottom,
+		textureWidth = textureClip->aWidth,
+		textureHeight = textureClip->aHeight,
+		depth = aDepth;
+
+	QuadExpansionVertex * vertices = xQuadData->aVertices;
+	void * mappedVertices = 0;
+
+	calcLeft = max(rectX, 0);
+	calcTop = max(rectY, 0);
+	calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+	calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+
+	calcHeight = calcBottom - calcTop;
+	calcWidth = calcRight - calcLeft;
+
+	texLeft = rectX > 0 ? 0.0f : abs(rectX);
+	texTop = rectY > 0 ? 0.0f : abs(rectY);
+	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
+	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
+
+	texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
+	texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
+	texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
+	texelBottom = xRepeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
+
+	left = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + calcLeft);
+	top = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + calcTop);
+	width = pixelsToRelativeDistance(aWindowDims->aWidth, calcWidth);
+	height = pixelsToRelativeDistance(aWindowDims->aHeight, calcHeight);
+
+	// Set up vertices
+	vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
+	vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
+	vertices[0].aBorderColors = A2DUINT4(0xFF0000FF, 0xFFFFFF00, 0x0000FF00, 0xFFFF00FF);
+	vertices[0].aBorderWidths = D3DXVECTOR4(0.005f, 0.005f, 0.005f, 0.005f);
+	vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, 0.00001f, 1.0f);
+
+	// Lock the vertex buffer.
+	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+
+	// Copy data using SSE2 accelerated method
+	memcpy(static_cast<QuadExpansionVertex*>(mappedVertices), vertices, sizeof(QuadExpansionVertex));
+
+	// Unlock the vertex buffer.
+	xQuadData->aVertexBuffer->Unmap();
+
+	return true;
+}
+
+bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -148,7 +227,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData,
 
 }
 
-bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
+bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -230,7 +309,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect *
 
 }
 
-bool QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint)
+bool QuadFactory::updateVertexBuffer(QuadData<ColorVertex, 6> * xQuadData, Rect * xRect, Paint * xPaint)
 {
 	Rect& constraints = aConstraints;
 
