@@ -76,7 +76,6 @@
 #define max__hplist(a, b)  (((a) > (b)) ? (a) : (b))
 #define min__hplist(a, b)  (((a) < (b)) ? (a) : (b))
 
-
 namespace A2D{
 
 	template <class T>
@@ -168,7 +167,7 @@ namespace A2D{
 		// Ammortizes the src array based on the parameters.
 		// In most cases dstLength = srcLength * 2
 		// Users of this method must watch out for double-freeing
-		void ammortize(void *** x_src, int x_src_length, int x_dst_length)
+		inline void ammortize(void *** x_src, int x_src_length, int x_dst_length)
 		{
 			// Create pointer in L1 cache for src array
 			void ** src_alloc = *x_src;
@@ -191,7 +190,7 @@ namespace A2D{
 
 		// Internal use for safely removing nodes and adding 
 		// to fragment cache
-		void remove_node(Node<T> * node)
+		inline void remove_node(Node<T> * node)
 		{
 			// Remove the value
 			node->value = 0;
@@ -237,7 +236,7 @@ namespace A2D{
 			m_size--;
 		}
 
-		Node<T> * find_node(int index)
+		inline Node<T> * find_node(int index)
 		{
 			// This testing is not required because fine_node is an internal method
 			//if (index >= m_size || index < 0)
@@ -269,7 +268,7 @@ namespace A2D{
 		}
 
 		// Allocate large chunks in heap
-		void allocate_chunk()
+		inline void allocate_chunk()
 		{
 			// Check if the heap ptr index will greater than length
 			if (m_heapptr_index + 1 >= m_heapptr_length)

@@ -39,7 +39,7 @@ struct QuadVertex
 	float4 borderWidths : POSITION2; // [leftWidth, topWidth, rightWidth, bottomWidth]
 	float4 borderRadius : POSITION3; // [leftRadius, topRadius, rightRadius, bottomRadius]
 	float4 colorTex : COLOR0;
-	uint4 borderColors : UINT0;     // [leftColor, topColor, rightColor, bottomColor]
+	uint4 borderColors : UINT0;      // [leftColor, topColor, rightColor, bottomColor]
 };
 
 struct QuadPixel
