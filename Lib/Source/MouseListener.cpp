@@ -57,7 +57,7 @@ void MouseListener::notify(MouseEvent * xEvent)
 void MouseListener::mousePressed(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	print();
+	//print();
 	SYSOUT_STR("Handling pressed.");
 }
 

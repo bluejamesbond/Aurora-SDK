@@ -119,7 +119,7 @@ namespace A2D{
 	private:
 
 
-		bool							isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs);
+		//bool							isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs);
 
 		MouseEvent					*	aMouseEvent; // check performance to see
 		FocusEvent					*	aFocusEvent;

@@ -207,9 +207,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 	Rect * eventRegion;
 	HRESULT isConsumedMouse;
+	HRESULT isConsumedAction = S_FALSE;
 	bool isConsumedFocus = false;
-	HRESULT isConsumedAction = false;
 	bool isValidRegion = false;
+	bool noComponent = false; 
 	POINT point;
 	int ID;
 	UnorderedList<Component*> * comps;
@@ -230,8 +231,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			comp = comps->get(i);
 			eventRegion = comp->getVisibleRegion();
 			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight &&
-				!isInvalidLocation(point, &invalidLocs);
+				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
 
 			if (isValidRegion)
 			{
@@ -277,15 +277,18 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					}
 					else
 					{
-						invalidLocs.push_back(&comp->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
-						//comp = comp->aParent;
-						comp = NULL;
-						i += 1;
+						//invalidLocs.push_back(&comp->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
+						comp = comp->aParent;
 					}
-				}		
+				}
+				// Once we are here, that means no components processed the event, 
+				// so now we will break through the whole loop and check the containers.
+				noComponent = true;
+				break;
 			}
 		}
-		node = node->left;
+		if (noComponent) break;
+		node = node->left; // check next depth
 	}
 	// Now check containers.
 	// Need to make an event handler for exclusively multiple windows later on.
@@ -326,7 +329,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		}
 		nodeE = nodeE->left;
 	}
-	//SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+	SYSOUT_F("MouseListenerNotFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
@@ -463,22 +466,22 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 }
 
-bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)
-{
-	Rect * loc;
-	OrderedList<Rect*>::Node<Rect*> * node = xInvalidLocs->_end();
-	while (node)
-	{
-		loc = node->value;
-		if (xPoint.x >= loc->aX && xPoint.x <= loc->aX + loc->aWidth &&
-			xPoint.y >= loc->aY && xPoint.y <= loc->aY + loc->aHeight)
-		{
-			return true;
-		}
-		node = node->left;
-	}
-	return false;
-}
+//bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)
+//{
+//	Rect * loc;
+//	OrderedList<Rect*>::Node<Rect*> * node = xInvalidLocs->_end();
+//	while (node)
+//	{
+//		loc = node->value;
+//		if (xPoint.x >= loc->aX && xPoint.x <= loc->aX + loc->aWidth &&
+//			xPoint.y >= loc->aY && xPoint.y <= loc->aY + loc->aHeight)
+//		{
+//			return true;
+//		}
+//		node = node->left;
+//	}
+//	return false;
+//}
 
 HRESULT AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 {
