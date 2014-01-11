@@ -2,7 +2,7 @@
 // Filename: quad.fx
 ////////////////////////////////////////////////////////////////////////////////
 
-Texture2D shaderTexture;
+Texture2D shaderTexture : register(ps_4_0, t[0]) ;
 
 //////////////////
 // BLEND STATE  //
@@ -97,7 +97,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	borderRightColor = ARGBtoFloat4(input[0].borderColors[2]);
 	borderBottomColor = ARGBtoFloat4(input[0].borderColors[3]);
 
-	z = input[0].options[2];
+	z = (10000000 - input[0].options[2]) / 10000000;
 	opacity = input[0].options[3];
 
 	//**********************************************************************
@@ -209,17 +209,16 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	border.position = float4(left, bottom, z, 1);
 	quadStream.Append(border);
 	//top left
-	border.position = float4(left + borderRightWidth, bottom + borderRightWidth, z, 1);
+	border.position = float4(left + borderBottomWidth, bottom + borderBottomWidth, z, 1);
 	quadStream.Append(border);
 	//bottom right
 	border.position = float4(right, bottom, z, 1);
 	quadStream.Append(border);
 	//top right
-	border.position = float4(right - borderRightWidth, bottom + borderRightWidth, z, 1);
+	border.position = float4(right - borderBottomWidth, bottom + borderBottomWidth, z, 1);
 
 	// Reset
 	quadStream.Append(border);
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -47,6 +47,8 @@ namespace A2D {
 		// Do not delete only adjust the values! 
 		T				aVertices[V];
 
+		int			isSet = 0;
+
 		// Vertex buffer can change (but change only as needed)
 		ID3D10Buffer		*			aVertexBuffer;
 

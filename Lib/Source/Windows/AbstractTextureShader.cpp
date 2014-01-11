@@ -16,9 +16,6 @@ Texture * AbstractTextureShader::aTexture = NULL;
 float ** AbstractTextureShader::aProjectionMatrix = NULL;
 ID3D10Effect * AbstractTextureShader::aTextureEffect = NULL;
 ID3D10EffectShaderResourceVariable * AbstractTextureShader::aTexturePtr = NULL;
-ID3D10EffectMatrixVariable * AbstractTextureShader::aWorldMatrixPtr = NULL;
-ID3D10EffectMatrixVariable * AbstractTextureShader::aViewMatrixPtr = NULL;
-ID3D10EffectMatrixVariable * AbstractTextureShader::aProjectionMatrixPtr = NULL;
 /***********************************************************/
 
 AbstractTextureShader::AbstractTextureShader(ID3D10Device ** xDevice) : AbstractShader(xDevice) {}

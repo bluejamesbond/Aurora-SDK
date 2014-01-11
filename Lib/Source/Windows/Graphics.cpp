@@ -41,6 +41,8 @@ void Graphics::setClip(Rect * xClip, float xDepth)
 
 void Graphics::validate()
 {
+	// No validation required since we are not using matrices
+
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
 
@@ -48,7 +50,7 @@ void Graphics::validate()
 	G_SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 
 	ColorShader::reloadProjectionMatrix();
-	TextureShader::reloadProjectionMatrix();
+	//TextureShader::reloadProjectionMatrix();
 }
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
@@ -90,6 +92,10 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
 {
+	Rect * clip = aClip;
+
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+
 	Texture * texture;
 	QuadData<QuadExpansionVertex, 1> * quadData;
 

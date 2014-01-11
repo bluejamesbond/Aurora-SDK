@@ -243,9 +243,7 @@ HRESULT AbstractFrame::createResources()
 	
 	aRepaintManager = new RepaintManager(aGraphics, &aRootPane);
 	SAFELY(aRepaintManager->initialize());
-
-	aWindowDims = aWindow->getSizeAsPtr();
-
+	
 	return S_OK;
 }
 

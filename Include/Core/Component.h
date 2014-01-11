@@ -56,7 +56,7 @@ namespace A2D {
 
 	private:
 
-		float							aDepth = FLT_MIN;
+		float							aDepth = 0;
 
 		bool							aForced = false;
 

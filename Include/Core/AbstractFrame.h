@@ -59,8 +59,6 @@ namespace A2D {
 		AbstractWindow	  	   *		aWindow;
 		AbstractEventQueue	   *		aEventQueue = NULL;
 		void				   * 		aGraphics;
-
-		Dims				   *		aWindowDims;
 		RepaintManager		   *		aRepaintManager;
 		Panel                			aRootPane;
 		GXSettings			  			aGXSettings;

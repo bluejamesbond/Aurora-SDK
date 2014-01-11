@@ -83,9 +83,9 @@ Rect AbstractWindow::getBounds()
 	return aRect;
 }
 
-Dims * AbstractWindow::getSizeAsPtr()
+Dims& AbstractWindow::getSizeAsPtr()
 {
-	return static_cast<Dims*>(&aRect);
+	return *static_cast<Dims*>(&aRect);
 }
 
 
@@ -214,6 +214,11 @@ void AbstractWindow::validated()
 void AbstractWindow::revalidate()
 {
 	validate();
+}
+
+Dims& AbstractWindow::getDrawableRegionAsPtr()
+{
+	return aDrawableRegion;
 }
 
 HRESULT AbstractWindow::initialize()
