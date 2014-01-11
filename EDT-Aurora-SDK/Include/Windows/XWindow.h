@@ -59,6 +59,14 @@ namespace A2D {
         GLXContext                      hRC;
         GLXContext                      render_context;
         Dims                            aCurrentSize;
+        float                           aRealX = 0;
+        float                           aRealY = 0;
+        float                           aRealWidth = 0;
+        float                           aRealHeight = 0;
+        float                           aRelativeX = 0;
+        float                           aRelativeY = 0;
+        float                           aRelativeWidth = 0;
+        float                           aRelativeHeight = 0;
 
 	public:
 

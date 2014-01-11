@@ -37,6 +37,7 @@
 //#include "ColorShader.h"
 #include "GLShaderUtils.h"
 #include "../Include/Windows/XWindow.h"
+#include "../Include/Dims.h"
 
 namespace A2D {
 
@@ -44,18 +45,13 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Abstract;
-	class Renderable;
-	class Container;
-	class Camera;
-	struct CameraProperties;
 	struct RenderData;
 	class BackBuffer;
-	class MatrixFactory;
 	class RootPane;
 	class Texture;
 	class TextureBuffer;
     class XWindow;
+    class Dims;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -68,25 +64,23 @@ namespace A2D {
 		Graphics(BackBuffer * xBackBuffer);
 		~Graphics();
 
-
+        //variables
         GLuint                          programID;
-        GLuint                          MatrixID;
         unsigned char       *           image_data;
         int                             x;
         int                             y;
         int                             n;
         char                *           file_name;
 
-//    private:
-/*
-		float                *			aViewMatrix;
-		float                *			aWorldMatrix;
-		float                *			aProjection2DMatrix;
-		float                *			aProjection3DMatrix;
-*/
         glm::mat4                       MVP;
 		BackBuffer			 *			aBackBuffer;
-        AbstractWindow              *          aWindow;
+        AbstractWindow       *          aWindow;
+        Dims                 *          aBackBufferDims;
+
+        //Future Quadfactory
+        Rect                 *          aConstraints; //(aClip in Quad)
+        float                           aDepth;
+
 /*
         QuadFactory			 *			aQuadFactory;
 		TextureBuffer        *			aTextureBuffer;
@@ -99,22 +93,25 @@ namespace A2D {
 
 	public:
 
-		Dims*							getDrawableDimensions();
-		BackBuffer*						getBackBuffer();
 		void							validate();
         void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
         void							setClip(Rect * aRect, float xZ);
+        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
+
 */
         BackBuffer           *          getBackBuffer();
-        void                            setWindow(AbstractWindow* xWindow);
-        void                            setBackBuffer(BackBuffer* xBackBuffer);
-//        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
+        Dims                 *          getDrawableDimensions();
+        void                            setWindow(AbstractWindow * xWindow);
+        void                            setBackBuffer(BackBuffer * xBackBuffer);
+        void                            validate();
         void                            drawImage();
-	public:
 
 		virtual HRESULT                 initialize();
 		virtual LPCWSTR                 getClass();
 		virtual LPCWSTR                 toString();
+
+        //Future Quadfactory
+        void                            setClip(Rect * xClip, float xDepth);
 
 	};
 }

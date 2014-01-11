@@ -66,7 +66,7 @@ namespace A2D {
 */
     public:
 
-		Dims					 	   aDims;
+        Dims					  *	   aDims;
 		AbstractWindow			  *    aWindow;
 //		GXSettings				       aSettings;
         GLuint                         vertexbuffer;
@@ -75,6 +75,8 @@ namespace A2D {
         GLuint                         TextureID;
         unsigned int                   tex = 0;
         Graphics                  *    aGraphics;
+        GLfloat                   *    g_vertex_buffer_data;
+        float                     *    texcoords;
 
         //functions
 

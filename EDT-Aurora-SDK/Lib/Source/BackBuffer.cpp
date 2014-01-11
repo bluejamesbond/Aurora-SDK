@@ -23,7 +23,7 @@ BackBuffer::~BackBuffer()
 
 Dims * BackBuffer::getSize()
 {
-	return &aDims;
+    return aDims;
 }
 
 void BackBuffer::setGraphics(Graphics* xGraphics)
@@ -34,7 +34,12 @@ void BackBuffer::setGraphics(Graphics* xGraphics)
 
 HRESULT BackBuffer::initialize()
 {
-    static const GLfloat g_vertex_buffer_data[] = {
+    //(x/realwidth)*2 = xoffset
+    //-1 + xoffset = newstart
+    //(width/realwidth)*2 = width
+    //newstart + width = leftmost
+    //do same for height, put in code for appropriate points
+        g_vertex_buffer_data[] = {
             -0.75f,-0.75f,0.0f,
             -0.75f, 0.75f,0.0f,
              0.75f,-0.75f,0.0f,
@@ -74,7 +79,7 @@ HRESULT BackBuffer::initialize()
         glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        float texcoords[] = {
+        texcoords[] = {
           0.0f, 0.0f,
           0.0f, 1.0f,
           1.0, 0.0,
