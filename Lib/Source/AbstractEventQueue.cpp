@@ -513,7 +513,7 @@ void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
 	win->aCurrentState = xEvent->getID();
 }
 
-void AbstractEventQueue::addEventDepthTracker(Component * xSource, int xZ)
+void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 {
 	//OrderedList<OrderedList<EventSource*>*>::Node<OrderedList<EventSource*>*> * node = aEventSources._end();
 

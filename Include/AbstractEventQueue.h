@@ -117,7 +117,7 @@ namespace A2D{
 		void							processWindowEvent(WindowEvent * xEvent);
 		void							processMouseMotionEvent(MouseEvent * xEvent);
 
-		void							addEventDepthTracker(Component * xSource, int xZ);
+		void							addEventDepthTracker(Component * xSource, float xZ);
 	private:
 
 

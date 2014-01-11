@@ -245,7 +245,9 @@ HRESULT Component::addMouseListener(MouseListener * xListener)
 	if (aRepaintManager != NULL)
 	{
 		// Add depth manually
-		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+		HRESULT hr = ComponentEventSource::addMouseListener(xListener);
+		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		return hr;
 	}
 	return ComponentEventSource::addMouseListener(xListener);
 }
@@ -255,7 +257,9 @@ HRESULT Component::addMouseMotionListener(MouseMotionListener * xListener)
 	if (aRepaintManager != NULL)
 	{
 		// Add depth manually
-		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+		HRESULT hr = ComponentEventSource::addMouseMotionListener(xListener);
+		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		return hr;
 	}
 	return ComponentEventSource::addMouseMotionListener(xListener);
 }
@@ -265,7 +269,9 @@ HRESULT Component::addFocusListener(FocusListener * xListener)
 	if (aRepaintManager != NULL)
 	{
 		// Add depth manually
-		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+		HRESULT hr = ComponentEventSource::addFocusListener(xListener);
+		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		return hr;
 	}
 	return ComponentEventSource::addFocusListener(xListener);
 }
@@ -275,7 +281,9 @@ HRESULT Component::addActionListener(ActionListener * xListener)
 	if (aRepaintManager != NULL)
 	{
 		// Add depth manually
-		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+		HRESULT hr = ComponentEventSource::addActionListener(xListener);
+		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		return hr;
 	}
 	return ComponentEventSource::addActionListener(xListener);
 }
