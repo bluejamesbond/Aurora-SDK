@@ -433,12 +433,12 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 				{
 					aMouseEvent->setProperties(source, MouseEvent::MOUSE_MOVE);
-					isConsumedMouse = source->processMouseEvent(aMouseEvent);
+					isConsumedMouseMove = source->processMouseEvent(aMouseEvent);
 				}
 				else if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED)
 				{
 					aMouseEvent->setProperties(source, MouseEvent::MOUSE_DRAGGED);
-					isConsumedMouse = source->processMouseEvent(aMouseEvent);
+					isConsumedMouseMove = source->processMouseEvent(aMouseEvent);
 				}
 			}
 
@@ -467,6 +467,10 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		nodeE = nodeE->left;
 	}
 
+	//if (isConsumedMouse == S_FALSE)
+	//{
+	//	aLastSource = NULL; // Reset last source as the event was not handled.
+	//}
 
 }
 

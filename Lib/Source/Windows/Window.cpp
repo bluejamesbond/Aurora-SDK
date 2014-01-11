@@ -92,7 +92,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
 			aMouseDown->setLocation(p);
-
+			
 			xEventQueue->processMouseEvent(aMouseDown);
 			return updateOnMouseDown(xHwnd);
 		
