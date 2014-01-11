@@ -152,7 +152,12 @@ namespace A2D {
 		HRESULT							addFocusListener(FocusListener * xListener);
 		HRESULT							addActionListener(ActionListener * xListener);
 
-		RepaintManager				*	aRepaintManager = 0;
+		RepaintManager				*	aRepaintManager = 0; 
+
+	private:
+
+		Component					*	aNextCompListener = 0;
+		Component					*	aPrevCompListener = 0;
 
 	private:
 

@@ -118,8 +118,10 @@ namespace A2D{
 		void							processMouseMotionEvent(MouseEvent * xEvent);
 
 		void							addEventDepthTracker(Component * xSource, float xZ);
-	private:
 
+		Component					*	findNextCompListener(Component * xSource);
+		Component					*	findPrevCompListener(Component * xSource);
+	private:
 
 		//bool							isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs);
 

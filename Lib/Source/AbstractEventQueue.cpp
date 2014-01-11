@@ -270,18 +270,16 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 							aActionEvent->setSource(comp);
 							isConsumedAction = processActionEvent(aActionEvent);
 						}
-
-
 					}
 					if (isConsumedMouse == S_OK)
 					{
-						SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+						SYSOUT_F("MouseListenerFound, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 						return;
 					}
 					else
 					{
 						//invalidLocs.push_back(&comp->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
-						comp = comp->aParent;
+						comp = comp->aNextCompListener;
 					}
 				}
 				// Once we are here, that means no components processed the event, 
@@ -327,7 +325,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 			if (isConsumedMouse == S_OK)
 			{
-				SYSOUT_F("MouseListenerFound: Time taken: %.9fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+				SYSOUT_F("MouseListenerFound, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 				return;
 			}
 		}
@@ -536,21 +534,17 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 			aComponentEventSources.push_back(peerEventSources = new OrderedList<Component*>, NULL);
 			maxZ += 1;
 		}
-		// check duplicate (aka same region)
-		node = peerEventSources->_end();
-		while (node)
-		{
-			if (node->value == xSource) // need to replace, so remove first
-			{
-				peerEventSources->remove_request(&node->value->aRemoveTicket);
-				break;
-			}
-			node = node->left;
-		}
+		// No need to check duplicate (aka same region) because new depth
 		peerEventSources->push_front(xSource, &xSource->aRemoveTicket);
+
+		// Component with listener added topmost, so no previous comp listener.
+		Component * nextComp = findNextCompListener(xSource);
+		if (nextComp) nextComp->aPrevCompListener = xSource;
+		xSource->aNextCompListener = nextComp;
 	}
 	else
 	{
+		// Component with listener inserted between top and bottom-most
 		// check duplicate (aka same region)
 		peerEventSources = aComponentEventSources.get(neededZ);
 		node = peerEventSources->_end();
@@ -564,10 +558,51 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 			node = node->left;
 		}
 		peerEventSources->push_front(xSource, &xSource->aRemoveTicket);
+		Component * nodeComp = findNextCompListener(xSource);
+		if (nodeComp) // Found parent that has listener.
+		{
+			xSource->aPrevCompListener = nodeComp->aPrevCompListener;
+			xSource->aNextCompListener = nodeComp;
+			nodeComp->aPrevCompListener = xSource;
+		}
+		else // No parent has listener. Look for children listeners.
+		{
+			nodeComp = findPrevCompListener(xSource);
+			if (nodeComp) nodeComp->aNextCompListener = xSource;
+			xSource->aPrevCompListener = nodeComp;
+		}
+		
 	}
 
 	return ;
 
+}
+
+Component * AbstractEventQueue::findNextCompListener(Component * xSource)
+{
+	Component * comp;
+	comp = xSource->aParent;
+	while (comp)
+	{
+		if (hasListener(comp)) return comp;
+		comp = comp->aParent;
+	}
+	// Didnt find a parent with listener
+	return NULL;
+}
+
+Component * AbstractEventQueue::findPrevCompListener(Component * xSource)
+{
+	OrderedList<Component*> children = xSource->aChildren;
+	OrderedList<Component*>::Node<Component*> * nodeC = children._end();
+	Component * prevComp;
+	while (nodeC)
+	{
+		prevComp = nodeC->value;
+		if (hasListener(prevComp)) return prevComp;
+		nodeC = nodeC->left;
+	}
+	return NULL;
 }
 
 bool AbstractEventQueue::hasListener(EventSource * xSource)
