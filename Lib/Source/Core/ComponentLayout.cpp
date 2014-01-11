@@ -153,5 +153,4 @@ void Component::applyCascadingStyleLayout()
 
 		start = start->right;
 	}
-
 }

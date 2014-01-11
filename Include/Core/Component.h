@@ -157,9 +157,6 @@ namespace A2D {
 		void							update();
 		Rect                            getBounds();
 		void                            setBounds(Rect& xRect);
-
-		void                            setBounds(float xX, float xY, float xWidth, float xHeight);
-
         bool                            isDoubleBuffered();
         LPCWSTR                         getBackgroundImage()                                                    { return    aOptBackgroundSrc; };
         int                             getBackgroundPositionX()                                                { return    aOptBackgroundPosX; };
@@ -181,10 +178,30 @@ namespace A2D {
         void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
         void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
 												      int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
-        
+
     public:
 
         virtual HRESULT                 initialize();
+
+	////////////////////////////////////////////////////////////////////////////////
+	// INLINE
+	////////////////////////////////////////////////////////////////////////////////
+
+	protected:
+
+		inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
+		{
+			aOptRegion.aWidth = xWidth;
+			aOptRegion.aHeight = xHeight;
+			aOptRegion.aX = xX;
+			aOptRegion.aY = xY;
+
+			aOptBackgroundRegion.aWidth = xWidth;
+			aOptBackgroundRegion.aHeight = xHeight;
+
+			aValidatedContents = false;
+		}
+
     };
 }
 #endif

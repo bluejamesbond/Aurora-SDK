@@ -96,18 +96,22 @@ namespace A2D {
 		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
 		
-		void							validate();
-
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat);
-		void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
-
-		void							setClip(Rect * aRect, float xZ);
+		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 
 	public:
 
 		virtual HRESULT                 initialize();
 
+		////////////////////////////////////////////////////////////////////////////////
+		// INLINE
+		////////////////////////////////////////////////////////////////////////////////
+
+		inline void Graphics::setClip(Rect * xClip, float xDepth)
+		{
+			aQuadFactory->setConstraints(aClip = xClip, xDepth);
+		}
 	};
 }
 

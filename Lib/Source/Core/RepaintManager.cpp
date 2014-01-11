@@ -29,15 +29,6 @@ HRESULT RepaintManager::initialize()
 	return S_OK;
 }
 
-void RepaintManager::validate()
-{
-	aBackBuffer->validate();
-
-	aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
-
-	static_cast<Graphics*>(aGraphics)->validate();
-}
-
 RepaintManager::~RepaintManager(){}
 
 HRESULT RepaintManager::add(Component& xParent, Component& xChild)

@@ -34,25 +34,6 @@ Dims * Graphics::getDrawableDimensions()
 	return aBackBufferDims;
 }
 
-void Graphics::setClip(Rect * xClip, float xDepth)
-{
-	aQuadFactory->setConstraints(aClip = xClip, xDepth);
-}
-
-void Graphics::validate()
-{
-	// No validation required since we are not using matrices
-
-	//GXSettings* settings = aBackBufferSettings;
-	//Dims* size = aBackBufferDims;
-
-	//// G_SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-	//G_SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
-
-	//ColorShader::reloadProjectionMatrix();
-	////TextureShader::reloadProjectionMatrix();
-}
-
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
 	Texture * texture;
@@ -132,6 +113,36 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 	}
 }
 
+void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
+{
+	QuadData<ColorVertex, 6> * quadData;
+
+	if (*xPipeline == NULL)
+	{
+		// Intialize the pipeline
+
+		*xPipeline = new Pipeline();
+
+		quadData = new QuadData<ColorVertex, 6>();
+
+		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+
+		(*xPipeline)->aPipelineComps[0] = quadData;
+
+		(*xPipeline)->aLength = 2;
+
+		return;
+	}
+
+	quadData = static_cast<QuadData<ColorVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
+
+	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint))
+	{
+		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
+		aColorShader->renderShader();
+	}
+}
+
 //void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
 //{
 //	Texture * texture;
@@ -169,36 +180,6 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 //		aColoredTextureShader->renderShader();
 //	}
 //}
-
-void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
-{
-	QuadData<ColorVertex, 6> * quadData;
-
-	if (*xPipeline == NULL)
-	{
-		// Intialize the pipeline
-
-		*xPipeline = new Pipeline();
-
-		quadData = new QuadData<ColorVertex, 6>();
-
-		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-		(*xPipeline)->aPipelineComps[0] = quadData;
-
-		(*xPipeline)->aLength = 2;
-
-		return;
-	}
-
-	quadData = static_cast<QuadData<ColorVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
-	
-	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint))
-	{
-		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
-		aColorShader->renderShader();
-	}
-}
 
 HRESULT Graphics::initialize()
 {
