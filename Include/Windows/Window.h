@@ -132,9 +132,9 @@ namespace A2D {
 
 		ATOM	                        registerClass();
 
-		HRESULT                         updateOnMouseDown(HWND xHwnd);
-		HRESULT                         updateOnMouseMove(HWND xHwnd);
-		HRESULT                         updateOnMouseUp(HWND xHwnd);
+		inline HRESULT                  updateOnMouseDown(HWND xHwnd);
+		inline HRESULT                  updateOnMouseMove(HWND xHwnd);
+		inline HRESULT                  updateOnMouseUp(HWND xHwnd);
 		HRESULT							onSize(HWND hwnd);
 
 		void                            destroyBackgroundResources();
@@ -151,8 +151,8 @@ namespace A2D {
 		void							updateBackgroundCache();
 		void							updateColorCache();
 
-		void							paintComponent(Gdiplus::Graphics& graphics);
-		void							paintComponentBorder(Gdiplus::Graphics& graphics);
+		inline void						paintComponent(Gdiplus::Graphics& graphics);
+		inline void						paintComponentBorder(Gdiplus::Graphics& graphics);
 
 		HRESULT							createResources();
 		void							destroyResources();
