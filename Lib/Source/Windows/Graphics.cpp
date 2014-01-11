@@ -43,14 +43,14 @@ void Graphics::validate()
 {
 	// No validation required since we are not using matrices
 
-	GXSettings* settings = aBackBufferSettings;
-	Dims* size = aBackBufferDims;
+	//GXSettings* settings = aBackBufferSettings;
+	//Dims* size = aBackBufferDims;
 
-	// G_SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-	G_SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
+	//// G_SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
+	//G_SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 
-	ColorShader::reloadProjectionMatrix();
-	//TextureShader::reloadProjectionMatrix();
+	//ColorShader::reloadProjectionMatrix();
+	////TextureShader::reloadProjectionMatrix();
 }
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
@@ -202,19 +202,19 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 
 HRESULT Graphics::initialize()
 {
-	CameraProperties& cameraProperties = aCameraProperties;
+//	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
 	ID3D10Device ** device = aDevice;
 		
-	cameraProperties.aPositionX = 0.0f;
-	cameraProperties.aPositionY = 0.0f;
-	cameraProperties.aPositionZ = -800.0f;
+	//cameraProperties.aPositionX = 0.0f;
+	//cameraProperties.aPositionY = 0.0f;
+	//cameraProperties.aPositionZ = -800.0f;
 
-	SAFELY(DXUtils::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
-	SAFELY(DXUtils::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));
-	SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-	SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
+	//SAFELY(DXUtils::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
+	//SAFELY(DXUtils::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));
+	//SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
+	//SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 
 	aQuadFactory = new QuadFactory(device, aBackBufferDims);
 	SAFELY(aQuadFactory->initialize());
@@ -231,14 +231,14 @@ HRESULT Graphics::initialize()
 	aQuadExpansionShader = new QuadExpansionShader(device);
 	SAFELY(aQuadExpansionShader->initialize());
 
-	TextureShader::setViewMatrix(&aViewMatrix);
-	ColorShader::setViewMatrix(&aViewMatrix);
+	//TextureShader::setViewMatrix(&aViewMatrix);
+	//ColorShader::setViewMatrix(&aViewMatrix);
 
-	TextureShader::setProjectionMatrix(&aProjection2DMatrix);
-	ColorShader::setProjectionMatrix(&aProjection2DMatrix);
+	//TextureShader::setProjectionMatrix(&aProjection2DMatrix);
+	//ColorShader::setProjectionMatrix(&aProjection2DMatrix);
 
-	TextureShader::setWorldMatrix(&aWorldMatrix);
-	ColorShader::setWorldMatrix(&aWorldMatrix);
+	//TextureShader::setWorldMatrix(&aWorldMatrix);
+	//ColorShader::setWorldMatrix(&aWorldMatrix);
 
 	return S_OK;
 }

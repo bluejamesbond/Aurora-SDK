@@ -28,6 +28,7 @@ ColorShader::~ColorShader()
 	DESTROY(aWorldMatrixPtr);
 	DESTROY(aViewMatrixPtr);
 	DESTROY(aProjectionMatrixPtr);
+	D3DDESTROY(aColorEffect);
 }
 
 ID3D10Effect ** ColorShader::getEffect()

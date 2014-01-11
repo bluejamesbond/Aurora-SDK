@@ -1,18 +1,23 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: color.fx
-////////////////////////////////////////////////////////////////////////////////
+//+-----------------------------------------------------------------------------
+//
+//  Shader:  
+//      COLOR.fx
+//
+//  Synopsis:
+//      Texture container class.
+//
+//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// GLOBAL
+//------------------------------------------------------------------------------
+matrix worldMatrix; // unused
+matrix viewMatrix;  // unused
+matrix projectionMatrix; // unused
 
-/////////////
-// GLOBALS //
-/////////////
-matrix worldMatrix;
-matrix viewMatrix;
-matrix projectionMatrix;
-
-//////////////
-// TYPEDEFS //
-//////////////
+//------------------------------------------------------------------------------
+// STRUCTS
+//------------------------------------------------------------------------------
 struct ColorVertex
 {
     float4 position : POSITION;
@@ -25,41 +30,59 @@ struct ColorPixel
     float4 color : COLOR;
 };
 
+// UNUSED
+struct QuadFillVertex
+{
+	float4 position : POSITION0;       // [left, top, right, bottom]
+	float4 options : POSITION1;        // [reserved, reserved, z, opacity]
+	uint4  colors : UINT4_0;		   // [leftColor, topColor, rightColor, bottomColor]
+};
 
-////////////////////////////////////////////////////////////////////////////////
-// Vertex Shader
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+// FUNCTIONS
+//------------------------------------------------------------------------------
+
+//#ARGB to (Rf, Gf, Bf, Af)
+float4 ARGBtoFloat4(uint color)
+{
+	return float4(((color >> 24) & 0xFF) / 255, ((color >> 16) & 0xFF) / 255, ((color >> 8) & 0xFF) / 255, 1.0);
+}
+
+//------------------------------------------------------------------------------
+// VS
+//------------------------------------------------------------------------------
 ColorPixel ColorVertexShader(ColorVertex input)
 {
 	ColorPixel output;
         
-	// Change the position vector to be 4 units for proper matrix calculations.
-    input.position.w = 1.0f;
+	// Force w-buffer to be 1.0
+	input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-    output.position = mul(input.position, worldMatrix);
-    output.position = mul(output.position, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
-    
-	// Store the input color for the pixel shader to use.
+	// Calculate z-buffer manually
+	input.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+    output.position = input.position; 
+
+	// Store the input color for the 
+	// pixel shader to use.
     output.color = input.color;
     
 	return output;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Pixel Shader
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+// PS
+//------------------------------------------------------------------------------
 float4 ColorPixelShader(ColorPixel input) : SV_Target
 {
     return input.color;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Technique
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+// TECHNIQUE
+//------------------------------------------------------------------------------
 technique10 ColorTechnique
 {
     pass pass0

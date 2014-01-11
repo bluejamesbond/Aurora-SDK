@@ -57,7 +57,7 @@ void QuadFactory::renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 
 float QuadFactory::pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
 {
-	return xPixels / xPixelDimension * 2 - 1;
+	return xPixels / (xPixelDimension / 2) - 1;
 }
 
 float QuadFactory::pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
@@ -325,8 +325,11 @@ bool QuadFactory::updateVertexBuffer(QuadData<ColorVertex, 6> * xQuadData, Rect 
 	float rectHeight = xRect->aHeight;
 
 	if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
-	
-	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
+
+	float winWidth = aWindowDims->aWidth;
+	float winHeight = aWindowDims->aHeight;
+
+	float calcLeft, calcTop, calcRight, calcBottom, 
 		left, right, top, bottom, depth = aDepth;
 
 	ColorVertex * vertices = xQuadData->aVertices;
@@ -337,14 +340,11 @@ bool QuadFactory::updateVertexBuffer(QuadData<ColorVertex, 6> * xQuadData, Rect 
 	calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
 	calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
 
-	calcHeight = calcBottom - calcTop;
-	calcWidth = calcRight - calcLeft;
+	left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
+	top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
+	right = pixelsToRelativeDistance(winWidth, constraints.aX + calcRight);
+	bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
 
-	left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
-	right = left + calcWidth;
-	top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
-	bottom = top - calcHeight;
-	
 	Color3D& topLeftColor = xPaint->aStart;
 	Color3D& topRightColor = xPaint->aStart;
 	Color3D& bottomLeftColor = xPaint->aEnd;
