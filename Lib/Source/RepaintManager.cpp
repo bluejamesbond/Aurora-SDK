@@ -3,6 +3,7 @@
 #include "../../include/RepaintManager.h"
 #include "../../include/Component.h"
 #include "../../include/Graphics.h"
+#include "../../include/AbstractFrame.h"
 
 using namespace A2D;
 
@@ -42,6 +43,8 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 
 HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 {
+	// Call eventDepthTracker also.
+	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;

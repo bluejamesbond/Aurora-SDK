@@ -470,22 +470,6 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 }
 
-//bool AbstractEventQueue::isInvalidLocation(POINT xPoint, OrderedList<Rect*> * xInvalidLocs)
-//{
-//	Rect * loc;
-//	OrderedList<Rect*>::Node<Rect*> * node = xInvalidLocs->_end();
-//	while (node)
-//	{
-//		loc = node->value;
-//		if (xPoint.x >= loc->aX && xPoint.x <= loc->aX + loc->aWidth &&
-//			xPoint.y >= loc->aY && xPoint.y <= loc->aY + loc->aHeight)
-//		{
-//			return true;
-//		}
-//		node = node->left;
-//	}
-//	return false;
-//}
 
 HRESULT AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 {
@@ -523,4 +507,57 @@ void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
 	xEvent->setOldState(win->aCurrentState);
 	win->processWindowEvent(xEvent);
 	win->aCurrentState = xEvent->getID();
+}
+
+void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
+{
+	//OrderedList<OrderedList<EventSource*>*>::Node<OrderedList<EventSource*>*> * node = aEventSources._end();
+
+
+	// Screw checking if there's a duplicate
+	// Check if there's a listener first, then add.
+
+	if (!hasListener(xSource)) return; // Source has no listener, so we do not add to the list.
+
+	OrderedList<EventSource*> * peerEventSources;
+
+	int maxZ = aEventSources.size() - 1;
+	int neededZ = INT(xZ);
+
+	if (maxZ <= neededZ)
+	{
+		while (maxZ <= neededZ)
+		{
+			aEventSources.push_back(peerEventSources = new OrderedList<EventSource*>, NULL);
+			maxZ += 1;
+		}
+
+		peerEventSources->push_front(xSource, &xSource->aRemoveTicket);
+	}
+	else
+	{
+		aEventSources.get(neededZ)->push_front(xSource, &xSource->aRemoveTicket);
+	}
+
+	return ;
+
+}
+
+bool AbstractEventQueue::hasListener(EventSource * xSource)
+{
+	int id = A2D_LISTENER_ACTION;
+	if (xSource->findListener(id)) return true;
+
+	id = A2D_LISTENER_FOCUS;
+	if (xSource->findListener(id)) return true;
+
+	id = A2D_LISTENER_MOUSE;
+	if (xSource->findListener(id)) return true;
+
+	id = A2D_LISTENER_MOUSEMOTION;
+	if (xSource->findListener(id)) return true;
+
+	id = A2D_LISTENER_WINDOW;
+	if (xSource->findListener(id)) return true;
+	else return false;
 }

@@ -25,10 +25,10 @@
 #include "Rect.h"
 #include "Color.h"
 #include "Common.h"
-#include "AbstractEventQueue.h"
-#include "EventSource.h"
 
+#include "AbstractEventQueue.h"
 #include "WindowListener.h"
+#include "EventSource.h"
 
 namespace A2D {
 

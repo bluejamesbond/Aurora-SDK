@@ -47,6 +47,7 @@ namespace A2D {
 	class ActionEvent;
 	class MouseMotionListener;
 	class WindowListener;
+	class AbstractEventQueue;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -67,6 +68,8 @@ namespace A2D {
 
 		virtual Rect *			getEventRegion() = 0;
 
+		friend					AbstractEventQueue;
+
 	protected:
 
 		EventSource();
@@ -75,11 +78,10 @@ namespace A2D {
 		
 		AbstractListener 	 *	findListener(const int xListenerID);
 		HRESULT					fireListener(AbstractEvent * xEvent, int xListenerID);
-
 		virtual HRESULT			addListener(AbstractListener * xListener); // slow 
 		virtual HRESULT			removeListener(AbstractListener * xListener); // slow
 
-		void						*	aRemoveTicket;
+		void				 *	aRemoveTicket;
 	private:
 
 		OrderedList<AbstractListener *> aListenerList;

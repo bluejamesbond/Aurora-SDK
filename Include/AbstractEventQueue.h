@@ -116,6 +116,7 @@ namespace A2D{
 		void							processWindowEvent(WindowEvent * xEvent);
 		void							processMouseMotionEvent(MouseEvent * xEvent);
 
+		void							addEventDepthTracker(EventSource * xSource, int xZ);
 	private:
 
 
@@ -129,9 +130,13 @@ namespace A2D{
 		EventSource					*	aLastSource = 0;
 		Rect						*	aLastVisibleRegion = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
+		OrderedList<OrderedList<EventSource*>*> aEventSources;
 
 		bool							aMousePressed = false;
 
+
+
+		bool							hasListener(EventSource * xSource);
 		OrderedList<EventSource *>		aEventSourcesList;
 
 	protected:

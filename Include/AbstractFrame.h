@@ -31,8 +31,8 @@
 #include "MatrixFactory.h"
 #include "AbstractWindow.h"
 #include "GXSettings.h"
-#include "RepaintManager.h"
 #include "Rect.h"
+#include "RepaintManager.h"
 
 namespace A2D {
 	
@@ -64,6 +64,7 @@ namespace A2D {
 
 		AbstractFrame();
 		~AbstractFrame();
+
 
 	private:
 

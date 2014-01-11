@@ -2,6 +2,7 @@
 #include "../../include/ExtLibs.h"
 #include "../../include/EventSource.h"
 #include "../../Include/WindowListener.h"
+#include "../../Include/AbstractEventQueue.h"
 
 
 using namespace A2D;

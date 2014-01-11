@@ -22,9 +22,7 @@
 
 #include "OrderedList.h"
 #include "UnorderedList.h"
-#include "AbstractWindow.h"
 #include "BackBuffer.h"
-
 
 namespace A2D {
 
@@ -35,6 +33,8 @@ namespace A2D {
 	class Abstract;
 	class Graphics;
 	class Component;
+	class Window;
+	class AbstractFrame;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION

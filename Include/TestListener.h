@@ -1,0 +1,97 @@
+////////////////////////////////////////////////////////////////////////////////
+// GAURDS
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef __TESTLISTENER_H__
+#define __TESTLISTENER_H__
+
+//+-----------------------------------------------------------------------------
+//
+//  Class: 
+//      TESTLISTENER
+//
+//  Synopsis:
+//      Listener class for in keyboard Test events.
+//
+//------------------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE
+////////////////////////////////////////////////////////////////////////////////
+
+#include "ExtLibs.h"
+#include "TestEvent.h"
+#include "AbstractListener.h"
+//#include "Component.h"
+
+using namespace std;
+
+namespace A2D {
+
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
+
+	class AbstractListener;
+	class TestEvent;
+	class Component;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DEFINE
+	////////////////////////////////////////////////////////////////////////////////
+
+	#define A2D_LISTENER_TEST			0x6000
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
+
+	class TestListener : public AbstractListener
+	{
+	public:
+		TestListener();
+		TestListener(string xString);
+		virtual ~TestListener();
+
+
+		void							notify(TestEvent * xEvent);
+
+		virtual void					TestGained(TestEvent * xEvent);
+		virtual void					TestLost(TestEvent * xEvent);
+
+
+		void							print() const;
+
+	public:
+
+
+	protected:
+		virtual void					notify(AbstractEvent * xEvent);
+
+	private:
+
+		void							setTest(bool xTest);
+
+		TestListener(const TestListener&);
+		TestListener& operator()(const TestListener&);
+
+		string							aName;
+
+	public:
+
+		//////////////////////////////////////////////////////////
+		// ABSTRACT IMPLEMENTATION
+		//////////////////////////////////////////////////////////
+
+		virtual HRESULT                 initialize();
+		virtual LPCWSTR                 getClass();
+		virtual LPCWSTR                 toString();
+	};
+
+
+}
+
+
+
+
+#endif

@@ -216,32 +216,6 @@ void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 	invalidate();
 }
 
-HRESULT Component::addListenerThroughChildren(AbstractListener * xListener)
-{
-	HRESULT hr;
-	hr = addListener(xListener);
-	OrderedList<Component*>::Node<Component*> * node = aChildren._end();
-	while (node)
-	{
-		hr = addListener(xListener);
-		node = node->left;
-	}
-	return hr;
-}
-
-HRESULT Component::removeListenerThroughChildren(AbstractListener * xListener)
-{
-	HRESULT hr;
-	hr = removeListener(xListener);
-	OrderedList<Component*>::Node<Component*> * node = aChildren._end();
-	while (node)
-	{
-		hr = removeListener(xListener);
-		node = node->left;
-	}
-	return hr;
-}
-
 // Focus system
 
 HRESULT Component::requestFocus()

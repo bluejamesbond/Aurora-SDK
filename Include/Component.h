@@ -138,9 +138,6 @@ namespace A2D {
         void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
         void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
 														int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
-
-		HRESULT							addListenerThroughChildren(AbstractListener * xListener); // doesnt work as intended
-		HRESULT							removeListenerThroughChildren(AbstractListener * xListener); // doesnt work as intended
         
 		// Components are the only we that can use the focus system
 	public:
