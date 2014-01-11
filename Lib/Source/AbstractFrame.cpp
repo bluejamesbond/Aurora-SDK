@@ -253,7 +253,7 @@ HRESULT AbstractFrame::createResources()
 	aGraphics = new Graphics(aBackBuffer);
 	SAFELY(aGraphics->initialize());
 	
-	aRepaintManager = new RepaintManager(aGraphics, &aRootPane);
+	aRepaintManager = new RepaintManager(aGraphics, &aRootPane, aWindow);
 	SAFELY(aRepaintManager->initialize());
 		
 	return S_OK;

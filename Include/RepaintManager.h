@@ -57,7 +57,7 @@ namespace A2D {
 
 	public:
 
-		RepaintManager(Graphics * xGraphics, Component * xRoot);
+		RepaintManager(Graphics * xGraphics, Component * xRoot, AbstractWindow * xWindow);
 
 		~RepaintManager();
 

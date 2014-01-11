@@ -7,11 +7,12 @@
 
 using namespace A2D;
 
-RepaintManager::RepaintManager(Graphics * xGraphics, Component * xRoot)
+RepaintManager::RepaintManager(Graphics * xGraphics, Component * xRoot, AbstractWindow * xWindow)
 {
 	aGraphics = xGraphics;
 	aBackBuffer = aGraphics->getBackBuffer();
 	aRoot = xRoot;
+	aWindow = xWindow;
 }
 
 RepaintManager::~RepaintManager(){}
