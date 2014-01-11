@@ -44,7 +44,19 @@ namespace A2D {
 
 	public:
 
-		void									setTexture(Texture * xTexture);
+		///////////////////////////////////////////////////////////
+		// INLINE FUNCTION
+		///////////////////////////////////////////////////////////
+
+		inline void QuadExpansionShader::setTexture(Texture * xTexture)
+		{
+			aTexture = xTexture;
+			aHasAlpha = xTexture->hasAlpha();
+
+			// Bind and update the texture.
+			// Also cache the texture while doing so.!!!!
+			aTexturePtr->SetResource(static_cast<ID3D10ShaderResourceView*>(xTexture->getPlatformCompatibleResource()));
+		}
 
 	protected:
 
