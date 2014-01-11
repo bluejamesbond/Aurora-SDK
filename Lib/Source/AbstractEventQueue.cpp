@@ -520,6 +520,7 @@ void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
 	if (!hasListener(xSource)) return; // Source has no listener, so we do not add to the list.
 
 	OrderedList<EventSource*> * peerEventSources;
+	OrderedList<EventSource*>::Node<EventSource*> * node;
 
 	int maxZ = aEventSources.size() - 1;
 	int neededZ = INT(xZ);
@@ -531,11 +532,32 @@ void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
 			aEventSources.push_back(peerEventSources = new OrderedList<EventSource*>, NULL);
 			maxZ += 1;
 		}
-
+		// check duplicate (aka same region)
+		node = peerEventSources->_end();
+		while (node)
+		{
+			if (node->value == xSource) // need to replace, so remove first
+			{
+				peerEventSources->remove_request(&node->value->aRemoveTicket);
+				break;
+			}
+			node = node->left;
+		}
 		peerEventSources->push_front(xSource, &xSource->aRemoveTicket);
 	}
 	else
 	{
+		// check duplicate (aka same region)
+		node = peerEventSources->_end();
+		while (node)
+		{
+			if (node->value == xSource) // need to replace, so remove first
+			{
+				peerEventSources->remove_request(&node->value->aRemoveTicket);
+				break;
+			}
+			node = node->left;
+		}
 		aEventSources.get(neededZ)->push_front(xSource, &xSource->aRemoveTicket);
 	}
 

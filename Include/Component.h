@@ -43,6 +43,7 @@ namespace A2D {
 	class Graphics;
 	class ComponentEventSource;
 	struct ImageProperties;
+	class RepaintManager;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
@@ -145,6 +146,13 @@ namespace A2D {
 		HRESULT							requestFocus();
 		void							setFocusable(bool xFocusable);
 		Rect						*	getEventRegion();
+
+		HRESULT							addMouseListener(MouseListener * xListener);
+		HRESULT							addMouseMotionListener(MouseMotionListener * xListener);
+		HRESULT							addFocusListener(FocusListener * xListener);
+		HRESULT							addActionListener(ActionListener * xListener);
+
+		RepaintManager				*	aRepaintManager = 0;
 
 	private:
 

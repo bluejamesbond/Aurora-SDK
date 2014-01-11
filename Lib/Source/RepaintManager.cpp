@@ -25,6 +25,7 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 		return E_FAIL;
 	}
 
+	xChild.aRepaintManager = this;
 	xChild._setParent(xParent);
 	xChild._setDepth(--depth);
 	xChild._setGraphics(xParent.getGraphics());

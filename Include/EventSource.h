@@ -68,6 +68,8 @@ namespace A2D {
 
 		virtual Rect *			getEventRegion() = 0;
 
+		bool					operator==(EventSource& xSource);
+
 		friend					AbstractEventQueue;
 
 	protected:

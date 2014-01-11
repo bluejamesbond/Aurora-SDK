@@ -44,13 +44,14 @@ namespace A2D {
 		
 		HRESULT					processFocusEvent(FocusEvent * xEvent);
 
-		HRESULT					addFocusListener(FocusListener * xListener);
+		virtual HRESULT 		addFocusListener(FocusListener * xListener);
 
 		Rect				*	getEventRegion() = 0;
 
 	protected:
 
 		ComponentEventSource();
+		
 
 	public:
 

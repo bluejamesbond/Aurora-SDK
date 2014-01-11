@@ -126,6 +126,17 @@ HRESULT EventSource::addMouseMotionListener(MouseMotionListener * xListener)
 	return addListener(xListener);
 }
 
+bool EventSource::operator==(EventSource& xSource)
+{
+	Rect * thisRegion = getEventRegion();
+	Rect * thatRegion = xSource.getEventRegion();
+	if (thisRegion->aX != thatRegion->aX) return false;
+	if (thisRegion->aY != thatRegion->aY) return false;
+	if (thisRegion->aWidth != thatRegion->aWidth) return false;
+	if (thisRegion->aHeight != thatRegion->aHeight) return false;
+	return true;
+}
+
 HRESULT EventSource::addListener(AbstractListener * xListener)
 {
 	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();

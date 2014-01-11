@@ -240,6 +240,46 @@ Rect * Component::getEventRegion()
 	return &aVisibleRegion;
 }
 
+HRESULT Component::addMouseListener(MouseListener * xListener)
+{
+	if (aRepaintManager != NULL)
+	{
+		// Add depth manually
+		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+	}
+	return ComponentEventSource::addMouseListener(xListener);
+}
+
+HRESULT Component::addMouseMotionListener(MouseMotionListener * xListener)
+{
+	if (aRepaintManager != NULL)
+	{
+		// Add depth manually
+		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+	}
+	return ComponentEventSource::addMouseMotionListener(xListener);
+}
+
+HRESULT Component::addFocusListener(FocusListener * xListener)
+{
+	if (aRepaintManager != NULL)
+	{
+		// Add depth manually
+		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+	}
+	return ComponentEventSource::addFocusListener(xListener);
+}
+
+HRESULT Component::addActionListener(ActionListener * xListener)
+{
+	if (aRepaintManager != NULL)
+	{
+		// Add depth manually
+		Toolkit::getSystemEventQueue(aFrame->id())->addEventDepthTracker(this, aDepth);
+	}
+	return ComponentEventSource::addActionListener(xListener);
+}
+
 LPCWSTR Component::getClass()
 {
 	return L"Component";
