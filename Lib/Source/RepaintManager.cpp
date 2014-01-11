@@ -12,6 +12,7 @@ RepaintManager::RepaintManager(Graphics * xGraphics, Component * xRoot, Abstract
 	aGraphics = xGraphics;
 	aBackBuffer = aGraphics->getBackBuffer();
 	aRoot = xRoot;
+	//aRoot->aRepaintManager = this;
 	aWindow = xWindow;
 }
 
@@ -26,7 +27,7 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 		return E_FAIL;
 	}
 
-	xChild.aRepaintManager = this;
+	
 	xChild._setParent(xParent);
 	xChild._setDepth(--depth);
 	xChild._setGraphics(xParent.getGraphics());
@@ -46,6 +47,7 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 HRESULT RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 {
 	// Call eventDepthTracker also.
+	xComponent.aRepaintManager = this;
 	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
 	UnorderedList<Component*> * peerComponents;
 

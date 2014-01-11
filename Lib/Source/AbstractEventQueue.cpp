@@ -203,7 +203,6 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	componentLocations = aComponentEventSources;
 
 	int size = componentLocations.size();
-	if (!size) return;
 
 	Rect * eventRegion;
 	HRESULT isConsumedMouse;
@@ -529,10 +528,10 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 
 	if (maxZ <= neededZ)
 	{
-		while (maxZ <= neededZ)
+		while (maxZ++ <= neededZ)
 		{
 			aComponentEventSources.push_back(peerEventSources = new OrderedList<Component*>, NULL);
-			maxZ += 1;
+
 		}
 		// No need to check duplicate (aka same region) because new depth
 		peerEventSources->push_front(xSource, &xSource->aRemoveTicket);
@@ -575,6 +574,36 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 	}
 
 	return ;
+
+}
+
+void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
+{
+	int maxZ = aComponentEventSources.size();
+	int neededZ = INT(xZ);
+
+	if (maxZ <= neededZ) return; // ERROR HERE
+
+	OrderedList<Component*> * peerEventSources = aComponentEventSources.get(neededZ);
+	OrderedList<Component*>::Node<Component*> * node = peerEventSources->_end();
+	Component * comp;
+	while (node)
+	{
+		comp = node->value;
+		if (comp == xSource) // If found, we remove and connect node pointers.
+		{
+			Component * prev = comp->aPrevCompListener;
+			Component * next = comp->aNextCompListener;
+
+			if (prev) prev->aNextCompListener = next;
+			if (next) next->aPrevCompListener = prev;
+			peerEventSources->remove_request(&comp->aRemoveTicket);
+			return;
+		}
+		node = node->left;
+	}
+
+	return; // Component didn't have a listener in the first place.
 
 }
 

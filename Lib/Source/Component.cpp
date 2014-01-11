@@ -245,8 +245,11 @@ HRESULT Component::addMouseListener(MouseListener * xListener)
 	if (aRepaintManager != NULL)
 	{
 		// Add depth manually
+		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id());
+
 		HRESULT hr = ComponentEventSource::addMouseListener(xListener);
-		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		if (xListener != NULL) eQ->addEventDepthTracker(this, abs(aDepth));
+		else eQ->removeEventDepthTracker(this, abs(aDepth - 1));
 		return hr;
 	}
 	return ComponentEventSource::addMouseListener(xListener);
@@ -258,7 +261,7 @@ HRESULT Component::addMouseMotionListener(MouseMotionListener * xListener)
 	{
 		// Add depth manually
 		HRESULT hr = ComponentEventSource::addMouseMotionListener(xListener);
-		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		if (xListener != NULL) Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
 		return hr;
 	}
 	return ComponentEventSource::addMouseMotionListener(xListener);
@@ -270,7 +273,7 @@ HRESULT Component::addFocusListener(FocusListener * xListener)
 	{
 		// Add depth manually
 		HRESULT hr = ComponentEventSource::addFocusListener(xListener);
-		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		if (xListener != NULL) Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
 		return hr;
 	}
 	return ComponentEventSource::addFocusListener(xListener);
@@ -282,7 +285,7 @@ HRESULT Component::addActionListener(ActionListener * xListener)
 	{
 		// Add depth manually
 		HRESULT hr = ComponentEventSource::addActionListener(xListener);
-		Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+		if (xListener != NULL) Toolkit::getSystemEventQueue(aRepaintManager->aWindow->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
 		return hr;
 	}
 	return ComponentEventSource::addActionListener(xListener);
