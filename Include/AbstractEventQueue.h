@@ -28,6 +28,7 @@
 #include "Runnable.h"
 #include "Rect.h"
 
+#include "ComponentEventSource.h"
 #include "ExtLibs.h"
 
 #include "MouseEvent.h"
@@ -116,7 +117,7 @@ namespace A2D{
 		void							processWindowEvent(WindowEvent * xEvent);
 		void							processMouseMotionEvent(MouseEvent * xEvent);
 
-		void							addEventDepthTracker(EventSource * xSource, int xZ);
+		void							addEventDepthTracker(Component * xSource, int xZ);
 	private:
 
 
@@ -130,7 +131,7 @@ namespace A2D{
 		EventSource					*	aLastSource = 0;
 		Rect						*	aLastVisibleRegion = 0;
 		//OrderedList<UnorderedList<Component*>*> aComponentLocations;
-		OrderedList<OrderedList<EventSource*>*> aEventSources;
+		OrderedList<OrderedList<Component*>*> aComponentEventSources;
 
 		bool							aMousePressed = false;
 

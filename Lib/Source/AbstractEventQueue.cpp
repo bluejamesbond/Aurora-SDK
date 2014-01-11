@@ -199,8 +199,8 @@ bool AbstractEventQueue::dispatchNextEvent()
 void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 {
 	clock_t tStart = clock();
-	OrderedList<UnorderedList<Component*>*> componentLocations;
-	componentLocations = aFrame->getRepaintManager()->aOpaqueDepthTracker;
+	OrderedList<OrderedList<Component*>*> componentLocations;
+	componentLocations = aComponentEventSources;
 
 	int size = componentLocations.size();
 	if (!size) return;
@@ -213,13 +213,13 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	bool noComponent = false; 
 	POINT point;
 	int ID;
-	UnorderedList<Component*> * comps;
+	OrderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
 	Component * comp;
 	int numPanels = 0;
 	
 	// Prepare for event handling.
-	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * node = componentLocations._end();
+	OrderedList<OrderedList<Component*>*>::Node<OrderedList<Component*>*> * node = componentLocations._end();
 	point = xEvent->getLocation();
 	ID = xEvent->getID();
 
@@ -338,8 +338,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 {
-	OrderedList<UnorderedList<Component*>*> componentLocations;
-	componentLocations = aFrame->getRepaintManager()->aOpaqueDepthTracker;
+	OrderedList<OrderedList<Component*>*> componentLocations;
+	componentLocations = aComponentEventSources;
 
 	int size = componentLocations.size();
 	if (!size) return;
@@ -354,14 +354,14 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	int ID;
 	bool isValidRegion;
 
-	UnorderedList<Component*> * comps;
+	OrderedList<Component*> * comps;
 	EventSource * source;
 	
 	point = xEvent->getLocation();
 	ID = xEvent->getID();
 
 	// Check components.
-	OrderedList<UnorderedList<Component*>*>::Node<UnorderedList<Component*>*> * nodeC = componentLocations._end();
+	OrderedList<OrderedList<Component*>*>::Node<OrderedList<Component*>*> * nodeC = componentLocations._end();
 
 	while (nodeC)
 	{
@@ -509,7 +509,7 @@ void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
 	win->aCurrentState = xEvent->getID();
 }
 
-void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
+void AbstractEventQueue::addEventDepthTracker(Component * xSource, int xZ)
 {
 	//OrderedList<OrderedList<EventSource*>*>::Node<OrderedList<EventSource*>*> * node = aEventSources._end();
 
@@ -519,17 +519,17 @@ void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
 
 	if (!hasListener(xSource)) return; // Source has no listener, so we do not add to the list.
 
-	OrderedList<EventSource*> * peerEventSources;
-	OrderedList<EventSource*>::Node<EventSource*> * node;
+	OrderedList<Component*> * peerEventSources;
+	OrderedList<Component*>::Node<Component*> * node;
 
-	int maxZ = aEventSources.size() - 1;
+	int maxZ = aComponentEventSources.size() - 1;
 	int neededZ = INT(xZ);
 
 	if (maxZ <= neededZ)
 	{
 		while (maxZ <= neededZ)
 		{
-			aEventSources.push_back(peerEventSources = new OrderedList<EventSource*>, NULL);
+			aComponentEventSources.push_back(peerEventSources = new OrderedList<Component*>, NULL);
 			maxZ += 1;
 		}
 		// check duplicate (aka same region)
@@ -548,6 +548,7 @@ void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
 	else
 	{
 		// check duplicate (aka same region)
+		peerEventSources = aComponentEventSources.get(neededZ);
 		node = peerEventSources->_end();
 		while (node)
 		{
@@ -558,7 +559,7 @@ void AbstractEventQueue::addEventDepthTracker(EventSource * xSource, int xZ)
 			}
 			node = node->left;
 		}
-		aEventSources.get(neededZ)->push_front(xSource, &xSource->aRemoveTicket);
+		peerEventSources->push_front(xSource, &xSource->aRemoveTicket);
 	}
 
 	return ;
