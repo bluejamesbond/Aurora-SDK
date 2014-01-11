@@ -216,7 +216,6 @@ HRESULT AbstractFrame::initialize()
 {
 	aId = ++aClassInstances;
 
-	SAFELY(aRootPane.initialize());
 
 	SAFELY(createPlatformCompatibleEventQueue(&aEventQueue));
 	SAFELY(aEventQueue->initialize());	
@@ -226,10 +225,6 @@ HRESULT AbstractFrame::initialize()
 	return S_OK;
 }
 
-Panel& AbstractFrame::getRootPane()
-{
-	return aRootPane;
-}
 
 HRESULT AbstractFrame::createResources()
 {	
@@ -241,7 +236,7 @@ HRESULT AbstractFrame::createResources()
 
 	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-	aRepaintManager = new RepaintManager(aGraphics, &aRootPane);
+    aRepaintManager = new RepaintManager(aGraphics, NULL);
 	SAFELY(aRepaintManager->initialize());
 
 	aWindowDims = aWindow->getSizeAsPtr();

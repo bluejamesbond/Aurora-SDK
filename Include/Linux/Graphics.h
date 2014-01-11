@@ -62,11 +62,11 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
     class Graphics// : public Abstract
-	{
-	public:
+    {
+    public:
 
-		Graphics(BackBuffer * xBackBuffer);
-		~Graphics();
+        Graphics(BackBuffer * xBackBuffer);
+        ~Graphics();
 
 
         GLuint                          programID;
@@ -79,30 +79,30 @@ namespace A2D {
 
 //    private:
 /*
-		float                *			aViewMatrix;
-		float                *			aWorldMatrix;
-		float                *			aProjection2DMatrix;
-		float                *			aProjection3DMatrix;
+        float                *			aViewMatrix;
+        float                *			aWorldMatrix;
+        float                *			aProjection2DMatrix;
+        float                *			aProjection3DMatrix;
 */
         glm::mat4                       MVP;
-		BackBuffer			 *			aBackBuffer;
+        BackBuffer			 *			aBackBuffer;
         AbstractWindow              *          aWindow;
 /*
         QuadFactory			 *			aQuadFactory;
-		TextureBuffer        *			aTextureBuffer;
-		TextureBuffer        *			aBlurBuffer;
+        TextureBuffer        *			aTextureBuffer;
+        TextureBuffer        *			aBlurBuffer;
 
-		// Shaders
-		AbstractShader		 *			aColorShader;
-		AbstractTextureShader*			aColoredTextureShader;
-		AbstractTextureShader*			aTextureShader;
+        // Shaders
+        AbstractShader		 *			aColorShader;
+        AbstractTextureShader*			aColoredTextureShader;
+        AbstractTextureShader*			aTextureShader;
 
-	public:
+    public:
 
-		Dims*							getDrawableDimensions();
-		BackBuffer*						getBackBuffer();
-		void							validate();
-    */    void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
+        Dims*							getDrawableDimensions();
+        BackBuffer*						getBackBuffer();*/
+        void							validate();
+       void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
         void							setClip(Rect * aRect, float xZ);/*
 */
         BackBuffer           *          getBackBuffer();
@@ -110,13 +110,13 @@ namespace A2D {
         void                            setBackBuffer(BackBuffer* xBackBuffer);
 //        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
         void                            drawImage();
-	public:
+    public:
 
-		virtual HRESULT                 initialize();
-		virtual LPCWSTR                 getClass();
-		virtual LPCWSTR                 toString();
+        virtual HRESULT                 initialize();
+        virtual LPCWSTR                 getClass();
+        virtual LPCWSTR                 toString();
 
-	};
+    };
 }
 
 #endif

@@ -7,8 +7,7 @@ using namespace A2D;
 
 RepaintManager::RepaintManager(void * xGraphics, Component * xRoot)
 {
-	aGraphics = xGraphics;
-	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
+    aGraphics = xGraphics;
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
 }
@@ -21,9 +20,6 @@ HRESULT RepaintManager::initialize()
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
 
-	root.setDepth(0.0f);
-	root.setGraphics(*static_cast<Graphics*>(aGraphics));
-
 	addToDepthTracker(root, 0.0f);
 
 	return S_OK;
@@ -31,34 +27,25 @@ HRESULT RepaintManager::initialize()
 
 void RepaintManager::validate()
 {
-	aBackBuffer->validate();
-
-	aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
-
-	static_cast<Graphics*>(aGraphics)->validate();
+    aBackBuffer->validate();
 }
 
 RepaintManager::~RepaintManager(){}
 
 HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 {
-	float depth = xParent.getDepth();
+    float depth = 0.0f;
 
-	if (depth == FLT_MIN)
+    if (depth == 0.0)
 	{
 		return E_FAIL;
 	}
 
 	static float val = -0.01f;
 
-	xChild.setParent(xParent);
-	xChild.setDepth(--depth);
-	xChild.setGraphics(xParent.getGraphics());
 	
 	if (addToDepthTracker(xChild, abs(depth)))
-	{
-		xParent.add(xChild);
-		xParent.revalidate(); // force validation asap
+    {
 
 		return S_OK;
 	}
@@ -116,7 +103,7 @@ void RepaintManager::update()
 			{
 				if ((component = containers->get(i)) != NULL)
 				{
-					component->update();
+                    //component->update();
 				}
 			}
 		}
@@ -151,7 +138,7 @@ void RepaintManager::update_forward()
 			{
 				if ((component = containers->get(i)) != NULL)
 				{
-					component->update();
+                    //component->update();
 				}
 			}
 		}

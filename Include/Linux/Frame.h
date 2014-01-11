@@ -44,7 +44,7 @@ namespace A2D {
 
 	protected:
 
-        virtual void		createPlatformCompatibleWindow(AbstractWindow ** xWindow);
+        virtual HRESULT		createPlatformCompatibleWindow(AbstractWindow ** xWindow);
 
     };
 }

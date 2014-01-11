@@ -1,6 +1,6 @@
 
 #include "../../../Include/Core/ExtLibs.h"
-#include "../../../Include/Core/RootPane.h"
+#include "../../../Include/Core/ImageProperties.h"
 
 using namespace A2D;
 

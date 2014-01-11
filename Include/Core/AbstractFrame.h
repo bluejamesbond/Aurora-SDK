@@ -20,7 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "Panel.h"
+#include "Component.h"
 #include "CameraProperties.h"
 #include "AbstractBackBuffer.h"
 #include "AbstractWindow.h"
@@ -34,20 +34,16 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class	Abstract;
-	class	Container;
-	struct	CameraProperties;
-	class	MatrixFactory;
 	class	BackBuffer;
-	class	RootPane;
 	class	Graphics;
+    class   Component;
 	
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
 	class AbstractFrame : public Runnable
-	{
+    {
 
 	public:
 
@@ -62,8 +58,7 @@ namespace A2D {
 		void				   * 		aGraphics;
 
 		Dims				   *		aWindowDims;
-		RepaintManager		   *		aRepaintManager;
-		Panel                			aRootPane;
+        RepaintManager		   *		aRepaintManager;
 		GXSettings			  			aGXSettings;
 
 		int								aId;
@@ -73,7 +68,6 @@ namespace A2D {
 
 	public:
 
-		Panel&               			getRootPane();
 		HRESULT                         createResources();
 		void                            update();
 		void							dispose();

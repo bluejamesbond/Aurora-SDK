@@ -58,7 +58,8 @@ namespace A2D {
         GLXContext                      hRC;
         GLXContext                      render_context;
         Dims                            aCurrentSize;
-
+        Display      *                   aDis;
+        Window                           aWin;
 	public:
 
         XWindow(AbstractFrame * xFrame);

@@ -4,4 +4,4 @@
 
 using namespace A2D;
 
-float Styles::AUTO = FLT_MIN;
+float Styles::AUTO = 0;

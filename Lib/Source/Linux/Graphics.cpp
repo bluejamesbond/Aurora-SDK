@@ -30,6 +30,8 @@ BackBuffer * Graphics::getBackBuffer()
 	return aBackBuffer;
 }
 
+void Graphics::validate(){}
+
 void Graphics::setBackBuffer(BackBuffer * xBackBuffer)
 {
     aBackBuffer = xBackBuffer;
@@ -109,7 +111,7 @@ void Graphics::drawImage()
 
             // Swap buffers
          //   glfwSwapBuffers(window);
-            glXSwapBuffers( aWindow->aDis, aWindow->aWin);
+            glXSwapBuffers( NULL, NULL);
 
         } // Check if the ESC key was pressed or the window was closed
         while( true );

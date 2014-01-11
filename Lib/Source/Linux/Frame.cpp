@@ -1,6 +1,6 @@
 #include "../../../Include/Linux/ExtLibs.h"
 #include "../../../Include/Linux/Frame.h"
-//#include "../../../Include/Windows/XWindow.h"
+#include "../../../Include/Linux/XWindow.h"
 
 using namespace A2D;
 
@@ -16,8 +16,10 @@ Frame::~Frame(){}
 // ABSTRACTFRAME
 ////////////////////////////////////////////////////////////////////////////////
 
-void Frame::createPlatformCompatibleWindow(AbstractWindow ** xWindow)
+HRESULT Frame::createPlatformCompatibleWindow(AbstractWindow ** xWindow)
 {
     *xWindow = new XWindow(this);
     ((XWindow*)xWindow)->createCompatibleWindow(true);
+
+    return 1;
 }

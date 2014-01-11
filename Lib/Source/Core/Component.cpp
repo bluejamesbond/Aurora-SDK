@@ -20,7 +20,7 @@ void Component::setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPosi
 	aOptBackgroundProps.aOptRepeat = xOptBackgroundRepeat;
 
 	Paint::from(aOptBackgroundPaint, xOptBackgroundPaint);
-};
+}
 
 void Component::paintComponentBorder(){}
 
@@ -254,7 +254,7 @@ void Component::paintComponent()
 	}
 	else
 	{
-		graphics.fillRect(&aPipeline, aOptBackgroundRegion, aOptBackgroundPaint);
+        //graphics.fillRect(&aPipeline, aOptBackgroundRegion, aOptBackgroundPaint);
 	}
 }
 
@@ -267,13 +267,13 @@ void Component::update()
 		validate();
 	}
 
-	graphics.setClip(&aVisibleRegion, aDepth);
+//	graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the current component
 	paintComponent();
 
 	// Force region
-	graphics.setClip(&aVisibleRegion, aDepth);
+    //graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the currect component border
 	paintComponentBorder();
