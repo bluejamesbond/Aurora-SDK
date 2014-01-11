@@ -25,6 +25,7 @@
 #include "UnorderedList.h"
 #include "AbstractWindow.h"
 #include "AbstractBackBuffer.h"
+#include "Component.h"
 #include GRAPHICS__
 
 namespace A2D {
@@ -62,8 +63,13 @@ namespace A2D {
 
 	public:
 
-		virtual void								  validate();
 		virtual HRESULT								  initialize();
+		
+		inline void RepaintManager::validate()
+		{
+			aBackBuffer->validate();
+			aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
+		}
 
 	};
 }

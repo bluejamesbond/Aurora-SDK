@@ -34,7 +34,7 @@ HRESULT BackBuffer::initialize()
 	D3D10_RASTERIZER_DESC rasterDesc;
 	D3D10_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 	ID3D10Device * device;
-	Dims& windowDims = aWindow->getSize();
+	Dims& windowDims = aWindow->getDrawableRegionAsPtr();
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
 	int videoCardMemory;
@@ -323,7 +323,7 @@ void BackBuffer::setActive()
 void BackBuffer::clear()
 {
 	// Clear the back buffer.
-	aDevice->ClearRenderTargetView(aDXRenderTargetView, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+//	aDevice->ClearRenderTargetView(aDXRenderTargetView, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 
 	// Clear the depth buffer.
 	aDevice->ClearDepthStencilView(aDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
@@ -335,7 +335,7 @@ void BackBuffer::swap()
 	// rendering is complete.
 
 	// Lock to screen refresh rate or present as fast as possible
-	aDXGISwapChain->Present(1, 0);
+	aDXGISwapChain->Present(0, 0);
 }
 
 ID3D10Device ** BackBuffer::getDevice()
@@ -361,7 +361,7 @@ void BackBuffer::validate()
 	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
 	///// CODE SHOULD BE FUNCTIONALIZED /////////////////
 
-	Dims& windowDims = aWindow->getSize();
+	Dims& windowDims = aWindow->getDrawableRegionAsPtr();
 	D3D10_TEXTURE2D_DESC& depthBufferDesc = aDepthBufferDesc; // reuse for performance
 	D3D10_VIEWPORT& viewport = aViewport;
 	ID3D10Texture2D* backBuffer;

@@ -29,15 +29,6 @@ HRESULT RepaintManager::initialize()
 	return S_OK;
 }
 
-void RepaintManager::validate()
-{
-	aBackBuffer->validate();
-
-	aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
-
-	static_cast<Graphics*>(aGraphics)->validate();
-}
-
 RepaintManager::~RepaintManager(){}
 
 HRESULT RepaintManager::add(Component& xParent, Component& xChild)
@@ -48,11 +39,9 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 	{
 		return E_FAIL;
 	}
-
-	static float val = -0.01f;
-
+	
 	xChild.setParent(xParent);
-	xChild.setDepth(--depth);
+	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
 	
 	if (addToDepthTracker(xChild, abs(depth)))

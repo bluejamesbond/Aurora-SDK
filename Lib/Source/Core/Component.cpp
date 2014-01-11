@@ -220,19 +220,6 @@ void Component::setPosition(Styles::Position xPosition)
 	aPosition = xPosition;
 }
 
-void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
-{
-	aOptRegion.aWidth = xWidth;
-	aOptRegion.aHeight = xHeight;
-	aOptRegion.aX = xX;
-	aOptRegion.aY = xY;
-
-	aOptBackgroundRegion.aWidth = xWidth;
-	aOptBackgroundRegion.aHeight = xHeight;
-
-	invalidate();
-}
-
 HRESULT Component::initialize()
 {
 	return S_OK;

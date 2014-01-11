@@ -1,12 +1,21 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: quad.fx
-////////////////////////////////////////////////////////////////////////////////
+//+-----------------------------------------------------------------------------
+//
+//  Shader:  
+//      QUAD.fx
+//
+//  Synopsis:
+//      Texture container class.
+//
+//------------------------------------------------------------------------------
 
-Texture2D shaderTexture;
+//------------------------------------------------------------------------------
+// GLOBAL
+//------------------------------------------------------------------------------
+Texture2D shaderTexture : register(ps_4_0, t[0]) ;
 
-//////////////////
-// BLEND STATE  //
-//////////////////
+//------------------------------------------------------------------------------
+// BLEND STATE
+//------------------------------------------------------------------------------
 //BlendState SrcAlphaBlendingAdd
 //{
 //	BlendEnable[0] = TRUE;
@@ -19,9 +28,9 @@ Texture2D shaderTexture;
 //	RenderTargetWriteMask[0] = 0x0F;
 //};
 
-///////////////////
-// SAMPLE STATES //
-///////////////////
+//------------------------------------------------------------------------------
+// SAMPLER
+//------------------------------------------------------------------------------
 SamplerState SampleType
 {
 	Filter = MIN_MAG_MIP_LINEAR;
@@ -29,9 +38,9 @@ SamplerState SampleType
 	AddressV = Wrap;
 };
 
-//////////////
-// TYPEDEFS //
-//////////////
+//------------------------------------------------------------------------------
+// STRUCTS
+//------------------------------------------------------------------------------
 struct QuadVertex
 {
 	float4 position : POSITION0;
@@ -49,13 +58,9 @@ struct QuadPixel
 	nointerpolation float4 options : FLOAT4; // [texture/color/both, opacity, reserved, reserved]
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// Vertex Shader
-////////////////////////////////////////////////////////////////////////////////
-QuadVertex QuadCollapsedShader(QuadVertex input)
-{
-	return input;
-}
+//------------------------------------------------------------------------------
+// FUNCTIONS
+//------------------------------------------------------------------------------
 
 //#ARGB to (Rf, Gf, Bf, Af)
 float4 ARGBtoFloat4(uint color)
@@ -63,9 +68,17 @@ float4 ARGBtoFloat4(uint color)
 	return float4(((color >> 24) & 0xFF) / 255, ((color >> 16) & 0xFF) / 255, ((color >> 8) & 0xFF) / 255, 1.0);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Geometry Shader
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+// VS
+//------------------------------------------------------------------------------
+QuadVertex QuadCollapsedShader(QuadVertex input)
+{
+	return input;
+}
+
+//------------------------------------------------------------------------------
+// GS
+//------------------------------------------------------------------------------
 [maxvertexcount(24)]
 void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPixel> quadStream)
 {
@@ -97,7 +110,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	borderRightColor = ARGBtoFloat4(input[0].borderColors[2]);
 	borderBottomColor = ARGBtoFloat4(input[0].borderColors[3]);
 
-	z = input[0].options[2];
+	z = (10000000 - input[0].options[2]) / 10000000;
 	opacity = input[0].options[3];
 
 	//**********************************************************************
@@ -131,7 +144,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//**********************************************************************
 	// Borders
 	//**********************************************************************
-	z -= 0.000001f;
+	z -= 0.0000001f;
 	// 0.0 indicates color coordinates
 	// 1.0 indicates texture coordinates
 	// 2.0 indicates texture on backgroundColor
@@ -209,22 +222,21 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	border.position = float4(left, bottom, z, 1);
 	quadStream.Append(border);
 	//top left
-	border.position = float4(left + borderRightWidth, bottom + borderRightWidth, z, 1);
+	border.position = float4(left + borderBottomWidth, bottom + borderBottomWidth, z, 1);
 	quadStream.Append(border);
 	//bottom right
 	border.position = float4(right, bottom, z, 1);
 	quadStream.Append(border);
 	//top right
-	border.position = float4(right - borderRightWidth, bottom + borderRightWidth, z, 1);
+	border.position = float4(right - borderBottomWidth, bottom + borderBottomWidth, z, 1);
 
 	// Reset
 	quadStream.Append(border);
-
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Pixel Shader
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+// PS
+//------------------------------------------------------------------------------
 float4 QuadExpandedShader(QuadPixel input) : SV_Target
 {
 	float isColorTex = input.options[0];
@@ -246,9 +258,9 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Technique
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+// TECHNIQUE
+//------------------------------------------------------------------------------
 technique10 ColorTechnique
 {
 	pass pass0

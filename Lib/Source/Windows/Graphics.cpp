@@ -34,23 +34,6 @@ Dims * Graphics::getDrawableDimensions()
 	return aBackBufferDims;
 }
 
-void Graphics::setClip(Rect * xClip, float xDepth)
-{
-	aQuadFactory->setConstraints(aClip = xClip, xDepth);
-}
-
-void Graphics::validate()
-{
-	GXSettings* settings = aBackBufferSettings;
-	Dims* size = aBackBufferDims;
-
-	// G_SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-	G_SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
-
-	ColorShader::reloadProjectionMatrix();
-	TextureShader::reloadProjectionMatrix();
-}
-
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
 	Texture * texture;
@@ -90,6 +73,10 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
 {
+	Rect * clip = aClip;
+
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+
 	Texture * texture;
 	QuadData<QuadExpansionVertex, 1> * quadData;
 
@@ -123,6 +110,36 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 		aQuadExpansionShader->setTexture(texture);
 		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(QuadExpansionVertex));
 		aQuadExpansionShader->renderShader();
+	}
+}
+
+void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
+{
+	QuadData<ColorVertex, 6> * quadData;
+
+	if (*xPipeline == NULL)
+	{
+		// Intialize the pipeline
+
+		*xPipeline = new Pipeline();
+
+		quadData = new QuadData<ColorVertex, 6>();
+
+		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+
+		(*xPipeline)->aPipelineComps[0] = quadData;
+
+		(*xPipeline)->aLength = 2;
+
+		return;
+	}
+
+	quadData = static_cast<QuadData<ColorVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
+
+	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint))
+	{
+		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
+		aColorShader->renderShader();
 	}
 }
 
@@ -164,51 +181,21 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 //	}
 //}
 
-void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
-{
-	QuadData<ColorVertex, 6> * quadData;
-
-	if (*xPipeline == NULL)
-	{
-		// Intialize the pipeline
-
-		*xPipeline = new Pipeline();
-
-		quadData = new QuadData<ColorVertex, 6>();
-
-		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-		(*xPipeline)->aPipelineComps[0] = quadData;
-
-		(*xPipeline)->aLength = 2;
-
-		return;
-	}
-
-	quadData = static_cast<QuadData<ColorVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
-	
-	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, &xPaint))
-	{
-		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColorVertex));
-		aColorShader->renderShader();
-	}
-}
-
 HRESULT Graphics::initialize()
 {
-	CameraProperties& cameraProperties = aCameraProperties;
+//	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
 	Dims* size = aBackBufferDims;
 	ID3D10Device ** device = aDevice;
 		
-	cameraProperties.aPositionX = 0.0f;
-	cameraProperties.aPositionY = 0.0f;
-	cameraProperties.aPositionZ = -800.0f;
+	//cameraProperties.aPositionX = 0.0f;
+	//cameraProperties.aPositionY = 0.0f;
+	//cameraProperties.aPositionZ = -800.0f;
 
-	SAFELY(DXUtils::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
-	SAFELY(DXUtils::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));
-	SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-	SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
+	//SAFELY(DXUtils::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
+	//SAFELY(DXUtils::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));
+	//SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
+	//SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 
 	aQuadFactory = new QuadFactory(device, aBackBufferDims);
 	SAFELY(aQuadFactory->initialize());
@@ -225,14 +212,14 @@ HRESULT Graphics::initialize()
 	aQuadExpansionShader = new QuadExpansionShader(device);
 	SAFELY(aQuadExpansionShader->initialize());
 
-	TextureShader::setViewMatrix(&aViewMatrix);
-	ColorShader::setViewMatrix(&aViewMatrix);
+	//TextureShader::setViewMatrix(&aViewMatrix);
+	//ColorShader::setViewMatrix(&aViewMatrix);
 
-	TextureShader::setProjectionMatrix(&aProjection2DMatrix);
-	ColorShader::setProjectionMatrix(&aProjection2DMatrix);
+	//TextureShader::setProjectionMatrix(&aProjection2DMatrix);
+	//ColorShader::setProjectionMatrix(&aProjection2DMatrix);
 
-	TextureShader::setWorldMatrix(&aWorldMatrix);
-	ColorShader::setWorldMatrix(&aWorldMatrix);
+	//TextureShader::setWorldMatrix(&aWorldMatrix);
+	//ColorShader::setWorldMatrix(&aWorldMatrix);
 
 	return S_OK;
 }

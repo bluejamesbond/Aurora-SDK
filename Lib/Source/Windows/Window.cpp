@@ -1140,11 +1140,15 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			{
 				frame.update();
 			}
-			else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			else
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				frame.update();
 			}
+			//else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			//{
+			//	TranslateMessage(&msg);
+			//	DispatchMessage(&msg);
+			//}
 		}
 	}
 }
@@ -1161,8 +1165,8 @@ void Window::render()
 
 	float realX = aRealX = aRect.aX + aOptBorderWidth;
 	float realY = aRealY = aRect.aY + aOptBorderWidth;
-	float realWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
-	float realHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
+	float realWidth = aDrawableRegion.aWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
+	float realHeight = aDrawableRegion.aHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
 	float relativeX = aRelativeX = aRect.aX - aPadding;
 	float relativeY = aRelativeY = aRect.aY - aPadding;
 	float relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;

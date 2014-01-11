@@ -2,6 +2,8 @@
 #include "../../../include/Core/ExtLibs.h"
 #include "../../../include/Core/Component.h"
 
+#include <time.h>
+
 using namespace A2D;
 
 #define UNITS(unit, value, range) ((unit == Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value)) 

@@ -69,7 +69,7 @@ namespace A2D {
 		
 		// Create matrix for specific class
 		template<class VertexClass>	
-		static HRESULT					CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
+		inline static HRESULT			CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
 
 		// Create index buffer
 		static HRESULT					CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
@@ -77,7 +77,7 @@ namespace A2D {
 	};
 
 	template<class VertexClass>
-	HRESULT DXUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
+	inline HRESULT DXUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
 	{
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;

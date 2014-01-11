@@ -69,6 +69,7 @@ namespace A2D {
 
 		LPCWSTR						aName;
 
+		Dims						 aDrawableRegion;
 		Rect                         aRect;
 		AbstractFrame          *     aFrame = NULL;
 		AbstractWindow         *     aRelativeWindow;
@@ -81,7 +82,7 @@ namespace A2D {
 
 		void                         update();
 		void						 invalidate();
-		void						 revalidate();
+		void							revalidate();
 
 	protected:
 
@@ -89,7 +90,8 @@ namespace A2D {
 
 	public:
 
-		Dims					  *		getSizeAsPtr(); // internal use only
+		Dims&					  		getSizeAsPtr(); // internal use only
+		Dims&					  		getDrawableRegionAsPtr(); // internal use only
 		Dims							getMinimumSize();
 		Dims							getMaximumSize();
 		Rect							getBounds();
