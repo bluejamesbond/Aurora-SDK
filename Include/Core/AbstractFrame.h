@@ -27,6 +27,7 @@
 #include "GXSettings.h"
 #include "RepaintManager.h"
 #include "Rect.h"
+#include "EventSource.h"
 
 namespace A2D {
 	
@@ -45,7 +46,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame : public Runnable
+	class AbstractFrame : public Runnable, public EventSource
 	{
 
 	public:
@@ -80,6 +81,9 @@ namespace A2D {
 	protected:
 		void							validated();
 		void							validate();
+		HRESULT							addListener(AbstractListener * xListener);
+		HRESULT							removeListener(AbstractListener * xListener);
+		Rect *							getEventRegion();
 
 	public:
 		int								id();

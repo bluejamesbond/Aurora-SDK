@@ -216,6 +216,8 @@ HRESULT AbstractFrame::initialize()
 {
 	aId = ++aClassInstances;
 
+	SAFELY(EventSource::initialize());
+
 	SAFELY(aRootPane.initialize());
 
 	SAFELY(createPlatformCompatibleEventQueue(&aEventQueue));
@@ -241,7 +243,7 @@ HRESULT AbstractFrame::createResources()
 
 	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-	aRepaintManager = new RepaintManager(aGraphics, &aRootPane);
+	aRepaintManager = new RepaintManager(aGraphics, &aRootPane, aWindow);
 	SAFELY(aRepaintManager->initialize());
 	
 	return S_OK;
@@ -255,6 +257,45 @@ void AbstractFrame::invalidate()
 void AbstractFrame::validated()
 {
 	aValidatedContents = true;
+}
+
+HRESULT AbstractFrame::addListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> * sourceList = &Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList->_end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			break; // don't have to add, so do nothing.
+		}
+		node = node->left;
+	}
+
+	sourceList->push_back(this, &aRemoveTicket);
+
+	return EventSource::addListener(xListener);
+}
+
+HRESULT AbstractFrame::removeListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			sourceList.remove_request(&aRemoveTicket);
+		}
+		node = node->left;
+	}
+
+	return EventSource::removeListener(xListener);
+}
+
+Rect * AbstractFrame::getEventRegion()
+{
+	return &aWindow->getBounds();
 }
 
 void AbstractFrame::update()

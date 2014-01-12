@@ -42,7 +42,7 @@ namespace A2D {
 
 	class Window : public AbstractWindow
 	{
-
+		friend class Component; // remove later if not needed
 		////////////////////////////////////////////////////////////////////////////////
 		// PLATFORM COMPATIBLE IMPLEMENTATION
 		////////////////////////////////////////////////////////////////////////////////
@@ -121,6 +121,7 @@ namespace A2D {
 
 	public:
 
+		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 	private:

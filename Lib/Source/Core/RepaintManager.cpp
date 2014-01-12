@@ -2,15 +2,18 @@
 #include "../../../include/Core/ExtLibs.h"
 #include "../../../include/Core/RepaintManager.h"
 #include "../../../include/Core/Component.h"
+#include "../../../include/Core/AbstractWindow.h"
+#include "../../../include/Core/AbstractFrame.h"
 
 using namespace A2D;
 
-RepaintManager::RepaintManager(void * xGraphics, Component * xRoot)
+RepaintManager::RepaintManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow)
 {
 	aGraphics = xGraphics;
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
+	aWindow = xWindow;
 }
 
 HRESULT RepaintManager::initialize()
@@ -30,6 +33,11 @@ HRESULT RepaintManager::initialize()
 }
 
 RepaintManager::~RepaintManager(){}
+
+AbstractWindow * RepaintManager::getWindow()
+{
+	return aWindow;
+}
 
 HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 {
@@ -57,6 +65,9 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 
 bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 {
+	// Call eventDepthTracker also.
+	xComponent.aRepaintManager = this;
+	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;

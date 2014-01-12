@@ -26,6 +26,12 @@
 #include "Runnable.h"
 #include "Rect.h"
 
+#include "ComponentEventSource.h"
+#include "MouseEvent.h"
+#include "ActionEvent.h"
+#include "FocusEvent.h"
+#include "WindowEvent.h"
+
 namespace A2D{
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +41,7 @@ namespace A2D{
 	class AbstractFrame;
 	class AbstractWindow;
 	class Window;
+	class WindowEvent;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -42,6 +49,10 @@ namespace A2D{
 
 	class AbstractEventQueue : public Runnable
 	{
+
+		friend class					AbstractWindow;
+		friend class					AbstractFrame;
+
 	public:
 
 		AbstractEventQueue(AbstractFrame * xFrame);
@@ -91,6 +102,36 @@ namespace A2D{
 		Runnable *						peekEvent();
 		void							popEvent();
 		bool							hasEvent();
+
+	public:
+
+		// Event handling
+		void							processMouseEvent(MouseEvent * xEvent);
+		void							processFocusEvent(FocusEvent * xEvent);
+		HRESULT							processActionEvent(ActionEvent * xEvent);
+		void							processWindowEvent(WindowEvent * xEvent);
+		void							processMouseMotionEvent(MouseEvent * xEvent);
+
+		void							addEventDepthTracker(Component * xSource, float xZ);
+		void							removeEventDepthTracker(Component * xSource, float xZ);
+
+		Component					*	findNextCompListener(Component * xSource);
+		Component					*	findPrevCompListener(Component * xSource);
+
+	private:
+
+		bool							hasListener(EventSource * xSource);
+
+		bool							aMousePressed = false;
+		MouseEvent					*	aMouseEvent; 
+		FocusEvent					*	aFocusEvent;
+		ActionEvent					*	aActionEvent;
+
+		Component					*	aLastFocusedComp = 0;
+		EventSource					*	aLastSource = 0;
+		Rect						*	aLastVisibleRegion = 0;
+		OrderedList<OrderedList<Component*>*> aComponentEventSources;
+		OrderedList<EventSource *>		aEventSourcesList;
 
 	protected:
 

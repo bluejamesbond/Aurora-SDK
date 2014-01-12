@@ -42,6 +42,9 @@ namespace A2D {
 
 	class RepaintManager
 	{
+
+	private:
+
 		Dims										*  aBackBufferDims;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
 		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
@@ -53,7 +56,11 @@ namespace A2D {
 
 	public:
 
-		RepaintManager(void * xGraphics, Component * xRoot);
+		AbstractWindow							   *   getWindow();
+
+	public:
+
+		RepaintManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow);
 		~RepaintManager();
 
 		HRESULT										  add(Component& xParent, Component& xChild);

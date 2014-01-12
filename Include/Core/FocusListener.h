@@ -1,0 +1,87 @@
+////////////////////////////////////////////////////////////////////////////////
+// GAURDS
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef __FOCUSLISTENER_H__
+#define __FOCUSLISTENER_H__
+
+//+-----------------------------------------------------------------------------
+//
+//  Class: 
+//      FOCUSLISTENER
+//
+//  Synopsis:
+//      Listener class for in keyboard focus events.
+//
+//------------------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE
+////////////////////////////////////////////////////////////////////////////////
+
+#include "ExtLibs.h"
+#include "FocusEvent.h"
+#include "AbstractListener.h"
+//#include "Component.h"
+
+using namespace std;
+
+namespace A2D {
+
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
+
+	class AbstractListener;
+	class FocusEvent;
+	class Component;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DEFINE
+	////////////////////////////////////////////////////////////////////////////////
+
+	#define A2D_LISTENER_FOCUS			0x6000
+
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
+
+	class FocusListener : public AbstractListener
+	{
+	public:
+		FocusListener();
+		FocusListener(string xString);
+		virtual ~FocusListener();
+
+
+		HRESULT							notify(FocusEvent * xEvent);
+
+		virtual void					focusGained(FocusEvent * xEvent);
+		virtual void					focusLost(FocusEvent * xEvent);
+
+
+		void							print() const;
+
+	public:
+
+
+	protected:
+		HRESULT							notify(AbstractEvent * xEvent);
+
+	private:
+
+		void							setFocus(bool xFocus);
+
+		FocusListener(const FocusListener&);
+		FocusListener& operator()(const FocusListener&);
+
+		string							aName;
+	};
+
+
+}
+
+
+
+
+#endif

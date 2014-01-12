@@ -28,6 +28,7 @@
 #include "Paint.h"
 #include "Styles.h"
 #include GRAPHICS__
+#include "ComponentEventSource.h"
 
 namespace A2D {
 
@@ -40,14 +41,16 @@ namespace A2D {
 	class Graphics;
 	class Component;
 	struct ImageProperties;
+	class RepaintManager;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
-    class Component
+    class Component : public ComponentEventSource
 	{
 		friend class RepaintManager;
+		friend class AbstractEventQueue;
 
 	public:
 
@@ -64,6 +67,7 @@ namespace A2D {
 		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
+		RepaintManager			*		aRepaintManager = NULL;
 
 	protected:
 
@@ -117,6 +121,24 @@ namespace A2D {
 		void							setFrame(AbstractFrame& xFrame);
 		void							add(Component& xComponent);
 		void							remove(Component& xComponent);
+
+	public:
+
+		HRESULT							requestFocus();
+		void							setFocusable(bool xFocusable);
+		Rect					*		getEventRegion();
+
+		HRESULT							addMouseListener(MouseListener * xListener);
+		HRESULT							addMouseMotionListener(MouseMotionListener * xListener);
+		HRESULT							addFocusListener(FocusListener * xListener);
+		HRESULT							addActionListener(ActionListener * xListener);
+
+	private:
+
+		bool							isFocused = false;
+		bool							isFocusable = true;
+		Component					*	aNextCompListener = 0;
+		Component					*	aPrevCompListener = 0;
 		
     protected:
 
@@ -153,6 +175,7 @@ namespace A2D {
 		Component&						getParent();
 		Component&						getRoot();
 		AbstractFrame&					getFrame();
+		Rect *							getVisibleRegion();
 
 		void							update();
 		Rect                            getBounds();
