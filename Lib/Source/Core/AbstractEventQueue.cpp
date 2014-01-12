@@ -464,10 +464,16 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		nodeE = nodeE->left;
 	}
 
-	//if (isConsumedMouse == S_FALSE)
-	//{
-	//	aLastSource = NULL; // Reset last source as the event was not handled.
-	//}
+	if (isConsumedMouse == S_FALSE)
+	{
+		if (aLastSource)
+		{
+			aMouseEvent->setProperties(aLastSource, MouseEvent::MOUSE_EXITED);
+			aLastSource->processMouseEvent(aMouseEvent);
+		}
+		aLastSource = NULL; // Reset last source as the event was not handled.
+
+	}
 
 }
 

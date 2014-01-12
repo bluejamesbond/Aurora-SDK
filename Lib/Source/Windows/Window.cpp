@@ -96,7 +96,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 		case WM_MOUSEMOVE:
 
-			// Fire MouseEvent
+			//// Fire MouseEvent
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
 			aMouseMove->setLocation(p);
@@ -244,6 +244,8 @@ HWND Window::createCompatibleWindow(bool isParent)
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
+	aIsDragged = true;
+
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
@@ -261,7 +263,6 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 	x = p.x;
 	y = p.y;
 
-	aIsDragged = true;
 
 	left = (isParent ? aRelativeX + aPadding : aRealX);
 	top = (isParent ? aRelativeY + aPadding : aRealY);
@@ -536,13 +537,13 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
+	aIsDragged = false;
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
 	}
-
 	ReleaseCapture();
-	aIsDragged = false;
+
 	aIsResizing = false;
 	aIsMoving = false;
 	
