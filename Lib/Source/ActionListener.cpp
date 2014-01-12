@@ -14,14 +14,16 @@ AbstractListener(A2D_LISTENER_ACTION), aName(xString)
 
 ActionListener::~ActionListener(){}
 
-void ActionListener::notify(AbstractEvent * xEvent)
+HRESULT ActionListener::notify(AbstractEvent * xEvent)
 {
-	notify((ActionEvent*)xEvent);
+	return notify((ActionEvent*)xEvent);
 }
 
-void ActionListener::notify(ActionEvent * xEvent)
+HRESULT ActionListener::notify(ActionEvent * xEvent)
 {
 	actionPerformed(xEvent);
+	if (xEvent->isConsumed()) return S_OK;
+	else return S_FALSE;
 }
 
 void ActionListener::actionPerformed(ActionEvent * xEvent)

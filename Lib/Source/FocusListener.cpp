@@ -15,18 +15,14 @@ aName(xString), AbstractListener(A2D_LISTENER_FOCUS)
 
 FocusListener::~FocusListener(){}
 
-void FocusListener::notify(AbstractEvent * xEvent)
+HRESULT FocusListener::notify(AbstractEvent * xEvent)
 {
-	notify((FocusEvent*)xEvent);
+	return notify((FocusEvent*)xEvent);
 }
 
-void FocusListener::notify(FocusEvent * xEvent)
+HRESULT FocusListener::notify(FocusEvent * xEvent)
 {
-	// do the good stuff here
-	cout << "Handling action with : ";
-	cout << aName.c_str() << ":\n";
-	xEvent->print();
-	
+
 	int id = xEvent->getID();
 
 	if (id == FocusEvent::FOCUS_GAINED)
@@ -41,6 +37,8 @@ void FocusListener::notify(FocusEvent * xEvent)
 	{
 		SYSOUT_STR("Id not recognized");
 	}
+	if (xEvent->isConsumed()) return S_OK;
+	else return S_FALSE;
 }
 
 void FocusListener::focusGained(FocusEvent * xEvent)

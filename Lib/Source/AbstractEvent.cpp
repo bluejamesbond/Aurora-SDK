@@ -21,6 +21,12 @@ int AbstractEvent::getID()
 	return aID;
 }
 
+
+bool AbstractEvent::isConsumed()
+{
+	return aConsumed;
+}
+
 void AbstractEvent::setSource(EventSource * xEventSource)
 {
 	aEventSource = xEventSource;
@@ -35,6 +41,11 @@ void AbstractEvent::setProperties(EventSource * xEventSource, int xID)
 void AbstractEvent::setID(int xID)
 {
 	aID = xID;
+}
+
+void AbstractEvent::setConsumed(bool xConsumed)
+{
+	aConsumed = xConsumed;
 }
 
 /////////////////////////////////////////////////////////////////////////////

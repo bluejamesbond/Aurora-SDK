@@ -51,7 +51,7 @@ namespace A2D {
 		ActionListener(string xString);
 		virtual ~ActionListener();
 
-		void							notify(ActionEvent * xEvent);
+		HRESULT							notify(ActionEvent * xEvent);
 		void							print() const;
 		virtual void					actionPerformed(ActionEvent * xEvent);
 
@@ -60,7 +60,7 @@ namespace A2D {
 
 	protected:
 
-		virtual void					notify(AbstractEvent * xEvent);
+		HRESULT							notify(AbstractEvent * xEvent);
 
 	private:
 		ActionListener(const ActionListener&);

@@ -51,7 +51,7 @@ namespace A2D {
 		WindowListener(string xString);
 		virtual ~WindowListener();
 
-		void							notify(WindowEvent * xEvent);
+		HRESULT							notify(WindowEvent * xEvent);
 		void							print() const;
 
 	public:
@@ -64,7 +64,7 @@ namespace A2D {
 
 	protected:
 
-		virtual void					notify(AbstractEvent * xEvent);
+		HRESULT							notify(AbstractEvent * xEvent);
 
 	private:
 		WindowListener(const WindowListener&);

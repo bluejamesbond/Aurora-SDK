@@ -54,7 +54,7 @@ namespace A2D {
 		virtual ~FocusListener();
 
 
-		void							notify(FocusEvent * xEvent);
+		HRESULT							notify(FocusEvent * xEvent);
 
 		virtual void					focusGained(FocusEvent * xEvent);
 		virtual void					focusLost(FocusEvent * xEvent);
@@ -66,7 +66,7 @@ namespace A2D {
 
 
 	protected:
-		virtual void					notify(AbstractEvent * xEvent);
+		HRESULT							notify(AbstractEvent * xEvent);
 
 	private:
 

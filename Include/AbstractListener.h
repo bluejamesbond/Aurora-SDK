@@ -50,7 +50,7 @@ namespace A2D {
 		friend						EventSource;
 
 		virtual ~AbstractListener();
-		virtual void notify(AbstractEvent * xEvent) = 0;
+		virtual HRESULT notify(AbstractEvent * xEvent) = 0;
 
 	protected:
 		// Constructor is protected because this class is abstract.
@@ -64,8 +64,13 @@ namespace A2D {
 
 		const int					aID;
 
+	protected:
+
+		AbstractEvent			*	aHandledEvent;
+
 	private:
 
+		
 		void					*	aRemoveTicket;
 
 		

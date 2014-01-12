@@ -54,15 +54,18 @@ namespace A2D {
 
 		EventSource			*	getSource();
 		int						getID();
+		bool					isConsumed();
 
 		void					setSource(EventSource * xEventSource);
 		void					setID(int xID);
 		void					setProperties(EventSource * xEventSource, int xID);
+		void					setConsumed(bool xConsumed);
 
 	protected:
 
 		EventSource				   *	aEventSource; // AbstractComp or not?
 		int								aID;
+		bool							aConsumed = false;
 
 	public:
 

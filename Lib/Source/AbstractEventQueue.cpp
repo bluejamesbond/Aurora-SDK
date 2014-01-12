@@ -324,13 +324,13 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 			if (isConsumedMouse == S_OK)
 			{
-				SYSOUT_F("MouseListenerFound, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
+				SYSOUT_F("MouseListenerFound and consumed, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 				return;
 			}
 		}
 		nodeE = nodeE->left;
 	}
-	SYSOUT_F("No listener, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
+	SYSOUT_F("Not consumed, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 }
 
 void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)

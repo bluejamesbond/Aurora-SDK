@@ -14,12 +14,12 @@ AbstractListener(A2D_LISTENER_WINDOW), aName(xString)
 
 WindowListener::~WindowListener(){}
 
-void WindowListener::notify(AbstractEvent * xEvent)
+HRESULT WindowListener::notify(AbstractEvent * xEvent)
 {
-	notify((WindowEvent*)xEvent);
+	return notify((WindowEvent*)xEvent);
 }
 
-void WindowListener::notify(WindowEvent * xEvent)
+HRESULT WindowListener::notify(WindowEvent * xEvent)
 {
 	int id = xEvent->getID();
 
@@ -43,6 +43,9 @@ void WindowListener::notify(WindowEvent * xEvent)
 	{
 		windowStateChanged(xEvent);
 	}
+
+	if (xEvent->isConsumed()) return S_OK;
+	else return S_FALSE;
 }
 
 void WindowListener::windowActivated(WindowEvent * xEvent)

@@ -55,25 +55,25 @@ HRESULT EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 	{
 		if (xListenerID == A2D_LISTENER_MOUSE)
 		{
-			(static_cast<MouseListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent)); // REPLACE NOTIFY FUNCTION NAME LATER.
+			return (static_cast<MouseListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent)); 
 		}
 		else if (xListenerID == A2D_LISTENER_FOCUS)
 		{
-			(static_cast<FocusListener*>(listener))->notify(static_cast<FocusEvent*>(xEvent)); // REPLACE NOTIFY FUNCTION NAME LATER.
+			return (static_cast<FocusListener*>(listener))->notify(static_cast<FocusEvent*>(xEvent));
 		}
 		else if (xListenerID == A2D_LISTENER_ACTION)
 		{
-			(static_cast<ActionListener*>(listener))->notify(static_cast<ActionEvent*>(xEvent));
+			return (static_cast<ActionListener*>(listener))->notify(static_cast<ActionEvent*>(xEvent));
 		}
 		else if (xListenerID == A2D_LISTENER_MOUSEMOTION)
 		{
-			(static_cast<MouseMotionListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
+			return (static_cast<MouseMotionListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
 		}
 		else if (xListenerID == A2D_LISTENER_WINDOW)
 		{
-			(static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
+			return (static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
 		}
-		return S_OK;
+		return S_FALSE;
 	}
 	else return S_FALSE;
 }

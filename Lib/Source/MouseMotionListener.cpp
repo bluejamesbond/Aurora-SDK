@@ -13,17 +13,13 @@ AbstractListener(A2D_LISTENER_MOUSEMOTION), aName(xString)
 
 MouseMotionListener::~MouseMotionListener(){}
 
-void MouseMotionListener::notify(AbstractEvent * xEvent)
+HRESULT MouseMotionListener::notify(AbstractEvent * xEvent)
 {
-	notify((MouseEvent*)xEvent);
+	return notify((MouseEvent*)xEvent);
 }
 
-void MouseMotionListener::notify(MouseEvent * xEvent)
+HRESULT MouseMotionListener::notify(MouseEvent * xEvent)
 {
-	//// do the good stuff here
-	//cout << "Handling action with : ";
-	//cout << aName.c_str() << ":\n";
-	//xEvent->Print();
 
 	int id = xEvent->getID();
 
@@ -43,6 +39,8 @@ void MouseMotionListener::notify(MouseEvent * xEvent)
 		// Do something default
 		SYSOUT_STR("Mouse ID not recognized");
 	}
+	if (xEvent->isConsumed()) return S_OK;
+	else return S_FALSE;
 }
 
 void MouseMotionListener::mouseDragged(MouseEvent * xEvent)
