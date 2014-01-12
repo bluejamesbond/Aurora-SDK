@@ -11,10 +11,147 @@ using namespace A2D;
 
 Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xFrame), aHInstance(xHInstance){}
 
+void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
+{
+	MSG msg;
+	bool& resizing = aIsResizing;
+	bool& visible = aVisible;
+
+	int defaultAllotedAnimationFrames = 10;
+	int currentAnimationFrame = 0;
+	int counter = 0;
+
+	AbstractFrame& frame = *aFrame;
+	AbstractEventQueue& eventQueue = *xEventQueue;
+
+	while (true)
+	{
+		//if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		//{
+		//	eventHandler(msg, aEventQueue);
+		//}
+
+		if (visible)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				eventHandler(msg, &eventQueue);
+			}
+
+			// Forced updating of rendering for now
+			if (eventQueue.dispatchNextEvent())
+			{
+				currentAnimationFrame = defaultAllotedAnimationFrames;
+			}
+			else if (currentAnimationFrame > 0)
+			{
+				currentAnimationFrame--;
+				frame.update();
+			}
+			else if (resizing)
+			{
+				frame.update();
+			}
+			else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			{
+				TranslateMessage(&msg);
+				eventHandler(msg, &eventQueue);
+			}
+
+		}
+	}
+}
+
+LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
+{
+	if (xMsg.message == WM_CREATE)
+	{
+		return S_OK;
+	}
+	else
+	{
+		HWND xHwnd = xMsg.hwnd;
+		switch (xMsg.message)
+		{
+			POINT p;
+		case WM_LBUTTONDOWN:
+
+			SetForegroundWindow(xHwnd);
+
+			// Firing window event. Opposite window isnt supported yet!!
+			// WM_ACTIVATE doesnt work in eventHandler.
+			if (aCurrentState != WindowEvent::WINDOW_ACTIVATED)
+			{
+				xEventQueue->processWindowEvent(aWindowActivated);
+			}
+
+			// Fire MouseEvent
+			GetCursorPos(&p);
+			ScreenToClient(aChildHWnd, &p);
+			aMouseDown->setLocation(p);
+
+			xEventQueue->processMouseEvent(aMouseDown);
+			return updateOnMouseDown(xHwnd);
+
+		case WM_MOUSEMOVE:
+
+			// Fire MouseEvent
+			GetCursorPos(&p);
+			ScreenToClient(aChildHWnd, &p);
+			aMouseMove->setLocation(p);
+
+			if (aIsDragged)
+			{
+				aMouseDragged->setLocation(p);
+				xEventQueue->processMouseMotionEvent(aMouseDragged);
+			}
+			else
+			{
+				aMouseMove->setLocation(p);
+				xEventQueue->processMouseMotionEvent(aMouseMove);
+			}
+			return updateOnMouseMove(xHwnd);
+
+		case WM_LBUTTONUP:
+
+			// Fire MouseEvent
+			GetCursorPos(&p);
+			ScreenToClient(aChildHWnd, &p);
+			aMouseUp->setLocation(p);
+
+			xEventQueue->processMouseEvent(aMouseUp);
+			return updateOnMouseUp(xHwnd);
+
+		case WM_CLOSE:
+
+			// Fire WindowEvent
+			xEventQueue->processWindowEvent(aWindowClosed);
+
+			DestroyWindow(xHwnd);
+			return S_OK;
+
+		case WM_SIZE:
+
+			onSize(xHwnd);
+			return S_OK;
+
+		case WM_ERASEBKGND:
+			// OS must not erase background. DirectX and
+			// OpenGL will automatically do its parent
+			// (aChildHWnd) window.
+			return S_OK;
+
+		default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
+		}
+
+	}
+}
+
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
 	Window * aWindow;
-	
+
 	if (xMessage == WM_CREATE)
 	{
 		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
@@ -26,42 +163,45 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 	{
 		switch (xMessage)
 		{
-		case WM_LBUTTONDOWN:
-		{					
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->updateOnMouseDown(xHwnd);
-		}
-		case WM_MOUSEMOVE:
-		{
-				aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				return aWindow->updateOnMouseMove(xHwnd);
-		}
-		case WM_LBUTTONUP:
-		{
-				 aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-				 return aWindow->updateOnMouseUp(xHwnd);
-		}
+
+		case WM_ACTIVATE:
+
+			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+
+			if (LOWORD(xWParam) == WA_INACTIVE)
+			{
+				WindowEvent * wEvent = aWindow->aWindowDeactivated;
+				if (wEvent)
+				{
+					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
+				}
+			}
+			else
+			{
+				WindowEvent * wEvent = aWindow->aWindowActivated;
+				if (wEvent)
+				{
+					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
+				}
+			}
+			return S_OK;
+
 		case WM_SIZE:
 		{
-						aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-						return aWindow->onSize(xHwnd);
+			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			return aWindow->onSize(xHwnd);
+		}
 
-		}
-		case WM_CLOSE:
-		{
-				DestroyWindow(xHwnd);
-				return S_OK;
-		}
+
 		case WM_ERASEBKGND:
 		{
-				// OS must not erase background. DirectX and
-				// OpenGL will automatically do its parent
-				// (aChildHWnd) window.
-				return S_OK;
+			// OS must not erase background. DirectX and
+			// OpenGL will automatically do its parent
+			// (aChildHWnd) window.
+			return S_OK;
 		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
-
 	}
 }
 
@@ -104,7 +244,6 @@ HWND Window::createCompatibleWindow(bool isParent)
 
 HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
-	SetForegroundWindow(xHwnd);
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
@@ -122,7 +261,7 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 	x = p.x;
 	y = p.y;
 
-	isDragged = true;
+	aIsDragged = true;
 
 	left = (isParent ? aRelativeX + aPadding : aRealX);
 	top = (isParent ? aRelativeY + aPadding : aRealY);
@@ -133,13 +272,13 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 		x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE ||
 		y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE ||
 		y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
-		!isResizing)
+		!aIsResizing)
 	{
-		isResizing = xHwnd == aHResizeWnd ? true : false;
+		aIsResizing = xHwnd == aHResizeWnd ? true : false;
 	}
 	else if (y < top + _WINDOW_MOVE_BAR_DISTANCE)
 	{
-		isMoving = xHwnd == aHMoveWnd ? true : false;
+		aIsMoving = xHwnd == aHMoveWnd ? true : false;
 	}
 
 	SetCursor(aCurrentCursor);
@@ -174,7 +313,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 	bottom = top + aRect.aHeight;
 	right = left + aRect.aWidth;
 
-	if (!isResizing && !isMoving)
+	if (!aIsResizing && !aIsMoving)
 	{
 		//bottom left corner
 		if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
@@ -247,13 +386,13 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		SetCursor(aCurrentCursor);
 	}
 
-	if (!isDragged)
+	if (!aIsDragged)
 	{
 		GetCursorPos(&aLastDraggedPoint);
 		ScreenToClient(xHwnd, &aLastDraggedPoint);
 	}
 
-	if (isDragged && (isResizing || isMoving))
+	if (aIsDragged && (aIsResizing || aIsMoving))
 	{
 		float deltaY, deltaX;
 		HCURSOR currentCursor;
@@ -274,7 +413,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
 
 		// Process resizing.
-		if (isResizing)
+		if (aIsResizing)
 		{
 			// Resize up and down.
 			if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
@@ -376,7 +515,7 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 		}
 		// Process window movement.
-		else if (isMoving)
+		else if (aIsMoving)
 		{
 			rect.aX -= deltaX;
 			rect.aY -= deltaY;
@@ -403,9 +542,9 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 	}
 
 	ReleaseCapture();
-	isDragged = false;
-	isResizing = false;
-	isMoving = false;
+	aIsDragged = false;
+	aIsResizing = false;
+	aIsMoving = false;
 	
 	aFramebufferInterpolation = false;
 
@@ -930,6 +1069,8 @@ void Window::setVisible(bool xVisible)
 
 		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
 		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
+		// Fire WindowEvent
+		Toolkit::getSystemEventQueue(aFrame->id())->processWindowEvent(aWindowOpened);
 	}
 	else
 	{
@@ -1103,55 +1244,7 @@ void* Window::getPlatformCompatibleWindowHandle()
 	return static_cast<void*>(&aChildHWnd);
 }
 
-void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
-{
-	MSG msg;
-	bool& resizing = isResizing;
-	bool& visible = aVisible;
 
-	int defaultAllotedAnimationFrames = 10;
-	int currentAnimationFrame = 0;
-	int counter = 0;
-
-	AbstractFrame& frame = *aFrame;
-	AbstractEventQueue& eventQueue = *xEventQueue;
-
-	while (true)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		if (visible)
-		{
-			// Forced updating of rendering for now
-			if (eventQueue.dispatchNextEvent())
-			{
-				currentAnimationFrame = defaultAllotedAnimationFrames;
-			}
-			else if (currentAnimationFrame > 0)
-			{
-				currentAnimationFrame--;
-				frame.update();
-			}
-			else if (resizing)
-			{
-				frame.update();
-			}
-			else
-			{
-				frame.update();
-			}
-			//else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			//{
-			//	TranslateMessage(&msg);
-			//	DispatchMessage(&msg);
-			//}
-		}
-	}
-}
 
 
 void Window::render()

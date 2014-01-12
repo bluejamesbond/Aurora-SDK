@@ -77,9 +77,9 @@ namespace A2D {
 		float							aOffsetX = 0.0f;
 		float							aOffsetY = 0.0f;
 
-		bool                            isDragged = false;
-		bool                            isResizing = false;
-		bool							isMoving = false;
+		bool                            aIsDragged = false;
+		bool                            aIsResizing = false;
+		bool							aIsMoving = false;
 		bool                            aWinMoveRes = false;
 
 

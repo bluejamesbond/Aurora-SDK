@@ -72,6 +72,10 @@
 // - Cached m_t_array is changed
 // - Check for m_arrayed - requires testing
 
+#define abs__hplist(a)     (((a) < 0) ? -(a) : (a))
+#define max__hplist(a, b)  (((a) > (b)) ? (a) : (b))
+#define min__hplist(a, b)  (((a) < (b)) ? (a) : (b))
+
 namespace A2D{
 
 	template <class T>
@@ -86,8 +90,8 @@ namespace A2D{
 		struct Node
 		{
 			T value;
-			Node<T> * left;
-			Node<T> * right;
+			Node<T> * left = NULL;
+			Node<T> * right = NULL;
 		};
 
 		template<class T>
@@ -96,7 +100,7 @@ namespace A2D{
 
 		private:
 
-			Node<T> * m_node;
+			Node<T> * m_node = NULL;
 			bool m_first = true;
 			int m_size = 0;
 
@@ -108,7 +112,7 @@ namespace A2D{
 				m_size = size;
 			}
 
-			inline T  next()
+			T  next()
 			{
 				T  t = m_node->value;
 
@@ -118,12 +122,12 @@ namespace A2D{
 				return t;
 			}
 
-			inline bool has_next()
+			bool has_next()
 			{
 				return m_node != NULL && m_size;
 			}
 
-			inline T  previous()
+			T  previous()
 			{
 				T  t = m_node->value;
 
@@ -133,7 +137,7 @@ namespace A2D{
 				return t;
 			}
 
-			inline bool has_previous()
+			bool has_previous()
 			{
 				return  m_node != NULL && m_size;
 			}
@@ -144,18 +148,18 @@ namespace A2D{
 		int m_heapptr_index = 0;
 		int m_heapptr_length = 0;
 		int m_heapptr_ammort_length = 0;
-		void ** m_heapptr;
+		void ** m_heapptr = NULL;
 
 		int m_heap_free = 0;
 		int m_heap_length = 0;
 		int m_heap_ammort_length = 0;
-		Node<T> * m_heap;
+		Node<T> * m_heap = NULL;
 
 		int m_fragments_available_index = 0;
 		int m_fragments_cache_total = 0;
 		int m_fragments_length = 0;
 		int m_fragments_ammort_length = 0;
-		void ** m_fragments;
+		void ** m_fragments = NULL;
 
 		bool m_released = true;
 		bool m_arrayed = false;
@@ -163,7 +167,7 @@ namespace A2D{
 		// Ammortizes the src array based on the parameters.
 		// In most cases dstLength = srcLength * 2
 		// Users of this method must watch out for double-freeing
-		inline void ammortize(void *** x_src, int x_src_length, int x_dst_length)
+		void ammortize(void *** x_src, int x_src_length, int x_dst_length)
 		{
 			// Create pointer in L1 cache for src array
 			void ** src_alloc = *x_src;
@@ -186,7 +190,7 @@ namespace A2D{
 
 		// Internal use for safely removing nodes and adding 
 		// to fragment cache
-		inline void remove_node(Node<T> * node)
+		void remove_node(Node<T> * node)
 		{
 			// Remove the value
 			node->value = 0;
@@ -232,7 +236,7 @@ namespace A2D{
 			m_size--;
 		}
 
-		inline Node<T> * find_node(int index)
+		Node<T> * find_node(int index)
 		{
 			// This testing is not required because fine_node is an internal method
 			//if (index >= m_size || index < 0)
@@ -264,7 +268,7 @@ namespace A2D{
 		}
 
 		// Allocate large chunks in heap
-		inline void allocate_chunk()
+		void allocate_chunk()
 		{
 			// Check if the heap ptr index will greater than length
 			if (m_heapptr_index + 1 >= m_heapptr_length)
@@ -279,26 +283,6 @@ namespace A2D{
 			m_heapptr[m_heapptr_index++] = static_cast<void*>(m_heap);
 		}
 
-		inline void cache_request(Node<T> ** node)
-		{
-			Node<T> * next_node = NULL;
-			// Look for fragments in the heap
-
-			if (m_fragments_available_index < m_fragments_cache_total)
-			{
-				next_node = static_cast<Node<T>*>(m_fragments[m_fragments_available_index]);
-				m_fragments[m_fragments_available_index++] = NULL;
-			}
-			// Allocate heap space if there are no fragments
-			// and use these.
-			else if (m_heap_free - 1 <= -1)
-			{
-				allocate_chunk();
-			}
-
-			*node = next_node ? next_node : &m_heap[--m_heap_free];
-		}
-
 	public:
 
 		// Create OrderedList of type T
@@ -307,11 +291,11 @@ namespace A2D{
 			// Calculate ammmortization values based on 
 			// the size of T. This will soon have some performance
 			// changes.
-			m_heap_ammort_length = max(sizeof(T), 80) / sizeof(T);
+			m_heap_ammort_length = max__hplist(sizeof(T), 80) / sizeof(T);
 
 			//  Higher size T indicates more
 			// ammortizations during OrderedList lifetime.
-			m_heapptr_ammort_length = max(m_heap_ammort_length / 20, 5);
+			m_heapptr_ammort_length = max__hplist(m_heap_ammort_length / 20, 5);
 			m_fragments_ammort_length = 5;
 
 			// Malloc and prepare the OrderedList
@@ -405,7 +389,7 @@ namespace A2D{
 		{
 			m_arrayed = false;
 
-			index = min(abs(index), m_size);
+			index = min__hplist(abs__hplist(index), m_size);
 
 			if (index == 0)
 			{
@@ -662,11 +646,6 @@ namespace A2D{
 
 		void remove_request(void ** x)
 		{
-			if (*x = NULL)
-			{
-				return;
-			}
-
 			remove_node(static_cast<Node<T>*>(*x));
 			*x = NULL;
 		}
@@ -792,8 +771,8 @@ namespace A2D{
 
 		Iterator<T>						m_iterator;
 		int								m_size = 0;
-		Node<T>					*		m_head;
-		Node<T>					*		m_end;
+		Node<T>					*		m_head = NULL;
+		Node<T>					*		m_end = NULL;
 		T					    *		m_t_array;
 	};
 }
