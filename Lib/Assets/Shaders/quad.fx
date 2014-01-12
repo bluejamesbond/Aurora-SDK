@@ -144,7 +144,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//**********************************************************************
 	// Borders
 	//**********************************************************************
-	z -= 0.0000001f;
+	z = (10000000 - (input[0].options[2] + 0.5)) / 10000000;
 	// 0.0 indicates color coordinates
 	// 1.0 indicates texture coordinates
 	// 2.0 indicates texture on backgroundColor
