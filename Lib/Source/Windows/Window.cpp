@@ -157,7 +157,7 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
 		aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
 		SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
-		return STATUS_OK;
+		return S_OK;
 	}
 	else
 	{
@@ -184,7 +184,7 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
 				}
 			}
-			return STATUS_OK;
+			return S_OK;
 
 		case WM_SIZE:
 		{
@@ -198,7 +198,7 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 			// OS must not erase background. DirectX and
 			// OpenGL will automatically do its parent
 			// (aChildHWnd) window.
-			return STATUS_OK;
+			return S_OK;
 		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
