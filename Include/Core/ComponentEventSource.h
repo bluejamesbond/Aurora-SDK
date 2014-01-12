@@ -20,6 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "OrderedList.h"
 
@@ -41,9 +43,9 @@ namespace A2D {
 
 		~ComponentEventSource();
 		
-		HRESULT					processFocusEvent(FocusEvent * xEvent);
+		STATUS					processFocusEvent(FocusEvent * xEvent);
 
-		virtual HRESULT 		addFocusListener(FocusListener * xListener);
+		virtual STATUS 		addFocusListener(FocusListener * xListener);
 
 		Rect				*	getEventRegion() = 0;
 

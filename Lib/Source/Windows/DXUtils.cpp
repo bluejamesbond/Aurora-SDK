@@ -4,7 +4,7 @@
 
 using namespace A2D;
 
-HRESULT DXUtils::LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * aDevice, ID3D10Effect ** xEffect)
+STATUS DXUtils::LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * aDevice, ID3D10Effect ** xEffect)
 {
 	ID3D10Blob* errorMessage;
 
@@ -15,12 +15,12 @@ HRESULT DXUtils::LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * aDevice, I
 	SAFELY(D3DX10CreateEffectFromFile(xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		aDevice, NULL, NULL, xEffect, &errorMessage, NULL));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void DXUtils::SysOut(ID3D10Blob * xErrorMessage, LPCWSTR * xFilename){}
 
-HRESULT DXUtils::CreatePNGCompatibleBlendStates(ID3D10Device * aDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState)
+STATUS DXUtils::CreatePNGCompatibleBlendStates(ID3D10Device * aDevice, ID3D10BlendState ** xBlendState, ID3D10BlendState ** xBlendDisabledState)
 {
 	D3D10_BLEND_DESC blendDesc;
 
@@ -40,10 +40,10 @@ HRESULT DXUtils::CreatePNGCompatibleBlendStates(ID3D10Device * aDevice, ID3D10Bl
 
 	SAFELY(aDevice->CreateBlendState(&blendDesc, xBlendDisabledState));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT DXUtils::loadTechniqueFromEffect(ID3D10Device * xDevice, ID3D10Effect * xEffect, ID3D10InputLayout ** xLayout, ID3D10EffectTechnique ** xTechnqiue, D3D10_INPUT_ELEMENT_DESC * xPolygonLayout, LPCSTR xName, unsigned int xElements)
+STATUS DXUtils::loadTechniqueFromEffect(ID3D10Device * xDevice, ID3D10Effect * xEffect, ID3D10InputLayout ** xLayout, ID3D10EffectTechnique ** xTechnqiue, D3D10_INPUT_ELEMENT_DESC * xPolygonLayout, LPCSTR xName, unsigned int xElements)
 {
 	D3D10_PASS_DESC passDesc;
 
@@ -57,11 +57,11 @@ HRESULT DXUtils::loadTechniqueFromEffect(ID3D10Device * xDevice, ID3D10Effect * 
 	// Create the input layout.
 	SAFELY(xDevice->CreateInputLayout(xPolygonLayout, xElements, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, xLayout));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
-HRESULT DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
+STATUS DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 {
 	// Set
 	*xWorldMatrix = new D3DXMATRIX;
@@ -69,10 +69,10 @@ HRESULT DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 	// initialize
 	D3DXMatrixIdentity(*xWorldMatrix);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
+STATUS DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create
 	FLOAT fieldOfView, screenAspect;
@@ -86,10 +86,10 @@ HRESULT DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, 
 	// initialize
 	D3DXMatrixPerspectiveFovLH(*xProjectionMatrix, fieldOfView, screenAspect, xSettings->aScreenNear, xSettings->aScreenDepth);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT DXUtils::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
+STATUS DXUtils::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Set
 	*xProjectionMatrix = new D3DXMATRIX;
@@ -97,10 +97,10 @@ HRESULT DXUtils::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, 
 	// initialize
 	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT DXUtils::createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties)
+STATUS DXUtils::createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties)
 {
 	D3DXVECTOR3 up, position, lookAt;
 	float yaw, pitch, roll;
@@ -142,10 +142,10 @@ HRESULT DXUtils::createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& x
 	// Finally create the view matrix from the three updated vectors.
 	D3DXMatrixLookAtLH(*xViewMatrix, &position, &lookAt, &up);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT DXUtils::CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
+STATUS DXUtils::CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
 {
 	D3D10_BUFFER_DESC indexBufferDesc;
 	D3D10_SUBRESOURCE_DATA indexData;
@@ -171,6 +171,6 @@ HRESULT DXUtils::CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer *
 	delete[] indices;
 	indices = 0;
 
-	return S_OK;
+	return STATUS_OK;
 
 }

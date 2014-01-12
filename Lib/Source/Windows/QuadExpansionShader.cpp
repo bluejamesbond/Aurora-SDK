@@ -36,7 +36,7 @@ LPCWSTR QuadExpansionShader::getEffectName()
 	return L"../../../Aurora-SDK/Lib/Assets/Shaders/quad.fx";
 }
 
-HRESULT QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
+STATUS QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 {
 	// Get pointers to the three matrices inside the 
 	// shader so we can update them from this class.
@@ -46,14 +46,14 @@ HRESULT QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 		aTexturePtr = xEffect->GetVariableByName("shaderTexture")->AsShaderResource();
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT	QuadExpansionShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
+STATUS	QuadExpansionShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
 {	
 	*xPolygonLayout = QuadExpansionVertex::aPolygonLayout;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 unsigned int QuadExpansionShader::getPolygonLayoutElementCount()

@@ -19,6 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "MouseEvent.h"
 #include "AbstractListener.h"
@@ -53,7 +55,7 @@ namespace A2D {
 		MouseMotionListener(string xString);
 		virtual ~MouseMotionListener();
 
-		HRESULT							notify(MouseEvent * xEvent);
+		STATUS							notify(MouseEvent * xEvent);
 
 		virtual void					mouseDragged(MouseEvent * xEvent);
 		virtual void					mouseMoved(MouseEvent * xEvent);
@@ -65,7 +67,7 @@ namespace A2D {
 
 	protected:
 
-		HRESULT							notify(AbstractEvent * xEvent);
+		STATUS							notify(AbstractEvent * xEvent);
 
 	private:
 		MouseMotionListener(const MouseMotionListener&);

@@ -20,6 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "../_A2DLinkers.h"
 #include "OrderedList.h"
 #include "ImageProperties.h"
@@ -124,14 +126,14 @@ namespace A2D {
 
 	public:
 
-		HRESULT							requestFocus();
+		STATUS							requestFocus();
 		void							setFocusable(bool xFocusable);
 		Rect					*		getEventRegion();
 
-		HRESULT							addMouseListener(MouseListener * xListener);
-		HRESULT							addMouseMotionListener(MouseMotionListener * xListener);
-		HRESULT							addFocusListener(FocusListener * xListener);
-		HRESULT							addActionListener(ActionListener * xListener);
+		STATUS							addMouseListener(MouseListener * xListener);
+		STATUS							addMouseMotionListener(MouseMotionListener * xListener);
+		STATUS							addFocusListener(FocusListener * xListener);
+		STATUS							addActionListener(ActionListener * xListener);
 
 	private:
 
@@ -204,7 +206,7 @@ namespace A2D {
 
     public:
 
-        virtual HRESULT                 initialize();
+        virtual STATUS                 initialize();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// INLINE

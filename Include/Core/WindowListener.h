@@ -19,6 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "WindowEvent.h"
 #include "AbstractListener.h"
@@ -51,7 +53,7 @@ namespace A2D {
 		WindowListener(string xString);
 		virtual ~WindowListener();
 
-		HRESULT							notify(WindowEvent * xEvent);
+		STATUS							notify(WindowEvent * xEvent);
 		void							print() const;
 
 	public:
@@ -64,7 +66,7 @@ namespace A2D {
 
 	protected:
 
-		HRESULT							notify(AbstractEvent * xEvent);
+		STATUS							notify(AbstractEvent * xEvent);
 
 	private:
 		WindowListener(const WindowListener&);

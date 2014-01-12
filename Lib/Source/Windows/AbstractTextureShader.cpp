@@ -45,7 +45,7 @@ LPCWSTR AbstractTextureShader::getEffectName()
 	return L"../../../Aurora-SDK/Lib/Assets/Shaders/texture.fx";
 }
 
-HRESULT AbstractTextureShader::getUsableVariablePointers(ID3D10Effect * xEffect)
+STATUS AbstractTextureShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 {
 	// Get pointers to the three matrices inside the 
 	// shader so we can update them from this class.
@@ -70,7 +70,7 @@ HRESULT AbstractTextureShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 		aTexturePtr = aTextureEffect->GetVariableByName("shaderTexture")->AsShaderResource();
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void AbstractTextureShader::setWorldMatrix(float ** xMatrix)

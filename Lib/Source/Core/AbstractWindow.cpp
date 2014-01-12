@@ -232,25 +232,25 @@ Dims& AbstractWindow::getDrawableRegionAsPtr()
 	return aDrawableRegion;
 }
 
-HRESULT AbstractWindow::processWindowEvent(WindowEvent * xEvent)
+STATUS AbstractWindow::processWindowEvent(WindowEvent * xEvent)
 {
 	int id = A2D_LISTENER_WINDOW;
 	return fireListener(xEvent, id);
 }
 
-HRESULT AbstractWindow::addWindowListener(WindowListener * xListener)
+STATUS AbstractWindow::addWindowListener(WindowListener * xListener)
 {
 	if (xListener == NULL)
 	{
 		int ID = A2D_LISTENER_WINDOW;
 		AbstractListener * listener = findListener(ID);
 		if (listener) return removeListener(listener);
-		else return S_FALSE;
+		else return STATUS_FAIL;
 	}
 	return addListener(xListener);
 }
 
-HRESULT AbstractWindow::addListener(AbstractListener * xListener)
+STATUS AbstractWindow::addListener(AbstractListener * xListener)
 {
 	OrderedList<EventSource*> * sourceList = &Toolkit::getSystemEventQueue(aFrame->id())->aEventSourcesList;
 	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList->_end();
@@ -268,7 +268,7 @@ HRESULT AbstractWindow::addListener(AbstractListener * xListener)
 	return EventSource::addListener(xListener);
 }
 
-HRESULT AbstractWindow::removeListener(AbstractListener * xListener)
+STATUS AbstractWindow::removeListener(AbstractListener * xListener)
 {
 	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aFrame->id())->aEventSourcesList;
 	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
@@ -289,7 +289,7 @@ Rect * AbstractWindow::getEventRegion()
 	return &getBounds();
 }
 
-HRESULT AbstractWindow::initialize()
+STATUS AbstractWindow::initialize()
 {	
 	//------------------------------------------------------------
 	// ABSTRACTWINDOW DEFAULTS
@@ -361,5 +361,5 @@ HRESULT AbstractWindow::initialize()
 
 	//------------------------------------------------------------
 
-	return S_OK;
+	return STATUS_OK;
 }

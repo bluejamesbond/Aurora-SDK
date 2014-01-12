@@ -20,6 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
 #include "ExtLibs.h"
 #include "OrderedList.h"
 #include "Rect.h"
@@ -57,12 +58,12 @@ namespace A2D {
 
 		~EventSource();
 
-		virtual HRESULT			processMouseEvent(MouseEvent * xEvent);
-		virtual HRESULT			processActionEvent(ActionEvent * xEvent);
+		virtual STATUS			processMouseEvent(MouseEvent * xEvent);
+		virtual STATUS			processActionEvent(ActionEvent * xEvent);
 
-		virtual HRESULT			addMouseListener(MouseListener * xListener);
-		virtual HRESULT			addMouseMotionListener(MouseMotionListener * xListener);
-		virtual HRESULT			addActionListener(ActionListener * xListener);
+		virtual STATUS			addMouseListener(MouseListener * xListener);
+		virtual STATUS			addMouseMotionListener(MouseMotionListener * xListener);
+		virtual STATUS			addActionListener(ActionListener * xListener);
 
 		virtual Rect *			getEventRegion() = 0;
 
@@ -75,14 +76,14 @@ namespace A2D {
 	protected:
 
 		EventSource();
-		virtual HRESULT			initialize();
+		virtual STATUS			initialize();
 
 	protected:
 		
 		AbstractListener 	 *	findListener(const int xListenerID);
-		HRESULT					fireListener(AbstractEvent * xEvent, int xListenerID);
-		virtual HRESULT			addListener(AbstractListener * xListener); // slow 
-		virtual HRESULT			removeListener(AbstractListener * xListener); // slow
+		STATUS					fireListener(AbstractEvent * xEvent, int xListenerID);
+		virtual STATUS			addListener(AbstractListener * xListener); // slow 
+		virtual STATUS			removeListener(AbstractListener * xListener); // slow
 
 		void				 *	aRemoveTicket;
 

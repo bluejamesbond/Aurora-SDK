@@ -19,6 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
 #include "../Core/Rect.h"
 
 namespace A2D {
@@ -57,7 +58,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize() = 0;
+		virtual STATUS                 initialize() = 0;
 
 	};
 

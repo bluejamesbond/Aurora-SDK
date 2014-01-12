@@ -20,6 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "../Core/../_A2DCommon.h"
 #include "../Core/ImageProperties.h"
 #include "../Core/Rect.h"
@@ -74,7 +76,7 @@ namespace A2D {
 
 		// Implementation
 		// { ABSTRACT }
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

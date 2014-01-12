@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
+
+#include "../_A2DCommon.h"
 
 #include "Panel.h"
 #include "CameraProperties.h"
@@ -72,7 +75,7 @@ namespace A2D {
 	public:
 
 		Panel&               			getRootPane();
-		HRESULT                         createResources();
+		STATUS                         createResources();
 		void                            update();
 		void							dispose();
 		void							invalidate();
@@ -81,8 +84,8 @@ namespace A2D {
 	protected:
 		void							validated();
 		void							validate();
-		HRESULT							addListener(AbstractListener * xListener);
-		HRESULT							removeListener(AbstractListener * xListener);
+		STATUS							addListener(AbstractListener * xListener);
+		STATUS							removeListener(AbstractListener * xListener);
 		Rect *							getEventRegion();
 
 	public:
@@ -107,14 +110,14 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
-		virtual HRESULT					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
-		virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
-		virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
+		virtual STATUS					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
+		virtual STATUS					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
+		virtual STATUS					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
+		virtual STATUS					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
 		
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

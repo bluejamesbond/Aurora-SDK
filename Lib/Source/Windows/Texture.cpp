@@ -25,7 +25,7 @@ void * Texture::getPlatformCompatibleResource()
 	return aResource;
 }
 
-HRESULT Texture::changeTexture(LPCWSTR  xSrc)
+STATUS Texture::changeTexture(LPCWSTR  xSrc)
 {
 	aSrc = xSrc;
 
@@ -43,7 +43,7 @@ HRESULT Texture::changeTexture(LPCWSTR  xSrc)
 
 ID3D10ShaderResourceView* Texture::aStaticResource;
 
-HRESULT Texture::initialize()
+STATUS Texture::initialize()
 {
 	D3DX10_IMAGE_LOAD_INFO loadInfo;
 	D3DX10_IMAGE_INFO srcInfo;
@@ -62,5 +62,5 @@ HRESULT Texture::initialize()
 	aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
 
 	
-	return S_OK;
+	return STATUS_OK;
 }

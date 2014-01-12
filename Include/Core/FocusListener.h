@@ -19,6 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "FocusEvent.h"
 #include "AbstractListener.h"
@@ -54,7 +56,7 @@ namespace A2D {
 		virtual ~FocusListener();
 
 
-		HRESULT							notify(FocusEvent * xEvent);
+		STATUS							notify(FocusEvent * xEvent);
 
 		virtual void					focusGained(FocusEvent * xEvent);
 		virtual void					focusLost(FocusEvent * xEvent);
@@ -66,7 +68,7 @@ namespace A2D {
 
 
 	protected:
-		HRESULT							notify(AbstractEvent * xEvent);
+		STATUS							notify(AbstractEvent * xEvent);
 
 	private:
 

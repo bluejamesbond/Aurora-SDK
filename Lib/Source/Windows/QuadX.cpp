@@ -9,7 +9,7 @@ Quad(xBuffer, xConstraints), aQuadCount(xQuadCount){}
 
 QuadX::~QuadX(){}
 
-HRESULT QuadX::CreateResources(void * xArgs[])
+STATUS QuadX::CreateResources(void * xArgs[])
 {
 	// initialize buffers depending on the amount of quads we are going to render.
 	aVertexCount = aQuadCount * 6;
@@ -24,7 +24,7 @@ HRESULT QuadX::CreateResources(void * xArgs[])
 // 4: repeat direction x or y (?)
 void QuadX::Update(void * xArgs[])
 {
-	HRESULT hr;
+	STATUS hr;
 
 	// Set variables.
 	aRect = static_cast<Rect*>(xArgs[0]);
@@ -38,10 +38,10 @@ void QuadX::Update(void * xArgs[])
 
 }
 
-HRESULT QuadX::Map()
+STATUS QuadX::Map()
 {
 
-	HRESULT hr;
+	STATUS hr;
 	int i;
 
 	aVertices = new VertexData[aVertexCount];
@@ -82,9 +82,9 @@ void QuadX::BuildVertex()
 	aVertices[aIndex++].texture = D3DXVECTOR2(aRightTex, aBottomTex);	
 }
 
-HRESULT QuadX::MapCoords()
+STATUS QuadX::MapCoords()
 {
-	HRESULT hr;
+	STATUS hr;
 	void* verticesPtr;
 
 	// initialize the vertex buffer pointer to null first.

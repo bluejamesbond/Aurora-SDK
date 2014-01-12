@@ -19,6 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
 #include "../Core/Rect.h"
 
 #include "BackBuffer.h"
@@ -57,7 +58,7 @@ namespace A2D {
 		LPCTSTR					*		GetSrc();
 
 		// Virtual
-		HRESULT							changeTexture(LPCWSTR  xSrc);
+		STATUS							changeTexture(LPCWSTR  xSrc);
 
 		// Virtual
 		virtual	bool					hasAlpha();
@@ -66,7 +67,7 @@ namespace A2D {
 	public:
 		// Implementation
 		// { ABSTRACT }
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

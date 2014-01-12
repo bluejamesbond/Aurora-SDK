@@ -112,14 +112,14 @@ namespace A2D {
 		float                           getBorderWidth();
 
 		friend							AbstractEventQueue;
-		HRESULT							processWindowEvent(WindowEvent * xEvent);
-		HRESULT							addWindowListener(WindowListener * xListener);
+		STATUS							processWindowEvent(WindowEvent * xEvent);
+		STATUS							addWindowListener(WindowListener * xListener);
 		Rect				    *		getEventRegion();
 
 	protected:
 
-		virtual HRESULT					addListener(AbstractListener * xListener);
-		virtual HRESULT					removeListener(AbstractListener * xListener);
+		virtual STATUS					addListener(AbstractListener * xListener);
+		virtual STATUS					removeListener(AbstractListener * xListener);
 
 		WindowEvent				*		aWindowOpened = 0;
 		WindowEvent				*		aWindowClosed = 0;
@@ -170,7 +170,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

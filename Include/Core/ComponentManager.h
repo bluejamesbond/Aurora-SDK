@@ -20,6 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
 #include "../_A2DLinkers.h"
 #include "OrderedList.h"
 #include "UnorderedList.h"
@@ -63,14 +64,14 @@ namespace A2D {
 		ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow);
 		~ComponentManager();
 
-		HRESULT										  add(Component& xParent, Component& xChild);
+		STATUS										  add(Component& xParent, Component& xChild);
 		bool										  addToDepthTracker(Component& xComponent, float xZ);
 		void										  update();
 		void										  update_forward();
 
 	public:
 
-		virtual HRESULT								  initialize();
+		virtual STATUS								  initialize();
 		
 		inline void ComponentManager::validate()
 		{

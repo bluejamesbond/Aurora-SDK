@@ -20,6 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "../Core/AbstractBackBuffer.h"
 #include "../Core/GXSettings.h"
 #include "../Core/AbstractWindow.h"
@@ -71,7 +73,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

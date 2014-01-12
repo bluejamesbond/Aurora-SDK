@@ -19,6 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "DXUtils.h"
 #include "Texture.h"
@@ -57,12 +59,12 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) = 0;
+		virtual STATUS					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) = 0;
 		virtual unsigned int			getPolygonLayoutElementCount() = 0;
 		virtual	LPCSTR					getTechniqueName() = 0;
 		virtual ID3D10Effect		**	getEffect() = 0;
 		virtual LPCWSTR					getEffectName() = 0;
-		virtual HRESULT					getUsableVariablePointers(ID3D10Effect * xEffect) = 0;
+		virtual STATUS					getUsableVariablePointers(ID3D10Effect * xEffect) = 0;
 
 	public:
 
@@ -70,7 +72,7 @@ namespace A2D {
 		// ABSTRACT IMPLEMENTATION
 		//////////////////////////////////////////////////////////
 
-		virtual HRESULT	                initialize();
+		virtual STATUS	                initialize();
 	};
 }
 

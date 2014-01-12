@@ -16,7 +16,7 @@ ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, Abstract
 	aWindow = xWindow;
 }
 
-HRESULT ComponentManager::initialize()
+STATUS ComponentManager::initialize()
 {
 	Component& root = *aRoot;
 
@@ -29,7 +29,7 @@ HRESULT ComponentManager::initialize()
 
 	addToDepthTracker(root, 0.0f);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 ComponentManager::~ComponentManager(){}
@@ -39,13 +39,13 @@ AbstractWindow * ComponentManager::getWindow()
 	return aWindow;
 }
 
-HRESULT ComponentManager::add(Component& xParent, Component& xChild)
+STATUS ComponentManager::add(Component& xParent, Component& xChild)
 {
 	float depth = xParent.getDepth();
 
 	if (depth == FLT_MIN)
 	{
-		return E_FAIL;
+		return STATUS_FAIL;
 	}
 	
 	xChild.setParent(xParent);
@@ -57,10 +57,10 @@ HRESULT ComponentManager::add(Component& xParent, Component& xChild)
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	return E_FAIL;
+	return STATUS_FAIL;
 }
 
 bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)

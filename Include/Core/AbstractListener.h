@@ -48,7 +48,7 @@ namespace A2D {
 		friend						EventSource;
 
 		virtual ~AbstractListener();
-		virtual HRESULT notify(AbstractEvent * xEvent) = 0;
+		virtual STATUS notify(AbstractEvent * xEvent) = 0;
 
 	protected:
 		// Constructor is protected because this class is abstract.

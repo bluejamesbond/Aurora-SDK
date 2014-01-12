@@ -20,6 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "../Core/AbstractFrame.h"
 #include "Thread.h"
 #include "Graphics.h"
@@ -53,10 +55,10 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue);
-		virtual HRESULT					createPlatformCompatibleWindow(AbstractWindow ** xWindow);
-		virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings);
-		virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer);
+		virtual STATUS					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue);
+		virtual STATUS					createPlatformCompatibleWindow(AbstractWindow ** xWindow);
+		virtual STATUS					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings);
+		virtual STATUS					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer);
 
 	};
 }

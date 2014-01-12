@@ -212,7 +212,7 @@ ComponentManager * AbstractFrame::getComponentManager()
 	return aComponentManager;
 }
 
-HRESULT AbstractFrame::initialize()
+STATUS AbstractFrame::initialize()
 {
 	aId = ++aClassInstances;
 
@@ -225,7 +225,7 @@ HRESULT AbstractFrame::initialize()
 	
 	aEventQueue->startDispatchingThread();
 	
-	return S_OK;
+	return STATUS_OK;
 }
 
 Panel& AbstractFrame::getRootPane()
@@ -233,7 +233,7 @@ Panel& AbstractFrame::getRootPane()
 	return aRootPane;
 }
 
-HRESULT AbstractFrame::createResources()
+STATUS AbstractFrame::createResources()
 {	
 	SAFELY(createPlatformCompatibleWindow(&aWindow));
 	SAFELY(aWindow->initialize());	
@@ -246,7 +246,7 @@ HRESULT AbstractFrame::createResources()
 	aComponentManager = new ComponentManager(aGraphics, &aRootPane, aWindow);
 	SAFELY(aComponentManager->initialize());
 	
-	return S_OK;
+	return STATUS_OK;
 }
 
 void AbstractFrame::invalidate()
@@ -259,7 +259,7 @@ void AbstractFrame::validated()
 	aValidatedContents = true;
 }
 
-HRESULT AbstractFrame::addListener(AbstractListener * xListener)
+STATUS AbstractFrame::addListener(AbstractListener * xListener)
 {
 	OrderedList<EventSource*> * sourceList = &Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
 	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList->_end();
@@ -277,7 +277,7 @@ HRESULT AbstractFrame::addListener(AbstractListener * xListener)
 	return EventSource::addListener(xListener);
 }
 
-HRESULT AbstractFrame::removeListener(AbstractListener * xListener)
+STATUS AbstractFrame::removeListener(AbstractListener * xListener)
 {
 	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
 	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();

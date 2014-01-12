@@ -13,13 +13,13 @@ AbstractListener(A2D_LISTENER_MOUSE), aName(xString)
 
 MouseListener::~MouseListener(){}
 
-HRESULT MouseListener::notify(AbstractEvent * xEvent)
+STATUS MouseListener::notify(AbstractEvent * xEvent)
 {
 	return notify((MouseEvent*)xEvent);
 
 }
 
-HRESULT MouseListener::notify(MouseEvent * xEvent)
+STATUS MouseListener::notify(MouseEvent * xEvent)
 {
 
 	int id = xEvent->getID();
@@ -49,8 +49,8 @@ HRESULT MouseListener::notify(MouseEvent * xEvent)
 		// Do something default
 		SYSOUT_STR("Mouse ID not recognized");
 	}
-	if (xEvent->isConsumed()) return S_OK;
-	else return S_FALSE;
+	if (xEvent->isConsumed()) { return STATUS_OK; }
+	else return STATUS_FAIL;
 }
 
 void MouseListener::mousePressed(MouseEvent * xEvent)

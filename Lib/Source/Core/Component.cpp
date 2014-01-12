@@ -226,10 +226,10 @@ void Component::setPosition(Styles::Position xPosition)
 	aPosition = xPosition;
 }
 
-HRESULT Component::initialize()
+STATUS Component::initialize()
 {
 	SAFELY(EventSource::initialize());
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -269,7 +269,7 @@ void Component::update()
 	paintComponentBorder();
 }
 
-HRESULT Component::requestFocus()
+STATUS Component::requestFocus()
 {
 	// Also it's broken, as aFrame is not initialized.
 	if (isFocusable && !isFocused)
@@ -277,7 +277,7 @@ HRESULT Component::requestFocus()
 		FocusEvent& focusRequest = *new FocusEvent(this, FocusEvent::FOCUS_GAINED);
 		Toolkit::getSystemEventQueue(aFrame->id())->processFocusEvent(&focusRequest);
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
 void Component::setFocusable(bool xFocusable)
@@ -290,14 +290,14 @@ Rect * Component::getEventRegion()
 	return &aVisibleRegion;
 }
 
-HRESULT Component::addMouseListener(MouseListener * xListener)
+STATUS Component::addMouseListener(MouseListener * xListener)
 {
 	if (aComponentManager != NULL)
 	{
 		// Add depth manually
 		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
 
-		HRESULT hr = ComponentEventSource::addMouseListener(xListener);
+		STATUS hr = ComponentEventSource::addMouseListener(xListener);
 		if (xListener != NULL) eQ->addEventDepthTracker(this, abs(aDepth));
 		else eQ->removeEventDepthTracker(this, abs(aDepth + 1));
 		return hr;
@@ -305,14 +305,14 @@ HRESULT Component::addMouseListener(MouseListener * xListener)
 	return ComponentEventSource::addMouseListener(xListener);
 }
 
-HRESULT Component::addMouseMotionListener(MouseMotionListener * xListener)
+STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
 {
 	if (aComponentManager != NULL)
 	{
 		// Add depth manually
 		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
 
-		HRESULT hr = ComponentEventSource::addMouseMotionListener(xListener);
+		STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
 		if (xListener != NULL) Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
 		else eQ->removeEventDepthTracker(this, abs(aDepth + 1));
 		return hr;
@@ -320,12 +320,12 @@ HRESULT Component::addMouseMotionListener(MouseMotionListener * xListener)
 	return ComponentEventSource::addMouseMotionListener(xListener);
 }
 
-HRESULT Component::addFocusListener(FocusListener * xListener)
+STATUS Component::addFocusListener(FocusListener * xListener)
 {
 	if (aComponentManager != NULL)
 	{
 		// Add depth manually
-		HRESULT hr = ComponentEventSource::addFocusListener(xListener);
+		STATUS hr = ComponentEventSource::addFocusListener(xListener);
 		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
 
 		if (xListener != NULL) Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
@@ -335,14 +335,14 @@ HRESULT Component::addFocusListener(FocusListener * xListener)
 	return ComponentEventSource::addFocusListener(xListener);
 }
 
-HRESULT Component::addActionListener(ActionListener * xListener)
+STATUS Component::addActionListener(ActionListener * xListener)
 {
 	if (aComponentManager != NULL)
 	{
 		// Add depth manually
 		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
 
-		HRESULT hr = ComponentEventSource::addActionListener(xListener);
+		STATUS hr = ComponentEventSource::addActionListener(xListener);
 		if (xListener != NULL) Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
 		else eQ->removeEventDepthTracker(this, abs(aDepth + 1));
 		return hr;

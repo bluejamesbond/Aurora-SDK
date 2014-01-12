@@ -19,6 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "ActionEvent.h"
 #include "AbstractListener.h"
@@ -51,7 +53,7 @@ namespace A2D {
 		ActionListener(string xString);
 		virtual ~ActionListener();
 
-		HRESULT							notify(ActionEvent * xEvent);
+		STATUS							notify(ActionEvent * xEvent);
 		void							print() const;
 		virtual void					actionPerformed(ActionEvent * xEvent);
 
@@ -60,7 +62,7 @@ namespace A2D {
 
 	protected:
 
-		HRESULT							notify(AbstractEvent * xEvent);
+		STATUS							notify(AbstractEvent * xEvent);
 
 	private:
 		ActionListener(const ActionListener&);

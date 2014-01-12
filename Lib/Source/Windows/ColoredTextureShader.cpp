@@ -6,11 +6,11 @@ using namespace A2D;
 
 ColoredTextureShader::ColoredTextureShader(ID3D10Device ** xDevice) : AbstractTextureShader(xDevice){}
 
-HRESULT	ColoredTextureShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
+STATUS	ColoredTextureShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
 {
 	*xPolygonLayout = ColoredTextureVertex::aPolygonLayout;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 unsigned int ColoredTextureShader::getPolygonLayoutElementCount()

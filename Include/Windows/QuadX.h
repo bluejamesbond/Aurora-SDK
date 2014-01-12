@@ -19,6 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
 #include "../Pipelineable.h"
 
 #include "ExtLibs.h"
@@ -61,7 +62,7 @@ public:
 
 	///////////////////////////////////////////
 
-	virtual HRESULT CreateResources(void * xArgs[]);
+	virtual STATUS 					CreateResources(void * xArgs[]);
 
 	///////////////////////////////////////////
 
@@ -71,11 +72,11 @@ public:
 	// 3: orientation (horizontal/vertical) (?)
 	// 4: repeat direction x or y (?)
 	virtual void					Update(void* Args[]);
-	virtual HRESULT					Map();
+	virtual STATUS					Map();
 
 protected:
 
-	virtual HRESULT					MapCoords();
+	virtual STATUS					MapCoords();
 	virtual void					BuildVertex();
 
 public:
@@ -84,7 +85,7 @@ public:
 	// ABSTRACT IMPLEMENTATION
 	//////////////////////////////////////////////////////////
 
-	virtual HRESULT                 initialize() = 0;
+	virtual STATUS                 initialize() = 0;
 	virtual void                    Deinitialize() = 0;
 	virtual LPCWSTR                 getClass();
 	virtual LPCWSTR                 toString();

@@ -15,12 +15,12 @@ aName(xString), AbstractListener(A2D_LISTENER_FOCUS)
 
 FocusListener::~FocusListener(){}
 
-HRESULT FocusListener::notify(AbstractEvent * xEvent)
+STATUS FocusListener::notify(AbstractEvent * xEvent)
 {
 	return notify((FocusEvent*)xEvent);
 }
 
-HRESULT FocusListener::notify(FocusEvent * xEvent)
+STATUS FocusListener::notify(FocusEvent * xEvent)
 {
 
 	int id = xEvent->getID();
@@ -37,8 +37,8 @@ HRESULT FocusListener::notify(FocusEvent * xEvent)
 	{
 		SYSOUT_STR("Id not recognized");
 	}
-	if (xEvent->isConsumed()) return S_OK;
-	else return S_FALSE;
+	if (xEvent->isConsumed()) { return STATUS_OK; }
+	else return STATUS_FAIL;
 }
 
 void FocusListener::focusGained(FocusEvent * xEvent)

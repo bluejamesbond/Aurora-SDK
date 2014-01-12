@@ -20,6 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "AbstractThread.h"
 #include "OrderedList.h"
 #include "Toolkit.h"
@@ -108,7 +110,7 @@ namespace A2D{
 		// Event handling
 		void							processMouseEvent(MouseEvent * xEvent);
 		void							processFocusEvent(FocusEvent * xEvent);
-		HRESULT							processActionEvent(ActionEvent * xEvent);
+		STATUS							processActionEvent(ActionEvent * xEvent);
 		void							processWindowEvent(WindowEvent * xEvent);
 		void							processMouseMotionEvent(MouseEvent * xEvent);
 
@@ -147,7 +149,7 @@ namespace A2D{
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

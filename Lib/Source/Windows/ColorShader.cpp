@@ -41,7 +41,7 @@ LPCWSTR ColorShader::getEffectName()
 	return L"../../../Aurora-SDK/Lib/Assets/Shaders/color.fx";
 }
 
-HRESULT ColorShader::getUsableVariablePointers(ID3D10Effect * xEffect)
+STATUS ColorShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 {
 	// Get pointers to the three matrices inside the 
 	// shader so we can update them from this class.
@@ -61,7 +61,7 @@ HRESULT ColorShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 		aProjectionMatrixPtr = xEffect->GetVariableByName("projectionMatrix")->AsMatrix();
 	}
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void ColorShader::setWorldMatrix(float ** xMatrix)
@@ -96,11 +96,11 @@ void ColorShader::reloadProjectionMatrix()
 	aProjectionMatrixPtr->SetMatrix(*aProjectionMatrix);
 }
 
-HRESULT	ColorShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
+STATUS	ColorShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
 {
 	*xPolygonLayout = ColorVertex::aPolygonLayout;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 unsigned int ColorShader::getPolygonLayoutElementCount()

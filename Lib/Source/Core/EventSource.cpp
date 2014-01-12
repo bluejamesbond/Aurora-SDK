@@ -3,7 +3,7 @@
 #include "../../../include/Core/EventSource.h"
 #include "../../../Include/Core/WindowListener.h"
 #include "../../../Include/Core/AbstractEventQueue.h"
-
+#include "../../../Include/_A2DCommon.h"
 
 using namespace A2D;
 
@@ -16,7 +16,7 @@ EventSource::~EventSource(){}
 /// LISTENERS AND EVENTS   /////
 ////////////////////////////////
 
-HRESULT EventSource::processMouseEvent(MouseEvent * xEvent)
+STATUS EventSource::processMouseEvent(MouseEvent * xEvent)
 {
 	//int ID = _LISTENER_MOUSE;
 	//AbstractListener * mouseListener = FindListener(ID);
@@ -27,7 +27,7 @@ HRESULT EventSource::processMouseEvent(MouseEvent * xEvent)
 	//}
 	//else
 	//{
-	//	return S_FALSE;
+	//	return STATUS_FALSE;
 	//}
 	int ID;
 	if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED ||
@@ -40,7 +40,7 @@ HRESULT EventSource::processMouseEvent(MouseEvent * xEvent)
 	return fireListener(xEvent, ID);
 }
 
-HRESULT EventSource::processActionEvent(ActionEvent * xEvent)
+STATUS EventSource::processActionEvent(ActionEvent * xEvent)
 {
 	int ID = A2D_LISTENER_ACTION;
 	return fireListener(xEvent, ID);
@@ -48,7 +48,7 @@ HRESULT EventSource::processActionEvent(ActionEvent * xEvent)
 
 
 
-HRESULT EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
+STATUS EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 {
 	AbstractListener * listener = findListener(xListenerID);
 	if (listener)
@@ -73,9 +73,9 @@ HRESULT EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 		{
 			return (static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
 		}
-		return S_FALSE;
+		return STATUS_FAIL;
 	}
-	else return S_FALSE;
+	else return STATUS_FAIL;
 }
 
 AbstractListener * EventSource::findListener(const int xListenerID)
@@ -89,39 +89,39 @@ AbstractListener * EventSource::findListener(const int xListenerID)
 	return NULL;
 }
 
-HRESULT EventSource::addMouseListener(MouseListener * xListener)
+STATUS EventSource::addMouseListener(MouseListener * xListener)
 {
 	if (xListener == NULL)
 	{
 		int ID = A2D_LISTENER_MOUSE;
 		AbstractListener * listener = findListener(ID);
 		if(listener) return removeListener(listener);
-		else return S_FALSE;
+		else return STATUS_FAIL;
 	}
 	return addListener(xListener);
 	
 }
 
-HRESULT EventSource::addActionListener(ActionListener * xListener)
+STATUS EventSource::addActionListener(ActionListener * xListener)
 {
 	if (xListener == NULL)
 	{
 		int ID = A2D_LISTENER_ACTION;
 		AbstractListener * listener = findListener(ID);
 		if (listener) return removeListener(listener);
-		else return S_FALSE;
+		else return STATUS_FAIL;
 	}
 	return addListener(xListener);
 }
 
-HRESULT EventSource::addMouseMotionListener(MouseMotionListener * xListener)
+STATUS EventSource::addMouseMotionListener(MouseMotionListener * xListener)
 {
 	if (xListener == NULL)
 	{
 		int ID = A2D_LISTENER_MOUSEMOTION;
 		AbstractListener * listener = findListener(ID);
 		if (listener) return removeListener(listener);
-		else return S_FALSE;
+		else return STATUS_FAIL;
 	}
 	return addListener(xListener);
 }
@@ -137,7 +137,7 @@ bool EventSource::operator==(EventSource& xSource)
 	return true;
 }
 
-HRESULT EventSource::addListener(AbstractListener * xListener)
+STATUS EventSource::addListener(AbstractListener * xListener)
 {
 
 	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();
@@ -146,7 +146,7 @@ HRESULT EventSource::addListener(AbstractListener * xListener)
 		if (node->value == xListener)
 		{
 			node->value = xListener;
-			return S_OK; // Same type listener found, replace it.
+			return STATUS_OK; // Same type listener found, replace it.
 		}
 		node = node->left;
 	}
@@ -154,25 +154,25 @@ HRESULT EventSource::addListener(AbstractListener * xListener)
 
 	// Listener not found so we add to list.
 	aListenerList.push_back(xListener, &xListener->aRemoveTicket);
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT EventSource::removeListener(AbstractListener * xListener)
+STATUS EventSource::removeListener(AbstractListener * xListener)
 {
 	// Crashes if the one we are removing isn't there in the first place!
 	// Fix later!
 	aListenerList.remove_request(&xListener->aRemoveTicket);
 	if (xListener->aRemoveTicket == NULL)
 	{
-		return S_OK;
+		return STATUS_OK;
 	}
-	else return S_FALSE;
+	else return STATUS_FAIL;
 }
 
-HRESULT EventSource::initialize()
+STATUS EventSource::initialize()
 {
 	//aListenerList = new OrderedList<AbstractListener*>;
-	return S_OK;
+	return STATUS_OK;
 }
 
 

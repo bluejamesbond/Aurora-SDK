@@ -82,11 +82,11 @@ AbstractEventQueue* AbstractEventQueue::getInstance()
 	return aClassInstance;
 }
 
-HRESULT AbstractEventQueue::initialize()
+STATUS AbstractEventQueue::initialize()
 {
 	aClassInstance = this;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void AbstractEventQueue::startDispatchingThread()
@@ -99,7 +99,7 @@ void AbstractEventQueue::startDispatchingThread()
 	
 	G_SAFELY(aThread->initialize());	
 
-	// If it fails...screwed! -FIX IT. Catch the HRESULT!
+	// If it fails...screwed! -FIX IT. Catch the STATUS!
 
 	aThread->start();
 }
@@ -205,8 +205,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	int size = componentLocations.size();
 
 	Rect * eventRegion;
-	HRESULT isConsumedMouse;
-	HRESULT isConsumedAction = S_FALSE;
+	STATUS isConsumedMouse;
+	STATUS isConsumedAction = STATUS_FAIL;
 	bool isConsumedFocus = false;
 	bool isValidRegion = false;
 	bool noComponent = false;
@@ -264,13 +264,13 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 						// Action event handling AFTER CLICKED
 						// Will work more on this later, not sure how it works with current components.
-						if (isConsumedAction != S_OK)
+						if (isConsumedAction != STATUS_OK)
 						{
 							aActionEvent->setSource(comp);
 							isConsumedAction = processActionEvent(aActionEvent);
 						}
 					}
-					if (isConsumedMouse == S_OK)
+					if (isConsumedMouse == STATUS_OK)
 					{
 						//SYSOUT_F("MouseListenerFound, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 						return;
@@ -315,14 +315,14 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			{
 				aMouseEvent->setProperties(source, MouseEvent::MOUSE_RELEASED);
 				isConsumedMouse = source->processMouseEvent(aMouseEvent);
-				if (isConsumedAction != S_OK)
+				if (isConsumedAction != STATUS_OK)
 				{
 					aActionEvent->setSource(source);
 					isConsumedAction = processActionEvent(aActionEvent);
 				}
 			}
 
-			if (isConsumedMouse == S_OK)
+			if (isConsumedMouse == STATUS_OK)
 			{
 				//SYSOUT_F("MouseListenerFound and consumed, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 				return;
@@ -342,9 +342,9 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	if (!size) return;
 
 
-	HRESULT isConsumedMouseMove = S_FALSE;
-	HRESULT isConsumedMouse = S_FALSE;
-	bool isDone = (isConsumedMouseMove == S_OK && isConsumedMouse == S_OK);
+	STATUS isConsumedMouseMove = STATUS_FAIL;
+	STATUS isConsumedMouse = STATUS_FAIL;
+	bool isDone = (isConsumedMouseMove == STATUS_OK && isConsumedMouse == STATUS_OK);
 
 	Rect * eventRegion;
 	POINT point;
@@ -373,7 +373,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 			if (isValidRegion)
 			{
-				if (isConsumedMouseMove != S_FALSE)
+				if (isConsumedMouseMove != STATUS_FAIL)
 				{
 					if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 					{
@@ -386,7 +386,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 						isConsumedMouseMove = source->processMouseEvent(aMouseEvent);
 					}
 				}
-				if (isConsumedMouse == S_FALSE && aLastSource != source)
+				if (isConsumedMouse == STATUS_FAIL && aLastSource != source)
 				{
 					// We've entered a new component
 					if (aLastSource)
@@ -401,7 +401,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 					aLastSource = source;
 				}
 				// We only do this once, and we don't have to go through parent.
-				isConsumedMouse = S_OK;
+				isConsumedMouse = STATUS_OK;
 
 				if (isDone)
 				{
@@ -425,7 +425,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 		if (isValidRegion)
 		{
-			if (isConsumedMouseMove == S_FALSE)
+			if (isConsumedMouseMove == STATUS_FAIL)
 			{
 				if (xEvent->getID() == MouseEvent::MOUSE_MOVE)
 				{
@@ -439,7 +439,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 				}
 			}
 
-			if (isConsumedMouse == S_FALSE && aLastSource != source)
+			if (isConsumedMouse == STATUS_FAIL && aLastSource != source)
 			{
 				if (aLastSource)
 				{
@@ -454,7 +454,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 				aLastSource = source;
 			}
 
-			isConsumedMouse = S_OK;
+			isConsumedMouse = STATUS_OK;
 
 			if (isDone)
 			{
@@ -464,7 +464,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		nodeE = nodeE->left;
 	}
 
-	if (isConsumedMouse == S_FALSE)
+	if (isConsumedMouse == STATUS_FAIL)
 	{
 		if (aLastSource)
 		{
@@ -478,7 +478,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 }
 
 
-HRESULT AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
+STATUS AbstractEventQueue::processActionEvent(ActionEvent * xEvent)
 {
 	// Need to know when ActionEvents are fired, and what it contains.
 	return xEvent->getSource()->processActionEvent(xEvent);
