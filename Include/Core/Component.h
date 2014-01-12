@@ -41,7 +41,7 @@ namespace A2D {
 	class Graphics;
 	class Component;
 	struct ImageProperties;
-	class RepaintManager;
+	class ComponentManager;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
@@ -49,7 +49,7 @@ namespace A2D {
 
     class Component : public ComponentEventSource
 	{
-		friend class RepaintManager;
+		friend class ComponentManager;
 		friend class AbstractEventQueue;
 
 	public:
@@ -67,7 +67,7 @@ namespace A2D {
 		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
-		RepaintManager			*		aRepaintManager = NULL;
+		ComponentManager		*		aComponentManager = NULL;
 
 	protected:
 

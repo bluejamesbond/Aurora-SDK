@@ -11,7 +11,7 @@ AbstractFrame::AbstractFrame(){}
 AbstractFrame::~AbstractFrame()
 {
 	DESTROY(aBackBuffer);
-	DESTROY(aRepaintManager);
+	DESTROY(aComponentManager);
 	DESTROY(aGraphics);
 }
 
@@ -207,9 +207,9 @@ void AbstractFrame::dispose()
 	}
 }
 
-RepaintManager* AbstractFrame::getRepaintManager()
+ComponentManager * AbstractFrame::getComponentManager()
 {
-	return aRepaintManager;
+	return aComponentManager;
 }
 
 HRESULT AbstractFrame::initialize()
@@ -243,8 +243,8 @@ HRESULT AbstractFrame::createResources()
 
 	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-	aRepaintManager = new RepaintManager(aGraphics, &aRootPane, aWindow);
-	SAFELY(aRepaintManager->initialize());
+	aComponentManager = new ComponentManager(aGraphics, &aRootPane, aWindow);
+	SAFELY(aComponentManager->initialize());
 	
 	return S_OK;
 }
@@ -302,12 +302,12 @@ void AbstractFrame::update()
 {
 	if (!aValidatedContents)
 	{
-		aRepaintManager->validate();
+		aComponentManager->validate();
 		
-		aRepaintManager->update_forward();
+		aComponentManager->update_forward();
 
 		return;
 	}
 
-	aRepaintManager->update();
+	aComponentManager->update();
 }

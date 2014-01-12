@@ -25,7 +25,7 @@
 #include "AbstractBackBuffer.h"
 #include "AbstractWindow.h"
 #include "GXSettings.h"
-#include "RepaintManager.h"
+#include "ComponentManager.h"
 #include "Rect.h"
 #include "EventSource.h"
 
@@ -60,7 +60,7 @@ namespace A2D {
 		AbstractWindow	  	   *		aWindow;
 		AbstractEventQueue	   *		aEventQueue = NULL;
 		void				   * 		aGraphics;
-		RepaintManager		   *		aRepaintManager;
+		ComponentManager	   *		aComponentManager;
 		Panel                			aRootPane;
 		GXSettings			  			aGXSettings;
 
@@ -102,7 +102,7 @@ namespace A2D {
 		void							setDefaultCloseOperation(int xOperation);
 		AbstractWindow			*		getWindow();
 		void							run(int xThreadId);
-		RepaintManager*					getRepaintManager();
+		ComponentManager*					getComponentManager();
 
 
 	protected:

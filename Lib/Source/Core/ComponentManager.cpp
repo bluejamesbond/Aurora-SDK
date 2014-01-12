@@ -1,13 +1,13 @@
 
 #include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/RepaintManager.h"
+#include "../../../include/Core/ComponentManager.h"
 #include "../../../include/Core/Component.h"
 #include "../../../include/Core/AbstractWindow.h"
 #include "../../../include/Core/AbstractFrame.h"
 
 using namespace A2D;
 
-RepaintManager::RepaintManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow)
+ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow)
 {
 	aGraphics = xGraphics;
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
@@ -16,7 +16,7 @@ RepaintManager::RepaintManager(void * xGraphics, Component * xRoot, AbstractWind
 	aWindow = xWindow;
 }
 
-HRESULT RepaintManager::initialize()
+HRESULT ComponentManager::initialize()
 {
 	Component& root = *aRoot;
 
@@ -32,14 +32,14 @@ HRESULT RepaintManager::initialize()
 	return S_OK;
 }
 
-RepaintManager::~RepaintManager(){}
+ComponentManager::~ComponentManager(){}
 
-AbstractWindow * RepaintManager::getWindow()
+AbstractWindow * ComponentManager::getWindow()
 {
 	return aWindow;
 }
 
-HRESULT RepaintManager::add(Component& xParent, Component& xChild)
+HRESULT ComponentManager::add(Component& xParent, Component& xChild)
 {
 	float depth = xParent.getDepth();
 
@@ -63,10 +63,10 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 	return E_FAIL;
 }
 
-bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
+bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
 {
 	// Call eventDepthTracker also.
-	xComponent.aRepaintManager = this;
+	xComponent.aComponentManager = this;
 	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
 	UnorderedList<Component*> * peerComponents;
 
@@ -91,7 +91,7 @@ bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 	return 1;
 }
 
-void RepaintManager::update()
+void ComponentManager::update()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
@@ -126,7 +126,7 @@ void RepaintManager::update()
 	backBuffer->swap();
 }
 
-void RepaintManager::update_forward()
+void ComponentManager::update_forward()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
