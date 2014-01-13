@@ -11,7 +11,7 @@ AbstractFrame::AbstractFrame(){}
 AbstractFrame::~AbstractFrame()
 {
 	DESTROY(aBackBuffer);
-	DESTROY(aRepaintManager);
+	DESTROY(aComponentManager);
 	DESTROY(aGraphics);
 }
 
@@ -207,14 +207,16 @@ void AbstractFrame::dispose()
 	}
 }
 
-RepaintManager* AbstractFrame::getRepaintManager()
+ComponentManager * AbstractFrame::getComponentManager()
 {
-	return aRepaintManager;
+	return aComponentManager;
 }
 
-HRESULT AbstractFrame::initialize()
+STATUS AbstractFrame::initialize()
 {
 	aId = ++aClassInstances;
+
+	SAFELY(EventSource::initialize());
 
 	SAFELY(aRootPane.initialize());
 
@@ -223,7 +225,7 @@ HRESULT AbstractFrame::initialize()
 	
 	aEventQueue->startDispatchingThread();
 	
-	return S_OK;
+	return STATUS_OK;
 }
 
 Panel& AbstractFrame::getRootPane()
@@ -231,7 +233,7 @@ Panel& AbstractFrame::getRootPane()
 	return aRootPane;
 }
 
-HRESULT AbstractFrame::createResources()
+STATUS AbstractFrame::createResources()
 {	
 	SAFELY(createPlatformCompatibleWindow(&aWindow));
 	SAFELY(aWindow->initialize());	
@@ -241,10 +243,10 @@ HRESULT AbstractFrame::createResources()
 
 	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-	aRepaintManager = new RepaintManager(aGraphics, &aRootPane);
-	SAFELY(aRepaintManager->initialize());
+	aComponentManager = new ComponentManager(aGraphics, &aRootPane, aWindow);
+	SAFELY(aComponentManager->initialize());
 	
-	return S_OK;
+	return STATUS_OK;
 }
 
 void AbstractFrame::invalidate()
@@ -257,16 +259,55 @@ void AbstractFrame::validated()
 	aValidatedContents = true;
 }
 
+STATUS AbstractFrame::addListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> * sourceList = &Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList->_end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			break; // don't have to add, so do nothing.
+		}
+		node = node->left;
+	}
+
+	sourceList->push_back(this, &aRemoveTicket);
+
+	return EventSource::addListener(xListener);
+}
+
+STATUS AbstractFrame::removeListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aId)->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			sourceList.remove_request(&aRemoveTicket);
+		}
+		node = node->left;
+	}
+
+	return EventSource::removeListener(xListener);
+}
+
+Rect * AbstractFrame::getEventRegion()
+{
+	return &aWindow->getBounds();
+}
+
 void AbstractFrame::update()
 {
 	if (!aValidatedContents)
 	{
-		aRepaintManager->validate();
+		aComponentManager->validate();
 		
-		aRepaintManager->update_forward();
+		aComponentManager->update_forward();
 
 		return;
 	}
 
-	aRepaintManager->update();
+	aComponentManager->update();
 }

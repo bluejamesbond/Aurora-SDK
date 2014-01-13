@@ -2,8 +2,8 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __REPAINTMANAGER_H__
-#define __REPAINTMANAGER_H__
+#ifndef __COMPONENTMANAGER_H__
+#define __COMPONENTMANAGER_H__
 
 //+-----------------------------------------------------------------------------
 //
@@ -40,8 +40,11 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class RepaintManager
+	class ComponentManager
 	{
+
+	private:
+
 		Dims										*  aBackBufferDims;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
 		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
@@ -53,19 +56,23 @@ namespace A2D {
 
 	public:
 
-		RepaintManager(void * xGraphics, Component * xRoot);
-		~RepaintManager();
+		AbstractWindow							   *   getWindow();
 
-		HRESULT										  add(Component& xParent, Component& xChild);
+	public:
+
+		ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow);
+		~ComponentManager();
+
+		STATUS										  add(Component& xParent, Component& xChild);
 		bool										  addToDepthTracker(Component& xComponent, float xZ);
 		void										  update();
 		void										  update_forward();
 
 	public:
 
-		virtual HRESULT								  initialize();
+		virtual STATUS								  initialize();
 		
-		inline void RepaintManager::validate()
+		inline void ComponentManager::validate()
 		{
 			aBackBuffer->validate();
 			aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);

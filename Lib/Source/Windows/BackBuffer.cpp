@@ -18,7 +18,7 @@ BackBuffer::~BackBuffer()
 	D3DDESTROY(aDevice);
 }
 
-HRESULT BackBuffer::initialize()
+STATUS BackBuffer::initialize()
 {
 	IDXGIFactory* factory;
 	IDXGIAdapter* adapter;
@@ -309,7 +309,7 @@ HRESULT BackBuffer::initialize()
 	// rendered from this vertex buffer, in this case triangles.
 	device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void BackBuffer::setActive()

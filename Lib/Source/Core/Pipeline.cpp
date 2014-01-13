@@ -25,7 +25,7 @@ Pipeline::~Pipeline()
 	}
 }
 
-HRESULT Pipeline::initialize()
+STATUS Pipeline::initialize()
 {
 	return NULL;
 }

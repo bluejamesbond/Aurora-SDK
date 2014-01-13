@@ -1,19 +1,22 @@
 
 #include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/RepaintManager.h"
+#include "../../../include/Core/ComponentManager.h"
 #include "../../../include/Core/Component.h"
+#include "../../../include/Core/AbstractWindow.h"
+#include "../../../include/Core/AbstractFrame.h"
 
 using namespace A2D;
 
-RepaintManager::RepaintManager(void * xGraphics, Component * xRoot)
+ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow)
 {
 	aGraphics = xGraphics;
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
+	aWindow = xWindow;
 }
 
-HRESULT RepaintManager::initialize()
+STATUS ComponentManager::initialize()
 {
 	Component& root = *aRoot;
 
@@ -26,18 +29,23 @@ HRESULT RepaintManager::initialize()
 
 	addToDepthTracker(root, 0.0f);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-RepaintManager::~RepaintManager(){}
+ComponentManager::~ComponentManager(){}
 
-HRESULT RepaintManager::add(Component& xParent, Component& xChild)
+AbstractWindow * ComponentManager::getWindow()
+{
+	return aWindow;
+}
+
+STATUS ComponentManager::add(Component& xParent, Component& xChild)
 {
 	float depth = xParent.getDepth();
 
 	if (depth == FLT_MIN)
 	{
-		return E_FAIL;
+		return STATUS_FAIL;
 	}
 	
 	xChild.setParent(xParent);
@@ -49,14 +57,17 @@ HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
 
-		return S_OK;
+		return STATUS_OK;
 	}
 
-	return E_FAIL;
+	return STATUS_FAIL;
 }
 
-bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
+bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
 {
+	// Call eventDepthTracker also.
+	xComponent.aComponentManager = this;
+	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;
@@ -80,7 +91,7 @@ bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 	return 1;
 }
 
-void RepaintManager::update()
+void ComponentManager::update()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
@@ -115,7 +126,7 @@ void RepaintManager::update()
 	backBuffer->swap();
 }
 
-void RepaintManager::update_forward()
+void ComponentManager::update_forward()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 

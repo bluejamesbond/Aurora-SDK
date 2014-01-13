@@ -14,7 +14,7 @@ AbstractShader::~AbstractShader()
 	DESTROY(aTechnique);
 }
 
-HRESULT AbstractShader::initialize()
+STATUS AbstractShader::initialize()
 {
 	unsigned int polygonLayoutElements = getPolygonLayoutElementCount();
 	D3D10_INPUT_ELEMENT_DESC * polygonLayout;
@@ -38,7 +38,7 @@ HRESULT AbstractShader::initialize()
 	SAFELY(DXUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));	
 	SAFELY(getUsableVariablePointers(*effect));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void AbstractShader::renderShader()

@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,13 +21,15 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+
 #include "Panel.h"
 #include "CameraProperties.h"
 #include "AbstractBackBuffer.h"
 #include "AbstractWindow.h"
 #include "GXSettings.h"
-#include "RepaintManager.h"
+#include "ComponentManager.h"
 #include "Rect.h"
+#include "EventSource.h"
 
 namespace A2D {
 	
@@ -45,7 +48,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame : public Runnable
+	class AbstractFrame : public Runnable, public EventSource
 	{
 
 	public:
@@ -59,7 +62,7 @@ namespace A2D {
 		AbstractWindow	  	   *		aWindow;
 		AbstractEventQueue	   *		aEventQueue = NULL;
 		void				   * 		aGraphics;
-		RepaintManager		   *		aRepaintManager;
+		ComponentManager	   *		aComponentManager;
 		Panel                			aRootPane;
 		GXSettings			  			aGXSettings;
 
@@ -71,7 +74,7 @@ namespace A2D {
 	public:
 
 		Panel&               			getRootPane();
-		HRESULT                         createResources();
+		STATUS                         createResources();
 		void                            update();
 		void							dispose();
 		void							invalidate();
@@ -80,6 +83,9 @@ namespace A2D {
 	protected:
 		void							validated();
 		void							validate();
+		STATUS							addListener(AbstractListener * xListener);
+		STATUS							removeListener(AbstractListener * xListener);
+		Rect *							getEventRegion();
 
 	public:
 		int								id();
@@ -98,19 +104,19 @@ namespace A2D {
 		void							setDefaultCloseOperation(int xOperation);
 		AbstractWindow			*		getWindow();
 		void							run(int xThreadId);
-		RepaintManager*					getRepaintManager();
+		ComponentManager*					getComponentManager();
 
 
 	protected:
 
-		virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
-		virtual HRESULT					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
-		virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
-		virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
+		virtual STATUS					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
+		virtual STATUS					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
+		virtual STATUS					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
+		virtual STATUS					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
 		
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

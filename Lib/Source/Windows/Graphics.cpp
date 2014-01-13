@@ -181,7 +181,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 //	}
 //}
 
-HRESULT Graphics::initialize()
+STATUS Graphics::initialize()
 {
 //	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
@@ -221,5 +221,5 @@ HRESULT Graphics::initialize()
 	//TextureShader::setWorldMatrix(&aWorldMatrix);
 	//ColorShader::setWorldMatrix(&aWorldMatrix);
 
-	return S_OK;
+	return STATUS_OK;
 }

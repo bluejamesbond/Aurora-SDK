@@ -19,6 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+
 #include "../Core/Rect.h"
 #include "../Core/Paint.h"
 
@@ -581,7 +582,7 @@ namespace A2D {
 
 	public:
 		
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 	};
 
 }

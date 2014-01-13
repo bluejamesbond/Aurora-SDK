@@ -42,7 +42,7 @@ namespace A2D {
 
 	class Window : public AbstractWindow
 	{
-
+		friend class Component; // remove later if not needed
 		////////////////////////////////////////////////////////////////////////////////
 		// PLATFORM COMPATIBLE IMPLEMENTATION
 		////////////////////////////////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ namespace A2D {
 		float							aOffsetX = 0.0f;
 		float							aOffsetY = 0.0f;
 
-		bool                            isDragged = false;
-		bool                            isResizing = false;
-		bool							isMoving = false;
+		bool                            aIsDragged = false;
+		bool                            aIsResizing = false;
+		bool							aIsMoving = false;
 		bool                            aWinMoveRes = false;
 
 
@@ -121,21 +121,22 @@ namespace A2D {
 
 	public:
 
+		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 	private:
 
 		HWND                            createCompatibleWindow(bool isParent);
-		HRESULT                         createBackgroundResources();
-		HRESULT                         createShadowResources();
-		HRESULT                         createColorResources();
+		STATUS                         createBackgroundResources();
+		STATUS                         createShadowResources();
+		STATUS                         createColorResources();
 
 		ATOM	                        registerClass();
 
-		inline HRESULT                  updateOnMouseDown(HWND xHwnd);
-		inline HRESULT                  updateOnMouseMove(HWND xHwnd);
-		inline HRESULT                  updateOnMouseUp(HWND xHwnd);
-		HRESULT							onSize(HWND hwnd);
+		inline STATUS                  updateOnMouseDown(HWND xHwnd);
+		inline STATUS                  updateOnMouseMove(HWND xHwnd);
+		inline STATUS                  updateOnMouseUp(HWND xHwnd);
+		STATUS							onSize(HWND hwnd);
 
 		void                            destroyBackgroundResources();
 		void                            destroyShadowResources();
@@ -154,7 +155,7 @@ namespace A2D {
 		inline void						paintComponent(Gdiplus::Graphics& graphics);
 		inline void						paintComponentBorder(Gdiplus::Graphics& graphics);
 
-		HRESULT							createResources();
+		STATUS							createResources();
 		void							destroyResources();
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +199,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

@@ -88,6 +88,17 @@ Dims& AbstractWindow::getSizeAsPtr()
 	return *static_cast<Dims*>(&aRect);
 }
 
+/**
+* returns the reference Frame of the specified Window object
+*
+* @param void
+* @return AbstractFrame
+the Frame that is associated with the window
+*/
+AbstractFrame *  AbstractWindow::getFrame()
+{
+	return aFrame;
+}
 
 Dims AbstractWindow::getSize()
 {
@@ -221,11 +232,71 @@ Dims& AbstractWindow::getDrawableRegionAsPtr()
 	return aDrawableRegion;
 }
 
-HRESULT AbstractWindow::initialize()
+STATUS AbstractWindow::processWindowEvent(WindowEvent * xEvent)
+{
+	int id = A2D_LISTENER_WINDOW;
+	return fireListener(xEvent, id);
+}
+
+STATUS AbstractWindow::addWindowListener(WindowListener * xListener)
+{
+	if (xListener == NULL)
+	{
+		int ID = A2D_LISTENER_WINDOW;
+		AbstractListener * listener = findListener(ID);
+		if (listener) return removeListener(listener);
+		else return STATUS_FAIL;
+	}
+	return addListener(xListener);
+}
+
+STATUS AbstractWindow::addListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> * sourceList = &Toolkit::getSystemEventQueue(aFrame->id())->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList->_end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			break; // don't have to add, so do nothing.
+		}
+		node = node->left;
+	}
+
+	sourceList->push_back(this, &aRemoveTicket);
+
+	return EventSource::addListener(xListener);
+}
+
+STATUS AbstractWindow::removeListener(AbstractListener * xListener)
+{
+	OrderedList<EventSource*> sourceList = Toolkit::getSystemEventQueue(aFrame->id())->aEventSourcesList;
+	OrderedList<EventSource*>::Node<EventSource*> * node = sourceList._end();
+	while (node)
+	{
+		if (node->value == this) // may be broken, need to overload ==operator
+		{
+			sourceList.remove_request(&aRemoveTicket);
+		}
+		node = node->left;
+	}
+
+	return EventSource::removeListener(xListener);
+}
+
+Rect * AbstractWindow::getEventRegion()
+{
+	return &getBounds();
+}
+
+STATUS AbstractWindow::initialize()
 {	
 	//------------------------------------------------------------
 	// ABSTRACTWINDOW DEFAULTS
 	//------------------------------------------------------------
+
+	// Call event source initialize.
+	SAFELY(EventSource::initialize());
 
 	// Default name
 	aName = L"Aurora-SDK Unititled";
@@ -273,7 +344,22 @@ HRESULT AbstractWindow::initialize()
 	// Mark as dirty
 	invalidate();
 
+	// Initialize WindowEvent resources
+	aWindowOpened = new WindowEvent(this, WindowEvent::WINDOW_OPENED, NULL, WindowEvent::WINDOW_OPENED);
+	aWindowClosed = new WindowEvent(this, WindowEvent::WINDOW_CLOSED, NULL, WindowEvent::WINDOW_CLOSED);
+	aWindowActivated = new WindowEvent(this, WindowEvent::WINDOW_ACTIVATED, NULL, WindowEvent::WINDOW_ACTIVATED);
+	aWindowDeactivated = new WindowEvent(this, WindowEvent::WINDOW_DEACTIVATED, NULL, WindowEvent::WINDOW_DEACTIVATED);
+	
+	// Initialize MouseEvent resources
+	POINT p;
+	p.x = LONG(aRect.aX);
+	p.y = LONG(aRect.aY);
+	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
+	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
+	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);
+	aMouseDragged = new MouseEvent(this, MouseEvent::MOUSE_DRAGGED, p, 1);
+
 	//------------------------------------------------------------
 
-	return S_OK;
+	return STATUS_OK;
 }

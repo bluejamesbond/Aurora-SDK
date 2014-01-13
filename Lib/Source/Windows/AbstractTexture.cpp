@@ -43,9 +43,9 @@ void AbstractTexture::SetClip(Rect * xClip, int xIndex)
 // REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-HRESULT AbstractTexture::initialize()
+STATUS AbstractTexture::initialize()
 {
 	SetClip(NULL);
 
-	return S_OK;
+	return STATUS_OK;
 }

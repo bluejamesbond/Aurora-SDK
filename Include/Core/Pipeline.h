@@ -54,7 +54,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

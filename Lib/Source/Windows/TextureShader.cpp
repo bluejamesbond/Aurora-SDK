@@ -7,11 +7,11 @@ using namespace A2D;
 TextureShader::TextureShader(ID3D10Device ** xDevice) :
 AbstractTextureShader(xDevice){}
 
-HRESULT	TextureShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
+STATUS TextureShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
 {
 	*xPolygonLayout = TextureVertex::aPolygonLayout;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 unsigned int TextureShader::getPolygonLayoutElementCount()

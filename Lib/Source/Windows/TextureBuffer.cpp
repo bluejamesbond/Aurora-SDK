@@ -17,7 +17,7 @@ bool TextureBuffer::hasAlpha()
 	return false;
 }
 
-HRESULT TextureBuffer::initialize()
+STATUS TextureBuffer::initialize()
 {
 	D3D10_TEXTURE2D_DESC textureDesc;
 	D3D10_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
@@ -59,7 +59,7 @@ HRESULT TextureBuffer::initialize()
 	// Create the shader resource view.
 	SAFELY(device->CreateShaderResourceView(aDXRenderTargetTexture, &shaderResourceViewDesc, &aResource));
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void TextureBuffer::SetActive()

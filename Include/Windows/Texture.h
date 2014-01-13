@@ -57,7 +57,7 @@ namespace A2D {
 		LPCTSTR					*		GetSrc();
 
 		// Virtual
-		HRESULT							changeTexture(LPCWSTR  xSrc);
+		STATUS							changeTexture(LPCWSTR  xSrc);
 
 		// Virtual
 		virtual	bool					hasAlpha();
@@ -66,7 +66,7 @@ namespace A2D {
 	public:
 		// Implementation
 		// { ABSTRACT }
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

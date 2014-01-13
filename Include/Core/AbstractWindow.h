@@ -25,6 +25,8 @@
 #include "Color.h"
 #include "../_A2DCommon.h"
 #include "AbstractEventQueue.h"
+#include "WindowListener.h"
+#include "EventSource.h"
 
 namespace A2D {
 
@@ -38,7 +40,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractWindow
+	class AbstractWindow : public EventSource
 	{
 	
 		friend class AbstractFrame;
@@ -67,7 +69,7 @@ namespace A2D {
 		bool                         aShadowed;
 		bool                         aUndecorated;
 
-		LPCWSTR						aName;
+		LPCWSTR						 aName;
 
 		Dims						 aDrawableRegion;
 		Rect                         aRect;
@@ -76,13 +78,13 @@ namespace A2D {
 
 	private:
 
-		bool							aValidatedContents;
+		bool						 aValidatedContents;
 
 	public:
 
 		void                         update();
 		void						 invalidate();
-		void							revalidate();
+		void						 revalidate();
 
 	protected:
 
@@ -97,6 +99,7 @@ namespace A2D {
 		Rect							getBounds();
 		Dims					  		getSize();
 		LPCWSTR                         getName();
+		AbstractFrame		   *		getFrame();
 		bool                            isUndecorated();
 		int                             getDefaultCloseOperation();
 		AbstractWindow         *		getLocationRelativeTo();
@@ -107,6 +110,28 @@ namespace A2D {
 		Color							getShadowColor();
 		Color							getBackgroundColor();
 		float                           getBorderWidth();
+
+		friend							AbstractEventQueue;
+		STATUS							processWindowEvent(WindowEvent * xEvent);
+		STATUS							addWindowListener(WindowListener * xListener);
+		Rect				    *		getEventRegion();
+
+	protected:
+
+		virtual STATUS					addListener(AbstractListener * xListener);
+		virtual STATUS					removeListener(AbstractListener * xListener);
+
+		WindowEvent				*		aWindowOpened = 0;
+		WindowEvent				*		aWindowClosed = 0;
+		WindowEvent				*		aWindowActivated = 0;
+		WindowEvent				*		aWindowDeactivated = 0;
+
+		MouseEvent			    *		aMouseDown = 0;
+		MouseEvent			    *		aMouseUp = 0;
+		MouseEvent			    *		aMouseMove = 0;
+		MouseEvent			    * 		aMouseDragged = 0;
+
+		int								aCurrentState = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// PLATFORM COMPATIBLE IMPLEMENTATION
@@ -145,7 +170,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }
