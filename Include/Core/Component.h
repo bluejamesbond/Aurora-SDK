@@ -26,27 +26,27 @@
 #include "Pipeline.h"
 #include "Rect.h"
 #include "Paint.h"
-#include "CascadingLayout.h"
 #include "Styles.h"
+#include "CascadingLayout.h"
 #include GRAPHICS__
 
 namespace A2D {
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // FORWARD DECLARATIONS
-    ////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// FORWARD DECLARATIONS
+	////////////////////////////////////////////////////////////////////////////////
 
 	class AbstractFrame;
-    class Abstract;
+	class Abstract;
 	class Graphics;
 	class Component;
 	struct ImageProperties;
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // DECLARATION
-    ////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	// DECLARATION
+	////////////////////////////////////////////////////////////////////////////////
 
-    class Component
+	class Component
 	{
 		friend class RepaintManager;
 		friend class CascadingLayout;
@@ -58,135 +58,136 @@ namespace A2D {
 
 	private:
 
-		float							aDepth = FLT_ZERO;
+		float                                                        aDepth = 0;
 
-		bool							aForced = false;
-		bool							aVisible = true;
+		bool                                                        aVisible = true;
+		bool                                                        aForced = false;
 
-		AbstractFrame		    *		aFrame;
-		Component			    *		aParent = NULL;
-		OrderedList<Component*>			aChildren;
-		Pipeline				*		aPipeline = NULL;
+		AbstractFrame                    *                aFrame;
+		Component                            *                aParent = NULL;
+		OrderedList<Component*>                        aChildren;
+		Pipeline                                *                aPipeline = NULL;
 
 	protected:
 
-		Styles::Display					aDisplay = Styles::Display::BLOCK;
-		Styles::Position				aPosition = Styles::Position::RELATIVE_;
+		Styles::Display                                        aDisplay = Styles::Display::BLOCK;
+		Styles::Position                                aPosition = Styles::Position::RELATIVE_;
 
-		Styles::Units					aSizeWidthUnits = Styles::Units::PIXEL;
-		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;	
-		
-		Styles::Units					aMarginLeftUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginTopUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginBottomUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginRightUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aSizeWidthUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aSizeHeightUnits = Styles::Units::PIXEL;
 
-		Styles::Units					aPositionLeftUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionTopUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aMarginLeftUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aMarginTopUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aMarginBottomUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aMarginRightUnits = Styles::Units::PIXEL;
 
-		unsigned int					aSizeWidth = 0;
-		unsigned int							aSizeHeight = 0;
+		Styles::Units                                        aPositionLeftUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aPositionTopUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aPositionBottomUnits = Styles::Units::PIXEL;
+		Styles::Units                                        aPositionRightUnits = Styles::Units::PIXEL;
 
-		int							aMarginLeft = 0;
-		int							aMarginTop = 0;
-		int							aMarginBottom = 0;
-		int							aMarginRight = 0;
+		float                                                        aSizeWidth = 0.0f;
+		float                                                        aSizeHeight = 0.0f;
 
-		int							aPositionLeft = 0;
-		int							aPositionTop = 0;
-		int							aPositionBottom = 0;
-		int							aPositionRight = 0;
+		float                                                        aMarginLeft = 0.0f;
+		float                                                        aMarginTop = 0.0f;
+		float                                                        aMarginBottom = 0.0f;
+		float                                                        aMarginRight = 0.0f;
+
+		float                                                        aPositionLeft = 0.0f;
+		float                                                        aPositionTop = 0.0f;
+		float                                                        aPositionBottom = 0.0f;
+		float                                                        aPositionRight = 0.0f;
 
 	public:
-		
-		void							setPosition(Styles::Position xPosition);
-		void							setDisplay(Styles::Display xDisplay);
-		void							setFloat(Styles::Float xFloat);
-		void							setSize(Styles::Units xWidthUnits, unsigned int xWidth, Styles::Units xHeightUnits, unsigned int xHeight);
-		void							setMargins(Styles::Units xLeftUnits, int xLeft, Styles::Units xTopUnits, int xTop, Styles::Units xRightUnits, int xRight, Styles::Units xBottomUnits, int xBottom);
-		void							setPositioning(Styles::Units xLeftUnits, int xLeft, Styles::Units xTopUnits, int xTop, Styles::Units xRightUnits, int xRight, Styles::Units xBottomUnits, int xBottom);
-		void							forceBounds(bool xForce);
-	
+
+		void                                                        setPosition(Styles::Position xPosition);
+		void                                                        setDisplay(Styles::Display xDisplay);
+		void                                                        setFloat(Styles::Float xFloat);
+		void                                                        setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
+		void                                                        setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
+		void                                                        setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
+
+		void                                                        forceBounds(bool xForce);
+
 	public:
 
-		Rect *							getBoundsAtPtr();
-		void							setDepth(float xDepth);
-		void							setGraphics(Graphics& xGraphics);
+		Rect *                                                        getBoundsAtPtr();
+		void                                                        setDepth(float xDepth);
+		void                                                        setGraphics(Graphics& xGraphics);
 		void                            setParent(Component& xComponent);
-		void							setFrame(AbstractFrame& xFrame);
-		void							add(Component& xComponent);
-		void							remove(Component& xComponent);
-		
-    protected:
+		void                                                        setFrame(AbstractFrame& xFrame);
+		void                                                        add(Component& xComponent);
+		void                                                        remove(Component& xComponent);
+
+	protected:
 
 		bool                            aValidatedContents;
-		float							aCalculatedNegativeDeltaX = FLT_ZERO;
-		float							aCalculatedNegativeDeltaY = FLT_ZERO;
+		float                                                        aCalculatedNegativeDeltaX = 0.0f;
+		float                                                        aCalculatedNegativeDeltaY = 0.0f;
 		Graphics                *       aGraphics;
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;
 		Rect                            aCalculatedRegion;
 		Rect                            aVisibleRegion;
 
-        ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
-        LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
-        Paint                           aOptBackgroundPaint;			        // background-color  (CSS)
-        int                             aOptBackgroundPosX = 0;                 // background-position-x  (CSS)
-        int                             aOptBackgroundPosY = 0;                 // background-position-x  (CSS)
+		ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
+		LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
+		Paint                           aOptBackgroundPaint;                                // background-color  (CSS)
+		int                             aOptBackgroundPosX = 0;                 // background-position-x  (CSS)
+		int                             aOptBackgroundPosY = 0;                 // background-position-x  (CSS)
 
-        virtual void                    paintComponent();
-        virtual void                    paintComponentBorder();
+		virtual void                    paintComponent();
+		virtual void                    paintComponentBorder();
 
 	protected:
-		
-		void							validate();
 
-    public:
+		virtual void                    validate();
 
-		void							revalidate();
-		void							validated();
-		void							invalidate();
+	public:
 
-		float							getDepth();
-		Graphics&						getGraphics();
-		Component&						getParent();
-		Component&						getRoot();
-		AbstractFrame&					getFrame();
+		void                                                        revalidate();
+		void                                                        validated();
+		void                                                        invalidate();
 
-		void							update();
+		float                                                        getDepth();
+		Graphics&                                                getGraphics();
+		Component&                                                getParent();
+		Component&                                                getRoot();
+		AbstractFrame&                                        getFrame();
+
+		void                                                        update();
 		Rect                            getBounds();
 		void                            setBounds(Rect& xRect);
-        bool                            isDoubleBuffered();
-        LPCWSTR                         getBackgroundImage()                                                    { return    aOptBackgroundSrc; };
-        int                             getBackgroundPositionX()                                                { return    aOptBackgroundPosX; };
-        int                             getBackgroundPositionY()                                                { return    aOptBackgroundPosY; };
-        int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps.aOptSizeX; };
-        int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps.aOptSizeY; };
+		bool                            isDoubleBuffered();
+		LPCWSTR                         getBackgroundImage()                                                    { return    aOptBackgroundSrc; };
+		int                             getBackgroundPositionX()                                                { return    aOptBackgroundPosX; };
+		int                             getBackgroundPositionY()                                                { return    aOptBackgroundPosY; };
+		int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps.aOptSizeX; };
+		int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps.aOptSizeY; };
 		Paint&                          getBackgroundPaint()                                                    { return    aOptBackgroundPaint; };
-        int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps.aOptRepeat; };
-        ImageProperties                 getBackgroundProperties()                                               { return    aOptBackgroundProps; };
-		        
-        void                            setDoubleBuffered(bool xDoubleBuffer);
-        void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)                     { aOptBackgroundSrc = xOptBackgroundImage; };
-        void                            setBackgroundPositionX(int xOptPositionX)                           { aOptBackgroundPosX = xOptPositionX; };
-        void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
-        void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
-        void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
+		int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps.aOptRepeat; };
+		ImageProperties                 getBackgroundProperties()                                               { return    aOptBackgroundProps; };
+
+		void                            setDoubleBuffered(bool xDoubleBuffer);
+		void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)                     { aOptBackgroundSrc = xOptBackgroundImage; };
+		void                            setBackgroundPositionX(int xOptPositionX)                           { aOptBackgroundPosX = xOptPositionX; };
+		void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
+		void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
+		void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
 		void                            setBackgroundPaint(Paint& xOptPaint)                                   { Paint::from(aOptBackgroundPaint, xOptPaint); };
-        void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
-        void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
-        void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
-												      int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
+		void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
+		void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
+		void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY,
+			int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
 
-    public:
+	public:
 
-        virtual HRESULT                 initialize();
+		virtual HRESULT                 initialize();
 
-	////////////////////////////////////////////////////////////////////////////////
-	// INLINE
-	////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
+		// INLINE
+		////////////////////////////////////////////////////////////////////////////////
 
 	protected:
 
@@ -203,6 +204,6 @@ namespace A2D {
 			aValidatedContents = false;
 		}
 
-    };
+	};
 }
 #endif
