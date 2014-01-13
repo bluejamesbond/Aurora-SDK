@@ -52,6 +52,9 @@
 #define FLT_ZERO                                              0.0f
 #define FLT_ONE                                               1.0f
 
+#ifndef abs
+#endif
+
 #ifndef max
 #define max(a,b)										(((a) > (b)) ? (a) : (b))
 #endif
@@ -63,15 +66,28 @@
 // Debugging
 #include "_A2DDebug.h"
 
-#define G_SAFELY(hr)										  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
-#define SAFELY(hr)											  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return E_FAIL; }
-#define NULLCHECK(hr)										  if(!hr)		{ SYSOUT_STR("Failure detected");	return E_FAIL; }
-#define	DESTROY(x)											  if(x)			{ delete x; x = 0; }
-#define D3DDESTROY(x)										  if(x)			{ x->Release(); x = 0; }
-#define THREAD_DESTROY(x)									  if(x)			{ x->stop(); delete x; x = 0; }
-#define FLOAT(x)											  static_cast<float>(x)
-#define INT(x)												  static_cast<int>(x)
-#define UINT(x)												  static_cast<unsigned int>(x)
+//#define A2D_DE__										"Comment out this line to remove debugging."
+
+#define G_SAFELY(hr)									if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
+#define SAFELY(hr)										if(hr != 0)	{ SYSOUT_STR("Failure detected");	return E_FAIL; }
+#define NULLCHECK(hr)									if(!hr)		{ SYSOUT_STR("Failure detected");	return E_FAIL; }
+#define	DESTROY(x)										if(x)			{ delete x; x = 0; }
+#define D3DDESTROY(x)									if(x)			{ x->Release(); x = 0; }
+#define THREAD_DESTROY(x)								if(x)			{ x->stop(); delete x; x = 0; }
+#define FLOAT(x)										static_cast<float>(x)
+#define INT(x)											static_cast<int>(x)
+#define UINT(x)											static_cast<unsigned int>(x)
+#define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
+
+inline float pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
+{
+	return xPixels / (xPixelDimension / 2) - 1;
+}
+
+inline float pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
+{
+	return xPixels / xPixelDimension * 2;
+}
 
 #ifndef __STATUS_DEFINED__
 #define __STATUS_DEFINED__

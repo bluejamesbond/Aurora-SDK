@@ -570,16 +570,6 @@ namespace A2D {
 			}
 		}
 
-		static inline float QuadFactory::pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
-		{
-			return xPixels / (xPixelDimension / 2) - 1;
-		}
-
-		static inline float QuadFactory::pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
-		{
-			return xPixels / xPixelDimension * 2;
-		}
-
 	public:
 		
 		virtual STATUS                 initialize();

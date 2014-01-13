@@ -1,17 +1,16 @@
 
 #include "../../../include/Core/ExtLibs.h"
+#include "../../../include/Core/CascadingLayout.h"
 #include "../../../include/Core/Component.h"
 
 #include <time.h>
 
 using namespace A2D;
 
-#define UNITS(unit, value, range) ((unit == Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value)) 
-
-void Component::applyCascadingStyleLayout()
+void _fastcall CascadingLayout::doLayout(Component& x_component)
 {
-	int size = aChildren.size();
-	OrderedList<Component*>::Node<Component*> * start = aChildren._head();
+	int size = x_component.aChildren.size();
+	OrderedList<Component*>::Node<Component*> * start = x_component.aChildren._head();
 
 	float height, width, mX = 0, mY = 0, aX = 0, aY = 0,
 		marginLeft, marginTop, marginRight, marginBottom, maxElementHeight = 0.0f, tempVerticalOffset,
@@ -19,9 +18,9 @@ void Component::applyCascadingStyleLayout()
 
 	Styles::Display display;
 	Styles::Position position;
-	Rect& compRect = aOptRegion;
+	Rect& compRect = x_component.aOptRegion;
 	Component* component;
-	
+
 	bool firstElement = true;
 
 	while (start && size--)
@@ -30,28 +29,41 @@ void Component::applyCascadingStyleLayout()
 
 		if (component->aForced)
 		{
+			#ifdef A2D_DE__			
+			SYSOUT_STR("[CascadingLayout] Skipping calculations. Using forced bounds.");
+			#endif // A2D_DE__
+
 			start = start->right;
 			continue;
 		}
-		
+		else if (mY >= compRect.aHeight)
+		{
+			#ifdef A2D_DE__			
+			SYSOUT_STR("[CascadingLayout] Skipping calculations. Component out of window.");
+			#endif // A2D_DE__
+
+			component->aVisible = false;
+			continue;
+		}
+
 		///*************************************** CACHE **********************************//
 		display = component->aDisplay;
 		position = component->aPosition;
 
-		width = UNITS(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
-		height = UNITS(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
+		width = TO_PIXELS(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
+		height = TO_PIXELS(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
 
-		marginLeft = UNITS(component->aMarginLeftUnits, component->aMarginLeft, compRect.aWidth);
-		marginTop = UNITS(component->aMarginTopUnits, component->aMarginTop, compRect.aHeight);
-		marginBottom = UNITS(component->aMarginBottomUnits, component->aMarginBottom, compRect.aHeight);
-		marginRight = UNITS(component->aMarginRightUnits, component->aMarginRight, compRect.aWidth);
+		marginLeft = TO_PIXELS(component->aMarginLeftUnits, component->aMarginLeft, compRect.aWidth);
+		marginTop = TO_PIXELS(component->aMarginTopUnits, component->aMarginTop, compRect.aHeight);
+		marginBottom = TO_PIXELS(component->aMarginBottomUnits, component->aMarginBottom, compRect.aHeight);
+		marginRight = TO_PIXELS(component->aMarginRightUnits, component->aMarginRight, compRect.aWidth);
 
-		positionLeft = UNITS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
-		positionTop = UNITS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
-		positionBottom = UNITS(component->aPositionBottomUnits, component->aPositionBottom, compRect.aHeight);
-		positionRight = UNITS(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
+		positionLeft = TO_PIXELS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
+		positionTop = TO_PIXELS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
+		positionBottom = TO_PIXELS(component->aPositionBottomUnits, component->aPositionBottom, compRect.aHeight);
+		positionRight = TO_PIXELS(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
 		///********************************************************************************//
-		
+
 		if (position == Styles::RELATIVE_)
 		{
 			if (display == Styles::INLINE_BLOCK)
@@ -81,7 +93,7 @@ void Component::applyCascadingStyleLayout()
 		}
 		else/*if (position == Styles::ABSOLUTE_)*/
 		{
-			aX = marginLeft; 
+			aX = marginLeft;
 			aY = marginTop;
 
 			// left: auto | right: auto
@@ -121,20 +133,20 @@ void Component::applyCascadingStyleLayout()
 				aY += positionTop;
 				height = compRect.aHeight - (positionTop + positionBottom);
 			}
-
 		}
 
 		if (position == Styles::RELATIVE_)
 		{
 			/***********************************************/
+			component->aVisible = true;
 			component->setBounds(mX + positionLeft + positionRight, mY + positionTop + positionBottom, width, height);
 			/***********************************************/
 
 			if (display == Styles::INLINE_BLOCK)
-			{				
+			{
 				mX = mX + width + marginRight;
 				// mY = mY;
-				
+
 				// Inline block uses last_height
 				maxElementHeight = (tempVerticalOffset = marginBottom + height) > maxElementHeight ? tempVerticalOffset : maxElementHeight;
 			}
@@ -147,6 +159,7 @@ void Component::applyCascadingStyleLayout()
 		else/*if (position == Styles::ABSOLUTE_)*/
 		{
 			/***********************************************/
+			component->aVisible = true;
 			component->setBounds(aX, aY, width, height);
 			/***********************************************/
 		}
