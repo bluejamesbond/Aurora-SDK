@@ -73,11 +73,22 @@
 #define INT(x)												  static_cast<int>(x)
 #define UINT(x)												  static_cast<unsigned int>(x)
 
+#ifndef __STATUS_DEFINED__
+#define __STATUS_DEFINED__
+typedef unsigned int STATUS;
+#define _STATUS_TYPEDEF_(_sc)									((STATUS)_sc)
+#define STATUS_OK												_STATUS_TYPEDEF_(0);
+#define STATUS_FAIL												_STATUS_TYPEDEF_(1);
+#define STATUS_RETRY											_STATUS_TYPEDEF_(2);
+#define STATUS_FORCE_QUIT										_STATUS_TYPEDEF_(3);
+#endif
+
+
 // TEMPORARILY
-#define STATUS													HRESULT
-#define STATUS_OK												0
-#define STATUS_FAIL												1
-#define STATUS_RETRY											2
-#define STATUS_FORCE_QUIT										3
+//#define STATUS													HRESULT
+//#define STATUS_OK												0
+//#define STATUS_FAIL												1
+//#define STATUS_RETRY											2
+//#define STATUS_FORCE_QUIT										3
 
 #endif
