@@ -75,9 +75,9 @@
 
 // TEMPORARILY
 #define STATUS													HRESULT
-#define STATUS_OK												0;
-#define STATUS_FAIL												1;
-#define STATUS_RETRY											2;
-#define STATUS_FORCE_QUIT										3;
+#define STATUS_OK												0
+#define STATUS_FAIL												1
+#define STATUS_RETRY											2
+#define STATUS_FORCE_QUIT										3
 
 #endif

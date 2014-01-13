@@ -127,16 +127,16 @@ namespace A2D {
 	private:
 
 		HWND                            createCompatibleWindow(bool isParent);
-		HRESULT                         createBackgroundResources();
-		HRESULT                         createShadowResources();
-		HRESULT                         createColorResources();
+		STATUS                         createBackgroundResources();
+		STATUS                         createShadowResources();
+		STATUS                         createColorResources();
 
 		ATOM	                        registerClass();
 
-		inline HRESULT                  updateOnMouseDown(HWND xHwnd);
-		inline HRESULT                  updateOnMouseMove(HWND xHwnd);
-		inline HRESULT                  updateOnMouseUp(HWND xHwnd);
-		HRESULT							onSize(HWND hwnd);
+		inline STATUS                  updateOnMouseDown(HWND xHwnd);
+		inline STATUS                  updateOnMouseMove(HWND xHwnd);
+		inline STATUS                  updateOnMouseUp(HWND xHwnd);
+		STATUS							onSize(HWND hwnd);
 
 		void                            destroyBackgroundResources();
 		void                            destroyShadowResources();
@@ -155,7 +155,7 @@ namespace A2D {
 		inline void						paintComponent(Gdiplus::Graphics& graphics);
 		inline void						paintComponentBorder(Gdiplus::Graphics& graphics);
 
-		HRESULT							createResources();
+		STATUS							createResources();
 		void							destroyResources();
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ namespace A2D {
 
 	public:
 
-		virtual HRESULT                 initialize();
+		virtual STATUS                 initialize();
 
 	};
 }

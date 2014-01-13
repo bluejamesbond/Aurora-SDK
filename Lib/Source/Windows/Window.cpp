@@ -67,7 +67,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 {
 	if (xMsg.message == WM_CREATE)
 	{
-		return S_OK;
+		return STATUS_OK;
 	}
 	else
 	{
@@ -129,18 +129,18 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			xEventQueue->processWindowEvent(aWindowClosed);
 
 			DestroyWindow(xHwnd);
-			return S_OK;
+			return STATUS_OK;
 
 		case WM_SIZE:
 
 			onSize(xHwnd);
-			return S_OK;
+			return STATUS_OK;
 
 		case WM_ERASEBKGND:
 			// OS must not erase background. DirectX and
 			// OpenGL will automatically do its parent
 			// (aChildHWnd) window.
-			return S_OK;
+			return STATUS_OK;
 
 		default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
 		}
@@ -157,7 +157,7 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
 		aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
 		SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
-		return S_OK;
+		return STATUS_OK;
 	}
 	else
 	{
@@ -184,7 +184,7 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
 				}
 			}
-			return S_OK;
+			return STATUS_OK;
 
 		case WM_SIZE:
 		{
@@ -198,19 +198,19 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 			// OS must not erase background. DirectX and
 			// OpenGL will automatically do its parent
 			// (aChildHWnd) window.
-			return S_OK;
+			return STATUS_OK;
 		}
 		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
 		}
 	}
 }
 
-HRESULT Window::onSize(HWND hwnd)
+STATUS Window::onSize(HWND hwnd)
 {
 	if (hwnd == aChildHWnd)
 		aFrame->invalidate();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 HWND Window::createCompatibleWindow(bool isParent)
@@ -242,7 +242,7 @@ HWND Window::createCompatibleWindow(bool isParent)
 	return hWnd;
 }
 
-HRESULT Window::updateOnMouseDown(HWND xHwnd)
+STATUS Window::updateOnMouseDown(HWND xHwnd)
 {
 	aIsDragged = true;
 
@@ -284,10 +284,10 @@ HRESULT Window::updateOnMouseDown(HWND xHwnd)
 
 	SetCursor(aCurrentCursor);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT Window::updateOnMouseMove(HWND xHwnd)
+STATUS Window::updateOnMouseMove(HWND xHwnd)
 {
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
@@ -532,10 +532,10 @@ HRESULT Window::updateOnMouseMove(HWND xHwnd)
 
 		aLastDraggedPoint = p;
 	}
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT Window::updateOnMouseUp(HWND xHwnd)
+STATUS Window::updateOnMouseUp(HWND xHwnd)
 {
 	aIsDragged = false;
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
@@ -551,7 +551,7 @@ HRESULT Window::updateOnMouseUp(HWND xHwnd)
 
 	render();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 int Window::aClassInstances = 0;
@@ -829,7 +829,7 @@ Gdiplus::BitmapData * Window::getLockedBitmapData(Gdiplus::Bitmap * src)
 	return bitmapData;
 }
 
-HRESULT Window::createShadowResources()
+STATUS Window::createShadowResources()
 {
 	Gdiplus::Bitmap * solid, *blurred;
 	Gdiplus::Graphics * graphics;
@@ -890,10 +890,10 @@ HRESULT Window::createShadowResources()
 	delete blurred;
 	delete solid;
 
-	return S_OK;
+	return STATUS_OK;
 }
 
-HRESULT Window::createBackgroundResources()
+STATUS Window::createBackgroundResources()
 {
 	aBackground = new Gdiplus::Bitmap(1, 1);
 
@@ -904,7 +904,7 @@ HRESULT Window::createBackgroundResources()
 
 	aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void Window::destroyBackgroundResources()
@@ -922,13 +922,13 @@ void Window::destroyBackgroundResources()
 	}
 }
 
-HRESULT Window::createResources()
+STATUS Window::createResources()
 {
 	SAFELY(createColorResources());
 	SAFELY(createBackgroundResources());
 	SAFELY(createShadowResources());
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 void Window::destroyResources()
@@ -1181,13 +1181,13 @@ void Window::validate()
 	validated();
 }
 
-HRESULT Window::createColorResources()
+STATUS Window::createColorResources()
 {
 	aBackgroundColor = new Gdiplus::Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
 	aShadowColor = new Gdiplus::Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
 	aBorderColor = new Gdiplus::Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 
@@ -1351,7 +1351,7 @@ void Window::render()
 // ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
-HRESULT Window::initialize()
+STATUS Window::initialize()
 {
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR           gdiplusToken;
@@ -1377,7 +1377,7 @@ HRESULT Window::initialize()
 
 	update();
 
-	return S_OK;
+	return STATUS_OK;
 }
 
 Window::~Window()
