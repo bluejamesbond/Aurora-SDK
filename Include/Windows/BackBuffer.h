@@ -20,7 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
 
 #include "../Core/AbstractBackBuffer.h"
 #include "../Core/GXSettings.h"

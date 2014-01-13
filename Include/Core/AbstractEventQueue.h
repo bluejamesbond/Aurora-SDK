@@ -20,7 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
 
 #include "AbstractThread.h"
 #include "OrderedList.h"
@@ -33,6 +32,8 @@
 #include "ActionEvent.h"
 #include "FocusEvent.h"
 #include "WindowEvent.h"
+
+#include "../_A2DCommon.h"
 
 namespace A2D{
 

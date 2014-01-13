@@ -20,8 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
-
 #include "../_A2DLinkers.h"
 #include "OrderedList.h"
 #include "ImageProperties.h"

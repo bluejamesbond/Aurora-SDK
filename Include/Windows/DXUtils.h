@@ -21,8 +21,6 @@
 
 #include "ExtLibs.h"
 
-#include "../_A2DCommon.h"
-
 #include "../Core/../_A2DCommon.h"
 #include "../Core/Rect.h"
 #include "../Core/GXSettings.h"

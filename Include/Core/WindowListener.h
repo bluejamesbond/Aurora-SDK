@@ -19,8 +19,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
-
 #include "ExtLibs.h"
 #include "WindowEvent.h"
 #include "AbstractListener.h"

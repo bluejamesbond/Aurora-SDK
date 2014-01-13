@@ -20,8 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
-
 #include "../Core/AbstractFrame.h"
 #include "Thread.h"
 #include "Graphics.h"

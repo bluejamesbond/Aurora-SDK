@@ -67,7 +67,7 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 {
 	if (xMsg.message == WM_CREATE)
 	{
-		return STATUS_OK;
+		return S_OK;
 	}
 	else
 	{
@@ -129,18 +129,18 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 			xEventQueue->processWindowEvent(aWindowClosed);
 
 			DestroyWindow(xHwnd);
-			return STATUS_OK;
+			return S_OK;
 
 		case WM_SIZE:
 
 			onSize(xHwnd);
-			return STATUS_OK;
+			return S_OK;
 
 		case WM_ERASEBKGND:
 			// OS must not erase background. DirectX and
 			// OpenGL will automatically do its parent
 			// (aChildHWnd) window.
-			return STATUS_OK;
+			return S_OK;
 
 		default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
 		}
@@ -205,12 +205,12 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 	}
 }
 
-STATUS Window::onSize(HWND hwnd)
+HRESULT Window::onSize(HWND hwnd)
 {
 	if (hwnd == aChildHWnd)
 		aFrame->invalidate();
 
-	return STATUS_OK;
+	return S_OK;
 }
 
 HWND Window::createCompatibleWindow(bool isParent)
@@ -242,7 +242,7 @@ HWND Window::createCompatibleWindow(bool isParent)
 	return hWnd;
 }
 
-STATUS Window::updateOnMouseDown(HWND xHwnd)
+HRESULT Window::updateOnMouseDown(HWND xHwnd)
 {
 	aIsDragged = true;
 
@@ -284,10 +284,10 @@ STATUS Window::updateOnMouseDown(HWND xHwnd)
 
 	SetCursor(aCurrentCursor);
 
-	return STATUS_OK;
+	return S_OK;
 }
 
-STATUS Window::updateOnMouseMove(HWND xHwnd)
+HRESULT Window::updateOnMouseMove(HWND xHwnd)
 {
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
@@ -532,10 +532,10 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 
 		aLastDraggedPoint = p;
 	}
-	return STATUS_OK;
+	return S_OK;
 }
 
-STATUS Window::updateOnMouseUp(HWND xHwnd)
+HRESULT Window::updateOnMouseUp(HWND xHwnd)
 {
 	aIsDragged = false;
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
@@ -551,7 +551,7 @@ STATUS Window::updateOnMouseUp(HWND xHwnd)
 
 	render();
 
-	return STATUS_OK;
+	return S_OK;
 }
 
 int Window::aClassInstances = 0;
@@ -829,7 +829,7 @@ Gdiplus::BitmapData * Window::getLockedBitmapData(Gdiplus::Bitmap * src)
 	return bitmapData;
 }
 
-STATUS Window::createShadowResources()
+HRESULT Window::createShadowResources()
 {
 	Gdiplus::Bitmap * solid, *blurred;
 	Gdiplus::Graphics * graphics;
@@ -890,10 +890,10 @@ STATUS Window::createShadowResources()
 	delete blurred;
 	delete solid;
 
-	return STATUS_OK;
+	return S_OK;
 }
 
-STATUS Window::createBackgroundResources()
+HRESULT Window::createBackgroundResources()
 {
 	aBackground = new Gdiplus::Bitmap(1, 1);
 
@@ -904,7 +904,7 @@ STATUS Window::createBackgroundResources()
 
 	aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
 
-	return STATUS_OK;
+	return S_OK;
 }
 
 void Window::destroyBackgroundResources()
@@ -922,13 +922,13 @@ void Window::destroyBackgroundResources()
 	}
 }
 
-STATUS Window::createResources()
+HRESULT Window::createResources()
 {
 	SAFELY(createColorResources());
 	SAFELY(createBackgroundResources());
 	SAFELY(createShadowResources());
 
-	return STATUS_OK;
+	return S_OK;
 }
 
 void Window::destroyResources()
@@ -1181,13 +1181,13 @@ void Window::validate()
 	validated();
 }
 
-STATUS Window::createColorResources()
+HRESULT Window::createColorResources()
 {
 	aBackgroundColor = new Gdiplus::Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
 	aShadowColor = new Gdiplus::Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
 	aBorderColor = new Gdiplus::Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
 
-	return STATUS_OK;
+	return S_OK;
 }
 
 
@@ -1351,7 +1351,7 @@ void Window::render()
 // ABSTRACT
 ////////////////////////////////////////////////////////////////////////////////
 
-STATUS Window::initialize()
+HRESULT Window::initialize()
 {
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR           gdiplusToken;
@@ -1377,7 +1377,7 @@ STATUS Window::initialize()
 
 	update();
 
-	return STATUS_OK;
+	return S_OK;
 }
 
 Window::~Window()

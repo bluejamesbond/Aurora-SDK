@@ -20,7 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
 #include "ExtLibs.h"
 #include "OrderedList.h"
 #include "Rect.h"

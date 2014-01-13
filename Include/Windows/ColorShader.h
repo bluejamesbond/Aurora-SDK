@@ -19,8 +19,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../_A2DCommon.h"
-
 #include "ExtLibs.h"
 #include "Texture.h"
 #include "AbstractShader.h"
