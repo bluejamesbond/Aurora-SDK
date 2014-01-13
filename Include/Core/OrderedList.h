@@ -82,35 +82,35 @@ namespace A2D{
 
 
 		// Internal node system
-		template <class T>
+		template <class U>
 		struct Node
 		{
-			T value;
-			Node<T> * left;
-			Node<T> * right;
+			U value;
+			Node<U> * left = NULL;
+			Node<U> * right = NULL;
 		};
 
-		template<class T>
+		template<class U>
 		struct Iterator
 		{
 
 		private:
 
-			Node<T> * m_node;
+			Node<U> * m_node = NULL;
 			bool m_first = true;
 			int m_size = 0;
 
 		public:
 
-			void update(Node<T> * node, int size)
+			void update(Node<U> * node, int size)
 			{
 				m_node = node;
 				m_size = size;
 			}
 
-			inline T  next()
+			inline U  next()
 			{
-				T  t = m_node->value;
+				U  t = m_node->value;
 
 				m_node = m_node->right;
 				m_size--;
@@ -123,9 +123,9 @@ namespace A2D{
 				return m_node != NULL && m_size;
 			}
 
-			inline T  previous()
+			inline U  previous()
 			{
-				T  t = m_node->value;
+				U  t = m_node->value;
 
 				m_node = m_node->left;
 				m_size--;
@@ -144,18 +144,18 @@ namespace A2D{
 		int m_heapptr_index = 0;
 		int m_heapptr_length = 0;
 		int m_heapptr_ammort_length = 0;
-		void ** m_heapptr;
+		void ** m_heapptr = NULL;
 
 		int m_heap_free = 0;
 		int m_heap_length = 0;
 		int m_heap_ammort_length = 0;
-		Node<T> * m_heap;
+		Node<T> * m_heap = NULL;
 
 		int m_fragments_available_index = 0;
 		int m_fragments_cache_total = 0;
 		int m_fragments_length = 0;
 		int m_fragments_ammort_length = 0;
-		void ** m_fragments;
+		void ** m_fragments = NULL;
 
 		bool m_released = true;
 		bool m_arrayed = false;
@@ -792,9 +792,9 @@ namespace A2D{
 
 		Iterator<T>						m_iterator;
 		int								m_size = 0;
-		Node<T>					*		m_head;
-		Node<T>					*		m_end;
-		T					    *		m_t_array;
+		Node<T>					*		m_head = NULL;
+		Node<T>					*		m_end = NULL;
+		T					    *		m_t_array = NULL;
 	};
 }
 
