@@ -86,8 +86,8 @@ namespace A2D{
 		struct Node
 		{
 			U value;
-			Node<U> * left = NULL;
-			Node<U> * right = NULL;
+			Node<U> * left;
+			Node<U> * right;
 		};
 
 		template<class U>
@@ -96,7 +96,7 @@ namespace A2D{
 
 		private:
 
-			Node<U> * m_node = NULL;
+			Node<U> * m_node;
 			bool m_first = true;
 			int m_size = 0;
 
@@ -108,7 +108,7 @@ namespace A2D{
 				m_size = size;
 			}
 
-			inline U  next()
+			U  next()
 			{
 				U  t = m_node->value;
 
@@ -118,12 +118,12 @@ namespace A2D{
 				return t;
 			}
 
-			inline bool has_next()
+			bool has_next()
 			{
 				return m_node != NULL && m_size;
 			}
 
-			inline U  previous()
+			U  previous()
 			{
 				U  t = m_node->value;
 
@@ -133,7 +133,7 @@ namespace A2D{
 				return t;
 			}
 
-			inline bool has_previous()
+			bool has_previous()
 			{
 				return  m_node != NULL && m_size;
 			}

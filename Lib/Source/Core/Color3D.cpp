@@ -48,20 +48,24 @@ Color3D::Color3D(Color& xSrc)
 	from(*this, xSrc);
 }
 
-void Color3D::from(Color3D& xDst, int xColor)
+void Color3D::from(Color3D& xDst, unsigned int xColor)
 {
-	xDst.aAlpha = FLOAT(((xColor >> 24) & 0xFF) / FLT_255);
-	xDst.aRed = FLOAT(((xColor >> 16) & 0xFF) / FLT_255);
-	xDst.aGreen = FLOAT(((xColor >> 8) & 0xFF) / FLT_255);
-	xDst.aBlue = FLOAT((xColor & 0xFF) / FLT_255);
+	xDst.m_raw = xColor;
+
+	xDst.aRed = FLOAT(((xColor >> 24) & 0xFF) / FLT_255);
+	xDst.aGreen = FLOAT(((xColor >> 16) & 0xFF) / FLT_255);
+	xDst.aBlue = FLOAT(((xColor >> 8) & 0xFF) / FLT_255);
+	xDst.aAlpha = FLOAT((xColor & 0xFF) / FLT_255);
 }
 
 void Color3D::from(Color3D& xDest, Color& xSrc)
 {
-	xDest.aAlpha = FLOAT(xSrc.aAlpha) / FLT_255;
+	xDest.m_raw = xSrc.m_raw;
+
 	xDest.aRed = FLOAT(xSrc.aRed) / FLT_255;
-	xDest.aBlue = FLOAT(xSrc.aBlue) / FLT_255;
 	xDest.aGreen = FLOAT(xSrc.aGreen) / FLT_255;
+	xDest.aBlue = FLOAT(xSrc.aBlue) / FLT_255;
+	xDest.aAlpha = FLOAT(xSrc.aAlpha) / FLT_255;
 }
 
 void Color3D::from(Color3D& xDst, Color3D& xSrc)

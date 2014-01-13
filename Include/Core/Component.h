@@ -26,6 +26,7 @@
 #include "Pipeline.h"
 #include "Rect.h"
 #include "Paint.h"
+#include "CascadingLayout.h"
 #include "Styles.h"
 #include GRAPHICS__
 
@@ -48,6 +49,7 @@ namespace A2D {
     class Component
 	{
 		friend class RepaintManager;
+		friend class CascadingLayout;
 
 	public:
 
@@ -56,9 +58,10 @@ namespace A2D {
 
 	private:
 
-		float							aDepth = 0;
+		float							aDepth = FLT_ZERO;
 
 		bool							aForced = false;
+		bool							aVisible = true;
 
 		AbstractFrame		    *		aFrame;
 		Component			    *		aParent = NULL;
@@ -83,29 +86,27 @@ namespace A2D {
 		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
 
-		float							aSizeWidth = 0.0f;
-		float							aSizeHeight = 0.0f;
+		unsigned int					aSizeWidth = 0;
+		unsigned int							aSizeHeight = 0;
 
-		float							aMarginLeft = 0.0f;
-		float							aMarginTop = 0.0f;
-		float							aMarginBottom = 0.0f;
-		float							aMarginRight = 0.0f;
+		int							aMarginLeft = 0;
+		int							aMarginTop = 0;
+		int							aMarginBottom = 0;
+		int							aMarginRight = 0;
 
-		float							aPositionLeft = 0.0f;
-		float							aPositionTop = 0.0f;
-		float							aPositionBottom = 0.0f;
-		float							aPositionRight = 0.0f;
+		int							aPositionLeft = 0;
+		int							aPositionTop = 0;
+		int							aPositionBottom = 0;
+		int							aPositionRight = 0;
 
 	public:
 		
 		void							setPosition(Styles::Position xPosition);
 		void							setDisplay(Styles::Display xDisplay);
 		void							setFloat(Styles::Float xFloat);
-		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
-		void							setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
-		void							setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
-
-		void							applyCascadingStyleLayout();
+		void							setSize(Styles::Units xWidthUnits, unsigned int xWidth, Styles::Units xHeightUnits, unsigned int xHeight);
+		void							setMargins(Styles::Units xLeftUnits, int xLeft, Styles::Units xTopUnits, int xTop, Styles::Units xRightUnits, int xRight, Styles::Units xBottomUnits, int xBottom);
+		void							setPositioning(Styles::Units xLeftUnits, int xLeft, Styles::Units xTopUnits, int xTop, Styles::Units xRightUnits, int xRight, Styles::Units xBottomUnits, int xBottom);
 		void							forceBounds(bool xForce);
 	
 	public:
@@ -121,8 +122,8 @@ namespace A2D {
     protected:
 
 		bool                            aValidatedContents;
-		float							aCalculatedNegativeDeltaX = 0.0f;
-		float							aCalculatedNegativeDeltaY = 0.0f;
+		float							aCalculatedNegativeDeltaX = FLT_ZERO;
+		float							aCalculatedNegativeDeltaY = FLT_ZERO;
 		Graphics                *       aGraphics;
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;
@@ -140,7 +141,7 @@ namespace A2D {
 
 	protected:
 		
-		virtual void                    validate();
+		void							validate();
 
     public:
 

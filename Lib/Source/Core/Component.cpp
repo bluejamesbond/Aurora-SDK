@@ -117,15 +117,21 @@ void Component::validate()
 	Rect& compRect = aOptRegion;
 	bool hasParent = parentComp != NULL;
 
+	if (!aVisible)
+	{
+		aValidatedContents = true;
+		return;
+	}
+
 	if (!hasParent)
 	{
-		aCalculatedRegion.aX = max(0, compRect.aX);
-		aCalculatedRegion.aY = max(0, compRect.aY);
-		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
-		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
+		aCalculatedRegion.aX = max(FLT_ZERO, compRect.aX);
+		aCalculatedRegion.aY = max(FLT_ZERO, compRect.aY);
+		aCalculatedRegion.aWidth = max(FLT_ZERO, compRect.aWidth);
+		aCalculatedRegion.aHeight = max(FLT_ZERO, compRect.aHeight);
 
-		aCalculatedNegativeDeltaX = 0.0;
-		aCalculatedNegativeDeltaY = 0.0;
+		aCalculatedNegativeDeltaX = FLT_ZERO;
+		aCalculatedNegativeDeltaY = FLT_ZERO;
 	}
 	else
 	{
@@ -165,7 +171,7 @@ void Component::validate()
 		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= FLT_ZERO ? aCalculatedRegion.aHeight : FLT_ZERO);		
 	}
 
-	applyCascadingStyleLayout();
+	CascadingLayout::doLayout(*this);
 
 	aValidatedContents = true;
 }

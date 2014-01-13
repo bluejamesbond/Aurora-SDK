@@ -35,7 +35,9 @@ namespace A2D{
 		float								aRed = 1.0;
 		float								aGreen = 1.0;
 		float								aBlue = 1.0;
-		
+
+		unsigned int						m_raw;
+
 		static Color3D                      RED;
 		static Color3D                      BLUE;
 		static Color3D                      YELLOW;
@@ -67,8 +69,9 @@ namespace A2D{
 		static Color3D                      SILVER;
 		static Color3D                      ASBESTOS;
 		static Color3D                      CLEAR;
-		
-		static void							from(Color3D& xDst, int xSrc);
+
+		inline unsigned int					getRGBA() { return m_raw; }
+		static void							from(Color3D& xDst, unsigned int xSrc);
 		static void							from(Color3D& xDst, Color& xSrc);
 		static void							from(Color3D& xDst, Color3D& xSrc);
 

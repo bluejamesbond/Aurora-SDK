@@ -30,6 +30,8 @@ namespace A2D{
 		byte								aGreen = 0xFF;
 		byte								aBlue = 0xFF;
 
+		unsigned int						m_raw;
+
 		static Color                        RED;
 		static Color                        BLUE;
 		static Color                        YELLOW;
@@ -63,8 +65,9 @@ namespace A2D{
 		static Color                        CLEAR;
 
 		Color();
-		Color(int xColor);
+		Color(unsigned int xColor);
 
+		inline unsigned int					getRGBA() { return m_raw; }
 		static void							from(Color& xDst, int xSrc);
 	};
 }
