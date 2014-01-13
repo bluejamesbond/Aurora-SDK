@@ -77,10 +77,10 @@
 #define __STATUS_DEFINED__
 typedef unsigned int STATUS;
 #define _STATUS_TYPEDEF_(_sc)									((STATUS)_sc)
-#define STATUS_OK												_STATUS_TYPEDEF_(0);
-#define STATUS_FAIL												_STATUS_TYPEDEF_(1);
-#define STATUS_RETRY											_STATUS_TYPEDEF_(2);
-#define STATUS_FORCE_QUIT										_STATUS_TYPEDEF_(3);
+#define STATUS_OK												_STATUS_TYPEDEF_(0)
+#define STATUS_FAIL												_STATUS_TYPEDEF_(1)
+#define STATUS_RETRY											_STATUS_TYPEDEF_(2)
+#define STATUS_FORCE_QUIT										_STATUS_TYPEDEF_(3)
 #endif
 
 
