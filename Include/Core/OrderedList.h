@@ -95,6 +95,9 @@ namespace A2D{
 			U value;
 			Node<U> * left;
 			Node<U> * right;
+<<<<<<< HEAD
+>>>>>>> master-focus-border-v2
+=======
 >>>>>>> master-focus-border-v2
 		};
 

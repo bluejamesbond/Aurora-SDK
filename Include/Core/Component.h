@@ -29,6 +29,7 @@
 #include "Styles.h"
 #include "CascadingLayout.h"
 #include GRAPHICS__
+#include "ComponentEventSource.h"
 
 namespace A2D {
 
@@ -41,15 +42,17 @@ namespace A2D {
 	class Graphics;
 	class Component;
 	struct ImageProperties;
+        class ComponentManager;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
-    class Component
+    class Component : public ComponentEventSource
 	{
 		friend class RepaintManager;
 		friend class CascadingLayout;
+                friend class AbstractEventQueue;
 
 	public:
 
@@ -120,6 +123,24 @@ namespace A2D {
 		void							add(Component& xComponent);
 		void							remove(Component& xComponent);
 		
+        public:
+
+                STATUS                                                        requestFocus();
+                void                                                        setFocusable(bool xFocusable);
+                Rect                                        *                getEventRegion();
+
+                STATUS                                                        addMouseListener(MouseListener * xListener);
+                STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
+                STATUS                                                        addFocusListener(FocusListener * xListener);
+                STATUS                                                        addActionListener(ActionListener * xListener);
+
+        private:
+
+                bool                                                        isFocused = false;
+                bool                                                        isFocusable = true;
+                Component                                        *        aNextCompListener = 0;
+                Component                                        *        aPrevCompListener = 0;
+                
     protected:
 
 		bool                            aValidatedContents;
@@ -155,6 +176,7 @@ namespace A2D {
 		Component&						getParent();
 		Component&						getRoot();
 		AbstractFrame&					getFrame();
+                Rect *                                                        getVisibleRegion();
 
 		void							update();
 		Rect                            getBounds();
@@ -183,7 +205,7 @@ namespace A2D {
 
     public:
 
-        virtual HRESULT                 initialize();
+        virtual STATUS                 initialize();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// INLINE
