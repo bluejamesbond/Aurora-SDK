@@ -84,21 +84,12 @@ namespace A2D{
 		template <class U>
 		struct Node
 		{
-<<<<<<< HEAD
 			U value; // Let the compiler set this
 			Node<U> * left; // Let the compiler set this
 			Node<U> * right; // Let the compiler set this
 
 			// Note: Putting them to NULL has a overhead of around 0.30s for
 			// for 10,000,000 elements.
-=======
-			U value;
-			Node<U> * left;
-			Node<U> * right;
-<<<<<<< HEAD
->>>>>>> master-focus-border-v2
-=======
->>>>>>> master-focus-border-v2
 		};
 
 		template<class U>

@@ -52,9 +52,6 @@
 #define FLT_ZERO                                              0.0f
 #define FLT_ONE                                               1.0f
 
-#ifndef abs
-#endif
-
 #ifndef max
 #define max(a,b)										(((a) > (b)) ? (a) : (b))
 #endif

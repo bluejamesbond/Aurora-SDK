@@ -50,7 +50,7 @@ namespace A2D {
 
     class Component : public ComponentEventSource
 	{
-		friend class RepaintManager;
+		friend class ComponentManager;
 		friend class CascadingLayout;
                 friend class AbstractEventQueue;
 
@@ -70,6 +70,7 @@ namespace A2D {
 		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
+		ComponentManager                *                aComponentManager = NULL;
 
 	protected:
 
@@ -127,7 +128,7 @@ namespace A2D {
 
                 STATUS                                                        requestFocus();
                 void                                                        setFocusable(bool xFocusable);
-                Rect                                        *                getEventRegion();
+				virtual        Rect                                        *                getEventRegion();
 
                 STATUS                                                        addMouseListener(MouseListener * xListener);
                 STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
@@ -163,7 +164,7 @@ namespace A2D {
 
 	protected:
 		
-		virtual void                    validate();
+		void                    validate();
 
     public:
 
