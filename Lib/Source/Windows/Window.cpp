@@ -1300,10 +1300,11 @@ void Window::render()
 	{
 		// Paint from frameBuffer of the child HWND into the 
 		// the parent HWND
-		StretchBlt(memDC, aOptBorderWidth + aPadding,
-			aOptBorderWidth + aPadding,
-			realWidth,
-			realHeight,
+		StretchBlt(memDC, 
+			INT(aOptBorderWidth + aPadding),
+			INT(aOptBorderWidth + aPadding),
+			INT(realWidth),
+			INT(realHeight),
 			memDCChild,
 			0, 0,
 			INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
