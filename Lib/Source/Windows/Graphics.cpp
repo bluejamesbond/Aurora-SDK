@@ -115,6 +115,10 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Pain
 
 void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 {
+	Rect * clip = aClip;
+
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+
 	QuadData<ColorVertex, 6> * quadData;
 
 	if (*xPipeline == NULL)
@@ -180,6 +184,50 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 //		aColoredTextureShader->renderShader();
 //	}
 //}
+
+void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
+{
+	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
+	Rect * clip = aClip;
+
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+
+	Texture * texture;
+	QuadData<TextureVertex, 6> * quadData;	
+
+	if (*xPipeline == NULL)
+	{
+		// Intialize the pipeline
+
+		*xPipeline = new Pipeline();
+
+		texture = new Texture(aDevice, L"Assets/images/letter.png");
+		quadData = new QuadData<TextureVertex, 6>();
+
+		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+
+		texture->initialize();
+
+		(*xPipeline)->aPipelineComps[0] = texture;
+		(*xPipeline)->aPipelineComps[1] = quadData;
+
+		(*xPipeline)->aLength = 2;
+
+		return;
+	}
+
+	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
+	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
+
+	// texture->Update(textureArgs); <<<<+++ ADD LATER
+	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false))
+	{
+		aTextureShader->setTexture(texture);
+		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+		aTextureShader->renderShader();
+	}
+}
+
 
 STATUS Graphics::initialize()
 {

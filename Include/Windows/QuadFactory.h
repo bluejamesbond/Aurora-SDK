@@ -282,14 +282,15 @@ namespace A2D {
 			float rectWidth = xRect->aWidth;
 			float rectHeight = xRect->aHeight;
 
-			if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
-
 			float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 				left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 				texelRight, texelBottom,
 				textureWidth = textureClip->aWidth,
 				textureHeight = textureClip->aHeight,
 				depth = aDepth;
+			
+			float winWidth = aWindowDims->aWidth;
+			float winHeight = aWindowDims->aHeight;
 
 			TextureVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
@@ -302,10 +303,10 @@ namespace A2D {
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
 
-			left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
-			right = left + calcWidth;
-			top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
-			bottom = top - calcHeight;
+			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
+			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
+			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
+			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
 
 			texLeft = rectX > 0 ? 0.0f : abs(rectX);
 			texTop = rectY > 0 ? 0.0f : abs(rectY);
@@ -381,7 +382,7 @@ namespace A2D {
 
 			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
 			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = pixelsToRelativeDistance(winWidth, constraints.aX + calcRight);
+			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
 			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
 
 			Color3D& topLeftColor = xPaint->aStart;

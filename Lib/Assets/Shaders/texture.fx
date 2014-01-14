@@ -54,14 +54,16 @@ struct TexturePixel
 ColoredTexturePixel ColoredTextureVertexShader(ColoredTextureVertex input)
 {
 	ColoredTexturePixel output;
-	
-	// Change the position vector to be 4 units for proper matrix calculations.
+
+	// Force w-buffer to be 1.0
 	input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(input.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+	// Calculate z-buffer manually
+	input.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+	output.position = input.position;
 
 	output.tex = input.tex;
 	output.color = input.color;
@@ -97,13 +99,15 @@ TexturePixel TextureVertexShader(TextureVertex input)
 {
 	TexturePixel output;
 
-	// Change the position vector to be 4 units for proper matrix calculations.
+	// Force w-buffer to be 1.0
 	input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(input.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+	// Calculate z-buffer manually
+	input.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+	output.position = input.position;
 
 	output.tex = input.tex;
 
