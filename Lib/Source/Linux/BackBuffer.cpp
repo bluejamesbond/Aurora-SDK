@@ -78,7 +78,7 @@ HRESULT BackBuffer::initialize()
 
 	// Set to a single back buffer.
 
-	// Set the width and height of the back buffer.
+    // Set the width and height of the back buffer(quad)
 
 	// Set regular 32-bit surface for the back buffer.
 

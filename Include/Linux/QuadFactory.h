@@ -62,10 +62,6 @@ namespace A2D {
 
 		///////////////////////////////////////////////////////////
 /*
-		static void						memcpySSE2QuadVertex(TextureVertex * xDest, const TextureVertex * xSrc);
-		static void						memcpySSE2QuadVertex(ColoredTextureVertex * xDest, const ColoredTextureVertex * xSrc);
-		static void						memcpySSE2QuadVertex(ColorVertex * xDest, const ColorVertex * xSrc);
-		
 		HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
 		HRESULT							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
 		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
