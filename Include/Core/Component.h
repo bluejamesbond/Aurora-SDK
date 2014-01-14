@@ -63,7 +63,6 @@ namespace A2D {
 
 		float							aDepth = 0;
 
-		bool                                                        aVisible = true;
 		bool							aForced = false;
 
 		AbstractFrame		    *		aFrame;
@@ -73,6 +72,8 @@ namespace A2D {
 		ComponentManager                *                aComponentManager = NULL;
 
 	protected:
+
+		bool                                                        aVisible = true;
 
 		Styles::Display					aDisplay = Styles::Display::BLOCK;
 		Styles::Position				aPosition = Styles::Position::RELATIVE_;

@@ -240,6 +240,11 @@ STATUS Component::initialize()
 
 void Component::paintComponent()
 {
+	if (!aVisible)
+	{
+		return;
+	}
+
 	Graphics& graphics = *aGraphics;
 
 	if (aOptBackgroundSrc != NULL)
