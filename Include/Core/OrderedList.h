@@ -85,11 +85,14 @@ namespace A2D{
 		struct Node
 		{
 			U value; // Let the compiler set this
-			Node<U> * left; // Let the compiler set this
-			Node<U> * right; // Let the compiler set this
+			Node<U> * left = NULL; // Let the compiler set this
+			Node<U> * right = NULL; // Let the compiler set this
 
 			// Note: Putting them to NULL has a overhead of around 0.30s for
 			// for 10,000,000 elements.
+
+			// Note: The overhead of making this NULL is too small
+			// to be considered an issue.
 		};
 
 		template<class U>
@@ -508,6 +511,7 @@ namespace A2D{
 			{
 				*ptr = node;
 			}
+
 		}
 
 		void push_front(T t, void ** ptr)
@@ -548,7 +552,8 @@ namespace A2D{
 
 			if (ptr)
 			{
-				*ptr = next_node;
+				*ptr = static_cast<void*>(next_node);
+				Node<T> * derived = static_cast<Node<T>*>(*ptr);
 			}
 		}
 
@@ -662,15 +667,18 @@ namespace A2D{
 			splice(i, 1);
 		}
 
-		void remove_request(void ** x)
+		bool remove_request(void ** x)
 		{
-			if (*x = NULL)
+			if (*x == NULL)
 			{
-				return;
+				return false;
 			}
 
 			remove_node(static_cast<Node<T>*>(*x));
+
 			*x = NULL;
+
+			return true;
 		}
 
 		// Splice portions of list

@@ -87,10 +87,9 @@ STATUS EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 
 AbstractListener * EventSource::findListener(const int xListenerID)
 {
-	int size = aListenerList.size(); // Have to get size because your using _end();
 	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();
 	
-	while (node && size--)
+	while (node)
 	{
 		if (node->value->aID == xListenerID)
 		{
@@ -190,10 +189,9 @@ bool EventSource::operator==(EventSource& xSource)
 
 STATUS EventSource::addListener(AbstractListener * xListener)
 {
-	int size = aListenerList.size();
 	OrderedList<AbstractListener*>::Node<AbstractListener*> * node = aListenerList._end();
 	
-	while (node && size--)
+	while (node)
 	{
 		if (node->value == xListener)
 		{

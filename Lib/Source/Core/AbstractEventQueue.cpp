@@ -359,7 +359,6 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 
 	// Check components.
 	OrderedList<OrderedList<Component*>*>::Node<OrderedList<Component*>*> * nodeC = componentLocations._end();
-
 	while (nodeC)
 	{
 		comps = nodeC->value;
@@ -412,7 +411,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		nodeC = nodeC->left;
 	}
 
-	// Check other event sources.
+	// Check other event sources. 
 	OrderedList<EventSource*>::Node<EventSource*> * nodeE = aEventSourcesList._end();
 	while (nodeE)
 	{
