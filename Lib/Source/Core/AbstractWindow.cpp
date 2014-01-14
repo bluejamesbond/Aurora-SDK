@@ -295,9 +295,6 @@ STATUS AbstractWindow::initialize()
 	// ABSTRACTWINDOW DEFAULTS
 	//------------------------------------------------------------
 
-	// Call event source initialize.
-	SAFELY(EventSource::initialize());
-
 	// Default name
 	aName = L"Aurora-SDK Unititled";
 

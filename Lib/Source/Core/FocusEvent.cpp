@@ -38,7 +38,10 @@ Component * FocusEvent::getOppositeComponent()
 	return aOpposite;
 }
 
+// For debugging only.
 void FocusEvent::print() const
 {
-	SYSOUT_F("%s", aFocusName.c_str());
+	#ifdef A2D_DE__
+	SYSOUT_F("[FocusEvent] %s", aFocusName.c_str());
+	#endif // A2D_DE__
 }

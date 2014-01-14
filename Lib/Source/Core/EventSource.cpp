@@ -29,25 +29,20 @@ STATUS EventSource::processMouseEvent(MouseEvent * xEvent)
 	//{
 	//	return STATUS_FALSE;
 	//}
-	int ID;
 
 	if (xEvent->getID() == MouseEvent::MOUSE_DRAGGED || xEvent->getID() == MouseEvent::MOUSE_MOVE)
 	{
-		ID = A2D_LISTENER_MOUSEMOTION;
+		return fireListener(xEvent, A2D_LISTENER_MOUSEMOTION);
 	}
-
 	else
 	{
-		ID = A2D_LISTENER_MOUSE;
+		return fireListener(xEvent, A2D_LISTENER_MOUSE);
 	}
-
-	return fireListener(xEvent, ID);
 }
 
 STATUS EventSource::processActionEvent(ActionEvent * xEvent)
 {
-	int ID = A2D_LISTENER_ACTION;
-	return fireListener(xEvent, ID);
+	return fireListener(xEvent, A2D_LISTENER_ACTION);
 }
 
 STATUS EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
@@ -76,7 +71,6 @@ STATUS EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 		{
 			return (static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
 		}
-
 		return STATUS_FAIL;
 	}
 	else
@@ -166,25 +160,21 @@ bool EventSource::operator==(EventSource& xSource)
 {
 	Rect * thisRegion = getEventRegion();
 	Rect * thatRegion = xSource.getEventRegion();
-	
-	if (thisRegion->aX != thatRegion->aX)
+
+	// If they are exactly in the same region, then they are the same.
+	// Current exceptions: Frame & Window.
+
+	if (thisRegion->aX == thatRegion->aX &&
+		thisRegion->aY == thatRegion->aY &&
+		thisRegion->aWidth == thatRegion->aWidth &&
+		thisRegion->aHeight == thatRegion->aHeight)
+	{
+		return true;
+	}
+	else
 	{
 		return false;
 	}
-	if (thisRegion->aY != thatRegion->aY)
-	{
-		return false;
-	}
-	if (thisRegion->aWidth != thatRegion->aWidth)
-	{
-		return false;
-	}
-	if (thisRegion->aHeight != thatRegion->aHeight)
-	{
-		return false;
-	}
-	
-	return true;
 }
 
 STATUS EventSource::addListener(AbstractListener * xListener)
@@ -214,7 +204,7 @@ STATUS EventSource::removeListener(AbstractListener * xListener)
 	// Fix later!
 	aListenerList.remove_request(&xListener->aRemoveTicket);
 
-	if (xListener->aRemoveTicket == NULL)
+	if (aListenerList.remove_request(&xListener->aRemoveTicket))
 	{
 		return STATUS_OK;
 	}
@@ -222,12 +212,8 @@ STATUS EventSource::removeListener(AbstractListener * xListener)
 	{
 		return STATUS_FAIL;
 	}
+
 }
 
-STATUS EventSource::initialize()
-{
-	//aListenerList = new OrderedList<AbstractListener*>;
-	return STATUS_OK;
-}
 
 

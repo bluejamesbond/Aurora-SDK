@@ -46,47 +46,67 @@ STATUS MouseListener::notify(MouseEvent * xEvent)
 	}
 	else
 	{
-		// Do something default
-		SYSOUT_STR("Mouse ID not recognized");
+		#ifdef A2D_DE__
+		SYSOUT_STR("[MouseListener] Mouse ID not recognized");
+		#endif // A2D_DE__
 	}
-	if (xEvent->isConsumed()) { return STATUS_OK; }
-	else return STATUS_FAIL;
+	if (xEvent->isConsumed())
+	{
+		return STATUS_OK; 
+	}
+	else
+	{
+		return STATUS_FAIL;
+	}
 }
 
 void MouseListener::mousePressed(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	//print();
-	SYSOUT_STR("Handling pressed.");
-	xEvent->setConsumed(true);
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseListener] Handling pressed.");
+	#endif // A2D_DE__
+	
+	//xEvent->setConsumed(true);
 }
 
 void MouseListener::mouseReleased(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling released.");
-	xEvent->setConsumed(true);
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseListener] Handling released.");
+	#endif // A2D_DE__
+	//xEvent->setConsumed(true);
 }
 
 void MouseListener::mouseClicked(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling clicked.");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseListener] Handling clicked.");
+	#endif // A2D_DE__
 }
 
 void MouseListener::mouseExited(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling exited.");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseListener] Handling exited.");
+	#endif // A2D_DE__
 }
 
 void MouseListener::mouseEntered(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling entered.");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseListener] Handling entered.");
+	#endif // A2D_DE__
 }
 
+// For debugging only.
 void MouseListener::print() const
 {
+	#ifdef A2D_DE__
 	SYSOUT_F("%s", aName.c_str());
+	#endif // A2D_DE__
 }

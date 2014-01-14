@@ -70,19 +70,16 @@ namespace A2D {
 
 		friend					AbstractEventQueue;
 
-		
-
 	protected:
 
 		EventSource();
-		virtual STATUS			initialize();
 
 	protected:
 		
 		AbstractListener 	 *	findListener(const int xListenerID);
 		STATUS					fireListener(AbstractEvent * xEvent, int xListenerID);
-		virtual STATUS			addListener(AbstractListener * xListener); // slow 
-		virtual STATUS			removeListener(AbstractListener * xListener); // slow
+		virtual STATUS			addListener(AbstractListener * xListener);
+		virtual STATUS			removeListener(AbstractListener * xListener);
 
 		void				 *	aRemoveTicket;
 

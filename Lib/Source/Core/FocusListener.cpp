@@ -35,26 +35,41 @@ STATUS FocusListener::notify(FocusEvent * xEvent)
 	}
 	else
 	{
-		SYSOUT_STR("Id not recognized");
+		#ifdef A2D_DE__         
+		SYSOUT_STR("[FocusListener] ID not recognized.");
+		#endif // A2D_DE__
 	}
-	if (xEvent->isConsumed()) { return STATUS_OK; }
-	else return STATUS_FAIL;
+	if (xEvent->isConsumed())
+	{ 
+		return STATUS_OK; 
+	}
+	else
+	{
+		return STATUS_FAIL;
+	}
 }
 
 void FocusListener::focusGained(FocusEvent * xEvent)
 {
-	// do something
-	SYSOUT_STR("Handling focus gained.");
+	// Fill out.
+	#ifdef A2D_DE__
+	SYSOUT_STR("[FocusListener] Handling focus gained.");
+	#endif // A2D_DE__
 }
 
 void FocusListener::focusLost(FocusEvent * xEvent)
 {
-	// do something
-	SYSOUT_STR("Handling focus lost.");
+	// Fill out.
+	#ifdef A2D_DE__
+	SYSOUT_STR("[FocusListener] Handling focus lost.");
+	#endif // A2D_DE__
 }
 
+// For debugging only.
 void FocusListener::print() const
 {
-	SYSOUT_F("%s", aName.c_str());
+	#ifdef A2D_DE__
+	SYSOUT_F("[FocusListener] %s", aName.c_str());
+	#endif // A2D_DE__
 }
 

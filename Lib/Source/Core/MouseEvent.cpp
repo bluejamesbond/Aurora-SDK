@@ -61,7 +61,10 @@ POINT MouseEvent::getAbsoluteLocation()
 	return aPoint;
 }
 
+// For debugging only.
 void MouseEvent::print() const
 {
-	SYSOUT_F("%s", aMouseName.c_str());
+	#ifdef A2D_DE__
+	SYSOUT_F("[MouseEvent] %s", aMouseName.c_str());
+	#endif // A2D_DE__
 }

@@ -22,8 +22,12 @@ void ActionEvent::setCommand(string xCommand)
 	aCommand = xCommand;
 }
 
+// Only for debugging
 void ActionEvent::print() const
 {
-	SYSOUT_F("%s", aActionName.c_str());
+	#ifdef A2D_DE__         
+	SYSOUT_F("[ActionEvent] %s", aActionName.c_str());
+	#endif // A2D_DE__
+
 }
 

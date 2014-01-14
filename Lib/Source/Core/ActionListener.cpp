@@ -22,18 +22,28 @@ STATUS ActionListener::notify(AbstractEvent * xEvent)
 STATUS ActionListener::notify(ActionEvent * xEvent)
 {
 	actionPerformed(xEvent);
-	if (xEvent->isConsumed()) { return STATUS_OK; }
-	else return STATUS_FAIL;
+	if (xEvent->isConsumed())
+	{ 
+		return STATUS_OK; 
+	}
+	else
+	{
+		return STATUS_FAIL;
+	}
 }
 
 void ActionListener::actionPerformed(ActionEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling action performed");
+	#ifdef A2D_DE__         
+	SYSOUT_STR("[ActionListener] Handling action performed");
+	#endif // A2D_DE__
 }
 
+// Only for debugging
 void ActionListener::print() const
 {
+	#ifdef A2D_DE__ 
 	SYSOUT_F("%s", aName.c_str());
-
+	#endif // A2D_DE__
 }

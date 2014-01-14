@@ -216,8 +216,6 @@ STATUS AbstractFrame::initialize()
 {
 	aId = ++aClassInstances;
 
-	SAFELY(EventSource::initialize());
-
 	SAFELY(aRootPane.initialize());
 
 	SAFELY(createPlatformCompatibleEventQueue(&aEventQueue));
@@ -285,7 +283,14 @@ STATUS AbstractFrame::removeListener(AbstractListener * xListener)
 	{
 		if (node->value == this) // may be broken, need to overload ==operator
 		{
-			sourceList.remove_request(&aRemoveTicket);
+			if (sourceList.remove_request(&aRemoveTicket))
+			{
+				break;
+			}
+			else
+			{
+				return STATUS_FAIL;
+			}
 		}
 		node = node->left;
 	}

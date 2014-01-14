@@ -71,8 +71,11 @@ void WindowEvent::setStates(int xNewState, int xOldState)
 	aOldState = xOldState;
 }
 
+// For debugging only.
 void WindowEvent::print() const
 {
-	SYSOUT_F("%s", aWindowName.c_str());
+	#ifdef A2D_DE__
+	SYSOUT_F("[MouseMotionListener] %s", aWindowName.c_str());
+	#endif // A2D_DE__
 }
 

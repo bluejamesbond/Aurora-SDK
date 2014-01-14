@@ -10,8 +10,7 @@ ComponentEventSource::~ComponentEventSource(){}
 
 STATUS ComponentEventSource::processFocusEvent(FocusEvent * xEvent)
 {
-	int ID = A2D_LISTENER_FOCUS;
-	return fireListener(xEvent, ID);
+	return fireListener(xEvent, A2D_LISTENER_FOCUS);
 }
 
 STATUS ComponentEventSource::addFocusListener(FocusListener * xListener)
@@ -20,8 +19,14 @@ STATUS ComponentEventSource::addFocusListener(FocusListener * xListener)
 	{
 		int ID = A2D_LISTENER_FOCUS;
 		AbstractListener * listener = findListener(ID);
-		if (listener) return removeListener(listener);
-		else return STATUS_FAIL;
+		if (listener)
+		{
+			return removeListener(listener);
+		}
+		else
+		{
+			return STATUS_FAIL;
+		}
 	}
 	return addListener(xListener);
 }

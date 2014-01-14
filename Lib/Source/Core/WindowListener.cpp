@@ -44,41 +44,58 @@ STATUS WindowListener::notify(WindowEvent * xEvent)
 		windowStateChanged(xEvent);
 	}
 
-	if (xEvent->isConsumed()) { return STATUS_OK; }
-	else return STATUS_FAIL;
+	if (xEvent->isConsumed()) 
+	{
+		return STATUS_OK; 
+	}
+	else
+	{
+		return STATUS_FAIL;
+	}
 }
 
 void WindowListener::windowActivated(WindowEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling window activated");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[WindowListener] Handling window activated");
+	#endif // A2D_DE__
+	
 }
 
 void WindowListener::windowClosed(WindowEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling window closed");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[WindowListener] Handling window closed");
+	#endif // A2D_DE__
 }
 
 void WindowListener::windowDeactivated(WindowEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling window deactivated");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[WindowListener] Handling window deactivated");
+	#endif // A2D_DE__
 }
 
 void WindowListener::windowOpened(WindowEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling window opened");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[WindowListener] Handling window opened");
+	#endif // A2D_DE__
 }
 
 void WindowListener::windowStateChanged(WindowEvent * xEvent)
 {
 	// FILL THIS OUT
-	SYSOUT_STR("Handling window state changed");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[WindowListener] Handling window state changed");
+	#endif // A2D_DE__
 }
 
-
+// For debugging only.
 void WindowListener::print() const
 {
 	SYSOUT_F("%s", aName.c_str());

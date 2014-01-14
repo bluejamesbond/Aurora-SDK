@@ -25,37 +25,49 @@ STATUS MouseMotionListener::notify(MouseEvent * xEvent)
 
 	if (id == MouseEvent::MOUSE_MOVE)
 	{
-		// Do something
 		mouseMoved(xEvent);
-
 	}
 	else if (id == MouseEvent::MOUSE_DRAGGED)
 	{
-		// Do something
 		mouseDragged(xEvent);
 	}
 	else
 	{
-		// Do something default
-		SYSOUT_STR("Mouse ID not recognized");
+		#ifdef A2D_DE__
+		SYSOUT_STR("[MouseMotionListener] Mouse ID not recognized");
+		#endif // A2D_DE__
 	}
-	if (xEvent->isConsumed()) { return STATUS_OK; }
-	else return STATUS_FAIL;
+	if (xEvent->isConsumed()) 
+	{
+		return STATUS_OK; 
+	}
+	else
+	{
+		return STATUS_FAIL;
+	}
 }
 
 void MouseMotionListener::mouseDragged(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	 SYSOUT_STR("Handling mouse dragged.");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseMotionListener] Handling mouse dragged.");
+	#endif // A2D_DE__ 
 }
 
 void MouseMotionListener::mouseMoved(MouseEvent * xEvent)
 {
 	// FILL THIS OUT
-	 //SYSOUT_STR("Handling mouse moved.");
+	#ifdef A2D_DE__
+	SYSOUT_STR("[MouseMotionListener] Handling mouse moved.");
+	#endif // A2D_DE__ 
 	
 }
+
+// For debugging only.
 void MouseMotionListener::print() const
 {
-	SYSOUT_F("%s", aName.c_str());
+	#ifdef A2D_DE__
+	SYSOUT_F("[MouseMotionListener] %s", aName.c_str());
+	#endif // A2D_DE__
 }

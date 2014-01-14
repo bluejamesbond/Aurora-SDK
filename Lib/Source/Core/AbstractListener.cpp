@@ -16,5 +16,8 @@ bool AbstractListener::operator==(const AbstractListener& xListener)
 	{
 		return true;
 	}
-	else return false;
+	else
+	{
+		return false;
+	}
 }

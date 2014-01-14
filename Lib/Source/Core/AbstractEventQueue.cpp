@@ -198,7 +198,6 @@ bool AbstractEventQueue::dispatchNextEvent()
 
 void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 {
-	//clock_t tStart = clock();
 	OrderedList<OrderedList<Component*>*> componentLocations;
 	componentLocations = aComponentEventSources;
 
@@ -222,7 +221,9 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	point = xEvent->getLocation();
 	ID = xEvent->getID();
 
-	SYSOUT_F("x: %d, y: %d\n", point.x, point.y);
+	#ifdef A2D_DE__
+	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d\n", point.x, point.y);
+	#endif // A2D_DE__
 	while (node)
 	{
 		comps = node->value;
@@ -272,12 +273,13 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					}
 					if (isConsumedMouse == STATUS_OK)
 					{
-						//SYSOUT_F("MouseListenerFound, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
+						#ifdef A2D_DE__
+						SYSOUT_F("[AbstractEventQueue] MouseListenerFound, %d panels.", numPanels);
+						#endif // A2D_DE__
 						return;
 					}
 					else
 					{
-						//invalidLocs.push_back(&comp->aVisibleRegion, NULL); // Store location as unclickable in case of overlapping non-parent-child panels
 						comp = comp->aNextCompListener;
 					}
 				}
@@ -287,7 +289,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 				break;
 			}
 		}
-		if (noComponent) break;
+		if (noComponent)
+		{
+			break;
+		}
 		node = node->left; // check next depth
 	}
 
@@ -324,13 +329,17 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 			if (isConsumedMouse == STATUS_OK)
 			{
-				//SYSOUT_F("MouseListenerFound and consumed, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
+				#ifdef A2D_DE__
+				SYSOUT_F("[AbstractEventQueue] MouseListenerFound and consumed, %d panels.", numPanels);
+				#endif // A2D_DE__
 				return;
 			}
 		}
 		nodeE = nodeE->left;
 	}
-	//SYSOUT_F("Not consumed, %d panels: Time taken: %.9fs\n", numPanels, (double)(clock() - tStart) / CLOCKS_PER_SEC);
+	#ifdef A2D_DE__
+	SYSOUT_F("[AbstractEventQueue] Not consumed, %d panels.",numPanels);
+	#endif // A2D_DE__
 }
 
 void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
@@ -339,7 +348,10 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	componentLocations = aComponentEventSources;
 
 	int size = componentLocations.size();
-	if (!size) return;
+	if (!size)
+	{
+		return;
+	}
 
 
 	STATUS isConsumedMouseMove = STATUS_FAIL;
@@ -523,7 +535,10 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 	// Screw checking if there's a duplicate
 	// Check if there's a listener first, then add.
 
-	if (!hasListener(xSource)) return; // Source has no listener, so we do not add to the list.
+	if (!hasListener(xSource))
+	{
+		return; // Source has no listener, so we do not add to the list.
+	}
 
 	OrderedList<Component*> * peerEventSources;
 	OrderedList<Component*>::Node<Component*> * node;
@@ -543,7 +558,10 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 
 		// Component with listener added topmost, so no previous comp listener.
 		Component * nextComp = findNextCompListener(xSource);
-		if (nextComp) nextComp->aPrevCompListener = xSource;
+		if (nextComp)
+		{
+			nextComp->aPrevCompListener = xSource;
+		}
 		xSource->aNextCompListener = nextComp;
 	}
 	else
@@ -572,7 +590,10 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 		else // No parent has listener. Look for children listeners.
 		{
 			nodeComp = findPrevCompListener(xSource);
-			if (nodeComp) nodeComp->aNextCompListener = xSource;
+			if (nodeComp)
+			{
+				nodeComp->aNextCompListener = xSource;
+			}
 			xSource->aPrevCompListener = nodeComp;
 		}
 
@@ -587,7 +608,10 @@ void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 	int maxZ = aComponentEventSources.size();
 	int neededZ = INT(xZ);
 
-	if (maxZ <= neededZ) return; // ERROR HERE
+	if (maxZ <= neededZ)
+	{
+		return;
+	}
 
 	OrderedList<Component*> * peerEventSources = aComponentEventSources.get(neededZ);
 	OrderedList<Component*>::Node<Component*> * node = peerEventSources->_end();
@@ -600,8 +624,14 @@ void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 			Component * prev = comp->aPrevCompListener;
 			Component * next = comp->aNextCompListener;
 
-			if (prev) prev->aNextCompListener = next;
-			if (next) next->aPrevCompListener = prev;
+			if (prev)
+			{
+				prev->aNextCompListener = next;
+			}
+			if (next)
+			{
+				next->aPrevCompListener = prev;
+			}
 			peerEventSources->remove_request(&comp->aRemoveTicket);
 			return;
 		}
@@ -618,7 +648,10 @@ Component * AbstractEventQueue::findNextCompListener(Component * xSource)
 	comp = xSource->aParent;
 	while (comp)
 	{
-		if (hasListener(comp)) return comp;
+		if (hasListener(comp))
+		{
+			return comp;
+		}
 		comp = comp->aParent;
 	}
 	// Didnt find a parent with listener
@@ -633,7 +666,10 @@ Component * AbstractEventQueue::findPrevCompListener(Component * xSource)
 	while (nodeC)
 	{
 		prevComp = nodeC->value;
-		if (hasListener(prevComp)) return prevComp;
+		if (hasListener(prevComp))
+		{
+			return prevComp;
+		}
 		nodeC = nodeC->left;
 	}
 	return NULL;
@@ -641,19 +677,16 @@ Component * AbstractEventQueue::findPrevCompListener(Component * xSource)
 
 bool AbstractEventQueue::hasListener(EventSource * xSource)
 {
-	int id = A2D_LISTENER_ACTION;
-	if (xSource->findListener(id)) return true;
-
-	id = A2D_LISTENER_FOCUS;
-	if (xSource->findListener(id)) return true;
-
-	id = A2D_LISTENER_MOUSE;
-	if (xSource->findListener(id)) return true;
-
-	id = A2D_LISTENER_MOUSEMOTION;
-	if (xSource->findListener(id)) return true;
-
-	id = A2D_LISTENER_WINDOW;
-	if (xSource->findListener(id)) return true;
-	else return false;
+	if (xSource->findListener(A2D_LISTENER_ACTION) ||
+		xSource->findListener(A2D_LISTENER_FOCUS) ||
+		xSource->findListener(A2D_LISTENER_MOUSE) ||
+		xSource->findListener(A2D_LISTENER_MOUSEMOTION) ||
+		xSource->findListener(A2D_LISTENER_WINDOW))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
