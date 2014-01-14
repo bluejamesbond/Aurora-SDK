@@ -65,7 +65,7 @@ struct QuadPixel
 //#ARGB to (Rf, Gf, Bf, Af)
 float4 ARGBtoFloat4(uint color)
 {
-	return float4(((color >> 24) & 0xFF) / 255, ((color >> 16) & 0xFF) / 255, ((color >> 8) & 0xFF) / 255, 1.0);
+	return float4(((color >> 24) & 0xFF) / 255.0, ((color >> 16) & 0xFF) / 255.0, ((color >> 8) & 0xFF) / 255.0, (color & 0xFF) / 255.0);
 }
 
 //------------------------------------------------------------------------------

@@ -63,7 +63,7 @@
 // Debugging
 #include "_A2DDebug.h"
 
-//#define A2D_DE__										"Comment out this line to remove debugging."
+#define A2D_DE__										"Comment out this line to remove debugging."
 
 #define G_SAFELY(hr)									if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
 #define SAFELY(hr)										if(hr != 0)	{ SYSOUT_STR("Failure detected");	return E_FAIL; }

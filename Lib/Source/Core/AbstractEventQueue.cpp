@@ -222,7 +222,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	ID = xEvent->getID();
 
 	#ifdef A2D_DE__
-	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d\n", point.x, point.y);
+	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.x, point.y);
 	#endif // A2D_DE__
 	while (node)
 	{
