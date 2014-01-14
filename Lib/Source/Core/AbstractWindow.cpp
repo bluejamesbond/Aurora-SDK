@@ -274,6 +274,6 @@ HRESULT AbstractWindow::initialize()
 	invalidate();
 
 	//------------------------------------------------------------
-
+//    render();
 	return S_OK;
 }

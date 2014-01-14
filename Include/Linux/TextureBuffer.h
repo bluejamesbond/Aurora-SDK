@@ -21,11 +21,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../Core/Common.h"
-#include "../Core/ImageProperties.h"
+//#include "../Core/ImageProperties.h"
 #include "../Core/Rect.h"
 
-#include "TextureVertex.h"
-#include "BackBuffer.h"
+//#include "TextureVertex.h"
+//#include "BackBuffer.h"
 #include "AbstractTexture.h"
 
 namespace A2D {
@@ -47,29 +47,24 @@ namespace A2D {
 	public:
 
 		// Constructor
-		TextureBuffer(ID3D10Device ** xDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
+//        TextureBuffer(Dims * xSize);
+        TextureBuffer();
 
 		// Deconstructor
 		~TextureBuffer();
 
 		// Variables
-		ID3D10Device				**	aDevice;
-		ID3D10DepthStencilView		**	aBackBufferaDXDepthStencilView;
-
-		ID3D10Texture2D				*	aDXRenderTargetTexture;
-		ID3D10RenderTargetView		*	aDXRenderTargetView;
-		ID3D10DepthStencilState		*   aDXDepthStencilState;
-		ID3D10ShaderResourceView*		aResource;
 
 		// Accessors
-		virtual	bool					hasAlpha();
+//		virtual	bool					hasAlpha();
 
 		// Mutators
-		void							SetActive();
+//		void							SetActive();
+        void                            genBuffer(unsigned int vt_vbo, float*texcoords, int dimensions, int length);
 
 		// Additional
-		void							Clear();
-		virtual void			   *	getPlatformCompatibleResource();
+//		void							Clear();
+//		virtual void			   *	getPlatformCompatibleResource();
 
 	public:
 

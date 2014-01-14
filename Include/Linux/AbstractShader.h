@@ -20,8 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "DXShaderUtils.h"
+#include "GLShaderUtils.h"
 #include "Texture.h"
+#include "Common.h"
 
 namespace A2D {
 
@@ -33,43 +34,33 @@ namespace A2D {
 	{
 	public:
 
-		AbstractShader(ID3D10Device ** xDevice);
+        AbstractShader();
 		virtual ~AbstractShader();
 
 	protected:
 
-		// Pull out and cache device
-		ID3D10Device				**	aDevice;
-		ID3D10EffectTechnique		*	aTechnique;
-		ID3D10InputLayout			*	aLayout;
-		bool							aHasAlpha = false;
-
 
 	private:
-		
-		static ID3D10BlendState		*	aBlendState;
-		static ID3D10BlendState		*	aBlendDisabledState;
-		
-	public:
+        //variables
+        char                    *       vshadername;
+        char                    *       fshadername;
 
+	public:
+        //variables
+        GLuint                          programID;
+        GLuint                          TextureID;
+
+        //methods
 		void							renderShader();
-
-	protected:
-
-		virtual HRESULT					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC * xPolygonLayout) = 0;
-		virtual unsigned int			getPolygonLayoutElementCount() = 0;
-		virtual	LPCSTR					getTechniqueName() = 0;
-		virtual ID3D10Effect		**	getEffect() = 0;
-		virtual LPCWSTR					getEffectName() = 0;
-		virtual HRESULT					getUsableVariablePointers(ID3D10Effect * xEffect) = 0;
-
-	public:
+        void                            setVShader(char * xshader);
+        void                            setFShader(char * xshader);
 
 		//////////////////////////////////////////////////////////
 		// ABSTRACT IMPLEMENTATION
 		//////////////////////////////////////////////////////////
 
 		virtual HRESULT	                initialize();
+
 	};
 }
 

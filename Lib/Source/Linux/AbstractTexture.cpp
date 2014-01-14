@@ -1,14 +1,8 @@
 
-#include "../../../Include/Windows/ExtLibs.h"
-#include "../../../Include/Windows/AbstractTexture.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/AbstractTexture.h"
 
 using namespace A2D;
-
-bool AbstractTexture::hasAlpha()
-{
-	// Force to be true
-	return true;
-}
 
 Dims* AbstractTexture::GetSize()
 {

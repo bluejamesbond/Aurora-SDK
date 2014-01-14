@@ -61,6 +61,8 @@
 #define E_FAIL 0
 #define FAILED(x) !x
 
+#define LPCTSTR char*
+
 #define byte char
 #define min(a, b)                                             ((a > b ) ? b : a)
 #define max(a, b)                                             ((a < b ) ? b : a)

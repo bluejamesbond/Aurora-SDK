@@ -1,4 +1,3 @@
-
 #include "../../../Include/Core/ExtLibs.h"
 #include "../../../Include/Core/AbstractFrame.h"
 
@@ -256,7 +255,7 @@ void AbstractFrame::validated()
 
 void AbstractFrame::update()
 {
-	if (!aValidatedContents)
+    if (!aValidatedContents)
 	{
 		aRepaintManager->validate();
 		
@@ -265,5 +264,5 @@ void AbstractFrame::update()
 		return;
 	}
 
-	aRepaintManager->update();
+    aRepaintManager->update();
 }

@@ -73,7 +73,7 @@ Window  XWindow::createCompatibleWindow(bool isParent)
         winAttr.background_pixel = BlackPixel( aDis, visualInfo->screen );
         int winattr_flags = CWColormap | CWEventMask | CWBorderPixel | CWBackPixel;
 
-        aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, 512, 512, 0,
+        aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, 0,
         visualInfo->depth, InputOutput, visualInfo->visual, winattr_flags, &winAttr );
 
         //Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
@@ -165,6 +165,11 @@ void XWindow::render()
         }
 
     return;
+}
+
+void * XWindow::getPlatformCompatibleWindowHandle()
+{
+    return &aWin;
 }
 
 void XWindow::destroyBackgroundResources()

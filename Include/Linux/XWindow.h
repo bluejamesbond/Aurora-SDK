@@ -57,18 +57,19 @@ namespace A2D {
         XSetWindowAttributes            winAttr;
         GLXContext                      hRC;
         GLXContext                      render_context;
-        Dims                            aCurrentSize;
-        Display      *                   aDis;
-        Window                           aWin;
-	public:
+        Display      *                  aDis;
+        Window                          aWin;
+
+    public:
 
         XWindow(AbstractFrame * xFrame);
-        virtual Window                  createCompatibleWindow(bool isParent);
-        void                            destroyResources();
-
-//    protected:
 
         virtual void                    render();
+        virtual void              *     getPlatformCompatibleWindowHandle();
+
+
+        virtual Window                  createCompatibleWindow(bool isParent);
+        void                            destroyResources();
         virtual HRESULT                 createBackgroundResources();
         void                            destroyBackgroundResources();
         HRESULT                         isExtensionSupported(const char *extList, const char *extension);

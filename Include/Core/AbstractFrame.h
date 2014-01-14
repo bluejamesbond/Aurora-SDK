@@ -100,14 +100,14 @@ namespace A2D {
 
 	protected:
 
-		virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
+        virtual HRESULT					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) {}
 		virtual HRESULT					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
-		virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
-		virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
+        virtual HRESULT					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
+        virtual HRESULT					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
 		
 	public:
 
-		virtual HRESULT                 initialize();
+        virtual HRESULT                 initialize();
 
 	};
 }

@@ -1,13 +1,11 @@
-
 #include "../../../Include/Linux/ExtLibs.h"
 #include "../../../Include/Linux/Graphics.h"
 
 using namespace A2D;
 
-Graphics::Graphics(BackBuffer * xBackBuffer)
+Graphics::Graphics(AbstractBackBuffer * xBackBuffer)
 {
     /*aBackBuffer = xBackBuffer;
-	aDevice = xBackBuffer->getDevice();
 	aBackBufferDims = xBackBuffer->getSize();
     aBackBufferSettings = xBackBuffer->getSettings();*/
     aBackBuffer = xBackBuffer;
@@ -16,18 +14,12 @@ Graphics::Graphics(BackBuffer * xBackBuffer)
 Graphics::~Graphics()
 {
     /*DESTROY(aQuadFactory);
-	DESTROY(aColoredTextureShader);
-	DESTROY(aViewMatrix);
-	DESTROY(aWorldMatrix);
-	DESTROY(aProjection2DMatrix);
-	DESTROY(aProjection3DMatrix);
-	DESTROY(aTextureBuffer);
-    DESTROY(aBlurBuffer);*/
+    DESTROY(aTextureBuffer);*/
 }
 
-BackBuffer * Graphics::getBackBuffer()
+AbstractBackBuffer * Graphics::getBackBuffer()
 {
-	return aBackBuffer;
+    return aBackBuffer;
 }
 
 void Graphics::validate(){}
@@ -88,6 +80,8 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 
 void Graphics::drawImage()
 {
+        BackBuffer * xBackBuffer = dynamic_cast<BackBuffer * >(aBackBuffer);
+
     do{
 
             // Clear the screen
@@ -96,15 +90,14 @@ void Graphics::drawImage()
 
             // Use our shader
             glUseProgram(programID);
-            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, aBackBuffer->tex);
+            //glBindTexture(GL_TEXTURE_2D, aBackBuffer->tex);
 
             // Set our "myTextureSampler" sampler to user Texture Unit 0
-            glUniform1i(aBackBuffer->TextureID, 0);
+            //glUniform1i(aBackBuffer->TextureID, 0);
 
             //bind vertext array before drawing
-            glBindVertexArray (aBackBuffer->vao);
+            glBindVertexArray (xBackBuffer->vao);
 
             // Draw the triangle !
             glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
@@ -130,57 +123,6 @@ LPCWSTR Graphics::toString()
 
 HRESULT Graphics::initialize()
 {
-    programID = GLShaderUtils::LoadEffectFromFile( "/home/syk435/Testing Gl/GL-Test/SimpleVertexShader.vertexshader", "/home/syk435/Testing Gl/GL-Test/SimpleFragmentShader.fragmentshader" );
-
-    MatrixID = glGetUniformLocation(programID, "MVP");
-
-        // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    // Camera matrix
-    glm::mat4 View       = glm::lookAt(
-                                glm::vec3(0,0,2), // Camera is at (4,3,3), in World Space
-                                glm::vec3(0,0,0), // and looks at the origin
-                                glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-                           );
-    // Model matrix : an identity matrix (model will be at the origin)
-    glm::mat4 Model      = glm::mat4(1.0f);
-    // Our ModelViewProjection : multiplication of our 3 matrices
-    MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
-
-    file_name = "/home/syk435/Pictures/texture_sample.png";
-    int force_channels = 4;
-    image_data = stbi_load(file_name, &x, &y, &n, force_channels); //replaced file_name with aSrc, but i guess aSrc has to be a String
-
-    if (!image_data)
-    {
-           fprintf (stderr, "ERROR: could not load %s\n", file_name);
-    }
-
-    //check if not normal dims
-    if (x & (x - 1) != 0 || y & (y - 1) != 0)
-    {
-            fprintf (stderr, "WARNING: texture %s is not power-of-2 dimensions\n", file_name);
-    }
-    //invert to norm
-    int width_in_bytes = x * 4;
-    unsigned char *top = NULL;
-    unsigned char *bottom = NULL;
-    unsigned char temp = 0;
-    int half_height = y / 2;
-
-    for (int row = 0; row < half_height; row++) {
-    top = image_data + row * width_in_bytes;
-    bottom = image_data + (y - row - 1) * width_in_bytes;
-            for (int col = 0; col < width_in_bytes; col++)
-            {
-                   temp = *top;
-                   *top = *bottom;
-                   *bottom = temp;
-                   top++;
-                   bottom++;
-            }
-    }
-
 
     /*CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;

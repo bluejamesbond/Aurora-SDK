@@ -21,7 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Common.h"
-#include "GLImageLoader.h"
 //#include "TextureVertex.h"
 #include "BackBuffer.h"
 //#include "ColoredTextureShader.h"
@@ -30,7 +29,6 @@
 #include "QuadFactory.h"
 //#include "ImageProperties.h"
 //#include "Pipeline.h"
-//#include "MatrixFactory.h"
 //#include "Paint.h"
 //#include "Color3D.h"
 //#include "TextureShader.h"
@@ -44,33 +42,26 @@ namespace A2D {
 	// FORWARD DECLARATIONS
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Abstract;
-	class Renderable;
-	class Container;
-	class Camera;
-	struct CameraProperties;
-	struct RenderData;
-	class BackBuffer;
-	class MatrixFactory;
-	class RootPane;
+    struct CameraProperties;
+    class BackBuffer;;
 	class Texture;
 	class TextureBuffer;
     class XWindow;
+    class AbstractBackBuffer;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-    class Graphics// : public Abstract
+    class Graphics
     {
     public:
 
-        Graphics(BackBuffer * xBackBuffer);
+        Graphics(AbstractBackBuffer * xBackBuffer);
         ~Graphics();
 
 
         GLuint                          programID;
-        GLuint                          MatrixID;
         unsigned char       *           image_data;
         int                             x;
         int                             y;
@@ -84,13 +75,12 @@ namespace A2D {
         float                *			aProjection2DMatrix;
         float                *			aProjection3DMatrix;
 */
-        glm::mat4                       MVP;
-        BackBuffer			 *			aBackBuffer;
-        AbstractWindow              *          aWindow;
+        AbstractBackBuffer   *			aBackBuffer;
+        AbstractWindow       *          aWindow;
 /*
+        Texture              *          aTexture;
         QuadFactory			 *			aQuadFactory;
         TextureBuffer        *			aTextureBuffer;
-        TextureBuffer        *			aBlurBuffer;
 
         // Shaders
         AbstractShader		 *			aColorShader;
@@ -99,13 +89,12 @@ namespace A2D {
 
     public:
 
-        Dims*							getDrawableDimensions();
-        BackBuffer*						getBackBuffer();*/
+        Dims*							getDrawableDimensions();*/
         void							validate();
-       void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
+        void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
         void							setClip(Rect * aRect, float xZ);/*
 */
-        BackBuffer           *          getBackBuffer();
+        AbstractBackBuffer           *          getBackBuffer();
         void                            setWindow(AbstractWindow* xWindow);
         void                            setBackBuffer(BackBuffer* xBackBuffer);
 //        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);

@@ -112,40 +112,40 @@ namespace A2D {
 
 	protected:
 
-        virtual void                    render() {};
-        virtual void					validate() {};
-        virtual void              *     getPlatformCompatibleWindowHandle() {};
-        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) {};
+        virtual void                    render() = 0;
+        virtual void					validate() {}
+        virtual void              *     getPlatformCompatibleWindowHandle() = 0;
+        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) {}
 
 	public:
 
-        virtual void                    setMinimumSize(Dims * xSize) {};
-        virtual void                    setMaximumSize(Dims * xSize) {};
-        virtual void					setBounds(Rect * xRect) {};
-        virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight) {};
-        virtual void					setSize(Dims * xSize) {};
-        virtual void                    setMinimumSize(float xWidth, float xHeight) {};
-        virtual void                    setMaximumSize(float xWidth, float xHeight) {};
-        virtual void					setSize(float xWidth, float xHeight) {};
-        virtual void                    setName(LPCWSTR xName) {};
-        virtual void                    setUndecorated(bool xUndecoratedFlag) {};
-        virtual void                    setDefaultCloseOperation(int xCloseOperation) {};
-        virtual void                    setLocationRelativeTo(AbstractWindow * xWindow) {};
-        virtual void                    setVisible(bool xVisible) {};
-        virtual void                    setShadowed(bool xShadowFlag) {};
-        virtual void                    setBorderColor(Color * xBorderColor) {};
-        virtual void                    setShadowRadius(float xShadowRadius) {};
-        virtual void                    setShadowColor(Color * xShadowColor) {};
-        virtual void                    setBackgroundColor(Color * xShadowColor) {};
-        virtual void                    setBorderWidth(float xBorderWidth) {};
-        virtual void					setBorder(Color * xBorderColor, float xBorderWidth) {};
-        virtual void					setShadow(Color * xShadowColor, float xShadowRadius) {};
+        virtual void                    setMinimumSize(Dims * xSize) {}
+        virtual void                    setMaximumSize(Dims * xSize) {}
+        virtual void					setBounds(Rect * xRect) {}
+        virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight) {}
+        virtual void					setSize(Dims * xSize) {}
+        virtual void                    setMinimumSize(float xWidth, float xHeight) {}
+        virtual void                    setMaximumSize(float xWidth, float xHeight) {}
+        virtual void					setSize(float xWidth, float xHeight) {}
+        virtual void                    setName(LPCWSTR xName) {}
+        virtual void                    setUndecorated(bool xUndecoratedFlag) {}
+        virtual void                    setDefaultCloseOperation(int xCloseOperation) {}
+        virtual void                    setLocationRelativeTo(AbstractWindow * xWindow) {}
+        virtual void                    setVisible(bool xVisible) {}
+        virtual void                    setShadowed(bool xShadowFlag) {}
+        virtual void                    setBorderColor(Color * xBorderColor) {}
+        virtual void                    setShadowRadius(float xShadowRadius) {}
+        virtual void                    setShadowColor(Color * xShadowColor) {}
+        virtual void                    setBackgroundColor(Color * xShadowColor) {}
+        virtual void                    setBorderWidth(float xBorderWidth) {}
+        virtual void					setBorder(Color * xBorderColor, float xBorderWidth) {}
+        virtual void					setShadow(Color * xShadowColor, float xShadowRadius) {}
 
 	public:
 
 		virtual HRESULT                 initialize();
 
-	};
+    };
 }
 
 #endif

@@ -22,6 +22,7 @@
 
 #include "../Core/AbstractFrame.h"
 //#include "Thread.h"
+#include "Graphics.h"
 
 namespace A2D {
 
@@ -44,8 +45,10 @@ namespace A2D {
 
 	protected:
 
+        virtual HRESULT		createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue);
         virtual HRESULT		createPlatformCompatibleWindow(AbstractWindow ** xWindow);
-
+        virtual HRESULT		createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings);
+        virtual HRESULT		createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer);
     };
 }
 #endif

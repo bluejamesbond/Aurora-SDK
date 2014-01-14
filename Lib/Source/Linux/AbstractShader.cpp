@@ -1,83 +1,55 @@
-
-#include "../../../Include/Windows/ExtLibs.h"
-#include "../../../Include/Windows/AbstractShader.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/AbstractShader.h"
 
 using namespace A2D;
 
-ID3D10BlendState * AbstractShader::aBlendState = NULL;
-ID3D10BlendState * AbstractShader::aBlendDisabledState = NULL;
-
-AbstractShader::AbstractShader(ID3D10Device ** xDevice) : aDevice(xDevice) {}
+AbstractShader::AbstractShader() {}
 
 AbstractShader::~AbstractShader()
 {
-	DESTROY(aTechnique);
+
+}
+
+void AbstractShader::setVShader(char * xshader)
+{
+    vshadername = xshader;
+}
+
+void AbstractShader::setFShader(char * xshader)
+{
+    fshadername = xshader;
 }
 
 HRESULT AbstractShader::initialize()
 {
-	unsigned int polygonLayoutElements = getPolygonLayoutElementCount();
-	D3D10_INPUT_ELEMENT_DESC * polygonLayout = new D3D10_INPUT_ELEMENT_DESC[polygonLayoutElements];
-	ID3D10Effect **	effect = getEffect();
+    //set shader path?
+        //temp
+    if(vshadername == NULL)
+    {
+        vshadername = "/home/syk435/Testing Gl/GL-Test/SimpleVertexShader.vertexshader";
+    }
 
-	// Use the DXShaderUtils to create a shader
-	// and cache it.
-	if (!*effect)
-	{
-		SAFELY(DXShaderUtils::LoadEffectFromFile(getEffectName(), *aDevice, effect));
-	}
+    if(fshadername == NULL)
+    {
+        fshadername = "/home/syk435/Testing Gl/GL-Test/SimpleFragmentShader.fragmentshader";
+    }
 
-	// Create alpha channel supported blend states
-	// and cache it for reuse.
-	if (!aBlendState || !aBlendDisabledState)
-	{
-		SAFELY(DXShaderUtils::CreatePNGCompatibleBlendStates(*aDevice, &aBlendState, &aBlendDisabledState));
-	}
+    // create shaders , tie to "programid". Maybe later make more shaders and tie to different IDs
+    programID = GLShaderUtils::LoadEffectFromFile(vshadername, fshadername);
 
-	SAFELY(createPolygonLayout(polygonLayout));
+    //load all necessary textures with corresponding ID's, need to allow multiple(?)
+    TextureID  = glGetUniformLocation(programID, "basic_texture");
 
-	SAFELY(DXShaderUtils::loadTechniqueFromEffect(*aDevice, *effect, &aLayout, &aTechnique, polygonLayout, getTechniqueName(), polygonLayoutElements));
-	
-	SAFELY(getUsableVariablePointers(*effect));
-
-	DESTROY(polygonLayout);
-
-	return S_OK;
 }
 
 void AbstractShader::renderShader()
 {
-	D3D10_TECHNIQUE_DESC techniqueDesc;
-	unsigned int i;
+    // Use our shader
+    glUseProgram(programID);
 
-	// Cache the device onto L1 CPU cache for speed
-	ID3D10Device * device = *aDevice;
+    //might need texture::render to come here
 
-	// Cache the texture onto L1 CPU cache for speed
-	ID3D10EffectTechnique * technique = aTechnique;
+    // Set our "myTextureSampler" sampler to user Texture Unit 0
+    glUniform1i(TextureID, 0);
 
-	if (aHasAlpha)
-	{
-		device->OMSetBlendState(aBlendState, 0, 0xffffffff);
-	}
-	else
-	{
-		device->OMSetBlendState(aBlendDisabledState, 0, 0xffffffff);
-	}
-
-	// Set the input layout.
-	device->IASetInputLayout(aLayout);
-
-	// Get the description structure of the technique 
-	// from inside the shader so it can be used for rendering.
-	technique->GetDesc(&techniqueDesc);
-
-	// Go through each pass in the technique (should be just 
-	// one currently) and render the triangles.
-	for (i = 0; i < techniqueDesc.Passes; ++i)
-	{
-		// hard coded 6. change this to a variable later.
-		technique->GetPassByIndex(i)->Apply(0);
-		device->DrawIndexed(6, 0, 0);
-	}
 }
