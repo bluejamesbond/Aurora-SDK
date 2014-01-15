@@ -47,7 +47,10 @@ namespace A2D {
 		Border m_right;
 		Border m_bottom;
 
-		BorderSet()
+		bool m_inset; // unused
+
+		BorderSet() : 
+			m_inset(false)
 		{
 			Color3D::from(m_left.m_color, Color3D::GREEN);
 			Color3D::from(m_top.m_color, Color3D::BLUE);

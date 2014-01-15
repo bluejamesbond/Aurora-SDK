@@ -11,26 +11,13 @@
 //------------------------------------------------------------------------------
 // GLOBAL
 //------------------------------------------------------------------------------
-Texture2D shaderTexture : register(ps_4_0, t[0]) ;
 
-//------------------------------------------------------------------------------
-// BLEND STATE
-//------------------------------------------------------------------------------
-//BlendState SrcAlphaBlendingAdd
-//{
-//	BlendEnable[0] = TRUE;
-//	SrcBlend = SRC_ALPHA;
-//	DestBlend = INV_SRC_ALPHA;
-//	BlendOp = ADD;
-//	SrcBlendAlpha = ZERO;
-//	DestBlendAlpha = ZERO;
-//	BlendOpAlpha = ADD;
-//	RenderTargetWriteMask[0] = 0x0F;
-//};
+Texture2D shaderTexture : register(ps_4_0, t[0]) ;
 
 //------------------------------------------------------------------------------
 // SAMPLER
 //------------------------------------------------------------------------------
+
 SamplerState SampleType
 {
 	Filter = MIN_MAG_MIP_LINEAR;
@@ -44,12 +31,39 @@ SamplerState SampleType
 struct QuadVertex
 {
 	float4 position : POSITION0;
-	float4 options : POSITION1;      // [texture/color/both, textureSlice, z, opacity]
-	float4 borderWidths : POSITION2; // [leftWidth, topWidth, rightWidth, bottomWidth]
-	float4 borderRadius : POSITION3; // [leftRadius, topRadius, rightRadius, bottomRadius]
+	float4 options : POSITION1;      // [text/color/both, opacity, reserved, reserved]      NOTE: contents must be in float. 
+	float4 borderWidths : POSITION2; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
+	float4 borderRadius : POSITION3; // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
 	float4 colorTex : COLOR0;
-	uint4 borderColors : UINT4_0;      // [leftColor, topColor, rightColor, bottomColor]
+	uint4 borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };
+
+// >>>>>>> Proposed for future
+// >>>>>>> [complexOptions, opacity, reserved, reserved]
+//
+// ------------------------- ComplexOptions - BitLayout ------------------------
+//
+//  Values are 32 bit values laid out as follows:
+//
+//   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+//  +-+-+-+-+-+---------------------+-------------------------------+
+//  |r|r|r|C|I|   TextureSlice      |            Z-Index            |
+//  +-+-+-+-+-+---------------------+-------------------------------+
+//
+//  where
+//
+//      C - Contents - indicates whether the contents in float4: colorTex
+//                     are representing texture or color                 
+//
+//          0 - true (Texture)
+//          1 - false (Color) 
+//
+//      B - InsetBorder - indicates whether the borders are inset or
+//                        outset
+//
+//      r - reserved for future use
+//
+//------------------------------------------------------------------------------
 
 struct QuadPixel
 {
@@ -71,6 +85,7 @@ float4 ARGBtoFloat4(uint color)
 //------------------------------------------------------------------------------
 // VS
 //------------------------------------------------------------------------------
+
 QuadVertex QuadCollapsedShader(QuadVertex input)
 {
 	return input;
@@ -79,6 +94,7 @@ QuadVertex QuadCollapsedShader(QuadVertex input)
 //------------------------------------------------------------------------------
 // GS
 //------------------------------------------------------------------------------
+
 [maxvertexcount(24)]
 void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPixel> quadStream)
 {
@@ -359,6 +375,7 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 //------------------------------------------------------------------------------
 // TECHNIQUE
 //------------------------------------------------------------------------------
+
 technique10 ColorTechnique
 {
 	pass pass0
@@ -366,6 +383,5 @@ technique10 ColorTechnique
 		SetVertexShader(CompileShader(vs_4_0, QuadCollapsedShader()));
 		SetGeometryShader(CompileShader(gs_4_0, QuadExpansionShader()));
 		SetPixelShader(CompileShader(ps_4_0, QuadExpandedShader()));
-		//SetBlendState(SrcAlphaBlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
