@@ -26,6 +26,7 @@
 #include "../Core/ImageProperties.h"
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
+#include "../Core/BorderSet.h"
 
 #include "VertexTypes.h"
 #include "BackBuffer.h"
@@ -98,8 +99,50 @@ namespace A2D {
 		
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
 		void							drawString(Pipeline ** xPipeline, Rect& xRect);
-		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat);
+		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
+		
+		inline void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, bool xRepeat)
+		{
+			Rect * clip = aClip;
+
+			if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+
+			Texture * texture;
+			QuadData<QuadExpansionVertex, 1> * quadData;
+
+			if (*xPipeline == NULL)
+			{
+				// Intialize the pipeline
+
+				*xPipeline = new Pipeline();
+
+				texture = new Texture(aDevice, xSrc);
+				quadData = new QuadData<QuadExpansionVertex, 1>();
+
+				DXUtils::CreateDefaultDynamicVertexBuffer<QuadExpansionVertex>(*aDevice, &quadData->aVertexBuffer, 1);
+
+				texture->initialize();
+
+				(*xPipeline)->aPipelineComps[0] = texture;
+				(*xPipeline)->aPipelineComps[1] = quadData;
+
+				(*xPipeline)->aLength = 2;
+
+				return;
+			}
+
+			texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
+			quadData = static_cast<QuadData<QuadExpansionVertex, 1>*>((*xPipeline)->aPipelineComps[1]);
+
+			// texture->Update(textureArgs); <<<<+++ ADD LATER
+			if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xBorderSet, &xPaint, xRepeat))
+			{
+				aQuadExpansionShader->setTexture(texture);
+				aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(QuadExpansionVertex));
+				aQuadExpansionShader->renderShader();
+			}
+		}
 
 	public:
 

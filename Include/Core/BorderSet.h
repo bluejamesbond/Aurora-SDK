@@ -30,31 +30,30 @@ namespace A2D {
 
 	struct Border
 	{
-		Color3D  m_leftBorderColor;
-		Color3D  m_topBorderColor;
-		Color3D  m_rightBorderColor;
-		Color3D  m_bottomBorderColor;
-
-		unsigned int m_leftBorderWidthPixels;
-		unsigned int m_topBorderWidthPixels;
-		unsigned int m_rightBorderWidthPixels;
-		unsigned int m_bottomBorderWidthPixels;
-
+		Color3D  m_color;
+		unsigned int m_width;
+	
 		Border() :
-			m_leftBorderWidthPixels(1),
-			m_topBorderWidthPixels(1),
-			m_rightBorderWidthPixels(1),
-			m_bottomBorderWidthPixels(1)
+			m_width(1)
 		{
-		}		
+			Color3D::from(m_color, Color3D::AMETHYST);
+		}
 	};
 
 	struct BorderSet
 	{
-		Border m_leftBorder;
-		Border m_topBorder;
-		Border m_rightBorder;
-		Border m_bottomBorder;
+		Border m_left;
+		Border m_top;
+		Border m_right;
+		Border m_bottom;
+
+		BorderSet()
+		{
+			Color3D::from(m_left.m_color, Color3D::GREEN);
+			Color3D::from(m_top.m_color, Color3D::BLUE);
+			Color3D::from(m_right.m_color, Color3D::YELLOW);
+			Color3D::from(m_bottom.m_color, Color3D::RED);
+		}
 	};
 }
 

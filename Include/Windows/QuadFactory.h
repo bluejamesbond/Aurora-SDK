@@ -23,6 +23,7 @@
 #include "../Core/Rect.h"
 #include "../Core/Paint.h"
 #include "../Core/Pipelineable.h"
+#include "../Core/BorderSet.h"
 
 #include "ExtLibs.h"
 #include "DXUtils.h"
@@ -105,7 +106,7 @@ namespace A2D {
 			device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 
-		inline bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
+		inline bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, bool xRepeat)
 		{
 			Rect& constraints = aConstraints;
 			Rect * textureClip = xTexture->GetClip();
@@ -159,8 +160,14 @@ namespace A2D {
 			// Set up vertices
 			vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
 			vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
-			vertices[0].aBorderColors = A2DUINT4(0xFF0000FF, 0xFFFFFFFF, 0x0000FFFF, 0xFFFF00FF);
-			vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, 20), pixelsToRelativeDistance(winHeight, 0), pixelsToRelativeDistance(winWidth, 0), pixelsToRelativeDistance(winHeight, 30));
+			vertices[0].aBorderColors = A2DUINT4(xBorderSet->m_left.m_color.m_raw, 
+												 xBorderSet->m_top.m_color.m_raw, 
+												 xBorderSet->m_right.m_color.m_raw,
+												 xBorderSet->m_bottom.m_color.m_raw);
+			vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, xBorderSet->m_left.m_width),
+													pixelsToRelativeDistance(winHeight, xBorderSet->m_top.m_width), 
+													pixelsToRelativeDistance(winWidth, xBorderSet->m_right.m_width),
+													pixelsToRelativeDistance(winHeight, xBorderSet->m_bottom.m_width));
 			vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, aDepth, 1.0f);
 
 			// Lock the vertex buffer.

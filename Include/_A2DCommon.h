@@ -86,6 +86,11 @@ inline float pixelsToRelativeDistance(const float xPixelDimension, const float x
 	return xPixels / xPixelDimension * 2;
 }
 
+inline float pixelsToRelativeDistance(const float xPixelDimension, const unsigned int xPixels)
+{
+	return xPixels / xPixelDimension * 2;
+}
+
 #ifndef __STATUS_DEFINED__
 #define __STATUS_DEFINED__
 typedef unsigned int STATUS;

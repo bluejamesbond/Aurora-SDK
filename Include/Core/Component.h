@@ -28,6 +28,7 @@
 #include "Paint.h"
 #include "Styles.h"
 #include "CascadingLayout.h"
+#include "BorderSet.h"
 #include GRAPHICS__
 #include "ComponentEventSource.h"
 
@@ -70,6 +71,7 @@ namespace A2D {
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
 		ComponentManager                *                aComponentManager = NULL;
+		BorderSet						m_borderSet;
 
 	protected:
 
