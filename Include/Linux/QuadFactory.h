@@ -21,9 +21,10 @@
 
 #include "ExtLibs.h"
 //#include "DXShapeUtils.h"
-//#include "Texture.h"
+#include "Texture.h"
 #include "../Core/Rect.h"
 #include "QuadData.h"
+#include "Common.h"
 //#include "ColoredTextureVertex.h"
 //#include "ColorVertex.h"
 //#include "Paint.h"
@@ -51,25 +52,24 @@ namespace A2D {
 
 		GLuint				aIndexBuffer;
 		GLuint             	aVertexBuffer;
-		
+        GLfloat         *   g_vertex_buffer_data;
 		float				aDepth = 0.0f;
 
 		///////////////////////////////////////////////////////////
 
 		Rect				aConstraints;
 		Dims			*	aWindowDims;
-		//ID3D10Device	**	aDXDevice;
-
+        Texture         *   aTexture;
 		///////////////////////////////////////////////////////////
-/*
-		HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
-		HRESULT							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
-		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
+
+//		HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
+        HRESULT							updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
+//		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
 
 		void							setDepth(float xZ);
-		void							renderQuad(ID3D10Buffer * xVertexBuffer, unsigned int xStride);
-		bool							setConstraints(Rect * xContraints, float xZ);
-*/
+        void							renderQuad();
+        bool							setConstraints(Rect * xConstraints, float xZ);
+
 	public:
 
 		//////////////////////////////////////////////////////////

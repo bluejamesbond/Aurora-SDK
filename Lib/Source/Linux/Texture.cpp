@@ -7,6 +7,16 @@ using namespace A2D;
 Texture::Texture(LPCWSTR xSrc) : aSrc(xSrc)
 {
     tBuffer = new TextureBuffer();
+    float tcoords[] = {
+      0.0f, 0.0f,
+      0.0f, numRepeat*1.0f,
+      numRepeat * 1.0, 0.0,
+      numRepeat * 1.0, numRepeat * 1.0,
+      0.0, numRepeat * 1.0,
+      numRepeat * 1.0, 0.0
+    };
+
+    texcoords = tcoords;
 }
 
 Texture::~Texture()
@@ -105,16 +115,6 @@ HRESULT Texture::initialize()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 
     //set this according to amount of times necessary to repeat, need to set elsewhere
-    float tcoords[] = {
-      0.0f, 0.0f,
-      0.0f, numRepeat*1.0f,
-      numRepeat * 1.0, 0.0,
-      numRepeat * 1.0, numRepeat * 1.0,
-      0.0, numRepeat * 1.0,
-      numRepeat * 1.0, 0.0
-    };
-
-    texcoords = tcoords;
 
     //Set Texture Buffer, need to move to BackBuffer (?)
     vt_vbo;
