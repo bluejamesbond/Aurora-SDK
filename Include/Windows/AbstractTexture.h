@@ -20,7 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../_A2DCommon.h"
+
 #include "../Core/Rect.h"
+#include "../Core/Pipelineable.h"
 
 namespace A2D {
 
@@ -34,8 +36,11 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTexture
+	class AbstractTexture : public Pipelineable
 	{
+	public:
+
+		virtual ~AbstractTexture() {};
 
 	protected:
 

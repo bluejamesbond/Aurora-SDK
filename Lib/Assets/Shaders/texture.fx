@@ -127,7 +127,7 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 
 	textureColor = saturate(textureColor);
 
-	if (textureColor.a >= 0.5)
+	if (textureColor.a >= 0.3)
 	{
 		textureColor.a = 1.0;
 		return textureColor;

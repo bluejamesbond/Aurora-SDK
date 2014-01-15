@@ -43,7 +43,7 @@ namespace A2D {
 		Texture(ID3D10Device ** xDevice, LPCWSTR xFilename);
 
 		// Deconstructor
-		~Texture();
+		virtual ~Texture();
 
 		ID3D10Device			**		aDevice;
 		ID3D10ShaderResourceView*		aResource;

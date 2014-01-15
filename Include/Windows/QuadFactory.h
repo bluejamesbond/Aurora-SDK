@@ -22,6 +22,7 @@
 
 #include "../Core/Rect.h"
 #include "../Core/Paint.h"
+#include "../Core/Pipelineable.h"
 
 #include "ExtLibs.h"
 #include "DXUtils.h"

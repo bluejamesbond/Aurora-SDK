@@ -22,6 +22,7 @@
 
 #include "../Core/ImageProperties.h"
 #include "../Core/Rect.h"
+#include "../Core/Pipelineable.h"
 
 #include "ExtLibs.h"
 #include "VertexTypes.h"
@@ -33,7 +34,7 @@ namespace A2D {
 	////////////////////////////////////////////////////////////////////////////////
 
 	template<class T, int V>
-	struct QuadData
+	struct QuadData : public Pipelineable
 	{
 		// Before adjusting the ID3D10Buffer
 		// check if any of these values are different
@@ -55,6 +56,12 @@ namespace A2D {
 		// This pretty much stays constant
 		// so it will be stored inside Quads instance.
 		// ID3D10Buffer		*			aIndexBuffer;
+
+		// Deletion requested by Pipelineable
+		~QuadData()
+		{
+			D3DDESTROY(aVertexBuffer);
+		}
 	};
 }
 

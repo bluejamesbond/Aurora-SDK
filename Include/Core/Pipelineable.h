@@ -2,13 +2,13 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PIPELINE_H__
-#define __PIPELINE_H__
+#ifndef __PIPELINEABLE_H__
+#define __PIPELINEABLE_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Class:
-//      PIPELINE
+//      PIPELINEABLE
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc
@@ -21,42 +21,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "ExtLibs.h"
-#include "../_A2DCommon.h"
 
 namespace A2D {
-
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
-
-	class Abstract;
-	class Pipelineable;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Pipeline
+	class Pipelineable
 	{
-		friend class Graphics;
-
 	public:
-
-		Pipeline();
-		~Pipeline();
-
-	private:
-
-		Pipelineable		  *			aPipelineComps[8];
-		int							    aLength = 0;
-		int								aLifeCycle = 0;
-		static int						aGlobalLifeCycle;
-
-	public:
-
-		static void						nextLifeCycle();
-		virtual STATUS					initialize();
-
+		virtual ~Pipelineable() {};
 	};
 }
 
