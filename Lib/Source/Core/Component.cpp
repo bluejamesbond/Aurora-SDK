@@ -250,6 +250,7 @@ void Component::paintComponent()
 	if (aOptBackgroundSrc != NULL)
 	{
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
+	//	aOptBackgroundRegion.aX = -20;
 		graphics.drawComponent(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, m_borderSet, aOptBackgroundPaint, false);
 	}
 	else

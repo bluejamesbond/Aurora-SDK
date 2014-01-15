@@ -65,30 +65,43 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
-	bool foo = false;
+	bool cover = true; // Forced to true for now
 
-	float textRatio = textureWidth / textureHeight;
-	float rectRatio = rectWidth / rectHeight;
-
-	if (textRatio > rectRatio)
+	if (cover)
 	{
-		float growthFactor = calcHeight / textureHeight;
-		textureWidth *= growthFactor;
-		foo = true;
+		bool stretch = false;
+		float growthFactor = 1.0;
+
+		if ((textureWidth / textureHeight) > (rectWidth / rectHeight))
+		{
+			textureWidth *= growthFactor = calcHeight / textureHeight;
+			stretch = true;
+		}
+		else
+		{
+			textureHeight *= growthFactor = calcWidth / textureWidth;
+			stretch = false;
+		}
+
+		texelLeft = 0.0;
+		texelTop = 0.0;
+		texelRight = stretch ? texRight / textureWidth : 1.0;
+		texelBottom = stretch ? 1.0 : texBottom / textureHeight;
+	}
+	else if (xRepeat)
+	{
+		texelLeft = texLeft / textureWidth;
+		texelTop = texTop / textureHeight;
+		texelRight = (calcWidth + texLeft) / textureWidth;
+		texelBottom = (calcHeight + texTop) / textureHeight;
 	}
 	else
 	{
-
-		float growthFactor = calcWidth / textureWidth;
-		textureHeight *= growthFactor;
-		foo = false;
-	}
-	
-
-	texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
-	texelTop = 0.0;
-	texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : (foo ? texRight / textureWidth : 1.0);
-	texelBottom = foo ? 1.0 : texBottom / textureHeight;
+		texelLeft = texLeft / rectWidth;
+		texelTop = texTop / rectHeight;
+		texelRight = texRight / rectWidth;
+		texelBottom = texBottom / rectHeight;
+	}	
 
 	left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
 	top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
