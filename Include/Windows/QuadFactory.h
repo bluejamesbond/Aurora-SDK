@@ -392,7 +392,7 @@ namespace A2D {
 			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
 			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
 			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
-
+			
 			Color3D& topLeftColor = xPaint->aStart;
 			Color3D& topRightColor = xPaint->aStart;
 			Color3D& bottomLeftColor = xPaint->aEnd;

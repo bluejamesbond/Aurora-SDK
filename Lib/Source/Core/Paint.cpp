@@ -43,7 +43,7 @@ Paint Paint::GREEN_SEA_TO_POMEGRANATE_VERTICAL(0, 0, Color3D::GREEN_SEA, 0, 0, C
 
 Paint::Paint(){}
 
-Paint::Paint(int xColor)
+Paint::Paint(unsigned int xColor)
 {
 	Color3D::from(aStart, xColor);
 	Color3D::from(aEnd, xColor);

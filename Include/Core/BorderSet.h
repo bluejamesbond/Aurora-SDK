@@ -34,7 +34,7 @@ namespace A2D {
 		unsigned int m_width;
 	
 		Border() :
-			m_width(1)
+			m_width(10)
 		{
 			Color3D::from(m_color, Color3D::AMETHYST);
 		}
@@ -52,7 +52,7 @@ namespace A2D {
 		BorderSet() : 
 			m_inset(false)
 		{
-			Color3D::from(m_left.m_color, Color3D::GREEN);
+			Color3D::from(m_left.m_color, Color3D::RED);
 			Color3D::from(m_top.m_color, Color3D::BLUE);
 			Color3D::from(m_right.m_color, Color3D::YELLOW);
 			Color3D::from(m_bottom.m_color, Color3D::RED);

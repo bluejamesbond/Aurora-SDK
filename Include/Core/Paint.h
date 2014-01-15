@@ -39,7 +39,7 @@ namespace A2D{
 		};
 
 		Paint();
-		Paint(int xColor);
+		Paint(unsigned int xColor);
 		Paint(Color& xColor);
 		Paint(Color3D& xColor);
 		Paint(float xStartX, float xStartY, Color3D& xStart, float xEndX, float xEndY, Color3D& xEnd, Mode xMode);
