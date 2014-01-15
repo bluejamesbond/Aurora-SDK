@@ -91,6 +91,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		opacity;
 
 	float4 borderLeftColor, borderTopColor, borderRightColor, borderBottomColor;
+	bool insetBorder = false;
 
 	width = input[0].position[2];
 	height = input[0].position[3];
@@ -109,6 +110,11 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	borderTopColor = ARGBtoFloat4(input[0].borderColors[1]);
 	borderRightColor = ARGBtoFloat4(input[0].borderColors[2]);
 	borderBottomColor = ARGBtoFloat4(input[0].borderColors[3]);
+
+	bool hasLeftBorder = borderLeftWidth > 0;
+	bool hasTopBorder = borderTopWidth > 0;
+	bool hasRightBorder = borderRightWidth > 0;
+	bool hasBottomBorder = borderBottomWidth > 0;
 
 	z = (10000000 - input[0].options[2]) / 10000000;
 	opacity = input[0].options[3];
@@ -153,20 +159,41 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Left
 	//*******************************
-	border.colorTex = borderLeftColor;
+	if (hasLeftBorder)
+	{
+		border.colorTex = borderLeftColor;
 
-	//bottom left
-	border.position = float4(left, bottom, z, 1);
-	quadStream.Append(border);
-	//top left
-	border.position = float4(left, top, z, 1);
-	quadStream.Append(border);
-	//bottom right
-	border.position = float4(left + borderLeftWidth, bottom + borderLeftWidth, z, 1);
-	quadStream.Append(border);
-	//top right
-	border.position = float4(left + borderLeftWidth, top - borderLeftWidth, z, 1);
-	quadStream.Append(border);
+		if (insetBorder)
+		{
+			//bottom left
+			border.position = float4(left, bottom, z, 1);
+			quadStream.Append(border);
+			//top left
+			border.position = float4(left, top, z, 1);
+			quadStream.Append(border);
+			//bottom right
+			border.position = float4(left + borderLeftWidth, (hasBottomBorder ? bottom + borderBottomWidth : bottom), z, 1);
+			quadStream.Append(border);
+			//top right
+			border.position = float4(left + borderLeftWidth, (hasTopBorder ? top - borderTopWidth : top), z, 1);
+			quadStream.Append(border);
+		}
+		else
+		{
+			//bottom left
+			border.position = float4(left - borderLeftWidth, (hasBottomBorder ? bottom - borderBottomWidth : bottom), z, 1);
+			quadStream.Append(border);
+			//top left
+			border.position = float4(left - borderLeftWidth, (hasTopBorder ? top + borderTopWidth : top), z, 1);
+			quadStream.Append(border);
+			//bottom right
+			border.position = float4(left, bottom, z, 1);
+			quadStream.Append(border);
+			//top right
+			border.position = float4(left, top, z, 1);
+			quadStream.Append(border);
+		}
+	}
 
 	// Reset
 	quadStream.RestartStrip();
@@ -216,22 +243,45 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//*******************************
 	// Bottom
 	//*******************************
-	border.colorTex = borderBottomColor;
+	if (hasBottomBorder)
+	{
+		border.colorTex = borderBottomColor;
 
-	//bottom left
-	border.position = float4(left, bottom, z, 1);
-	quadStream.Append(border);
-	//top left
-	border.position = float4(left + borderBottomWidth, bottom + borderBottomWidth, z, 1);
-	quadStream.Append(border);
-	//bottom right
-	border.position = float4(right, bottom, z, 1);
-	quadStream.Append(border);
-	//top right
-	border.position = float4(right - borderBottomWidth, bottom + borderBottomWidth, z, 1);
+		if (insetBorder)
+		{
+			//bottom left
+			border.position = float4(left, bottom, z, 1);
+			quadStream.Append(border);
+			//top left
+			border.position = float4((hasLeftBorder ? left + borderLeftWidth : left), bottom + borderBottomWidth, z, 1);
+			quadStream.Append(border);
+			//bottom right
+			border.position = float4(right, bottom, z, 1);
+			quadStream.Append(border);
+			//top right
+			border.position = float4((hasRightBorder ? right - borderRightWidth : right), bottom + borderBottomWidth, z, 1);
 
-	// Reset
-	quadStream.Append(border);
+			// Reset
+			quadStream.Append(border);
+		}
+		else
+		{
+			//bottom left
+			border.position = float4((hasLeftBorder ? left - borderLeftWidth : left), bottom - borderBottomWidth, z, 1);
+			quadStream.Append(border);
+			//top left
+			border.position = float4(left, bottom, z, 1);
+			quadStream.Append(border);
+			//bottom right
+			border.position = float4((hasRightBorder ? right + borderRightWidth : right), bottom - borderBottomWidth, z, 1);
+			quadStream.Append(border);
+			//top right
+			border.position = float4(right, bottom, z, 1);
+
+			// Reset
+			quadStream.Append(border);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
