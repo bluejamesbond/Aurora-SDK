@@ -12,7 +12,7 @@ Texture2D shaderTexture;
 ///////////////////
 SamplerState SampleType
 {
-	Filter = ANISOTROPIC;
+	Filter = MIN_MAG_MIP_LINEAR;
 	AddressU = Clamp;
 	AddressV = Clamp;
 };
@@ -121,21 +121,38 @@ TexturePixel TextureVertexShader(TextureVertex input)
 float4 TexturePixelShader(TexturePixel input) : SV_Target
 {
 	float4 textureColor;
+	float dist;
 	
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
-
+	dist = textureColor.a;
 	textureColor = saturate(textureColor);
 
-	if (textureColor.a >= 0.5)
+	if (textureColor.a > 0.6)
 	{
 		textureColor.a = 1.0;
-		return textureColor;
+		
+		
+	}
+	else
+	{
+		textureColor.a = 0.0;
 	}
 
-	textureColor.a = 0.0;
+	textureColor.a *= smoothstep(.45, .65, dist);
 	
 	return textureColor;
+
+	//textureColor.a = 0.0;
+
+	//if (textureColor.a >= 0.5)
+	//{
+	//	textureColor.a = 1.0;
+	//	return textureColor;
+	//}
+
+	//textureColor.a = 0.0;
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
