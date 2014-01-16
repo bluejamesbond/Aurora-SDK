@@ -49,9 +49,14 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 				currentAnimationFrame--;
 				frame.update();
 			}
-			else
+			else if (resizing)
 			{
 				frame.update();
+			}
+			else if (GetMessage(&msg, NULL, 0, 0) > 0)
+			{
+				TranslateMessage(&msg);
+				eventHandler(msg, &eventQueue);
 			}
 
 		}
@@ -1276,18 +1281,14 @@ void Window::render()
 	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
 	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
-	
-	if (aFramebufferInterpolation)
-	{
+		
+	memDCChild = CreateCompatibleDC(hwndDC);
+	// Create secondary DC
+	memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
+	SelectObject(memDCChild, memBitmapChild);
 
-		memDCChild = CreateCompatibleDC(hwndDC);
-		// Create secondary DC
-		memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
-		SelectObject(memDCChild, memBitmapChild);
-
-		// Request copy of frameBuffer
-		PrintWindow(aChildHWnd, memDCChild, 0);
-	}
+	// Request copy of frameBuffer
+	PrintWindow(aChildHWnd, memDCChild, 0);
 
 	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
 	SelectObject(memDC, memBitmap);
@@ -1300,25 +1301,22 @@ void Window::render()
 	paintComponentBorder(graphics);
 
 	/***********************************************/
-	if (aFramebufferInterpolation)
-	{
-		// Paint from frameBuffer of the child HWND into the 
-		// the parent HWND
-		StretchBlt(memDC, 
-			INT(aOptBorderWidth + aPadding),
-			INT(aOptBorderWidth + aPadding),
-			INT(realWidth),
-			INT(realHeight),
-			memDCChild,
-			0, 0,
-			INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
-			INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
-			SRCCOPY);
+	// Paint from frameBuffer of the child HWND into the 
+	// the parent HWND
+	StretchBlt(memDC, 
+		INT(aOptBorderWidth + aPadding),
+		INT(aOptBorderWidth + aPadding),
+		INT(realWidth),
+		INT(realHeight),
+		memDCChild,
+		0, 0,
+		INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
+		INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
+		SRCCOPY);
 
-		ReleaseDC(aParentHWnd, memDCChild);
-		DeleteObject(memBitmapChild);
-		DeleteObject(memDCChild);
-	}
+	ReleaseDC(aParentHWnd, memDCChild);
+	DeleteObject(memBitmapChild);
+	DeleteObject(memDCChild);
 
 	/***********************************************/
 
