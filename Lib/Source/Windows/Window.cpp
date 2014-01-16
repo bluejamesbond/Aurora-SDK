@@ -552,9 +552,11 @@ STATUS Window::updateOnMouseUp(HWND xHwnd)
 
 	ReleaseCapture();
 	
-	// Give one more render request
-	if (aIsResizing)
+	// Give one more render request to ensure the 
+	// child comes into view again.
+	if (aIsResizing && aFramebufferInterpolation)
 	{
+		aFramebufferInterpolation = false;
 		render();
 	}
 
@@ -1334,9 +1336,9 @@ void Window::render()
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
 
 	EndDeferWindowPos(hdwp);
 
@@ -1359,9 +1361,9 @@ void Window::updateLocation()
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, INT(relativeX), INT(relativeY), 0, 0, SWP_NOSIZE);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY), 0, 0, SWP_NOSIZE);
 
 	EndDeferWindowPos(hdwp);
 }
