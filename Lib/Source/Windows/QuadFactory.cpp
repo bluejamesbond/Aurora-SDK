@@ -60,29 +60,40 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
 		
-	if (xBackgroundSettings == Styles::COVER_TOP_LEFT)
+	if (xBackgroundSettings.m_layout == Styles::Background::Layout::COVER)
 	{
 		float usableWidth = rectWidth, 
 			  usableHeight = rectHeight,
 			  resizeVFactor = 1.0,
-			  resizeHFactor = 1.0;
-		
+			  resizeHFactor = 1.0,
+			  proportion = 0.0;
+
+		// Discrete Point of Interest 
+		// Proportional Strech Algorithm - @author MK
+		// ------------------------------------------
+		// offset[C] = texture[R][C] * (pointOfInterest[C] / quadrant[R][C]) - pointOfInterest[C] 
+		// where C = X or Y
+		//       R = Range
+		int pointOfInterestX = rectWidth;
+		int pointOfInterestY = rectHeight/2;
+
 		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
 		{
 			textureWidth *= resizeVFactor = usableHeight / textureHeight;
+			proportion = pointOfInterestX / rectWidth;
 
-			texLeft = (textureWidth - rectWidth) / 2;
+			texLeft = proportion == 0 ? 0 : (textureWidth * proportion - pointOfInterestX);
 			texTop = 0.0;
 			texRight = rectWidth + texLeft;
 			texBottom = textureHeight;
-
 		}
 		else
 		{
 			textureHeight *= resizeHFactor = usableWidth / textureWidth;
+			proportion = pointOfInterestY / rectHeight;
 
 			texLeft = 0.0;
-			texTop = (textureHeight - rectHeight) / 2;
+			texTop = proportion == 0 ? 0 : (textureHeight * proportion - pointOfInterestY);
 			texRight = textureWidth;
 			texBottom = rectHeight + texTop;
 		}
@@ -92,6 +103,8 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		texelRight = texRight / textureWidth;
 		texelBottom = texBottom / textureHeight;
 
+		// Crop out any regions that might extend out
+		// of the contraints
 		if (calcWidth < rectWidth)
 		{
 			texelRight -= (rectWidth - calcWidth) / textureWidth / resizeHFactor;
@@ -110,7 +123,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
-	if (xBackgroundSettings == Styles::REPEAT_X_Y)
+	if (xBackgroundSettings.m_layout == Styles::Background::Layout::REPEAT)
 	{
 		texelLeft = texLeft / textureWidth;
 		texelTop = texTop / textureHeight;

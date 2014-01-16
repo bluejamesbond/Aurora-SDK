@@ -53,36 +53,36 @@ namespace A2D{
 			PERCENTAGE
 		};
 
-		enum BackgroundLayout
-		{
-			REPEAT,
-			STRETCH,
-			COVER
-		};
-
-		enum BackgroundPosition
-		{
-			CENTER,
-			LEFT,
-			TOP,
-			BOTTOM,
-			RIGHT,
-			CUSTOM
-		};
-
-		enum BackgroundRepeat
-		{
-			X,
-			Y,
-			X_Y,
-			NONE
-		};
-
 		static float AUTO;
 		
 		struct Background
 		{
-			BackgroundLayout m_layout;
+			enum Layout
+			{
+				REPEAT,
+				STRETCH,
+				COVER
+			};
+
+			enum Position
+			{
+				CENTER,
+				LEFT,
+				TOP,
+				BOTTOM,
+				RIGHT,
+				CUSTOM
+			};
+
+			enum Repeat
+			{
+				X,
+				Y,
+				X_Y,
+				NONE
+			};
+
+			Layout m_layout;
 
 			/**************************************/
 
@@ -102,26 +102,26 @@ namespace A2D{
 
 			/**************************************/
 
-			BackgroundRepeat m_repeat;
+			Repeat m_repeat;
 
-			BackgroundPosition m_positionX;
-			BackgroundPosition m_positionY;
+			Position m_positionX;
+			Position m_positionY;
 
 			Background() :
-				m_layout(BackgroundLayout::COVER),
-				m_positionX(BackgroundPosition::CENTER),
-				m_positionY(BackgroundPosition::CENTER),
+				m_layout(Layout::COVER),
+				m_positionX(Position::CENTER),
+				m_positionY(Position::CENTER),
 				m_customPositionX(0),
 				m_customPositionY(0)
 			{
 			}
 
-			inline void setStyle(BackgroundLayout x_layout)
+			inline void setStyle(Layout x_layout)
 			{
 				m_layout = x_layout;
 			}
 
-			inline void setPosition(BackgroundPosition x_positionX, BackgroundPosition x_positionY)
+			inline void setPosition(Position x_positionX, Position x_positionY)
 			{
 				m_positionX = x_positionX;
 				m_positionY = x_positionY;
@@ -147,7 +147,7 @@ namespace A2D{
 				m_customSizeHeight = Width__customSizeHeight;
 			}
 
-			inline void setRepeat(BackgroundRepeat x_repeat)
+			inline void setRepeat(Repeat x_repeat)
 			{
 				m_repeat = x_repeat;
 			}

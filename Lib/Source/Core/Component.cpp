@@ -9,19 +9,6 @@ Component::Component(){}
 
 Component::~Component(){}
 
-void Component::setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX,	int xOptBackroundPositionY,	
-	int xOptBackroundSizeX,	int xOptBackroundSizeY,	Paint& xOptBackgroundPaint, int xOptBackgroundRepeat)
-{
-	aOptBackgroundSrc = xOptBackgroundImage;
-	aOptBackgroundPosX = xOptBackroundPositionX;
-	aOptBackgroundPosY = xOptBackroundPositionY;
-	aOptBackgroundProps.aOptSizeX = xOptBackroundSizeX;
-	aOptBackgroundProps.aOptSizeY = xOptBackroundSizeY;
-	aOptBackgroundProps.aOptRepeat = xOptBackgroundRepeat;
-
-	Paint::from(aOptBackgroundPaint, xOptBackgroundPaint);
-};
-
 void Component::paintComponentBorder(){}
 
 Component& Component::getParent()
@@ -249,7 +236,7 @@ void Component::paintComponent()
 
 	if (aOptBackgroundSrc != NULL)
 	{
-		graphics.drawComponent(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, m_borderSet, aOptBackgroundPaint, aBackgroundSettings);
+		graphics.drawComponent(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, m_borderSet, aOptBackgroundPaint, m_backgroundStyle);
 	}
 	else
 	{

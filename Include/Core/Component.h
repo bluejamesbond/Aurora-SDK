@@ -72,6 +72,7 @@ namespace A2D {
 		Pipeline				*		aPipeline = NULL;
 		ComponentManager        *       aComponentManager = NULL;
 		BorderSet						m_borderSet;
+		Styles::Background				m_backgroundStyle;
 
 	protected:
 
@@ -92,9 +93,7 @@ namespace A2D {
 		Styles::Units					aPositionTopUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
-
-		Styles::Background				aBackgroundSettings = Styles::Background::COVER_TOP_LEFT;
-
+		
 		float							aSizeWidth = 0.0f;
 		float							aSizeHeight = 0.0f;
 
@@ -131,21 +130,21 @@ namespace A2D {
 		
         public:
 
-        STATUS                                                        requestFocus();
-        void                                                        setFocusable(bool xFocusable);
-		virtual Rect     *                getEventRegion();
+        STATUS                          requestFocus();
+        void                            setFocusable(bool xFocusable);
+		virtual Rect     *              getEventRegion();
 
-        STATUS                                                        addMouseListener(MouseListener * xListener);
-        STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
-        STATUS                                                        addFocusListener(FocusListener * xListener);
-        STATUS                                                        addActionListener(ActionListener * xListener);
+        STATUS                          addMouseListener(MouseListener * xListener);
+        STATUS                          addMouseMotionListener(MouseMotionListener * xListener);
+        STATUS                          addFocusListener(FocusListener * xListener);
+        STATUS                          addActionListener(ActionListener * xListener);
 
         private:
 
-        bool                           isFocused = false;
-        bool                                                        isFocusable = true;
-        Component               *        aNextCompListener = 0;
-        Component                                        *        aPrevCompListener = 0;
+        bool                            isFocused = false;
+        bool                            isFocusable = true;
+        Component               *       aNextCompListener = 0;
+        Component               *       aPrevCompListener = 0;
                 
     protected:
 
@@ -158,11 +157,8 @@ namespace A2D {
 		Rect                            aCalculatedRegion;
 		Rect                            aVisibleRegion;
 
-        ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
         LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
         Paint                           aOptBackgroundPaint;			        // background-color  (CSS)
-        int                             aOptBackgroundPosX = 0;                 // background-position-x  (CSS)
-        int                             aOptBackgroundPosY = 0;                 // background-position-x  (CSS)
 
         virtual void                    paintComponent();
         virtual void                    paintComponentBorder();
@@ -188,26 +184,12 @@ namespace A2D {
 		Rect                            getBounds();
 		void                            setBounds(Rect& xRect);
         bool                            isDoubleBuffered();
-        LPCWSTR                         getBackgroundImage()                                                    { return    aOptBackgroundSrc; };
-        int                             getBackgroundPositionX()                                                { return    aOptBackgroundPosX; };
-        int                             getBackgroundPositionY()                                                { return    aOptBackgroundPosY; };
-        int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps.aOptSizeX; };
-        int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps.aOptSizeY; };
-		Paint&                          getBackgroundPaint()                                                    { return    aOptBackgroundPaint; };
-        int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps.aOptRepeat; };
-        ImageProperties                 getBackgroundProperties()                                               { return    aOptBackgroundProps; };
+        LPCWSTR                         getBackgroundImage()                                                   { return aOptBackgroundSrc;	 };
+		Paint&                          getBackgroundPaint()                                                   { return aOptBackgroundPaint; };
 		        
         void                            setDoubleBuffered(bool xDoubleBuffer);
-        void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)                     { aOptBackgroundSrc = xOptBackgroundImage; };
-        void                            setBackgroundPositionX(int xOptPositionX)                           { aOptBackgroundPosX = xOptPositionX; };
-        void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
-        void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
-        void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
+        void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)						   { aOptBackgroundSrc = xOptBackgroundImage;	  };
 		void                            setBackgroundPaint(Paint& xOptPaint)                                   { Paint::from(aOptBackgroundPaint, xOptPaint); };
-        void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
-        void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
-        void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
-												      int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
 
     public:
 
