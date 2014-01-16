@@ -49,14 +49,9 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 				currentAnimationFrame--;
 				frame.update();
 			}
-			else if (resizing)
+			else
 			{
 				frame.update();
-			}
-			else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			{
-				TranslateMessage(&msg);
-				eventHandler(msg, &eventQueue);
 			}
 
 		}
