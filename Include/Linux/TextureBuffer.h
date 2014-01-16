@@ -60,7 +60,7 @@ namespace A2D {
 
 		// Mutators
 //		void							SetActive();
-        void                            genBuffer(unsigned int vt_vbo, float*texcoords, int dimensions, int length);
+        void                            genBuffer(unsigned int vt_vbo, float*texcoords);
 
 		// Additional
 //		void							Clear();

@@ -4,24 +4,16 @@
 
 using namespace A2D;
 
-Texture::Texture(LPCWSTR xSrc) : aSrc(xSrc)
+Texture::Texture(LPCWSTR xSrc, GLfloat* tcoords) : aSrc(xSrc)
 {
     tBuffer = new TextureBuffer();
-    float tcoords[] = {
-      0.0f, 0.0f,
-      0.0f, numRepeat*1.0f,
-      numRepeat * 1.0, 0.0,
-      numRepeat * 1.0, numRepeat * 1.0,
-      0.0, numRepeat * 1.0,
-      numRepeat * 1.0, 0.0
-    };
-
     texcoords = tcoords;
 }
 
 Texture::~Texture()
 {
-//    DESTROY(aResource);
+    glDeleteBuffers(1, &vt_vbo);
+
 }
 
 bool Texture::hasAlpha()
@@ -116,12 +108,11 @@ HRESULT Texture::initialize()
 
     //set this according to amount of times necessary to repeat, need to set elsewhere
 
-    //Set Texture Buffer, need to move to BackBuffer (?)
-    vt_vbo;
+    //Set Texture Buffer
     int dimensions = 2; // 2d data for texture coords
     int length = 6; // 6 vertices
 
-    tBuffer->genBuffer(vt_vbo, texcoords, dimensions, length);
+    tBuffer->genBuffer(vt_vbo, texcoords);
 
 	// Load the texture in.
 	// Store the texture properties

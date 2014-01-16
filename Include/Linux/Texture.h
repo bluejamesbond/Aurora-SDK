@@ -42,7 +42,7 @@ namespace A2D {
 	{
 	public:
 		// Constructor
-        Texture(LPCWSTR xFilename);
+        Texture(LPCWSTR xSrc, GLfloat* tcoords);
 
 		// Deconstructor
 		~Texture();
@@ -50,8 +50,7 @@ namespace A2D {
         unsigned char           *       image_data;
         unsigned int                    tex = 0;
         GLint                           State = GL_CLAMP_TO_EDGE;
-        float                   *       texcoords;
-        float                           numRepeat = 1;
+        GLfloat                   *       texcoords;
         unsigned int                    vt_vbo;
 
 		// Variables

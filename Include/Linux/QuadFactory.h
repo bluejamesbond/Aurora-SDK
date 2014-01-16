@@ -22,6 +22,7 @@
 #include "ExtLibs.h"
 //#include "DXShapeUtils.h"
 #include "Texture.h"
+#include "TextureBuffer.h"
 #include "../Core/Rect.h"
 #include "QuadData.h"
 #include "Common.h"

@@ -127,6 +127,11 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRec
 
     aTexture = xTexture;
 	Rect& constraints = aConstraints;
+    float relconstrX = (constraints.aX/aWindowDims->aWidth) * 2;
+    float relconstrY = (constraints.aY/aWindowDims->aHeight) * 2;
+    float relconstrWidth = (constraints.aWidth/aWindowDims->aWidth) * 2;
+    float relconstrHeight = (constraints.aHeight/aWindowDims->aHeight) * 2;
+
     Rect * textureClip = aTexture->GetClip();
 
 	float rectX = xRect->aX;
@@ -154,18 +159,43 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRec
 
     g_vertex_buffer_data = xQuadData->aVertices;
 
-    //vertex values. put in safety conditionals later***********************
+    //vertex values.
 
-    float ConstbottomleftX = -1.0 + RelativeXOffset;
-        if(xRect->aX<0){ConstbottomleftX = -1;}
-    float ConstbottomleftY = max(max(1.0-aConstraints.aY-aConstraints.aHeight,1.0-RelativeHeight-RelativeYOffset), -1.0);
-    float ConsttopleftX = -1.0 + RelativeXOffset;
-    float ConsttopleftY = 1.0 - RelativeYOffset;
-    float ConstbottomrightX = min(min(-1.0 + aConstraints.aX + aConstraints.aWidth, -1.0 + RelativeXOffset + RelativeWidth), 1.0);
+    GLfloat ConstbottomleftX = -1.0 + RelativeXOffset;
+    GLfloat ConstbottomleftY = max(max(1.0-relconstrY-relconstrHeight,1.0-RelativeHeight-RelativeYOffset), -1.0);
+    GLfloat ConsttopleftX = -1.0 + RelativeXOffset;
+    GLfloat ConsttopleftY = 1.0 - RelativeYOffset;
+    GLfloat ConstbottomrightX = min(min(-1.0 + relconstrX + relconstrWidth, -1.0 + RelativeXOffset + RelativeWidth), 1.0);
     //but if it's beyond 1.0 we use this value ^ to crop texture
-    float ConstbottomrightY =  max(max(1.0-aConstraints.aY-aConstraints.aHeight,1.0-RelativeHeight-RelativeYOffset), -1.0);
-    float ConsttoprightX = min(min(-1.0 + aConstraints.aX + aConstraints.aWidth, -1.0 + RelativeXOffset + RelativeWidth), 1.0);
-    float ConsttoprightY = 1.0 - RelativeYOffset;
+    GLfloat ConstbottomrightY =  max(max(1.0-relconstrY-relconstrHeight,1.0-RelativeHeight-RelativeYOffset), -1.0);
+    GLfloat ConsttoprightX = min(min(-1.0 + relconstrX + relconstrWidth, -1.0 + RelativeXOffset + RelativeWidth), 1.0);
+    GLfloat ConsttoprightY = 1.0 - RelativeYOffset;
+
+        //safety conditionals
+    if(xRect->aX<0){ConstbottomleftX = -1.0 + constraints.aX; ConsttopleftX = -1.0 + constraints.aX;}
+    if(xRect->aY<0){ConsttopleftY = 1 - constraints.aY; ConsttoprightY= ConsttopleftY;}
+
+    GLfloat * vcoords = new GLfloat[18];
+    vcoords[0] = ConstbottomleftX;
+    vcoords[1] = ConstbottomleftY;
+    vcoords[2] = (GLfloat)aDepth;
+    vcoords[3] = ConsttopleftX;
+    vcoords[4] = ConsttopleftY;
+    vcoords[5] = (GLfloat)aDepth;
+    vcoords[6] = ConstbottomrightX;
+    vcoords[7] = ConstbottomrightY;
+    vcoords[8] = (GLfloat)aDepth;
+    vcoords[9] = ConsttoprightX;
+    vcoords[10] = ConsttoprightY;
+    vcoords[11] = (GLfloat)aDepth;
+    vcoords[12] = ConsttopleftX;
+    vcoords[13] = ConsttopleftY;
+    vcoords[14] = (GLfloat)aDepth;
+    vcoords[15] = ConstbottomrightX;
+    vcoords[16] = ConstbottomrightY;
+    vcoords[17] = (GLfloat)aDepth;
+
+    g_vertex_buffer_data = vcoords;
 
     //Texture values-first check if repeat, then check if smaller than xRect, then check what portion is in constraints
     if(xRepeat)
@@ -176,8 +206,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRec
     float textureWidth = textureClip->aWidth;
     float textureHeight = textureClip->aHeight;
 
-    float leftloss=0, rightloss=0, toploss=0, bottomloss=0,topleftX,topleftY,toprightX, toprightY, bottomleftX
-          ,bottomleftY, bottomrightX, bottomrightY;
+    float leftloss=0, rightloss=0, toploss=0, bottomloss=0,topleftX,topleftY,toprightX, toprightY, bottomleftX,bottomleftY, bottomrightX, bottomrightY;
 
     if (rectX<0)
     {
@@ -199,7 +228,6 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRec
         bottomloss = ((rectY + rectHeight)-aConstraints.aHeight) / rectHeight;
     }
     //TEXELS
-    if(xRepeat){aTexture->State = GL_REPEAT;}
 
     //first if xRect completely in aConstraint
     //if((rectX> 0) && (rectY>0))
@@ -211,97 +239,55 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRec
             topleftY = 1.0f;
             topleftX = 0.0f;
             toprightY = 1.0f;
-            bottomleftY = ((textureHeight>=rectHeight)?(1-(rectHeight/textureHeight)):(-(rectHeight/textureHeight) + 1));
+            bottomleftY = ((textureHeight>=rectHeight)?(1-(rectHeight/textureHeight)):((xRepeat)?(-(rectHeight/textureHeight) + 1):0.0f));
             bottomrightY = bottomrightY;
-            toprightX = ((textureWidth>=rectWidth)?(rectWidth/textureWidth):(rectWidth/textureWidth));
+            toprightX = ((textureWidth>=rectWidth)?(rectWidth/textureWidth):((xRepeat)?(rectWidth/textureWidth):1.0f));
             bottomrightX = toprightX;
         //}
         //}
         //right case
         if((rectX+rectWidth)>constraints.aWidth)
         {
-            toprightX = ((textureWidth>=(rectWidth-(rectWidth + rectX - constraints.aWidth)))?(rectWidth/textureWidth):(rectWidth/textureWidth));;
-            bottomrightX = ;
+            toprightX = ((textureWidth>=(rectWidth-(rectWidth + rectX - constraints.aWidth)))?((-rectX+constraints.aWidth)/textureWidth):((xRepeat)?((-rectX+constraints.aWidth)/textureWidth):1.0f));
+            bottomrightX = toprightX;
         }
 
-
-    //if smaller than xRect
-    if((textureWidth < rectWidth))
-    {
-        if(xRepeat)
+        //bottom case
+        if((rectY+rectHeight)>constraints.aHeight)
         {
-            aTexture->State = GL_REPEAT;
-
-            if(xRect->aX < 0)
-            {
-                topleftX =leftloss;
-                toprightX = (1/(textureWidth/rectWidth));
-                bottomleftX = leftloss;
-                bottomrightX = (1/(textureWidth/rectWidth));
-            }
-            else if(textureWidth > (rectWidth-rectX))
-            {
-                topleftX = 0.0f;
-                toprightX = (rectWidth-rectX)/(textureWidth);
-                bottomleftX = 0.0f;
-                bottomrightX = (rectWidth-rectX)/(textureWidth);
-            }
-            else
-            {
-                topleftX = 0.0f;
-                toprightX =
-            }
-
+            bottomrightY = ((textureHeight>=(rectHeight-(rectHeight + rectY - constraints.aHeight)))?1-((-rectY+constraints.aWidth)/textureHeight):((xRepeat)?-((-rectY + constraints.aHeight)/textureWidth)+1:1.0f));
+            bottomleftY = bottomrightY;
         }
-        else
+
+        //left case
+        if(rectX < 0)
         {
-
+            topleftX = leftloss;
+            bottomleftX = topleftX;
         }
-        //topright
 
-    }
+        //top case
+        if(rectY < 0)
+        {
+            topleftY = toploss;
+            toprightY = topleftY;
+        }
 
-    //if larger than xRect/samesize
+        GLfloat * tcoords = new GLfloat[12];
+        tcoords[0] = bottomleftX;
+        tcoords[1] = bottomleftY;
+        tcoords[2] = topleftX;
+        tcoords[3] = topleftY;
+        tcoords[4] = bottomrightX;
+        tcoords[5] = bottomrightY;
+        tcoords[6] = toprightX;
+        tcoords[7] = toprightY;
+        tcoords[8] = topleftX;
+        tcoords[9] = topleftY;
+        tcoords[10] = bottomrightX;
+        tcoords[11] = bottomrightY;
 
-
-
-
-
-    /*
-    float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
-        left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
-        texelRight, texelBottom,
-        textureWidth = textureClip->aWidth,
-        textureHeight = textureClip->aHeight,
-        depth = aDepth;
-
-    calcLeft = max(rectX, 0); //left relative to rect
-    calcTop = max(rectY, 0);  //right relative to rect
-    calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth); //
-	calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
-
-	calcHeight = calcBottom - calcTop;
-	calcWidth = calcRight - calcLeft;
-
-	left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
-	right = left + calcWidth;
-	top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
-	bottom = top - calcHeight;
-
-	texLeft = rectX > 0 ? 0.0f : abs(rectX);
-	texTop = rectY > 0 ? 0.0f : abs(rectY);
-	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
-	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
-
-	texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
-	texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
-	texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
-	texelBottom = xRepeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
-*/
-	// Set up vertices
-
-//	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
-//	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
+    aTexture->texcoords = tcoords;
 
 	// Lock the vertex buffer.
     glGenBuffers(1, &aVertexBuffer);
@@ -363,11 +349,21 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect 
 */
 void QuadFactory::renderQuad()
 {
-	unsigned int offset = 0;
-
     // Set the vertex buffer to active in the input
 	// assembler so it can be rendered.
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, aVertexBuffer);
+
+    glVertexAttribPointer(
+        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
 
 }
 

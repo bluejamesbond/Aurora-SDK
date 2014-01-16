@@ -10,8 +10,11 @@ TextureBuffer::TextureBuffer()//(Dims * xSize)
 //	aDims.aHeight = xSize->aHeight;
 }
 
-void TextureBuffer::genBuffer(unsigned int vt_vbo, float*texcoords, int dimensions, int length)
+void TextureBuffer::genBuffer(unsigned int vt_vbo, float*texcoords)
 {
+    int dimensions = 2; // 2d data for texture coords
+    int length = 6; // 6 vertices
+
     glGenBuffers (1, &vt_vbo);
     glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
     glBufferData (
@@ -20,6 +23,18 @@ void TextureBuffer::genBuffer(unsigned int vt_vbo, float*texcoords, int dimensio
       texcoords,
       GL_STATIC_DRAW
     );
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
+    // note: I assume that vertex positions are location 0
+    glVertexAttribPointer (
+                1,
+                dimensions,
+                GL_FLOAT,
+                GL_FALSE,
+                0,
+                NULL
+     );
 }
 
 HRESULT TextureBuffer::initialize()
@@ -64,5 +79,5 @@ void TextureBuffer::Clear()
 
 TextureBuffer::~TextureBuffer()
 {
-    //
+
 }

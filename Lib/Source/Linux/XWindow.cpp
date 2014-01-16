@@ -130,11 +130,11 @@ HRESULT XWindow::createBackgroundResources()
     printf ("OpenGL version supported %s\n", version);
 
     // tell GL to only draw onto a pixel if the shape is closer to the viewer
-    glEnable (GL_DEPTH_TEST); // enable depth-testing
-    //glDepthFunc (GL_LESS); // depth-testing interprets a smaller value as "closer"
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LEQUAL);
-    glDepthRange(0.0f, 1.0f);
+//    glEnable (GL_DEPTH_TEST); // enable depth-testing
+    ///////////////glDepthFunc (GL_LESS); // depth-testing interprets a smaller value as "closer"
+//    glDepthMask(GL_TRUE);
+//    glDepthFunc(GL_LEQUAL);
+//    glDepthRange(0.0f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

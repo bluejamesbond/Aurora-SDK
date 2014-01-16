@@ -7,6 +7,8 @@ AbstractShader::AbstractShader() {}
 
 AbstractShader::~AbstractShader()
 {
+    glDeleteProgram(programID);
+    glDeleteTextures(1, &TextureID);
 
 }
 

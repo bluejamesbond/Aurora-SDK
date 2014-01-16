@@ -55,13 +55,10 @@ namespace A2D {
 
 		Dims					 	   aDims;
 		AbstractWindow			  *    aWindow;
-        GLuint                         vertexbuffer;
         GLuint                         vao;
         Graphics                  *    aGraphics;
-        Texture                   *    aTexture;
-        char                      *    fileSrc;
-        //functions
 
+        //functions
 		void							validate();
 		Dims					  *		getSize();
 //		GXSettings				  *		getSettings();
