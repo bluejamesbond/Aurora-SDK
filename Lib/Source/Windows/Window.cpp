@@ -543,19 +543,26 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 
 STATUS Window::updateOnMouseUp(HWND xHwnd)
 {
+	// FIXME Why is this here? Why would Dragged be set to false
+	// and the rest of the variables be true?
 	aIsDragged = false;
 
+	// FIXME Why is this here? Doesn't this mean that the remaining
+	// things inside the code is not done?
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
 	}
 
+	// Release accurate mouse capture
 	ReleaseCapture();
 	
 	// Give one more render request to ensure the 
 	// child comes into view again.
 	if (aIsResizing && aFramebufferInterpolation)
 	{
+		// Mark as disabled so that the child is forced
+		// back onto the screen.
 		aFramebufferInterpolation = false;
 		render();
 	}
@@ -564,6 +571,7 @@ STATUS Window::updateOnMouseUp(HWND xHwnd)
 	aIsResizing = false;
 	aIsMoving = false;
 
+	// Disable StretchBilt
 	aFramebufferInterpolation = false;
 
 	return STATUS_OK;
