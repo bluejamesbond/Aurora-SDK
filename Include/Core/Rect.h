@@ -29,8 +29,8 @@ namespace A2D {
 
 	struct Rect : public Dims
 	{
-		float			aX = 0;
-		float			aY = 0;
+		int						aX = 0;
+		int						aY = 0;
 
 		static void				memcpySSE2(Rect * xDest, const Rect * xSrc);
 		static byte				memeqlSSE4(Rect * xComp1, Rect * xComp2);

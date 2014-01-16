@@ -74,39 +74,48 @@
 #define FLOAT(x)										static_cast<float>(x)
 #define INT(x)											static_cast<int>(x)
 #define UINT(x)											static_cast<unsigned int>(x)
-#define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
+#define LONG(x)											static_cast<long>(x)
+#define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? INT(range * (value / 100)) : INT(value))
 
-inline float pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
+inline float pixelsToRelativePoint(const int xPixelDimension, const int xPixels)
 {
-	return xPixels / (xPixelDimension / 2) - 1;
+	return FLOAT(xPixels) / (FLOAT(xPixelDimension) / 2.0f) - 1.0f;
 }
 
-inline float pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
+inline float pixelsToRelativeDistance(const int xPixelDimension, const int xPixels)
 {
-	return xPixels / xPixelDimension * 2;
+	return FLOAT(xPixels) / FLOAT(xPixelDimension) * 2.0f;
 }
 
-inline float pixelsToRelativeDistance(const float xPixelDimension, const unsigned int xPixels)
-{
-	return xPixels / xPixelDimension * 2;
-}
-
-inline float __cdecl inline_max(const float a, const float b)
+inline float __cdecl _max_inline(const float a, const float b)
 {
 	return (((a) > (b)) ? (a) : (b));
 }
 
-inline float __cdecl inline_min(const float a, const float b)
+inline float __cdecl _min_inline(const float a, const float b)
 {
 	return (((a) < (b)) ? (a) : (b));
 }
 
+inline int __cdecl _max_inline(const int a, const int b)
+{
+	return (((a) > (b)) ? (a) : (b));
+}
+
+inline int __cdecl _min_inline(const int a, const int b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+#define	FP_REGISTER(x)										FLOAT(x)
+#define	INT_REGISTER(x)										INT(x)
+
 #ifndef _max
-#define _max(a,b)										inline_max(a, b)
+#define _max(a,b)											_max_inline(a, b)
 #endif
 
 #ifndef _min
-#define _min(a,b)										inline_min(a, b)
+#define _min(a,b)											_min_inline(a, b)
 #endif
 
 #ifndef __STATUS_DEFINED__

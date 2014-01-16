@@ -29,44 +29,44 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
-	
+
 	//-------------------------------------
 	// WARNING: No repeat with textureClip
 	//-------------------------------------
 
-	float rectX = xRect->aX;
-	float rectY = xRect->aY;
-	float rectWidth = xRect->aWidth;
-	float rectHeight = xRect->aHeight;
+	float rectX = FLOAT(xRect->aX);
+	float rectY = FLOAT(xRect->aY);
+	float rectWidth = FLOAT(xRect->aWidth);
+	float rectHeight = FLOAT(xRect->aHeight);
 
-	float winWidth = aWindowDims->aWidth;
-	float winHeight = aWindowDims->aHeight;
+	int winWidth = aWindowDims->aWidth;
+	int winHeight = aWindowDims->aHeight;
 
 	float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 		left, width, top, height, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 		texelRight, texelBottom,
-		textureWidth = textureClip->aWidth,
-		textureHeight = textureClip->aHeight,
+		textureWidth = FLOAT(textureClip->aWidth),
+		textureHeight = FLOAT(textureClip->aHeight),
 		depth = aDepth;
 
 	QuadExpansionVertex * vertices = xQuadData->aVertices;
 	void * mappedVertices = 0;
 
-	calcLeft = _max(rectX, 0);
-	calcTop = _max(rectY, 0);
-	calcRight = _min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-	calcBottom = _min(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
+	calcLeft = _max(rectX, 0.0);
+	calcTop = _max(rectY, 0.0);
+	calcRight = _min(FLOAT(constraints.aWidth), rectX > 0.0 ? rectWidth : rectX + rectWidth);
+	calcBottom = _min(FLOAT(constraints.aHeight), rectY > 0.0 ? rectY + rectHeight : rectY + rectHeight);
 
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
-		
+
 	if (xBackgroundSettings == Styles::COVER_TOP_LEFT)
 	{
-		float usableWidth = rectWidth, 
-			  usableHeight = rectHeight,
-			  resizeVFactor = 1.0,
-			  resizeHFactor = 1.0;
-		
+		float usableWidth = rectWidth,
+			usableHeight = rectHeight,
+			resizeVFactor = 1.0,
+			resizeHFactor = 1.0;
+
 		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
 		{
 			textureWidth *= resizeVFactor = usableHeight / textureHeight;
@@ -123,7 +123,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		texelTop = texTop / rectHeight;
 		texelRight = texRight / rectWidth;
 		texelBottom = texBottom / rectHeight;
-	}	
+	}
 
 createVertices:
 
@@ -137,13 +137,13 @@ createVertices:
 	vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
 	vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, aDepth, 1.0f);
 	vertices[0].aBorderColors = A2DUINT4(xBorderSet->m_left.m_color.m_raw,
-										 xBorderSet->m_top.m_color.m_raw,
-										 xBorderSet->m_right.m_color.m_raw,
-									     xBorderSet->m_bottom.m_color.m_raw);
+		xBorderSet->m_top.m_color.m_raw,
+		xBorderSet->m_right.m_color.m_raw,
+		xBorderSet->m_bottom.m_color.m_raw);
 	vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, xBorderSet->m_left.m_width),
-											pixelsToRelativeDistance(winHeight, xBorderSet->m_top.m_width),
-											pixelsToRelativeDistance(winWidth, xBorderSet->m_right.m_width),
-											pixelsToRelativeDistance(winHeight, xBorderSet->m_bottom.m_width));
+		pixelsToRelativeDistance(winHeight, xBorderSet->m_top.m_width),
+		pixelsToRelativeDistance(winWidth, xBorderSet->m_right.m_width),
+		pixelsToRelativeDistance(winHeight, xBorderSet->m_bottom.m_width));
 
 	// Lock the vertex buffer.
 	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));

@@ -152,7 +152,7 @@ int AbstractWindow::getDefaultCloseOperation()
 * @return float
 *			width of the border
 */
-float AbstractWindow::getBorderWidth()
+int AbstractWindow::getBorderWidth()
 {
 	return aOptBorderWidth;
 }
@@ -191,7 +191,7 @@ Dims AbstractWindow::getMaximumSize()
 * @return float
 *			radius of the shadow
 */
-float AbstractWindow::getShadowRadius()
+int AbstractWindow::getShadowRadius()
 {
 	return aOptShadowRadius;
 }
@@ -307,15 +307,15 @@ STATUS AbstractWindow::initialize()
 	aRect.aHeight = 600;
 
 	// Default minimium is 0,0
-	aMinDims.aWidth = FLT_ZERO;
-	aMinDims.aHeight = FLT_ZERO;
+	aMinDims.aWidth = 0;
+	aMinDims.aHeight = 0;
 
 	// Default maximum is full screen
-	aMaxDims.aWidth = FLT_MAX;
-	aMaxDims.aHeight = FLT_MAX;
+	aMaxDims.aWidth = INT_MAX;
+	aMaxDims.aHeight = INT_MAX;
 
 	// Default shadow radius
-	aOptShadowRadius = 30.0f;
+	aOptShadowRadius = 30;
 
 	// Default shadow color
 	aOptShadowColor.aRed = 0xFF;
@@ -324,7 +324,7 @@ STATUS AbstractWindow::initialize()
 	aOptShadowColor.aAlpha = 0xFF;
 
 	// Default border width
-	aOptBorderWidth = 2.0f;
+	aOptBorderWidth = 2;
 
 	// Default border color
 	aOptBorderColor.aRed = 0xFF;

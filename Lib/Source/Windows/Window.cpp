@@ -220,12 +220,12 @@ HWND Window::createCompatibleWindow(bool isParent)
 	DWORD           lStyle, lExStyle;
 	LPCWSTR titleName;
 
-	left = INT(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
-	top = INT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
-	width = INT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
-	height = INT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
-	lExStyle = INT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	left = isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth;
+	top = isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth;
+	width = isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2;
+	height = isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2;
+	lStyle = isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD;
+	lExStyle = isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0;
 	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
 	titleName = aName;
 
@@ -254,7 +254,7 @@ STATUS Window::updateOnMouseDown(HWND xHwnd)
 	SetCapture(xHwnd);
 
 	bool isParent = aParentHWnd == xHwnd;
-	float left, right, bottom, top;
+	int left, right, bottom, top;
 	int x, y;
 	POINT p;
 
@@ -299,7 +299,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 	}
 
 	bool isParent = aParentHWnd == xHwnd;
-	float left, right, bottom, top;
+	int left, right, bottom, top;
 	int x, y;
 	POINT p;
 	Rect& rect = aRect;
@@ -395,20 +395,20 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 
 	if (aIsDragged && (aIsResizing || aIsMoving))
 	{
-		float deltaY, deltaX;
+		int deltaY, deltaX;
 		HCURSOR currentCursor;
 
 		GetCursorPos(&p);
 		ScreenToClient(xHwnd, &p);
 
-		aOffsetY = deltaY = FLOAT(aLastDraggedPoint.y - p.y);
-		aOffsetX = deltaX = FLOAT(aLastDraggedPoint.x - p.x);
+		aOffsetY = deltaY = INT(aLastDraggedPoint.y - p.y);
+		aOffsetX = deltaX = INT(aLastDraggedPoint.x - p.x);
 		currentCursor = GetCursor();
 		
-		if (aOffsetY < -2000.0f)
+		if (aOffsetY < -2000)
 		{
-			aOffsetY = 0.0f;
-			deltaY = 0.0f;
+			aOffsetY = 0;
+			deltaY = 0;
 		}
 		
 		memcpy(&aLastRect, &aRect, sizeof(Rect));
@@ -426,13 +426,13 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
+						p.y += LONG(deltaY);
 						aFramebufferInterpolation = true;
 					}
 				}
 				else
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? deltaY : 0;
 				}
 			}
 			// Resize left and right.
@@ -445,13 +445,13 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
+						p.x += LONG(deltaX);
 						aFramebufferInterpolation = true;
 					}
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? deltaX : 0;
 				}
 
 			}
@@ -460,26 +460,26 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 			{
 				if (aWinMoveRes)
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? deltaY : 0;
 					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
 						rect.aWidth + deltaX < aMaxDims.aWidth)
 					{
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
+						p.x += LONG(deltaX);
 						aFramebufferInterpolation = true;
 
 					}
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? deltaX : 0;
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
 						rect.aHeight + deltaY < aMaxDims.aHeight)
 					{
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
+						p.y += LONG(deltaY);
 						aFramebufferInterpolation = true;
 					}
 				}
@@ -494,7 +494,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
+						p.x += LONG(deltaX);
 						aFramebufferInterpolation = true;
 					}
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
@@ -502,15 +502,15 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
+						p.y += LONG(deltaY);
 						aFramebufferInterpolation = true;
 					}
 
 				}
 				else
 				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
+					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? deltaX : 0;
+					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? deltaY : 0;
 				}
 			}
 
@@ -526,8 +526,8 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 		{
 			rect.aX -= deltaX;
 			rect.aY -= deltaY;
-			p.x += static_cast<long>(deltaX);
-			p.y += static_cast<long>(deltaY); 
+			p.x += LONG(deltaX);
+			p.y += LONG(deltaY); 
 
 			// DEFER REGION //
 
@@ -681,7 +681,7 @@ void Window::destroyShadowResources()
 void Window::spliceToNinePatch(Gdiplus::Image * src, Gdiplus::Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
 {
 	Gdiplus::Graphics graphics(dest);
-
+	
 	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
 	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
 	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
@@ -848,14 +848,14 @@ STATUS Window::createShadowResources()
 	Gdiplus::Graphics * graphics;
 	Gdiplus::SolidBrush blackBrush(*aShadowColor);
 
-	float radius = aOptShadowRadius;
-	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
-	float realDim = radius * 3;
-	float relativeDim = realDim + radius * 2;
+	int radius = aOptShadowRadius;
+	int radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
+	int realDim = radius * 3;
+	int relativeDim = realDim + radius * 2;
 
-	int radiusAsInt = INT(radius);
-	int radiusSafetyAsInt = INT(radiusSafety);
-	int relativeDimAsInt = INT(relativeDim);
+	int radiusAsInt = radius;
+	int radiusSafetyAsInt = radiusSafety;
+	int relativeDimAsInt = relativeDim;
 
 	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
 	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
@@ -880,15 +880,15 @@ STATUS Window::createShadowResources()
 
 	// Cache as 9-patch
 
-	spliceToNinePatch(blurred, aTopLeftShadow, FLT_ZERO, FLT_ZERO, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomLeftShadow, FLT_ZERO, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomRightShadow, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aTopRightShadow, relativeDim - radiusSafety, FLT_ZERO, radiusSafety, radiusSafety);
+	spliceToNinePatch(blurred, aTopLeftShadow, FLT_ZERO, FLT_ZERO, FLOAT(radiusSafety), FLOAT(radiusSafety));
+	spliceToNinePatch(blurred, aBottomLeftShadow, FLT_ZERO, FLOAT(relativeDim - radiusSafety), FLOAT(radiusSafety), FLOAT(radiusSafety));
+	spliceToNinePatch(blurred, aBottomRightShadow, FLOAT(relativeDim - radiusSafety), FLOAT(relativeDim - radiusSafety), FLOAT(radiusSafety), FLOAT(radiusSafety));
+	spliceToNinePatch(blurred, aTopRightShadow, FLOAT(relativeDim - radiusSafety), FLT_ZERO, FLOAT(radiusSafety), FLOAT(radiusSafety));
 
-	spliceToNinePatch(blurred, aTopShadow, radiusSafety, FLT_ZERO, FLT_ONE, radius);
-	spliceToNinePatch(blurred, aLeftShadow, FLT_ZERO, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, FLT_ONE, radius);
+	spliceToNinePatch(blurred, aTopShadow, FLOAT(radiusSafety), FLT_ZERO, FLT_ONE, FLOAT(radius));
+	spliceToNinePatch(blurred, aLeftShadow, FLT_ZERO, FLOAT(radiusSafety), FLOAT(radius), FLT_ONE);
+	spliceToNinePatch(blurred, aRightShadow, FLOAT(relativeDim - radius), FLOAT(radiusSafety), FLOAT(radius), FLT_ONE);
+	spliceToNinePatch(blurred, aBottomShadow, FLOAT(radiusSafety), FLOAT(relativeDim - radius), FLT_ONE, FLOAT(radius));
 
 	aTopShadowBrush = new Gdiplus::TextureBrush(aTopShadow);
 	aLeftShadowBrush = new Gdiplus::TextureBrush(aLeftShadow);
@@ -953,18 +953,18 @@ void Window::destroyResources()
 
 void Window::paintComponentBorder(Gdiplus::Graphics& graphics)
 {
-	float padding = aPadding;
-	float optBorderWidth = aOptBorderWidth;
-	float realWidth = aRealWidth;
-	float realHeight = aRealHeight;
+	int padding = aPadding;
+	int optBorderWidth = aOptBorderWidth;
+	int realWidth = aRealWidth;
+	int realHeight = aRealHeight;
 
 	Gdiplus::Color& borderColor = *aBorderColor;
 
 	if (optBorderWidth > 0)
 	{
-		Gdiplus::Pen borderPen(borderColor, optBorderWidth);
+		Gdiplus::Pen borderPen(borderColor, FLOAT(optBorderWidth));
 
-		graphics.DrawRectangle(&borderPen, padding + optBorderWidth / 2, padding + optBorderWidth / 2, aRealWidth + optBorderWidth, realHeight + optBorderWidth);
+		graphics.DrawRectangle(&borderPen, FLOAT(padding + optBorderWidth / 2), FLOAT(padding + optBorderWidth / 2), FLOAT(aRealWidth + optBorderWidth), FLOAT(realHeight + optBorderWidth));
 
 		DeleteObject(&borderPen);
 	}
@@ -972,13 +972,13 @@ void Window::paintComponentBorder(Gdiplus::Graphics& graphics)
 
 void Window::paintComponent(Gdiplus::Graphics& graphics)
 {
-	float padding = aPadding;
-	float optBorderWidth = aOptBorderWidth;
-	float shadowPadding = aShadowPadding;
-	float relativeWidth = aRelativeWidth;
-	float relativeHeight = aRelativeHeight;
-	float realWidth = aRealWidth;
-	float realHeight = aRealHeight;
+	int padding = aPadding;
+	int optBorderWidth = aOptBorderWidth;
+	int shadowPadding = aShadowPadding;
+	int relativeWidth = aRelativeWidth;
+	int relativeHeight = aRelativeHeight;
+	int realWidth = aRealWidth;
+	int realHeight = aRealHeight;
 
 	Gdiplus::TextureBrush * topShadowBrush = aTopShadowBrush;
 	Gdiplus::TextureBrush * leftShadowBrush = aLeftShadowBrush;
@@ -996,24 +996,24 @@ void Window::paintComponent(Gdiplus::Graphics& graphics)
 	rightShadowBrush->ResetTransform();
 	bottomShadowBrush->ResetTransform();
 
-	topShadowBrush->TranslateTransform(shadowPadding, FLT_ZERO);
-	graphics.FillRectangle(topShadowBrush, shadowPadding, FLT_ZERO, relativeWidth - shadowPadding * 2, padding);
+	topShadowBrush->TranslateTransform(FLOAT(shadowPadding), FLT_ZERO);
+	graphics.FillRectangle(topShadowBrush, FLOAT(shadowPadding), FLT_ZERO, FLOAT(relativeWidth - shadowPadding * 2), FLOAT(padding));
 
-	leftShadowBrush->TranslateTransform(FLT_ZERO, shadowPadding);
-	graphics.FillRectangle(leftShadowBrush, FLT_ZERO, shadowPadding, padding, relativeHeight - shadowPadding * 2);
+	leftShadowBrush->TranslateTransform(FLT_ZERO, FLOAT(shadowPadding));
+	graphics.FillRectangle(leftShadowBrush, FLT_ZERO, FLOAT(shadowPadding), FLOAT(padding), FLOAT(relativeHeight - shadowPadding * 2));
 
-	rightShadowBrush->TranslateTransform(relativeWidth - padding, shadowPadding);
-	graphics.FillRectangle(rightShadowBrush, relativeWidth - padding, shadowPadding, padding, relativeHeight - shadowPadding * 2);
+	rightShadowBrush->TranslateTransform(FLOAT(relativeWidth - padding), FLOAT(shadowPadding));
+	graphics.FillRectangle(rightShadowBrush, FLOAT(relativeWidth - padding), FLOAT(shadowPadding), FLOAT(padding), FLOAT(relativeHeight - shadowPadding * 2));
 
-	bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
-	graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
+	bottomShadowBrush->TranslateTransform(FLOAT(shadowPadding), FLOAT(relativeHeight - padding));
+	graphics.FillRectangle(bottomShadowBrush, FLOAT(shadowPadding), FLOAT(relativeHeight - padding), FLOAT(relativeWidth - shadowPadding * 2), FLOAT(padding));
 
-	graphics.DrawImage(topLeftShadow, FLT_ZERO, FLT_ZERO, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomLeftShadow, FLT_ZERO, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
-	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, FLT_ZERO, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
+	graphics.DrawImage(topLeftShadow, FLT_ZERO, FLT_ZERO, FLOAT(shadowPadding), FLOAT(shadowPadding));
+	graphics.DrawImage(bottomLeftShadow, FLT_ZERO, FLOAT(relativeHeight - shadowPadding), FLOAT(shadowPadding), FLOAT(shadowPadding));
+	graphics.DrawImage(topRightShadow, FLOAT(relativeWidth - shadowPadding), FLT_ZERO, FLOAT(shadowPadding), FLOAT(shadowPadding));
+	graphics.DrawImage(bottomRightShadow, FLOAT(relativeWidth - shadowPadding), FLOAT(relativeHeight - shadowPadding), FLOAT(shadowPadding), FLOAT(shadowPadding));
 
-	graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
+	graphics.FillRectangle(backgroundBrush, FLOAT(padding), FLOAT(padding), FLOAT(realWidth + optBorderWidth), FLOAT(realHeight + optBorderWidth));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1111,41 +1111,41 @@ void Window::setSize(Dims * xSize)
 	aRect.aHeight = xSize->aHeight;
 }
 
-void Window::setMinimumSize(float xWidth, float xHeight)
+void Window::setMinimumSize(int xWidth, int xHeight)
 {
 	aMinDims.aWidth = xWidth;
 	aMinDims.aHeight = xHeight;
 }
 
-void Window::setMaximumSize(float xWidth, float xHeight)
+void Window::setMaximumSize(int xWidth, int xHeight)
 {
 	aMaxDims.aWidth = xWidth;
 	aMaxDims.aHeight = xHeight;
 }
 
-void Window::setSize(float xWidth, float xHeight)
+void Window::setSize(int xWidth, int xHeight)
 {
 	aRect.aWidth = xWidth;
 	aRect.aHeight = xHeight;
 }
 
-void Window::setBorderWidth(float xBorderWidth)
+void Window::setBorderWidth(int xBorderWidth)
 {
 	aOptBorderWidth = xBorderWidth;
 }
 
-void Window::setShadowRadius(float xShadowRadius)
+void Window::setShadowRadius(int xShadowRadius)
 {
 	aOptShadowRadius = xShadowRadius;
 }
 
-void Window::setShadow(Color * xShadowColor, float xShadowRadius)
+void Window::setShadow(Color * xShadowColor, int xShadowRadius)
 {
 	aOptShadowColor = *xShadowColor;
 	aOptShadowRadius = xShadowRadius;
 }
 
-void Window::setBorder(Color * xBorderColor, float xBorderWidth)
+void Window::setBorder(Color * xBorderColor, int xBorderWidth)
 {
 	aOptBorderColor = *xBorderColor;
 	aOptBorderWidth = xBorderWidth;
@@ -1159,7 +1159,7 @@ void Window::setBounds(Rect * xRect)
 	aRect.aHeight = xRect->aHeight;
 }
 
-void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
+void Window::setBounds(int xLeft, int xTop, int xWidth, int xHeight)
 {
 	aRect.aWidth = xWidth;
 	aRect.aX = xLeft;
@@ -1170,16 +1170,16 @@ void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 void Window::validate()
 {
 	// Minimum dimensions has to be greater than border and shadow safety region
-	aMinDims.aWidth = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-	aMinDims.aHeight = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
+	aMinDims.aWidth = _max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
+	aMinDims.aHeight = _max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
 
 	// Minimum dimensions has to be greater than or equal to minimum size
-	aMaxDims.aWidth = max(aMinDims.aWidth, aMaxDims.aWidth);
-	aMaxDims.aHeight = max(aMinDims.aHeight, aMaxDims.aHeight);
+	aMaxDims.aWidth = _max(aMinDims.aWidth, aMaxDims.aWidth);
+	aMaxDims.aHeight = _max(aMinDims.aHeight, aMaxDims.aHeight);
 
 	// Constrain the rect to between min and max
-	aRect.aWidth = min(max(aMinDims.aWidth, aRect.aWidth), aMaxDims.aWidth);
-	aRect.aHeight = min(max(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
+	aRect.aWidth = _min(_max(aMinDims.aWidth, aRect.aWidth), aMaxDims.aWidth);
+	aRect.aHeight = _min(_max(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
 
 	// Create resize window pointer.
 	aHResizeWnd = aOptBorderWidth < _WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
@@ -1240,7 +1240,7 @@ void Window::setShadowed(bool xShadowed)
 {
 	aShadowed = xShadowed;
 
-	setShadowRadius(FLT_ZERO);
+	setShadowRadius(0);
 }
 
 void Window::setShadowColor(Color * xShadowColor)
@@ -1263,24 +1263,24 @@ void Window::render()
 	// won't be changed in the middle of update() via concurrent
 	// threads.
 
-	float padding = aPadding;
-	float optBorderWidth = aOptBorderWidth;
+	int padding = aPadding;
+	int optBorderWidth = aOptBorderWidth;
 
-	float realX = aRealX = aRect.aX + aOptBorderWidth;
-	float realY = aRealY = aRect.aY + aOptBorderWidth;
-	float realWidth = aDrawableRegion.aWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
-	float realHeight = aDrawableRegion.aHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
-	float relativeX = aRelativeX = aRect.aX - aPadding;
-	float relativeY = aRelativeY = aRect.aY - aPadding;
-	float relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;
-	float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
+	int realX = aRealX = aRect.aX + aOptBorderWidth;
+	int realY = aRealY = aRect.aY + aOptBorderWidth;
+	int realWidth = aDrawableRegion.aWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
+	int realHeight = aDrawableRegion.aHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
+	int relativeX = aRelativeX = aRect.aX - aPadding;
+	int relativeY = aRelativeY = aRect.aY - aPadding;
+	int relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;
+	int relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
 
 	/***********************************************/
 	
-	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
+	SIZE size = { LONG(relativeWidth), LONG(relativeHeight) };
 	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
 	HBITMAP memBitmapChild;
-	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
+	POINT ptDst = { LONG(relativeX), LONG(relativeY) }, ptSrc = { 0, 0 };
 	
 	if (aFramebufferInterpolation)
 	{
@@ -1310,14 +1310,14 @@ void Window::render()
 		// Paint from frameBuffer of the child HWND into the 
 		// the parent HWND
 		StretchBlt(memDC, 
-			INT(aOptBorderWidth + aPadding),
-			INT(aOptBorderWidth + aPadding),
-			INT(realWidth),
-			INT(realHeight),
+			aOptBorderWidth + aPadding,
+			aOptBorderWidth + aPadding,
+			realWidth,
+			realHeight,
 			memDCChild,
 			0, 0,
-			INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
-			INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
+			aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0),
+			aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0),
 			SRCCOPY);
 
 		ReleaseDC(aParentHWnd, memDCChild);
@@ -1341,9 +1341,9 @@ void Window::render()
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, relativeX, relativeY, relativeWidth, relativeHeight, SWP_NOCOPYBITS);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, realX, realY - (aFramebufferInterpolation ? 3000 : 0), realWidth, realHeight, SWP_NOCOPYBITS | SWP_NOREDRAW);
 
 	EndDeferWindowPos(hdwp);
 
@@ -1359,16 +1359,16 @@ void Window::render()
 
 void Window::updateLocation()
 {
-	float relativeX = aRelativeX = aRect.aX - aPadding;
-	float relativeY = aRelativeY = aRect.aY - aPadding;
-	float realX = aRealX = aRect.aX + aOptBorderWidth;
-	float realY = aRealY = aRect.aY + aOptBorderWidth;
+	int relativeX = aRelativeX = aRect.aX - aPadding;
+	int relativeY = aRelativeY = aRect.aY - aPadding;
+	int realX = aRealX = aRect.aX + aOptBorderWidth;
+	int realY = aRealY = aRect.aY + aOptBorderWidth;
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, relativeX, relativeY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, realX, realY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
 	EndDeferWindowPos(hdwp);
 }

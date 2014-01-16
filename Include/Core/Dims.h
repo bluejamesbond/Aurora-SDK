@@ -23,8 +23,8 @@ namespace A2D {
 
 	struct Dims
 	{
-		float			aWidth;
-		float			aHeight;
+		int				aWidth;
+		int				aHeight;
 
 		static void	memcpySSE2(Dims * xDest, const Dims * xSrc);
 	};

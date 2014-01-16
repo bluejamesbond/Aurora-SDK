@@ -12,9 +12,15 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	int size = x_component.aChildren.size();
 	OrderedList<Component*>::Node<Component*> * start = x_component.aChildren._head();
 
-	float height, width, mX = 0, mY = 0, aX = 0, aY = 0,
-		marginLeft, marginTop, marginRight, marginBottom, maxElementHeight = 0.0f, tempVerticalOffset,
-		positionLeft, positionTop, positionRight, positionBottom;
+	int height, width, 
+		mX = 0, mY = 0, 
+		aX = 0, aY = 0, 
+		maxElementHeight = 0.0f, 
+		tempVerticalOffset,
+		marginLeft, marginTop, 
+		marginRight, marginBottom, 
+		positionLeft, positionTop, 
+		positionRight, positionBottom;
 
 	Styles::Display display;
 	Styles::Position position;
@@ -68,7 +74,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		{
 			if (display == Styles::INLINE_BLOCK)
 			{
-				if ((marginLeft + mX + width + marginRight) > (compRect.aWidth + FLT_ONE))
+				if ((marginLeft + mX + width + marginRight) > (compRect.aWidth + 1))
 				{
 					mX = marginLeft;
 					mY = mY + maxElementHeight + marginTop;
@@ -155,7 +161,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			}
 			else/*if (display == Styles::BLOCK)*/
 			{
-				mX = FLT_ZERO;
+				mX = 0;
 				mY = mY + height + marginBottom;
 			}
 		}

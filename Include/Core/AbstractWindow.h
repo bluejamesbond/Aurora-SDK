@@ -56,8 +56,8 @@ namespace A2D {
 		Dims                         aMinDims;
 		Dims                         aMaxDims;
 
-		float                        aOptShadowRadius;
-		float                        aOptBorderWidth;
+		int							 aOptShadowRadius;
+		int						     aOptBorderWidth;
 
 		Color                        aOptBorderColor;
 		Color                        aOptBackgroundColor;
@@ -106,10 +106,10 @@ namespace A2D {
 		bool                            isVisible();
 		bool                            isShadowed();
 		Color							getBorderColor();
-		float                           getShadowRadius();
+		int                             getShadowRadius();
 		Color							getShadowColor();
 		Color							getBackgroundColor();
-		float                           getBorderWidth();
+		int                             getBorderWidth();
 
 		friend							AbstractEventQueue;
 		STATUS							processWindowEvent(WindowEvent * xEvent);
@@ -149,11 +149,11 @@ namespace A2D {
 		virtual void                    setMinimumSize(Dims * xSize) = 0;
 		virtual void                    setMaximumSize(Dims * xSize) = 0;
 		virtual void					setBounds(Rect * xRect) = 0;
-		virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight) = 0;
+		virtual void					setBounds(int xLeft, int xtop, int xWidth, int xHeight) = 0;
 		virtual void					setSize(Dims * xSize) = 0;
-		virtual void                    setMinimumSize(float xWidth, float xHeight) = 0;
-		virtual void                    setMaximumSize(float xWidth, float xHeight) = 0;
-		virtual void					setSize(float xWidth, float xHeight) = 0;
+		virtual void                    setMinimumSize(int xWidth, int xHeight) = 0;
+		virtual void                    setMaximumSize(int xWidth, int xHeight) = 0;
+		virtual void					setSize(int xWidth, int xHeight) = 0;
 		virtual void                    setName(LPCWSTR xName) = 0;
 		virtual void                    setUndecorated(bool xUndecoratedFlag) = 0;
 		virtual void                    setDefaultCloseOperation(int xCloseOperation) = 0;
@@ -161,12 +161,12 @@ namespace A2D {
 		virtual void                    setVisible(bool xVisible) = 0;
 		virtual void                    setShadowed(bool xShadowFlag) = 0;
 		virtual void                    setBorderColor(Color * xBorderColor) = 0;
-		virtual void                    setShadowRadius(float xShadowRadius) = 0;
+		virtual void                    setShadowRadius(int xShadowRadius) = 0;
 		virtual void                    setShadowColor(Color * xShadowColor) = 0;
 		virtual void                    setBackgroundColor(Color * xShadowColor) = 0;
-		virtual void                    setBorderWidth(float xBorderWidth) = 0;
-		virtual void					setBorder(Color * xBorderColor, float xBorderWidth) = 0;
-		virtual void					setShadow(Color * xShadowColor, float xShadowRadius) = 0;
+		virtual void                    setBorderWidth(int xBorderWidth) = 0;
+		virtual void					setBorder(Color * xBorderColor, int xBorderWidth) = 0;
+		virtual void					setShadow(Color * xShadowColor, int xShadowRadius) = 0;
 
 	public:
 

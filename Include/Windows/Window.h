@@ -61,21 +61,21 @@ namespace A2D {
 
 		int                             aStyle;
 
-		float                           aPadding;
-		float                           aShadowPadding;
+		int							    aPadding;
+		int							    aShadowPadding;
 
-		float                           aRealX = 0;
-		float                           aRealY = 0;
-		float                           aRealWidth = 0;
-		float                           aRealHeight = 0;
+		int							     aRealX = 0;
+		int							     aRealY = 0;
+		int							     aRealWidth = 0;
+		int							     aRealHeight = 0;
 
-		float                           aRelativeX = 0;
-		float                           aRelativeY = 0;
-		float                           aRelativeWidth = 0;
-		float                           aRelativeHeight = 0;
+		int							     aRelativeX = 0;
+		int							     aRelativeY = 0;
+		int							     aRelativeWidth = 0;
+		int							     aRelativeHeight = 0;
 
-		float							aOffsetX = 0.0f;
-		float							aOffsetY = 0.0f;
+		int								aOffsetX = 0;
+		int								aOffsetY = 0;
 
 		bool                            aIsDragged = false;
 		bool                            aIsResizing = false;
@@ -167,25 +167,25 @@ namespace A2D {
 
 		virtual void                    setMinimumSize(Dims * xSize);
 		virtual void                    setMaximumSize(Dims * xSize);
-		virtual void                    setMinimumSize(float xWidth, float xHeight);
-		virtual void                    setMaximumSize(float xWidth, float xHeight);
-		virtual void					setSize(float xWidth, float xHeight);
+		virtual void                    setMinimumSize(int xWidth, int xHeight);
+		virtual void                    setMaximumSize(int xWidth, int xHeight);
+		virtual void					setSize(int xWidth, int xHeight);
 		virtual void					setSize(Dims * xSize);
 		virtual void					setBounds(Rect * xRect);
-		virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight);
+		virtual void					setBounds(int xLeft, int xtop, int xWidth, int xHeight);
 		virtual void                    setName(LPCWSTR xName);
 		virtual void                    setUndecorated(bool xUndecoratedFlag);
 		virtual void                    setDefaultCloseOperation(int xCloseOperation);
 		virtual void                    setLocationRelativeTo(AbstractWindow * xWindow);
 		virtual void                    setVisible(bool xVisible);
 		virtual void                    setBorderColor(Color * xBorderColor);
-		virtual void                    setBorderWidth(float xBorderWidth);
+		virtual void                    setBorderWidth(int xBorderWidth);
 		virtual void                    setShadowed(bool xShadowFlag);
-		virtual void                    setShadowRadius(float xShadowRadius);
+		virtual void                    setShadowRadius(int xShadowRadius);
 		virtual void                    setShadowColor(Color * xShadowColor);
 		virtual void                    setBackgroundColor(Color * xBackgroundColor);
-		virtual void					setBorder(Color * xBorderColor, float xBorderWidth);
-		virtual void					setShadow(Color * xShadowColor, float xShadowRadius);
+		virtual void					setBorder(Color * xBorderColor, int xBorderWidth);
+		virtual void					setShadow(Color * xShadowColor, int xShadowRadius);
 
 	protected:
 

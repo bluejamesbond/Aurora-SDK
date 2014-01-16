@@ -150,8 +150,8 @@ namespace A2D {
     protected:
 
 		bool                            aValidatedContents;
-		float							aCalculatedNegativeDeltaX = 0.0f;
-		float							aCalculatedNegativeDeltaY = 0.0f;
+		int							aCalculatedNegativeDeltaX = 0;
+		int							aCalculatedNegativeDeltaY = 0;
 		Graphics                *       aGraphics;
 		Rect                            aOptRegion;
 		Rect                            aOptBackgroundRegion;
@@ -219,7 +219,7 @@ namespace A2D {
 
 	protected:
 
-		inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
+		inline void Component::setBounds(int xX, int xY, int xWidth, int xHeight)
 		{
 			aOptRegion.aWidth = xWidth;
 			aOptRegion.aHeight = xHeight;
