@@ -70,12 +70,12 @@ namespace A2D {
 		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
-		ComponentManager                *                aComponentManager = NULL;
+		ComponentManager        *       aComponentManager = NULL;
 		BorderSet						m_borderSet;
 
 	protected:
 
-		bool                                                        aVisible = true;
+		bool                            aVisible = true;
 
 		Styles::Display					aDisplay = Styles::Display::BLOCK;
 		Styles::Position				aPosition = Styles::Position::RELATIVE_;
@@ -131,21 +131,21 @@ namespace A2D {
 		
         public:
 
-                STATUS                                                        requestFocus();
-                void                                                        setFocusable(bool xFocusable);
-				virtual        Rect                                        *                getEventRegion();
+        STATUS                                                        requestFocus();
+        void                                                        setFocusable(bool xFocusable);
+		virtual Rect     *                getEventRegion();
 
-                STATUS                                                        addMouseListener(MouseListener * xListener);
-                STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
-                STATUS                                                        addFocusListener(FocusListener * xListener);
-                STATUS                                                        addActionListener(ActionListener * xListener);
+        STATUS                                                        addMouseListener(MouseListener * xListener);
+        STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
+        STATUS                                                        addFocusListener(FocusListener * xListener);
+        STATUS                                                        addActionListener(ActionListener * xListener);
 
         private:
 
-                bool                                                        isFocused = false;
-                bool                                                        isFocusable = true;
-                Component                                        *        aNextCompListener = 0;
-                Component                                        *        aPrevCompListener = 0;
+        bool                           isFocused = false;
+        bool                                                        isFocusable = true;
+        Component               *        aNextCompListener = 0;
+        Component                                        *        aPrevCompListener = 0;
                 
     protected:
 
@@ -169,7 +169,7 @@ namespace A2D {
 
 	protected:
 		
-		void                    validate();
+		void							validate();
 
     public:
 
@@ -182,7 +182,7 @@ namespace A2D {
 		Component&						getParent();
 		Component&						getRoot();
 		AbstractFrame&					getFrame();
-                Rect *                                                        getVisibleRegion();
+        Rect *                          getVisibleRegion();
 
 		void							update();
 		Rect                            getBounds();

@@ -91,6 +91,24 @@ inline float pixelsToRelativeDistance(const float xPixelDimension, const unsigne
 	return xPixels / xPixelDimension * 2;
 }
 
+inline float __cdecl inline_max(const float a, const float b)
+{
+	return (((a) > (b)) ? (a) : (b));
+}
+
+inline float __cdecl inline_min(const float a, const float b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+#ifndef _max
+#define _max(a,b)										inline_max(a, b)
+#endif
+
+#ifndef _min
+#define _min(a,b)										inline_min(a, b)
+#endif
+
 #ifndef __STATUS_DEFINED__
 #define __STATUS_DEFINED__
 typedef unsigned int STATUS;

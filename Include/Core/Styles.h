@@ -57,7 +57,15 @@ namespace A2D{
 		{
 			REPEAT_X_Y,
 			STRETCH_WIDTH_HEIGHT,
-			COVER_TOP_LEFT
+			COVER_TOP_LEFT,           // Implemented
+			COVER_TOP_CENTER,
+			COVER_TOP_RIGHT,
+			COVER_CENTER_LEFT,
+			COVER_CENTER_CENTER,      // Implemented
+			COVER_CENTER_RIGHT,
+			COVER_BOTTOM_LEFT,
+			COVER_BOTTOM_CENTER,
+			COVER_BOTTOM_RIGHT
 		};
 
 		static float AUTO;

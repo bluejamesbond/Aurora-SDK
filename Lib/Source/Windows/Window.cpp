@@ -514,6 +514,12 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 				}
 			}
 
+			// DEFER REGION //
+
+			render();
+
+			// DEFER REGION //
+
 		}
 		// Process window movement.
 		else if (aIsMoving)
@@ -521,14 +527,14 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 			rect.aX -= deltaX;
 			rect.aY -= deltaY;
 			p.x += static_cast<long>(deltaX);
-			p.y += static_cast<long>(deltaY);
+			p.y += static_cast<long>(deltaY); 
+
+			// DEFER REGION //
+
+			updateLocation();
+
+			// DEFER REGION //
 		}
-
-		// DEFER REGION //
-
-		render();
-
-		// DEFER REGION //
 
 		aLastDraggedPoint = p;
 	}
@@ -1244,10 +1250,6 @@ void* Window::getPlatformCompatibleWindowHandle()
 {
 	return static_cast<void*>(&aChildHWnd);
 }
-
-
-
-
 void Window::render()
 {
 	// Cache variables to ensure that these variables
@@ -1346,6 +1348,22 @@ void Window::render()
 	ReleaseDC(aParentHWnd, hwndDC);
 	DeleteDC(hwndDC);
 	DeleteDC(memDC);
+}
+
+void Window::updateLocation()
+{
+	float relativeX = aRelativeX = aRect.aX - aPadding;
+	float relativeY = aRelativeY = aRect.aY - aPadding;
+	float realX = aRealX = aRect.aX + aOptBorderWidth;
+	float realY = aRealY = aRect.aY + aOptBorderWidth;
+
+	HDWP hdwp = BeginDeferWindowPos(2);
+
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+
+	EndDeferWindowPos(hdwp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -52,44 +52,65 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	QuadExpansionVertex * vertices = xQuadData->aVertices;
 	void * mappedVertices = 0;
 
-	calcLeft = max(rectX, 0);
-	calcTop = max(rectY, 0);
-	calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-	calcBottom = min(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
+	calcLeft = _max(rectX, 0);
+	calcTop = _max(rectY, 0);
+	calcRight = _min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+	calcBottom = _min(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
 
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
-	
+		
+	if (xBackgroundSettings == Styles::COVER_TOP_LEFT)
+	{
+		float usableWidth = rectWidth, 
+			  usableHeight = rectHeight,
+			  resizeVFactor = 1.0,
+			  resizeHFactor = 1.0;
+		
+		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
+		{
+			textureWidth *= resizeVFactor = usableHeight / textureHeight;
+
+			texLeft = (textureWidth - rectWidth) / 2;
+			texTop = 0.0;
+			texRight = rectWidth + texLeft;
+			texBottom = textureHeight;
+
+		}
+		else
+		{
+			textureHeight *= resizeHFactor = usableWidth / textureWidth;
+
+			texLeft = 0.0;
+			texTop = (textureHeight - rectHeight) / 2;
+			texRight = textureWidth;
+			texBottom = rectHeight + texTop;
+		}
+
+		texelLeft = texLeft / textureWidth;
+		texelTop = texTop / textureHeight;
+		texelRight = texRight / textureWidth;
+		texelBottom = texBottom / textureHeight;
+
+		if (calcWidth < rectWidth)
+		{
+			texelRight -= (rectWidth - calcWidth) / textureWidth / resizeHFactor;
+		}
+
+		if (calcHeight < rectHeight)
+		{
+			texelBottom -= (rectHeight - calcHeight) / textureHeight / resizeVFactor;
+		}
+
+		goto createVertices;
+	}
+
 	texLeft = rectX > 0 ? 0.0f : abs(rectX);
 	texTop = rectY > 0 ? 0.0f : abs(rectY);
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
-	
-	if (xBackgroundSettings == Styles::COVER_TOP_LEFT)
-	{
-		float usableWidth = min(calcWidth, rectWidth), 
-			  usableHeight = min(calcHeight, rectHeight),
-			  resizeFactor = 1.0;
 
-		bool stretch = false;
-
-		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
-		{
-			textureWidth *= resizeFactor = usableHeight / textureHeight;
-			stretch = true;
-		}
-		else
-		{
-			textureHeight *= resizeFactor = usableWidth / textureWidth;
-			stretch = false;
-		}
-
-		texelLeft = 0.0;
-		texelTop = 0.0;
-		texelRight = stretch ? texRight / textureWidth : 1.0;
-		texelBottom = stretch ? 1.0 : texBottom / textureHeight;
-	}
-	else if (xBackgroundSettings == Styles::REPEAT_X_Y)
+	if (xBackgroundSettings == Styles::REPEAT_X_Y)
 	{
 		texelLeft = texLeft / textureWidth;
 		texelTop = texTop / textureHeight;
@@ -103,6 +124,8 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		texelRight = texRight / rectWidth;
 		texelBottom = texBottom / rectHeight;
 	}	
+
+createVertices:
 
 	left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
 	top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);

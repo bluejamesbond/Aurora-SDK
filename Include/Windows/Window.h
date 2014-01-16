@@ -157,6 +157,7 @@ namespace A2D {
 
 		STATUS							createResources();
 		void							destroyResources();
+		void							updateLocation();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ABSTRACTWINDOW
