@@ -544,18 +544,25 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 STATUS Window::updateOnMouseUp(HWND xHwnd)
 {
 	aIsDragged = false;
+
 	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
 	{
 		return 0;
 	}
-	ReleaseCapture();
 
+	ReleaseCapture();
+	
+	// Give one more render request
+	if (aIsResizing)
+	{
+		render();
+	}
+
+	// Disable everything
 	aIsResizing = false;
 	aIsMoving = false;
-	
-	aFramebufferInterpolation = false;
 
-	render();
+	aFramebufferInterpolation = false;
 
 	return STATUS_OK;
 }
