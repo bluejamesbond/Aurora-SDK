@@ -201,7 +201,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 		*xPipeline = new Pipeline();
 
-		texture = new Texture(aDevice, L"Assets/images/letter.png");
+		texture = new Texture(aDevice, L"Assets/images/letters.png");
 		quadData = new QuadData<TextureVertex, 6>();
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
