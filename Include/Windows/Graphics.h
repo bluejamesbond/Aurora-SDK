@@ -102,7 +102,7 @@ namespace A2D {
 		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 		
-		inline void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, bool xRepeat)
+		inline void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Styles::Background xBackgroundSettings)
 		{
 			Rect * clip = aClip;
 
@@ -136,7 +136,7 @@ namespace A2D {
 			quadData = static_cast<QuadData<QuadExpansionVertex, 1>*>((*xPipeline)->aPipelineComps[1]);
 
 			// texture->Update(textureArgs); <<<<+++ ADD LATER
-			if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xBorderSet, &xPaint, xRepeat))
+			if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xBorderSet, &xPaint, xBackgroundSettings))
 			{
 				aQuadExpansionShader->setTexture(texture);
 				aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(QuadExpansionVertex));

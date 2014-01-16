@@ -93,6 +93,8 @@ namespace A2D {
 		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
 		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
 
+		Styles::Background				aBackgroundSettings = Styles::Background::COVER_TOP_LEFT;
+
 		float							aSizeWidth = 0.0f;
 		float							aSizeHeight = 0.0f;
 

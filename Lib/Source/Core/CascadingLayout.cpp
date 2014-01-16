@@ -89,6 +89,9 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			{
 				mX += marginLeft;
 				mY += marginTop;
+
+				// try to move this elswhere
+				firstElement = false;
 			}
 		}
 		else/*if (position == Styles::ABSOLUTE_)*/

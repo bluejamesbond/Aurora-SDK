@@ -53,6 +53,13 @@ namespace A2D{
 			PERCENTAGE
 		};
 
+		enum Background
+		{
+			REPEAT_X_Y,
+			STRETCH_WIDTH_HEIGHT,
+			COVER_TOP_LEFT
+		};
+
 		static float AUTO;
 
 	};

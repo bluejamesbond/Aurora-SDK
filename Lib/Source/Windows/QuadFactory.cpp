@@ -25,7 +25,7 @@ STATUS QuadFactory::initialize()
 }
 
 // Temporarily moved to cpp to make the build process faster
-bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, bool xRepeat)
+bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Styles::Background xBackgroundSettings)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -64,22 +64,23 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	texTop = rectY > 0 ? 0.0f : abs(rectY);
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
-
-	bool cover = true; // Forced to true for now
-
-	if (cover)
+	
+	if (xBackgroundSettings == Styles::COVER_TOP_LEFT)
 	{
-		bool stretch = false;
-		float growthFactor = 1.0;
+		float usableWidth = min(calcWidth, rectWidth), 
+			  usableHeight = min(calcHeight, rectHeight),
+			  resizeFactor = 1.0;
 
-		if ((textureWidth / textureHeight) > (rectWidth / rectHeight))
+		bool stretch = false;
+
+		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
 		{
-			textureWidth *= growthFactor = calcHeight / textureHeight;
+			textureWidth *= resizeFactor = usableHeight / textureHeight;
 			stretch = true;
 		}
 		else
 		{
-			textureHeight *= growthFactor = calcWidth / textureWidth;
+			textureHeight *= resizeFactor = usableWidth / textureWidth;
 			stretch = false;
 		}
 
@@ -88,14 +89,14 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		texelRight = stretch ? texRight / textureWidth : 1.0;
 		texelBottom = stretch ? 1.0 : texBottom / textureHeight;
 	}
-	else if (xRepeat)
+	else if (xBackgroundSettings == Styles::REPEAT_X_Y)
 	{
 		texelLeft = texLeft / textureWidth;
 		texelTop = texTop / textureHeight;
 		texelRight = (calcWidth + texLeft) / textureWidth;
 		texelBottom = (calcHeight + texTop) / textureHeight;
 	}
-	else
+	else /*(xBackgroundSettings == Styles::STRETCH_WIDTH_HEIGHT)*/
 	{
 		texelLeft = texLeft / rectWidth;
 		texelTop = texTop / rectHeight;
