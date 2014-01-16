@@ -128,25 +128,43 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 	dist = textureColor.a;
 	textureColor = saturate(textureColor);
 
+	const float smoothing = 1.0 / 16.0;
+
 	if (textureColor.a > 0.4)
 	{
-		textureColor.a = 1.0;	
+		if (textureColor.a  < 0.7)
+		{
+			textureColor.x = 0.2;
+			textureColor.y = 0.1;
+			textureColor.z = 1.0;
+			textureColor.a = 1.0;
+			textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
+		}
+		else
+		{
+			textureColor.x = 0.8;
+			textureColor.y = 0.5;
+			textureColor.z = 0.2;
+			textureColor.a = 1.0;
+			textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
+		}
+		//textureColor.a = 1.0;	
 	}
 	else
 	{
 		textureColor.a = 0.0;
 	}
 
-	const float smoothing = 1.0 / 16.0;
+	//const float smoothing = 1.0 / 16.0;
 
 	// 2048x2048 tex -> min .5, max .6
 	// 1024x1024 tex -> min .45, max .75
 
-	textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
+	//textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
 	//textureColor.a *= smoothstep(.5, .6, dist);
-	textureColor.x = 0.2;
-	textureColor.y = 0.1;
-	textureColor.z = 1.0;
+	//textureColor.x = 0.2;
+	//textureColor.y = 0.1;
+	//textureColor.z = 1.0;
 
 	return textureColor;
 
