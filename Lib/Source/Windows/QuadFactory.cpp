@@ -75,7 +75,6 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 			texTop = 0.0;
 			texRight = rectWidth + texLeft;
 			texBottom = textureHeight;
-
 		}
 		else
 		{
