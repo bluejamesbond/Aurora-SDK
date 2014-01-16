@@ -15,7 +15,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	int height, width, 
 		mX = 0, mY = 0, 
 		aX = 0, aY = 0, 
-		maxElementHeight = 0.0f, 
+		maxElementHeight = 0, 
 		tempVerticalOffset,
 		marginLeft, marginTop, 
 		marginRight, marginBottom, 
@@ -80,7 +80,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 					mY = mY + maxElementHeight + marginTop;
 
 					// new row
-					maxElementHeight = 0.0;
+					maxElementHeight = 0;
 				}
 				else
 				{

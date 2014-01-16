@@ -126,10 +126,10 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 
 createVertices:
 
-	left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-	top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-	width = pixelsToRelativeDistance(winWidth, calcWidth);
-	height = pixelsToRelativeDistance(winHeight, calcHeight);
+	left = pixelsToRelativePoint(winWidth, INT(constraints.aX + calcLeft));
+	top = -pixelsToRelativePoint(winHeight, INT(constraints.aY + calcTop));
+	width = pixelsToRelativeDistance(winWidth, INT(calcWidth));
+	height = pixelsToRelativeDistance(winHeight, INT(calcHeight));
 
 	// Set up vertices
 	vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);

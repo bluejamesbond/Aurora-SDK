@@ -55,6 +55,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			}
 		}
 	}
+
 }
 
 LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
@@ -726,7 +727,7 @@ Gdiplus::Bitmap * Window::applyGaussianBlur(Gdiplus::Bitmap * src, int radius)
 
 	blurred = new Gdiplus::Bitmap(src->GetWidth(), src->GetHeight());
 	rotated = new Gdiplus::Bitmap(src->GetHeight(), src->GetWidth());
-
+	
 	// horizontal pass 0
 	srcData = getLockedBitmapData(src);
 	if (!srcData) return NULL;

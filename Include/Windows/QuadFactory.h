@@ -226,10 +226,10 @@ namespace A2D {
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
 
-			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
-			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
+			left = pixelsToRelativePoint(winWidth, INT(constraints.aX + calcLeft));
+			top = -pixelsToRelativePoint(winHeight, INT(constraints.aY + calcTop));
+			right = pixelsToRelativePoint(winWidth, INT(constraints.aX + calcRight));
+			bottom = -pixelsToRelativePoint(winHeight, INT(constraints.aY + calcBottom));
 
 			texLeft = rectX > 0 ? 0.0f : abs(rectX);
 			texTop = rectY > 0 ? 0.0f : abs(rectY);
@@ -303,10 +303,10 @@ namespace A2D {
 			calcRight = _min(FLOAT(constraints.aWidth), rectX > 0 ? rectWidth : rectX + rectWidth);
 			calcBottom = _min(FLOAT(constraints.aHeight), rectY > 0 ? rectHeight : rectY + rectHeight);
 
-			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
-			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
+			left = pixelsToRelativePoint(winWidth, INT(constraints.aX + calcLeft));
+			top = -pixelsToRelativePoint(winHeight, INT(constraints.aY + calcTop));
+			right = pixelsToRelativePoint(winWidth, INT(constraints.aX + calcRight));
+			bottom = -pixelsToRelativePoint(winHeight, INT(constraints.aY + calcBottom));
 
 			Color3D& topLeftColor = xPaint->aStart;
 			Color3D& topRightColor = xPaint->aStart;

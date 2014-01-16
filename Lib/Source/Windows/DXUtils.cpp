@@ -75,11 +75,11 @@ STATUS DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 STATUS DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create
-	FLOAT fieldOfView, screenAspect;
+	float fieldOfView, screenAspect;
 
 	// Set
-	fieldOfView = ((float)D3DX_PI / 4.0f);
-	screenAspect = xWindowSize->aWidth / xWindowSize->aHeight;
+	fieldOfView = (D3DX_PI / 4.0f);
+	screenAspect = FLOAT(xWindowSize->aWidth) / FLOAT(xWindowSize->aHeight);
 
 	*xProjectionMatrix = new D3DXMATRIX;
 
@@ -95,7 +95,7 @@ STATUS DXUtils::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, D
 	*xProjectionMatrix = new D3DXMATRIX;
 
 	// initialize
-	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
+	D3DXMatrixOrthoLH(*xProjectionMatrix, FLOAT(xWindowSize->aWidth), FLOAT(xWindowSize->aHeight), xSettings->aScreenNear, xSettings->aScreenDepth);
 
 	return STATUS_OK;
 }

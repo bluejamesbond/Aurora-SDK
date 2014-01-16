@@ -38,7 +38,7 @@ STATUS BackBuffer::initialize()
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
 	int videoCardMemory;
-	float width = windowDims.aWidth, height = windowDims.aHeight;
+	int width = windowDims.aWidth, height = windowDims.aHeight;
 	char videoCardDescription[128];
 
 	// Create a DirectX graphics interface factory.
