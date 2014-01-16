@@ -53,7 +53,7 @@ namespace A2D{
 			PERCENTAGE
 		};
 
-		enum Background
+		enum BackgroundLayout
 		{
 			REPEAT,
 			STRETCH,
@@ -80,33 +80,35 @@ namespace A2D{
 
 		static float AUTO;
 		
-		struct BackgroundProperties
+		struct Background
 		{
-			Background m_style;
+			BackgroundLayout m_layout;
 
 			/**************************************/
 
 			Units m_customPositionXUnits;
 			Units m_customPositionYUnits;
 
-			int m_customPositionX;
-			int m_customPositionY;
+			float m_customPositionX;
+			float m_customPositionY;
 
 			/**************************************/
 
 			Units m_customSizeWidthUnits;
 			Units m_customSizeHeightUnits;
 
-			int m_customSizeWidth;
-			int m_customSizeHeight;
+			float m_customSizeWidth;
+			float m_customSizeHeight;
 
 			/**************************************/
+
+			BackgroundRepeat m_repeat;
 
 			BackgroundPosition m_positionX;
 			BackgroundPosition m_positionY;
 
-			BackgroundProperties() :
-				m_style(Background::COVER),
+			Background() :
+				m_layout(BackgroundLayout::COVER),
 				m_positionX(BackgroundPosition::CENTER),
 				m_positionY(BackgroundPosition::CENTER),
 				m_customPositionX(0),
@@ -114,23 +116,40 @@ namespace A2D{
 			{
 			}
 
-			void setStyle(Background x_style)
+			inline void setStyle(BackgroundLayout x_layout)
 			{
-				m_style = x_style;
+				m_layout = x_layout;
 			}
 
-			void setPosition(BackgroundPosition x_positionX, BackgroundPosition x_positionY)
+			inline void setPosition(BackgroundPosition x_positionX, BackgroundPosition x_positionY)
 			{
 				m_positionX = x_positionX;
 				m_positionY = x_positionY;
 			}
 
-			void setCustomPosition(int x_customPositionX, int x__customPositionY)
+			inline void setCustomPosition(Units x_customPositionXUnits, float x_customPositionX, Units x_customPositionYUnits, float x__customPositionY)
 			{
 				// Note that customPosition will only be taken into consideration
 				// iff BackgroundPosition is set to PRECISE
+				m_customPositionXUnits = x_customPositionXUnits;
+				m_customPositionYUnits = x_customPositionYUnits;
+
 				m_customPositionX = x_customPositionX;
 				m_customPositionY = x__customPositionY;
+			}
+
+			inline void setSize(Units Width_customSizeWidthUnits, float Width_customSizeWidth, Units Width_customSizeHeightUnits, float Width__customSizeHeight)
+			{
+				m_customSizeWidthUnits = Width_customSizeWidthUnits;
+				m_customSizeHeightUnits = Width_customSizeHeightUnits;
+
+				m_customSizeWidth = Width_customSizeWidth;
+				m_customSizeHeight = Width__customSizeHeight;
+			}
+
+			inline void setRepeat(BackgroundRepeat x_repeat)
+			{
+				m_repeat = x_repeat;
 			}
 		};
 	};
