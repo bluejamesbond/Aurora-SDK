@@ -335,7 +335,7 @@ void BackBuffer::swap()
 	// rendering is complete.
 
 	// Lock to screen refresh rate or present as fast as possible
-	aDXGISwapChain->Present(1, 0);
+	aDXGISwapChain->Present(0, 0);
 }
 
 ID3D10Device ** BackBuffer::getDevice()

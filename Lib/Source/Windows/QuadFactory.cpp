@@ -65,25 +65,24 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		float usableWidth = rectWidth, 
 			  usableHeight = rectHeight,
 			  resizeVFactor = 1.0,
-			  resizeHFactor = 1.0,
-			  proportion = 0.0;
+			  resizeHFactor = 1.0;
 
 		// Discrete Point of Interest 
 		// Proportional Strech Algorithm - @author MK
 		// ------------------------------------------
-		// offset[C] = texture[R][C] * (pointOfInterest[C] / quadrant[R][C]) - pointOfInterest[C] 
+		// offset[C] = quadrant_2[R][C] * (pointOfInterest[C] / quadrant_1[R][C]) - pointOfInterest[C] 
 		// where C = X or Y
 		//       R = Range
-		// and   0 <= pointOfInterest[C] <= quadrant[R][C]
-		int pointOfInterestX = rectWidth;
-		int pointOfInterestY = rectHeight/2;
+		//  Offset = offset inside quadrant_2
+		// and   0 <= pointOfInterest[C] <= quadrant_1[R][C]
+		float pointOfInterestX = rectWidth;
+		float pointOfInterestY = rectHeight / 2;
 
 		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
 		{
 			textureWidth *= resizeVFactor = usableHeight / textureHeight;
-			proportion = pointOfInterestX / rectWidth;
 
-			texLeft = proportion == 0 ? 0 : (textureWidth * proportion - pointOfInterestX);
+			texLeft = textureWidth * (pointOfInterestX / rectWidth) - pointOfInterestX;
 			texTop = 0.0;
 			texRight = rectWidth + texLeft;
 			texBottom = textureHeight;
@@ -91,10 +90,9 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		else
 		{
 			textureHeight *= resizeHFactor = usableWidth / textureWidth;
-			proportion = pointOfInterestY / rectHeight;
 
 			texLeft = 0.0;
-			texTop = proportion == 0 ? 0 : (textureHeight * proportion - pointOfInterestY);
+			texTop = textureHeight * (pointOfInterestY / rectHeight) - pointOfInterestY;
 			texRight = textureWidth;
 			texBottom = rectHeight + texTop;
 		}
