@@ -74,6 +74,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		// offset[C] = texture[R][C] * (pointOfInterest[C] / quadrant[R][C]) - pointOfInterest[C] 
 		// where C = X or Y
 		//       R = Range
+		// and   0 <= pointOfInterest[C] <= quadrant[R][C]
 		int pointOfInterestX = rectWidth;
 		int pointOfInterestY = rectHeight/2;
 
