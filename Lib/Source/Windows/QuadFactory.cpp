@@ -75,14 +75,17 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		//       R = Range
 		//  Offset = offset inside quadrant_2
 		// and   0 <= pointOfInterest[C] <= quadrant_1[R][C]
-		float pointOfInterestX = rectWidth;
-		float pointOfInterestY = rectHeight / 2;
+		float pointOfInterestX = textureWidth;
+		float pointOfInterestY = textureHeight / 2;
+
+		float proportionalConstantX = pointOfInterestX / textureWidth;
+		float proportionalConstantY = pointOfInterestY / textureHeight;
 
 		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
 		{
 			textureWidth *= resizeVFactor = usableHeight / textureHeight;
 
-			texLeft = textureWidth * (pointOfInterestX / rectWidth) - pointOfInterestX;
+			texLeft = (textureWidth - rectWidth) * proportionalConstantX;
 			texTop = 0.0;
 			texRight = rectWidth + texLeft;
 			texBottom = textureHeight;
@@ -92,7 +95,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 			textureHeight *= resizeHFactor = usableWidth / textureWidth;
 
 			texLeft = 0.0;
-			texTop = textureHeight * (pointOfInterestY / rectHeight) - pointOfInterestY;
+			texTop = (textureHeight - rectHeight) * proportionalConstantY;
 			texRight = textureWidth;
 			texBottom = rectHeight + texTop;
 		}
