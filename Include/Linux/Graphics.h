@@ -24,8 +24,8 @@
 //#include "TextureVertex.h"
 #include "BackBuffer.h"
 //#include "ColoredTextureShader.h"
-//#include "TextureBuffer.h"
-//#include "Texture.h"
+#include "TextureBuffer.h"
+#include "Texture.h"
 #include "QuadFactory.h"
 //#include "ImageProperties.h"
 //#include "Pipeline.h"
@@ -60,29 +60,14 @@ namespace A2D {
         Graphics(AbstractBackBuffer * xBackBuffer);
         ~Graphics();
 
-
-        GLuint                          programID;
-        unsigned char       *           image_data;
-        int                             x;
-        int                             y;
-        int                             n;
-        char                *           file_name;
-
-//    private:
-/*
-        float                *			aViewMatrix;
-        float                *			aWorldMatrix;
-        float                *			aProjection2DMatrix;
-        float                *			aProjection3DMatrix;
-*/
         AbstractBackBuffer   *			aBackBuffer;
         AbstractWindow       *          aWindow;
-/*
         Texture              *          aTexture;
         QuadFactory			 *			aQuadFactory;
         TextureBuffer        *			aTextureBuffer;
+        Rect                 *          aClip;
 
-        // Shaders
+/*        // Shaders
         AbstractShader		 *			aColorShader;
         AbstractTextureShader*			aColoredTextureShader;
         AbstractTextureShader*			aTextureShader;
@@ -92,13 +77,15 @@ namespace A2D {
         Dims*							getDrawableDimensions();*/
         void							validate();
         void							fillRect(Pipeline ** xPipeline, Rect& xRect,  Paint& xPaint);
-        void							setClip(Rect * aRect, float xZ);/*
-*/
-        AbstractBackBuffer           *          getBackBuffer();
+
+        AbstractBackBuffer       *      getBackBuffer();
+        void                            setClip(Rect * xClip, float xDepth);
+
         void                            setWindow(AbstractWindow* xWindow);
         void                            setBackBuffer(BackBuffer* xBackBuffer);
 //        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
         void                            drawImage();
+        void                            swap();
     public:
 
         virtual HRESULT                 initialize();

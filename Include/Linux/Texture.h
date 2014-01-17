@@ -42,7 +42,7 @@ namespace A2D {
 	{
 	public:
 		// Constructor
-        Texture(LPCWSTR xSrc, GLfloat* tcoords);
+        Texture(LPCWSTR xSrc);
 
 		// Deconstructor
 		~Texture();
@@ -50,7 +50,7 @@ namespace A2D {
         unsigned char           *       image_data;
         unsigned int                    tex = 0;
         GLint                           State = GL_CLAMP_TO_EDGE;
-        GLfloat                   *       texcoords;
+        GLfloat                 *       texcoords;
         unsigned int                    vt_vbo;
 
 		// Variables
@@ -62,6 +62,7 @@ namespace A2D {
 
 		// Virtual
 		HRESULT							changeTexture(LPCWSTR  xSrc);
+        HRESULT                         initBuffer();
 
 		// Virtual
 		virtual	bool					hasAlpha();

@@ -20,6 +20,11 @@ Dims * BackBuffer::getSize()
 	return &aDims;
 }
 
+AbstractWindow * BackBuffer::getWindow()
+{
+    return aWindow;
+}
+
 void BackBuffer::setGraphics(Graphics* xGraphics)
 {
     aGraphics = xGraphics;
@@ -69,17 +74,21 @@ void BackBuffer::setActive()
 {		
 	// Reset the render target back to the original back
 	// buffer and not the render to texture anymore.
+    glBindVertexArray (vao);
+
 	return;
 }
 
 void BackBuffer::clear()
 {
-/*	float color[4];
-
+/*
 	// Clear the back buffer.
 
 	// Clear the depth buffer.
     */
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 }
 
 void BackBuffer::swap()
@@ -92,11 +101,14 @@ void BackBuffer::swap()
 
 void BackBuffer::setZBuffer(bool val)
 {
-    glEnable (GL_DEPTH_TEST); // enable depth-testing
+    if(val)
+    {
+        glEnable (GL_DEPTH_TEST); // enable depth-testing
     ///////////////glDepthFunc (GL_LESS); // depth-testing interprets a smaller value as "closer"
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LEQUAL);
-    glDepthRange(0.0f, 1.0f);
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LEQUAL);
+        glDepthRange(0.0f, 1.0f);
+    }
 }
 
 LPCWSTR BackBuffer::getClass()

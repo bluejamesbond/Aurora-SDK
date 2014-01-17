@@ -9,6 +9,8 @@ Graphics::Graphics(AbstractBackBuffer * xBackBuffer)
 	aBackBufferDims = xBackBuffer->getSize();
     aBackBufferSettings = xBackBuffer->getSettings();*/
     aBackBuffer = xBackBuffer;
+    BackBuffer * xbuffer = dynamic_cast<BackBuffer * >(aBackBuffer);
+    aWindow = xbuffer->getWindow();
 }
 
 Graphics::~Graphics()
@@ -34,13 +36,14 @@ void Graphics::setWindow(AbstractWindow *xWindow)
     aWindow = xWindow;
 }
 
-/*
+
 void Graphics::setClip(Rect * xClip, float xDepth)
 {
-	aQuadFactory->setConstraints(aClip = xClip, xDepth);
+    aClip = xClip;
+    aQuadFactory->setConstraints(aClip, xDepth);
 }
 
-
+/*
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
     Texture * texture;
@@ -81,6 +84,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 void Graphics::drawImage()
 {
         BackBuffer * xBackBuffer = dynamic_cast<BackBuffer * >(aBackBuffer);
+        XWindow * xwin = dynamic_cast<XWindow * >(aWindow);
 
     do{
 
@@ -89,7 +93,7 @@ void Graphics::drawImage()
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Use our shader
-            glUseProgram(programID);
+//            glUseProgram(programID);
             glActiveTexture(GL_TEXTURE0);
             //glBindTexture(GL_TEXTURE_2D, aBackBuffer->tex);
 
@@ -104,7 +108,7 @@ void Graphics::drawImage()
 
             // Swap buffers
          //   glfwSwapBuffers(window);
-            glXSwapBuffers( NULL, NULL);
+            glXSwapBuffers( xwin->aDis, xwin->aWin);
 
         } // Check if the ESC key was pressed or the window was closed
         while( true );
@@ -119,6 +123,12 @@ LPCWSTR Graphics::getClass()
 LPCWSTR Graphics::toString()
 {
     return "Graphics";
+}
+
+void Graphics::swap()
+{
+    XWindow * xwin = dynamic_cast<XWindow * >(aWindow);
+    glXSwapBuffers( xwin->aDis, xwin->aWin);
 }
 
 HRESULT Graphics::initialize()

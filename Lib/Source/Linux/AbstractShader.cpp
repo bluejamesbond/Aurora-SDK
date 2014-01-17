@@ -22,10 +22,16 @@ void AbstractShader::setFShader(char * xshader)
     fshadername = xshader;
 }
 
+void AbstractShader::associateTexture(Texture * xTexture)
+{
+    aTexture = xTexture;
+}
+
+
 HRESULT AbstractShader::initialize()
 {
     //set shader path?
-        //temp
+        //temp FOR TESTING
     if(vshadername == NULL)
     {
         vshadername = "/home/syk435/Testing Gl/GL-Test/SimpleVertexShader.vertexshader";
@@ -50,6 +56,8 @@ void AbstractShader::renderShader()
     glUseProgram(programID);
 
     //might need texture::render to come here
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, aTexture->tex);
 
     // Set our "myTextureSampler" sampler to user Texture Unit 0
     glUniform1i(TextureID, 0);

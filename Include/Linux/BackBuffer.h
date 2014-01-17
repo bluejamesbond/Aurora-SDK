@@ -61,6 +61,7 @@ namespace A2D {
         //functions
 		void							validate();
 		Dims					  *		getSize();
+        AbstractWindow            *     getWindow();
 //		GXSettings				  *		getSettings();
 		void                            setActive();
 		void                            swap();

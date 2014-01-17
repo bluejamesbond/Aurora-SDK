@@ -49,11 +49,13 @@ namespace A2D {
         //variables
         GLuint                          programID;
         GLuint                          TextureID;
+        Texture                 *       aTexture;
 
         //methods
 		void							renderShader();
         void                            setVShader(char * xshader);
         void                            setFShader(char * xshader);
+        void                            associateTexture(Texture * xTexture);
 
 		//////////////////////////////////////////////////////////
 		// ABSTRACT IMPLEMENTATION

@@ -4,10 +4,9 @@
 
 using namespace A2D;
 
-Texture::Texture(LPCWSTR xSrc, GLfloat* tcoords) : aSrc(xSrc)
+Texture::Texture(LPCWSTR xSrc) : aSrc(xSrc)
 {
     tBuffer = new TextureBuffer();
-    texcoords = tcoords;
 }
 
 Texture::~Texture()
@@ -37,7 +36,12 @@ HRESULT Texture::changeTexture(LPCWSTR  xSrc)
 	// Remind Mathew if you see this.
 	return initialize();
 }
- 
+
+HRESULT Texture::initBuffer()
+{
+    tBuffer->genBuffer(vt_vbo, texcoords);
+    return S_OK;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // REQUIRED BY _ABSTRACT
@@ -112,9 +116,7 @@ HRESULT Texture::initialize()
     int dimensions = 2; // 2d data for texture coords
     int length = 6; // 6 vertices
 
-    tBuffer->genBuffer(vt_vbo, texcoords);
-
-	// Load the texture in.
+    // Load the texture in.
 	// Store the texture properties
 	aClip.aX = 0;
 	aClip.aY = 0;
