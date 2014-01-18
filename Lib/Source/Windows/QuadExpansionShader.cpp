@@ -4,20 +4,12 @@
 
 using namespace A2D;
 
-//******************* STATIC _ VARIABLES *****************//
-// These are the variables held as static for every effect file.
-// Filename: quad.fx
-//
-// Why?
-// ----
-// All chidlren will automatically get these. Updating these,
-// will update the children as well.
-ID3D10Effect * QuadExpansionShader::aQuadEffect = NULL;
-ID3D10EffectShaderResourceVariable * QuadExpansionShader::aTexturePtr = NULL;
-Texture * QuadExpansionShader::aTexture = NULL;
-/***********************************************************/
-
-QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) : AbstractShader(xDevice) {}
+QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) : 
+	AbstractShader(xDevice),
+	aQuadEffect(NULL),
+	aTexturePtr(NULL)
+{
+}
 
 QuadExpansionShader::~QuadExpansionShader()
 {

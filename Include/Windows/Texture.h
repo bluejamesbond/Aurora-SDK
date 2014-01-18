@@ -48,8 +48,6 @@ namespace A2D {
 		ID3D10Device			**		aDevice;
 		ID3D10ShaderResourceView*		aResource;
 
-		static			ID3D10ShaderResourceView* aStaticResource;
-
 		// Variables
 		LPCTSTR							aSrc;
 
@@ -57,11 +55,31 @@ namespace A2D {
 		LPCTSTR					*		GetSrc();
 
 		// Virtual
-		STATUS							changeTexture(LPCWSTR  xSrc);
-
+		STATUS							changeTexture(LPCWSTR xSrc);
+		
 		// Virtual
 		virtual	bool					hasAlpha();
-		virtual void			*		getPlatformCompatibleResource();
+		
+		inline void * Texture::getPlatformCompatibleResource()
+		{
+			return aResource;
+		}
+
+		inline bool update(LPCWSTR xSrc)
+		{
+			if (wcscmp(aSrc, xSrc) != 0)
+			{
+				aSrc = xSrc;
+
+				Texture::~Texture();
+
+				initialize();
+
+				return true;
+			}
+
+			return false;
+		}
 
 	public:
 		// Implementation

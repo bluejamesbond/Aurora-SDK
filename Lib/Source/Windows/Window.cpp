@@ -58,7 +58,6 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 				TranslateMessage(&msg);
 				eventHandler(msg, &eventQueue);
 			}
-
 		}
 	}
 }

@@ -40,9 +40,9 @@ namespace A2D {
 		
 	private:
 
-		static ID3D10Effect			*	aQuadEffect;
-		static ID3D10EffectShaderResourceVariable*   aTexturePtr;
-		static Texture				*	aTexture;
+		ID3D10Effect			*	aQuadEffect;
+		ID3D10EffectShaderResourceVariable*   aTexturePtr;
+		Texture					*	aTexture;
 
 	public:
 

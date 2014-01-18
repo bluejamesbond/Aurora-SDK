@@ -19,6 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../Core/Pipelineable.h"
 
 #include "ExtLibs.h"
 #include "DXUtils.h"
@@ -31,7 +32,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractShader
+	class AbstractShader : public Pipelineable
 	{
 	public:
 

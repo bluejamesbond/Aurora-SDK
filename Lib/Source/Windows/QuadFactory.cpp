@@ -25,7 +25,7 @@ STATUS QuadFactory::initialize()
 }
 
 // Temporarily moved to cpp to make the build process faster
-bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Styles::Background xBackgroundSettings)
+void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Styles::Background xBackgroundSettings)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -75,11 +75,16 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		//       R = Range
 		//  Offset = offset inside quadrant_2
 		// and   0 <= pointOfInterest[C] <= quadrant_1[R][C]
+
+		//-----------------------------------------------
+		// TEMPORARILY FORCED
+		//-----------------------------------------------
 		float pointOfInterestX = textureWidth;
 		float pointOfInterestY = textureHeight / 2;
 
 		float proportionalConstantX = pointOfInterestX / textureWidth;
 		float proportionalConstantY = pointOfInterestY / textureHeight;
+		//-----------------------------------------------
 
 		if ((textureWidth / textureHeight) > (usableWidth / usableHeight))
 		{
@@ -117,7 +122,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 			texelBottom -= (rectHeight - calcHeight) / textureHeight / resizeVFactor;
 		}
 
-		goto createVertices;
+		goto _createAndUpdateVertex;
 	}
 
 	texLeft = rectX > 0 ? 0.0f : abs(rectX);
@@ -140,7 +145,7 @@ bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		texelBottom = texBottom / rectHeight;
 	}	
 
-createVertices:
+_createAndUpdateVertex:
 
 	left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
 	top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
@@ -168,6 +173,4 @@ createVertices:
 
 	// Unlock the vertex buffer.
 	xQuadData->aVertexBuffer->Unmap();
-
-	return true;
 }
