@@ -127,44 +127,65 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
 	dist = textureColor.a;
 	textureColor = saturate(textureColor);
+	const float smoothing = 2.0 / 16.0;
 
-	const float smoothing = 1.0 / 16.0;
 
-	if (textureColor.a > 0.4)
+	if (textureColor.a > 0.5)
 	{
-		if (textureColor.a  < 0.7)
-		{
-			textureColor.x = 0.2;
-			textureColor.y = 0.1;
-			textureColor.z = 1.0;
-			textureColor.a = 1.0;
-			textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
-		}
-		else
-		{
-			textureColor.x = 0.8;
-			textureColor.y = 0.5;
-			textureColor.z = 0.2;
-			textureColor.a = 1.0;
-			textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
-		}
-		//textureColor.a = 1.0;	
+		//if (textureColor.a < 0.)
+		//{
+		//	textureColor.x = 0.2;
+		//	textureColor.y = 0.1;
+		//	textureColor.z = 1.0;
+		//	textureColor.a = 1.0;
+		//	
+		//}
+		//else
+		//{
+		//	textureColor.x = 0.8;
+		//	textureColor.y = 0.5;
+		//	textureColor.z = 0.2;
+		//	textureColor.a = 1.0;
+		//	textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
+		//}
+		textureColor.a = 1.0;	
 	}
 	else
 	{
 		textureColor.a = 0.0;
 	}
 
-	//const float smoothing = 1.0 / 16.0;
 
+
+
+
+	float EFFECT_CENTER = .2;
+	float BASE_CENTER = .5;
+
+	float EFFECT_OFFSET = 0.01;
+	float EFFECT_MIND = 0.01;
+	float EFFECT_MAXD = 0.01;
+	float4 EFFECT_COLOR = float4(0.0,0.0,0.0,1.0);
+
+	//const float smoothing = 1.0 / 16.0;
 	// 2048x2048 tex -> min .5, max .6
 	// 1024x1024 tex -> min .45, max .75
 
-	//textureColor.a *= smoothstep(.5 - smoothing, .5 + smoothing, dist);
-	//textureColor.a *= smoothstep(.5, .6, dist);
-	//textureColor.x = 0.2;
-	//textureColor.y = 0.1;
-	//textureColor.z = 1.0;
+	//textureColor.a *= smoothstep(BASE_CENTER - smoothing, BASE_CENTER + smoothing, dist);
+	
+	textureColor.a *= smoothstep(.52, .58, dist);
+
+	//float4 effectTexel = shaderTexture.Sample(SampleType, input.tex.xy + EFFECT_OFFSET);
+	//float distEffect = effectTexel.a;
+	//float4 effectC = EFFECT_COLOR * smoothstep(EFFECT_MIND - smoothing, EFFECT_MAXD + smoothing, effectTexel.a);
+
+	//effectC.a *= smoothstep(EFFECT_MIND - smoothing, EFFECT_MAXD + smoothing, distEffect);
+
+	textureColor.x = 0.2;
+	textureColor.y = 0.1;
+	textureColor.z = 1.0;
+
+	// textureColor = lerp(effectC, textureColor, dist);
 
 	return textureColor;
 
@@ -177,6 +198,63 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 	//}
 
 	//textureColor.a = 0.0;
+
+}
+
+float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
+{
+	// Process distance field texture for base font.
+	float4 base, baseColor;
+	float alphaBaseDistance;
+
+	base = shaderTexture.Sample(SampleType, input.tex);
+	alphaBaseDistance = base.a;
+	baseColor = float4(0.2, 0.1, 1.0, 1.0); // base color should be blue, for testing purposes
+
+	// Threshold.
+	if (base.a > 0.5)
+	{
+		base.a = 1.0;
+	}
+	else
+	{
+		base.a = 0.0;
+	}
+
+	base.a *= smoothstep(0.52, 0.58, alphaBaseDistance);
+
+	base.x = baseColor.x; // Is there a more efficient way to do this?
+	base.y = baseColor.y;
+	base.z = baseColor.z;
+
+	// Process distance field  texture for shadow.
+	float4 shadow, shadowTexel, shadowColor;
+	float SHADOW_OFFSET = 0.004;
+	float alphaShadowMaskDistance;
+
+	shadowTexel = shaderTexture.Sample(SampleType, input.tex.xy - SHADOW_OFFSET);
+	alphaShadowMaskDistance = shadow.a;
+	shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
+
+	shadow = shadowColor * smoothstep(0.1, .6, shadowTexel.a);
+	//shadow = smoothstep(0.5, 0.6, alphaShadowMaskDistance);
+
+	//shadow.x = shadowColor.x;
+	//shadow.y = shadowColor.y;
+	//shadow.z = shadowColor.z;
+
+	//shadow.a *= smoothstep(0.1, 1.0, shadow.a); // bigger gap on min and max to get blur effect.
+
+
+	shadow.a *= 0.8; // set opacity
+
+
+	base = lerp(shadow, base, base.a);
+	
+	return base;
+
+	return base + shadow; // How do we combine these two?
+
 
 }
 
@@ -201,9 +279,16 @@ technique10 TextureTechnique
 	pass pass0
 	{
 		SetVertexShader(CompileShader(vs_4_0, TextureVertexShader()));
-		SetPixelShader(CompileShader(ps_4_0, TexturePixelShader()));
+		SetPixelShader(CompileShader(ps_4_0, TextureShadowedPixelShader()));
 		SetGeometryShader(NULL);
 	}
+
+	//pass pass1
+	//{
+	//	SetVertexShader(CompileShader(vs_4_0, TextureVertexShader()));
+	//	SetPixelShader(CompileShader(ps_4_0, TextureShadowPixelShader()));
+	//	SetGeometryShader(NULL);
+	//}
 }
 
 
