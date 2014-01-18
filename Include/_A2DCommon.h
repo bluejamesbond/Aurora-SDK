@@ -77,30 +77,87 @@
 #define UINT(x)											static_cast<unsigned int>(x)
 #define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
 
-inline float pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
+// Speed : Fast
+inline float _pixelsToRelativePoint(float& xPixelDimension, float xPixels)
 {
 	return xPixels / (xPixelDimension / 2) - 1;
 }
 
-inline float pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
+// Speed : Fast
+inline float _pixelsToRelativeDistance(float& xPixelDimension, float xPixels)
+{
+	return abs(xPixels) / xPixelDimension * 2;
+}
+
+// Speed : Fastest
+inline float _pixelsToRelativePoint_(float& xPixelDimension, float& xPixels)
+{
+	return xPixels / (xPixelDimension / 2) - 1;
+}
+
+// Speed : Fastest
+inline float _pixelsToRelativeDistance_(float& xPixelDimension, float& xPixels)
+{
+	return abs(xPixels) / xPixelDimension * 2;
+}
+
+// Speed : Fast
+inline float pixelsToRelativeDistance(float& xPixelDimension, unsigned int xPixels)
 {
 	return xPixels / xPixelDimension * 2;
 }
 
-inline float pixelsToRelativeDistance(const float xPixelDimension, const unsigned int xPixels)
-{
-	return xPixels / xPixelDimension * 2;
-}
-
-inline float __cdecl inline_max(const float a, const float b)
+// Speed : Slow
+inline float inline_max(float a, float b)
 {
 	return (((a) > (b)) ? (a) : (b));
 }
 
-inline float __cdecl inline_min(const float a, const float b)
+// Speed : Fast
+inline float _inline_max(float& a, float b)
+{
+	return (((a) > (b)) ? (a) : (b));
+}
+
+// Speed : Fastest
+inline float _inline_max_(float& a, float& b)
+{
+	return (((a) > (b)) ? (a) : (b));
+}
+
+// Speed : Slow
+inline float inline_min(float a, float b)
 {
 	return (((a) < (b)) ? (a) : (b));
 }
+
+// Speed : Fast
+inline float _inline_min(float& a, float b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+// Speed : Fastest
+inline float _inline_min_(float& a, float& b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+#ifndef max_flt
+#define max_flt(a,b)									inline_max(a, b)
+#endif
+
+#ifndef _max_flt
+#define _max_flt(a,b)									_inline_max(a, b)
+#endif
+
+#ifndef _max_flt_
+#define _max_flt_(a,b)									_inline_max_(a, b)
+#endif
+
+#ifndef _min_flt
+#define _min_flt(a,b)									_inline_min(a, b)
+#endif
 
 #ifndef _max
 #define _max(a,b)										inline_max(a, b)
@@ -109,6 +166,8 @@ inline float __cdecl inline_min(const float a, const float b)
 #ifndef _min
 #define _min(a,b)										inline_min(a, b)
 #endif
+
+
 
 #ifndef __STATUS_DEFINED__
 #define __STATUS_DEFINED__

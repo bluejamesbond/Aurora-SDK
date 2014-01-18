@@ -238,10 +238,10 @@ namespace A2D {
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
 
-			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
-			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
+			left = _pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
+			top = -_pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
+			right = _pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
+			bottom = -_pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
 
 			texLeft = rectX > 0 ? 0.0f : abs(rectX);
 			texTop = rectY > 0 ? 0.0f : abs(rectY);
@@ -310,15 +310,15 @@ namespace A2D {
 			ColorVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = constraints.aX + max(rectX, 0);
+			calcTop = constraints.aY + max(rectY, 0);
+			calcRight = constraints.aX + min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+			calcBottom = constraints.aY + min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
 
-			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
-			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
+			left = _pixelsToRelativePoint_(winWidth, calcLeft);
+			top = -_pixelsToRelativePoint_(winHeight, calcTop);
+			right = _pixelsToRelativePoint_(winWidth, calcRight);
+			bottom = -_pixelsToRelativePoint_(winHeight, calcBottom);
 			
 			Color3D& topLeftColor = xPaint->aStart;
 			Color3D& topRightColor = xPaint->aStart;

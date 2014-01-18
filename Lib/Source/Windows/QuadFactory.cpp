@@ -52,10 +52,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	QuadExpansionVertex * vertices = xQuadData->aVertices;
 	void * mappedVertices = 0;
 
-	calcLeft = _max(rectX, 0);
-	calcTop = _max(rectY, 0);
-	calcRight = _min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-	calcBottom = _min(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
+	calcLeft = _max_flt(rectX, 0);
+	calcTop = _max_flt(rectY, 0);
+	calcRight = _min_flt(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+	calcBottom = _min_flt(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
 
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
@@ -147,10 +147,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 
 _createAndUpdateVertex:
 
-	left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-	top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-	width = pixelsToRelativeDistance(winWidth, calcWidth);
-	height = pixelsToRelativeDistance(winHeight, calcHeight);
+	left = _pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
+	top = -_pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
+	width = _pixelsToRelativeDistance_(winWidth, calcWidth);
+	height = _pixelsToRelativeDistance_(winHeight, calcHeight);
 
 	// Set up vertices
 	vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
