@@ -1,6 +1,6 @@
 
-#include "../../../Include/Windows/ExtLibs.h"
-#include "../../../Include/Windows/Thread.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/Thread.h"
 
 using namespace A2D;
 
@@ -32,21 +32,26 @@ Thread::~Thread()
 	AbstractThread::~AbstractThread();
 }
 
-bool Thread::start()
+bool start()
+{
+    //
+    return true;
+}
+
+bool Thread::start(void * (*start_routine)(void *), void* arg)
 { 
 	// Get thread via kernel level request
-	aHThread = CreateThread(NULL, 0, &initThread, this, 0, &aId);
+    retval = pthread_create( &thread1, NULL, start_routine, (void*) arg);
 
 	// Set priority just because we can
-	SetThreadPriority(aHThread, THREAD_PRIORITY_TIME_CRITICAL);
 
 	// Get the handle from OrderedList and store it
-	aThreadHandles.push_back(aHThread, &aListHandle);
+//	aThreadHandles.push_back(aHThread, &aListHandle);
 
 	// Increment parent activeCount
 	AbstractThread::aActiveCount++;
 
-    return (aHThread != NULL);
+    return (retval != NULL);
 }
 
 void Thread::interrupt()
@@ -87,13 +92,10 @@ void Thread::stop()
 {
     if (aHThread)
     {
-		TerminateThread( aHThread, 0 );
-		CloseHandle(aHThread);
-		aHThread = NULL;
+        pthread_exit(retval);
 
 		// Request remove of the list handle
-		aThreadHandles.remove_request(&aListHandle);
-		
+
 		// Decrement parent activeCount
 		AbstractThread::aActiveCount--;
     }
@@ -126,6 +128,7 @@ int Thread::getCurrentThreadId()
 // thread creation and starting every thread. Different
 // platforms have different techniques, Windows just happens
 // to do it this way.
+/*
 DWORD WINAPI Thread::initThread(void * xParam)
 {
 	Thread * thread = reinterpret_cast<Thread*>(xParam);
@@ -142,3 +145,4 @@ DWORD WINAPI Thread::initThread(void * xParam)
 
     return -1;
 }
+*/

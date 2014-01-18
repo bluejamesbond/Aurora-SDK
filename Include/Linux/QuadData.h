@@ -45,8 +45,8 @@ namespace A2D {
 //		ImageProperties aPreviousImageProperties; // cached
 
 		// Do not delete only adjust the values! 
-        T				aVertices[18];       //should be six but I'm going to make it a float array of 6*3 (x,y,z)
-
+//        T				aVertices[18];       //should be six but I'm going to make it a float array of 6*3 (x,y,z)
+        T            *   aVertices;
 		// Vertex buffer can change (but change only as needed)
 		GLuint			aVertexBuffer;
 

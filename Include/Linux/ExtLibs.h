@@ -22,10 +22,8 @@
 #include <X11/extensions/Xrender.h>
 
 #include <GL/glew.h>
-//#include <GL/glxext.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
-//#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -38,6 +36,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <pthread.h>
 
 #include <stdlib.h>
 #include <string.h>

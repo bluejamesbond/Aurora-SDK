@@ -43,9 +43,8 @@ namespace A2D {
 		virtual ~Thread();
 
 	private:
-
-		HANDLE aHThread;
-		DWORD aId;
+        pthread_t thread1;
+        int retval;
 
 		void * aListHandle;
 		static OrderedList<HANDLE> aThreadHandles;
@@ -53,13 +52,14 @@ namespace A2D {
 	public:
 
 		virtual bool start();
+        virtual bool start(void * (*start_routine)(void *), void* arg);
 		virtual void interrupt();
 		virtual void resume();
 		virtual void stop();
 		virtual bool isAlive();
-		virtual int	id();
+        virtual int	 id();
 		virtual void waitAll();
-		virtual int getCurrentThreadId();
+        virtual int  getCurrentThreadId();
 
 	protected:
 
@@ -67,8 +67,8 @@ namespace A2D {
 
 	private:
 
-		static DWORD WINAPI initThread(void * xParam);
-		
+//		static DWORD WINAPI initThread(void * xParam);
+
 	};
 }
 #endif

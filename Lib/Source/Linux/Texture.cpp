@@ -59,6 +59,8 @@ HRESULT Texture::initialize()
            fprintf (stderr, "ERROR: could not load %s\n", aSrc);
     }
 
+    checkSrcDims();
+
     //invert to norm
     int width_in_bytes = x * 4;
     unsigned char *top = NULL;
