@@ -73,6 +73,7 @@
 #define THREAD_DESTROY(x)								if(x)			{ x->stop(); delete x; x = 0; }
 #define FLOAT(x)										static_cast<float>(x)
 #define INT(x)											static_cast<int>(x)
+#define LONG(x)											static_cast<long>(x)
 #define UINT(x)											static_cast<unsigned int>(x)
 #define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
 

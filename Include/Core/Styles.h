@@ -61,7 +61,8 @@ namespace A2D{
 			{
 				REPEAT,
 				STRETCH,
-				COVER
+				COVER,
+				NORMAL
 			};
 
 			enum Position
@@ -81,6 +82,8 @@ namespace A2D{
 				X_Y,
 				NONE
 			};
+
+			/**************************************/
 
 			Layout m_layout;
 
@@ -104,8 +107,12 @@ namespace A2D{
 
 			Repeat m_repeat;
 
+			/**************************************/
+
 			Position m_positionX;
 			Position m_positionY;
+
+			/**************************************/
 
 			Background() :
 				m_layout(Layout::COVER),

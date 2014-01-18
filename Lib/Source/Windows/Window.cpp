@@ -425,7 +425,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
+						p.y +=LONG(deltaY);
 						aFramebufferInterpolation = true;
 					}
 				}
@@ -444,7 +444,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
+						p.x +=LONG(deltaX);
 						aFramebufferInterpolation = true;
 					}
 				}
@@ -465,7 +465,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
+						p.x +=LONG(deltaX);
 						aFramebufferInterpolation = true;
 
 					}
@@ -478,7 +478,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
+						p.y +=LONG(deltaY);
 						aFramebufferInterpolation = true;
 					}
 				}
@@ -493,7 +493,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aX -= (deltaX);
 						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
+						p.x +=LONG(deltaX);
 						aFramebufferInterpolation = true;
 					}
 					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
@@ -501,7 +501,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					{
 						rect.aY -= (deltaY);
 						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
+						p.y +=LONG(deltaY);
 						aFramebufferInterpolation = true;
 					}
 
@@ -525,8 +525,8 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 		{
 			rect.aX -= deltaX;
 			rect.aY -= deltaY;
-			p.x += static_cast<long>(deltaX);
-			p.y += static_cast<long>(deltaY); 
+			p.x +=LONG(deltaX);
+			p.y +=LONG(deltaY); 
 
 			// DEFER REGION //
 
@@ -1022,7 +1022,8 @@ void Window::paintComponent(Gdiplus::Graphics& graphics)
 	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, FLT_ZERO, shadowPadding, shadowPadding);
 	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
 
-	graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
+	// ## THIS IS A VERY SLOW PROCESS
+	//graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1266,6 +1267,7 @@ void* Window::getPlatformCompatibleWindowHandle()
 {
 	return static_cast<void*>(&aChildHWnd);
 }
+
 void Window::render()
 {
 	// Cache variables to ensure that these variables
@@ -1285,78 +1287,91 @@ void Window::render()
 	float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
 
 	/***********************************************/
+
+	bool flickerRemoval = false, highPerformance = true;
+
+	if (!highPerformance)
+	{
+		SIZE size = {LONG(relativeWidth),LONG(relativeHeight) };
+		HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
+		HBITMAP memBitmapChild;
+		POINT ptDst = {LONG(relativeX),LONG(relativeY) }, ptSrc = { 0, 0 };
+
+		if (flickerRemoval)
+		{
+			memDCChild = CreateCompatibleDC(hwndDC);
+			// Create secondary DC
+			memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
+			SelectObject(memDCChild, memBitmapChild);
+
+			// Request copy of frameBuffer
+			PrintWindow(aChildHWnd, memDCChild, 0);
+		}
 	
-	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
-	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
-	HBITMAP memBitmapChild;
-	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
-		
-	memDCChild = CreateCompatibleDC(hwndDC);
-	// Create secondary DC
-	memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
-	SelectObject(memDCChild, memBitmapChild);
+		memDC = CreateCompatibleDC(hwndDC);
 
-	// Request copy of frameBuffer
-	PrintWindow(aChildHWnd, memDCChild, 0);
+		HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
+		SelectObject(memDC, memBitmap);
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
-	SelectObject(memDC, memBitmap);
+		Gdiplus::Graphics graphics(memDC);
 
-	Gdiplus::Graphics graphics(memDC);
+		/***********************************************/
 
-	/***********************************************/
+		// paintComponent(graphics);
+		paintComponentBorder(graphics);
 
-	paintComponent(graphics);
-	paintComponentBorder(graphics);
+		/***********************************************/
+		// Paint from frameBuffer of the child HWND into the 
+		// the parent HWND
+		if (flickerRemoval)
+		{
+			StretchBlt(memDC,
+				INT(aOptBorderWidth + aPadding),
+				INT(aOptBorderWidth + aPadding),
+				INT(realWidth),
+				INT(realHeight),
+				memDCChild,
+				0, 0,
+				INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
+				INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
+				SRCCOPY);
 
-	/***********************************************/
-	// Paint from frameBuffer of the child HWND into the 
-	// the parent HWND
-	StretchBlt(memDC, 
-		INT(aOptBorderWidth + aPadding),
-		INT(aOptBorderWidth + aPadding),
-		INT(realWidth),
-		INT(realHeight),
-		memDCChild,
-		0, 0,
-		INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
-		INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
-		SRCCOPY);
+			ReleaseDC(aParentHWnd, memDCChild);
+			DeleteObject(memBitmapChild);
+			DeleteObject(memDCChild);
+		}
 
-	ReleaseDC(aParentHWnd, memDCChild);
-	DeleteObject(memBitmapChild);
-	DeleteObject(memDCChild);
+		/***********************************************/
 
-	/***********************************************/
+		BLENDFUNCTION blendFunction;
+		blendFunction.AlphaFormat = AC_SRC_ALPHA;
+		blendFunction.BlendFlags = 0;
+		blendFunction.BlendOp = AC_SRC_OVER;
+		blendFunction.SourceConstantAlpha = 255;
 
-	BLENDFUNCTION blendFunction;
-	blendFunction.AlphaFormat = AC_SRC_ALPHA;
-	blendFunction.BlendFlags = 0;
-	blendFunction.BlendOp = AC_SRC_OVER;
-	blendFunction.SourceConstantAlpha = 255;
+		/***********************************************/
 
-	/***********************************************/
+		UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
-	UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
+		/***********************************************/
 
-	/***********************************************/
+		graphics.ReleaseHDC(memDC);
+		DeleteObject(memBitmap);
+		ReleaseDC(aParentHWnd, memDC);
+		ReleaseDC(aParentHWnd, hwndDC);
+		DeleteDC(hwndDC);
+		DeleteDC(memDC);
+
+		/***********************************************/
+	}
 
 	HDWP hdwp = BeginDeferWindowPos(2);
 	
 	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
 	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
+	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, INT(realX), INT(realY) - ((aFramebufferInterpolation && flickerRemoval) ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
 
 	EndDeferWindowPos(hdwp);
-
-	/***********************************************/
-	
-	graphics.ReleaseHDC(memDC);
-	DeleteObject(memBitmap);
-	ReleaseDC(aParentHWnd, memDC);
-	ReleaseDC(aParentHWnd, hwndDC);
-	DeleteDC(hwndDC);
-	DeleteDC(memDC);
 }
 
 void Window::updateLocation()
