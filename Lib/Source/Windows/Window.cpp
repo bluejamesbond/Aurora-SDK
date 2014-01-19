@@ -26,11 +26,6 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 	while (true)
 	{
-		//if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		//{
-		//	eventHandler(msg, aEventQueue);
-		//}
-
 		if (visible)
 		{
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -704,7 +699,7 @@ void Window::destroyShadowResources()
 void Window::spliceToNinePatch(Gdiplus::Image * src, Gdiplus::Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
 {
 	Gdiplus::Graphics graphics(dest);
-
+	
 	graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
 	graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
 	graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
@@ -880,10 +875,10 @@ STATUS Window::createShadowResources()
 	int radiusSafetyAsInt = SINT(radiusSafety);
 	int relativeDimAsInt = SINT(relativeDim);
 
-	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aTopRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
+	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
+	aTopRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
+	aBottomRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
 
 	aTopShadow = new Gdiplus::Bitmap(1, radiusAsInt);
 	aLeftShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
@@ -982,15 +977,9 @@ void Window::paintComponentBorder(Gdiplus::Graphics& graphics)
 	float realHeight = aRealHeight;
 
 	Gdiplus::Color& borderColor = *aBorderColor;
+	Gdiplus::Pen borderPen(borderColor, optBorderWidth);
 
-	if (optBorderWidth > 0)
-	{
-		Gdiplus::Pen borderPen(borderColor, optBorderWidth);
-
-		graphics.DrawRectangle(&borderPen, padding + optBorderWidth / 2, padding + optBorderWidth / 2, aRealWidth + optBorderWidth, realHeight + optBorderWidth);
-
-		DeleteObject(&borderPen);
-	}
+	graphics.DrawRectangle(&borderPen, padding + optBorderWidth / 2, padding + optBorderWidth / 2, aRealWidth + optBorderWidth, realHeight + optBorderWidth);
 }
 
 void Window::paintComponent(Gdiplus::Graphics& graphics)
@@ -1031,10 +1020,10 @@ void Window::paintComponent(Gdiplus::Graphics& graphics)
 	bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
 	graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
 
-	graphics.DrawImage(topLeftShadow, 0.0f, 0.0f, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomLeftShadow, 0.0f, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
-	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, 0.0f, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
+	graphics.DrawImage(topLeftShadow, 0.0f, 0.0f);
+	graphics.DrawImage(bottomLeftShadow, 0.0f, relativeHeight - shadowPadding);
+	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, 0.0f);
+	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding);
 
 	// ## THIS IS A VERY SLOW PROCESS
 	//graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
@@ -1287,7 +1276,7 @@ void Window::render()
 	// Cache variables to ensure that these variables
 	// won't be changed in the middle of update() via concurrent
 	// threads.
-
+	//------------------------------------------------------------------------------
 	float padding = aPadding;
 	float optBorderWidth = aOptBorderWidth;
 
@@ -1300,9 +1289,9 @@ void Window::render()
 	float relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;
 	float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
 
-	/***********************************************/
-
-	bool flickerRemoval = false, highPerformance = true;
+	// Paint options
+	//------------------------------------------------------------------------------
+	bool flickerRemoval = true, highPerformance = false;
 
 	if (!highPerformance)
 	{
@@ -1313,32 +1302,50 @@ void Window::render()
 
 		if (flickerRemoval)
 		{
+			// Create compatible secondary DC
 			memDCChild = CreateCompatibleDC(hwndDC);
-			// Create secondary DC
+
+			// Create bitmap for child
 			memBitmapChild = CreateCompatibleBitmap(hwndDC, SINT(relativeWidth), SINT(relativeHeight));
+
+			// Select bitmap into memDCChild
 			SelectObject(memDCChild, memBitmapChild);
 
 			// Request copy of frameBuffer
 			PrintWindow(aChildHWnd, memDCChild, 0);
 		}
-	
-		memDC = CreateCompatibleDC(hwndDC);
 
+		// Create Bitmap to render to
+		//------------------------------------------------------------------------------
 		HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, SINT(relativeWidth), SINT(relativeHeight));
 		SelectObject(memDC, memBitmap);
 
 		Gdiplus::Graphics graphics(memDC);
 
-		/***********************************************/
+		// Apply highspeed settings for GDI+
+		//------------------------------------------------------------------------------
+		graphics.SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
+		graphics.SetCompositingQuality(Gdiplus::CompositingQualityHighSpeed);
+		graphics.SetPixelOffsetMode(Gdiplus::PixelOffsetModeNone);
+		graphics.SetSmoothingMode(Gdiplus::SmoothingModeNone);
+		graphics.SetInterpolationMode(Gdiplus::InterpolationModeDefault);
 
-		// paintComponent(graphics);
-		paintComponentBorder(graphics);
+		// Paint the component
+		//------------------------------------------------------------------------------
+		paintComponent(graphics);
+		
+		if (aOptBorderWidth > 0)
+		{
+			paintComponentBorder(graphics);
+		}
 
-		/***********************************************/
 		// Paint from frameBuffer of the child HWND into the 
 		// the parent HWND
+		//------------------------------------------------------------------------------
 		if (flickerRemoval)
 		{
+			SetStretchBltMode(memDC, COLORONCOLOR);
+
 			StretchBlt(memDC,
 				SINT(aOptBorderWidth + aPadding),
 				SINT(aOptBorderWidth + aPadding),
@@ -1354,29 +1361,21 @@ void Window::render()
 			DeleteObject(memBitmapChild);
 			DeleteObject(memDCChild);
 		}
-
-		/***********************************************/
-
-		BLENDFUNCTION blendFunction;
-		blendFunction.AlphaFormat = AC_SRC_ALPHA;
-		blendFunction.BlendFlags = 0;
-		blendFunction.BlendOp = AC_SRC_OVER;
-		blendFunction.SourceConstantAlpha = 255;
-
-		/***********************************************/
+		
+		// Blend function required for UpdateLayeredWindow and updat the data
+		//------------------------------------------------------------------------------
+		BLENDFUNCTION blendFunction = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
 		UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
-		/***********************************************/
-
+		// Release and destroy objects
+		//------------------------------------------------------------------------------
 		graphics.ReleaseHDC(memDC);
 		DeleteObject(memBitmap);
 		ReleaseDC(aParentHWnd, memDC);
 		ReleaseDC(aParentHWnd, hwndDC);
 		DeleteDC(hwndDC);
 		DeleteDC(memDC);
-
-		/***********************************************/
 	}
 
 	HDWP hdwp = BeginDeferWindowPos(2);
