@@ -26,6 +26,7 @@
 #include "../Core/ImageProperties.h"
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
+#include "../Core/Font.h"
 
 #include "VertexTypes.h"
 #include "BackBuffer.h"

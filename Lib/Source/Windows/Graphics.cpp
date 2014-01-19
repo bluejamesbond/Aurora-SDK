@@ -193,20 +193,30 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
 
 	Texture * texture;
-	QuadData<TextureVertex, 6> * quadData;	
+	QuadData<TextureVertex, 6> * quadData;
 
+	Font * museo = new Font("Assets/fonts/museo.txt");
+	
+
+	string input = "hi there";
+
+	const char * input_c = input.c_str();
+	int inputLength = input.length();
 	if (*xPipeline == NULL)
 	{
 		// Intialize the pipeline
 
 		*xPipeline = new Pipeline();
 
-		texture = new Texture(aDevice, L"Assets/images/museo.png");
+		texture = new Texture(aDevice, L"Assets/fonts/museo.png");
 		quadData = new QuadData<TextureVertex, 6>();
+	
+		museo->initialize();
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
 		texture->initialize();
+		museo->initialize();
 
 		(*xPipeline)->aPipelineComps[0] = texture;
 		(*xPipeline)->aPipelineComps[1] = quadData;
@@ -219,7 +229,54 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
 	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
 
+	//float charX;
+	//float charY;
+	//float width;
+	//float height;
+	//float offsetX;
+	//float offsetY;
+	//float advanceX;
+	//Rect * clipR = new Rect;
+	//Rect * inputR = &xRect;
+
+	//for (int i = 0; i < inputLength; i += 1)
+	//{
+
+	//	charX = FLOAT(museo->aCharacters[input_c[i]].aX);
+	//	charY = FLOAT(museo->aCharacters[input_c[i]].aY);
+	//	width = FLOAT(museo->aCharacters[input_c[i]].aWidth);
+	//	height = FLOAT(museo->aCharacters[input_c[i]].aHeight);
+	//	offsetX = FLOAT(museo->aCharacters[input_c[i]].aXOffset);
+	//	offsetY = FLOAT(museo->aCharacters[input_c[i]].aYOffset);
+	//	advanceX = FLOAT(museo->aCharacters[input_c[i]].aXAdvance);
+
+	//	// Get new clip.
+	//	clipR->aX = charX;
+	//	clipR->aY = charX;
+	//	clipR->aWidth = width;
+	//	clipR->aHeight = height;
+
+	//	texture->SetClip(clipR);
+
+	//	// Adjust input rect for each letter.
+	//	//inputR->aX += offsetX;
+	//	//inputR->aY - offsetY;
+
+	//	// Calculate vertex and render letter.
+	//	if (aQuadFactory->updateVertexBuffer(quadData, inputR, texture, false))
+	//	{
+	//		aTextureShader->setTexture(texture);
+	//		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+	//		aTextureShader->renderShader();
+	//	}
+
+	//	// Prepare for next letter.
+	//	inputR->aX += advanceX;
+
+	//}
+
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
+
 	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false))
 	{
 		aTextureShader->setTexture(texture);

@@ -206,6 +206,8 @@ float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
 	// Process distance field texture for base font.
 	float4 base, baseColor;
 	float alphaBaseDistance;
+	const float baseCenter = 0.5;
+	const float smoothing = 1.0 / 16.0;
 
 	base = shaderTexture.Sample(SampleType, input.tex);
 	alphaBaseDistance = base.a;
@@ -221,7 +223,8 @@ float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
 		base.a = 0.0;
 	}
 
-	base.a *= smoothstep(0.52, 0.58, alphaBaseDistance);
+	base.a *= smoothstep(baseCenter - smoothing, baseCenter + smoothing, alphaBaseDistance);
+
 
 	base.x = baseColor.x; // Is there a more efficient way to do this?
 	base.y = baseColor.y;
