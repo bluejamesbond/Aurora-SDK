@@ -74,8 +74,15 @@ namespace A2D {
 		
 		inline void ComponentManager::validate()
 		{
+			// FIX ME ... use scrollLeft and variables like that to find offset
+
+			BorderSet& borderSet = aRoot->m_borderSet;
+
 			aBackBuffer->validate();
-			aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
+			aRoot->setBounds(borderSet.m_left.m_width,
+							 borderSet.m_top.m_width,
+							 aBackBufferDims->aWidth - (borderSet.m_left.m_width + borderSet.m_right.m_width),
+							 aBackBufferDims->aHeight - (borderSet.m_top.m_width + borderSet.m_bottom.m_width));
 		}
 
 	};

@@ -118,10 +118,10 @@ void Component::validate()
 
 	if (!hasParent)
 	{
-		aCalculatedRegion.aX = max__(0.0f, compRect.aX);
-		aCalculatedRegion.aY = max__(0.0f, compRect.aY);
-		aCalculatedRegion.aWidth = max__(0.0f, compRect.aWidth);
-		aCalculatedRegion.aHeight = max__(0.0f, compRect.aHeight);
+		aVisibleRegion.aX = aCalculatedRegion.aX = max__(0.0f, compRect.aX);
+		aVisibleRegion.aY = aCalculatedRegion.aY = max__(0.0f, compRect.aY);
+		aVisibleRegion.aWidth = aCalculatedRegion.aWidth = max__(0.0f, compRect.aWidth);
+		aVisibleRegion.aHeight = aCalculatedRegion.aHeight = max__(0.0f, compRect.aHeight);
 
 		aCalculatedNegativeDeltaX = 0.0f;
 		aCalculatedNegativeDeltaY = 0.0f;
