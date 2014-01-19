@@ -997,33 +997,27 @@ void Window::paintComponent(Gdiplus::Graphics& graphics)
     Gdiplus::TextureBrush * rightShadowBrush = aRightShadowBrush;
     Gdiplus::TextureBrush * bottomShadowBrush = aBottomShadowBrush;
     Gdiplus::TextureBrush * backgroundBrush = aBackgroundBrush;
-
-    Gdiplus::Image * topLeftShadow = aTopLeftShadow;
-    Gdiplus::Image * bottomLeftShadow = aBottomLeftShadow;
-    Gdiplus::Image * topRightShadow = aTopRightShadow;
-    Gdiplus::Image * bottomRightShadow = aBottomRightShadow;
-
-    topShadowBrush->ResetTransform();
-    leftShadowBrush->ResetTransform();
-    rightShadowBrush->ResetTransform();
-    bottomShadowBrush->ResetTransform();
-
+	
+	topShadowBrush->ResetTransform();
     topShadowBrush->TranslateTransform(shadowPadding, 0.0f);
     graphics.FillRectangle(topShadowBrush, shadowPadding, 0.0f, relativeWidth - shadowPadding * 2, padding);
 
+	leftShadowBrush->ResetTransform();
     leftShadowBrush->TranslateTransform(0.0f, shadowPadding);
     graphics.FillRectangle(leftShadowBrush, 0.0f, shadowPadding, padding, relativeHeight - shadowPadding * 2);
 
+	rightShadowBrush->ResetTransform();
     rightShadowBrush->TranslateTransform(relativeWidth - padding, shadowPadding);
     graphics.FillRectangle(rightShadowBrush, relativeWidth - padding, shadowPadding, padding, relativeHeight - shadowPadding * 2);
 
+	bottomShadowBrush->ResetTransform();
     bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
     graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
 
-    graphics.DrawImage(topLeftShadow, 0.0f, 0.0f);
-    graphics.DrawImage(bottomLeftShadow, 0.0f, relativeHeight - shadowPadding);
-    graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, 0.0f);
-    graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding);
+	graphics.DrawImage(aTopLeftShadow, 0.0f, 0.0f);
+	graphics.DrawImage(aBottomLeftShadow, 0.0f, relativeHeight - shadowPadding);
+	graphics.DrawImage(aTopRightShadow, relativeWidth - shadowPadding, 0.0f);
+	graphics.DrawImage(aBottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding);
 
     // ## THIS IS A VERY SLOW PROCESS
     //graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
@@ -1301,7 +1295,7 @@ void Window::render()
         POINT ptDst = {SLONG(relativeX),SLONG(relativeY) }, ptSrc = { 0, 0 };
 
         if (flickerRemoval)
-        {
+		{
             // Create compatible secondary DC
             memDCChild = CreateCompatibleDC(hwndDC);
 
@@ -1312,14 +1306,13 @@ void Window::render()
             SelectObject(memDCChild, memBitmapChild);
 
             // Request copy of frameBuffer
-            PrintWindow(aChildHWnd, memDCChild, 0);
+			PrintWindow(aChildHWnd, memDCChild, 0);
         }
 
         // Create Bitmap to render to
         //------------------------------------------------------------------------------
         HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, SINT(relativeWidth), SINT(relativeHeight));
         SelectObject(memDC, memBitmap);
-
         Gdiplus::Graphics graphics(memDC);
 
         // Apply highspeed settings for GDI+
@@ -1334,7 +1327,7 @@ void Window::render()
         //------------------------------------------------------------------------------
         paintComponent(graphics);
         
-        if (aOptBorderWidth > 0)
+		if (aOptBorderWidth > 0)
         {
             paintComponentBorder(graphics);
         }
@@ -1344,7 +1337,7 @@ void Window::render()
         //------------------------------------------------------------------------------
         if (flickerRemoval)
         {
-            SetStretchBltMode(memDC, COLORONCOLOR);
+			SetStretchBltMode(memDC, BLACKONWHITE);
 
             StretchBlt(memDC,
                 SINT(aOptBorderWidth + aPadding),
@@ -1380,9 +1373,8 @@ void Window::render()
 
     HDWP hdwp = BeginDeferWindowPos(2);
     
-    if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), SINT(relativeWidth), SINT(relativeHeight), SWP_NOCOPYBITS);
-    
-    if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY) - ((aFramebufferInterpolation && flickerRemoval) ? 3000 : 0), SINT(realWidth), SINT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
+    DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), SINT(relativeWidth), SINT(relativeHeight), SWP_NOCOPYBITS);
+    DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY) - ((aFramebufferInterpolation && flickerRemoval) ? 3000 : 0), SINT(realWidth), SINT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
 
     EndDeferWindowPos(hdwp);
 }
@@ -1396,9 +1388,8 @@ void Window::updateLocation()
 
     HDWP hdwp = BeginDeferWindowPos(2);
 
-    if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), 0, 0, SWP_NOSIZE);
-
-    if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY), 0, 0, SWP_NOSIZE);
+    DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), 0, 0, SWP_NOSIZE);
+    DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY), 0, 0, SWP_NOSIZE);
 
     EndDeferWindowPos(hdwp);
 }
