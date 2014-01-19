@@ -39,6 +39,16 @@ HRESULT Texture::changeTexture(LPCWSTR  xSrc)
 
 HRESULT Texture::initBuffer()
 {
+    //necessary Texture settting (Tiling vs. Stretch)
+        //Default State is Stretch, Repeat is set by:GL_REPEAT
+
+        //MIPMAP enabled by Default
+    glGenerateMipmap (GL_TEXTURE_2D);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, State);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, State);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+
     tBuffer->genBuffer(vt_vbo, texcoords);
     return S_OK;
 }
@@ -102,17 +112,6 @@ HRESULT Texture::initialize()
     image_data
     );
 
-    //necessary Texture settting (Tiling vs. Stretch)(how to crop?)
-        //Default State is Stretch, Repeat is set by:GL_REPEAT
-
-        //MIPMAP enabled by Default
-    glGenerateMipmap (GL_TEXTURE_2D);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, State);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, State);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-
-    //set this according to amount of times necessary to repeat, need to set elsewhere
 
     //Set Texture Buffer
     int dimensions = 2; // 2d data for texture coords

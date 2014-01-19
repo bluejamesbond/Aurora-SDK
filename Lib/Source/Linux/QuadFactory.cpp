@@ -1,6 +1,7 @@
 
 #include "../../../Include/Linux/ExtLibs.h"
 #include "../../../Include/Linux/QuadFactory.h"
+#include "../../../Include/Linux/GLShaderUtils.h"
 
 using namespace A2D;
 
@@ -314,8 +315,8 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRec
 	// Lock the vertex buffer.
     glGenBuffers(1, &aVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, aVertexBuffer);
-
-	// Unlock the vertex buffer.
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 18, g_vertex_buffer_data, GL_STATIC_DRAW);
+    // Unlock the vertex buffer.
 //	xQuadData->aVertexBuffer->Unmap();
 
 	return S_OK;
@@ -373,11 +374,12 @@ void QuadFactory::renderQuad()
 {
     // Set the vertex buffer to active in the input
 	// assembler so it can be rendered.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 18, g_vertex_buffer_data, GL_STATIC_DRAW);
+
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     glEnableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, aVertexBuffer);
 
     glVertexAttribPointer(
