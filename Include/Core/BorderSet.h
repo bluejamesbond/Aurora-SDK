@@ -31,10 +31,10 @@ namespace A2D {
 	struct Border
 	{
 		Color3D  m_color;
-		unsigned int m_width;
+		float m_width;
 	
 		Border() :
-			m_width(10)
+			m_width(10.0f)
 		{
 			Color3D::from(m_color, Color3D::AMETHYST);
 		}

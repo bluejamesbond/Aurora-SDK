@@ -9,30 +9,30 @@ aMouseName(xString){};
 
 MouseEvent::MouseEvent(EventSource * xSource, int xEventID, int xLocX, int xLocY, int xClickCount)
 {
-	POINT point;
-	point.x = xLocX; 
-	point.y = xLocY;
+	Point point;
+	point.aX = SFLOAT(xLocX); 
+	point.aY = SFLOAT(xLocY);
 	MouseEvent(xSource, xEventID, point, xClickCount, BUTTON1);
 }
 
-MouseEvent::MouseEvent(EventSource * xSource, int xEventID, POINT xPoint, int xClickCount) :
+MouseEvent::MouseEvent(EventSource * xSource, int xEventID, Point&  xPoint, int xClickCount) :
 MouseEvent(xSource, xEventID, xPoint, xClickCount, BUTTON1)
 {}
 
-MouseEvent::MouseEvent(EventSource * xSource, int xEventID, POINT xPoint, int xClickCount, int xButton) :
+MouseEvent::MouseEvent(EventSource * xSource, int xEventID, Point&  xPoint, int xClickCount, int xButton) :
 AbstractEvent(xSource, xEventID), aPoint(xPoint), aClickCount(xClickCount), aButton(xButton)
 {}
 
 MouseEvent::~MouseEvent(){}
 
-long MouseEvent::getX()
+float MouseEvent::getX()
 {
-	return aPoint.x;
+	return aPoint.aX;
 }
 
-long MouseEvent::getY()
+float MouseEvent::getY()
 {
-	return aPoint.y;
+	return aPoint.aY;
 }
 
 int MouseEvent::getButton()
@@ -45,18 +45,18 @@ int MouseEvent::getClickCount()
 	return aClickCount;
 }
 
-POINT MouseEvent::getLocation()
+Point& MouseEvent::getLocation()
 {
 	return aPoint;
 }
 
-void MouseEvent::setLocation(POINT xPoint)
+void MouseEvent::setLocation(Point& xPoint)
 {
-	aPoint = xPoint;
+	memcpy(&aPoint, &xPoint, sizeof(Point));
 }
 
 // Will do this later + constructor - Brent.
-POINT MouseEvent::getAbsoluteLocation()
+Point& MouseEvent::getAbsoluteLocation()
 {
 	return aPoint;
 }

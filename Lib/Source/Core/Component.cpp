@@ -118,10 +118,10 @@ void Component::validate()
 
 	if (!hasParent)
 	{
-		aCalculatedRegion.aX = _max(0.0f, compRect.aX);
-		aCalculatedRegion.aY = _max(0.0f, compRect.aY);
-		aCalculatedRegion.aWidth = _max(0.0f, compRect.aWidth);
-		aCalculatedRegion.aHeight = _max(0.0f, compRect.aHeight);
+		aCalculatedRegion.aX = max__(0.0f, compRect.aX);
+		aCalculatedRegion.aY = max__(0.0f, compRect.aY);
+		aCalculatedRegion.aWidth = max__(0.0f, compRect.aWidth);
+		aCalculatedRegion.aHeight = max__(0.0f, compRect.aHeight);
 
 		aCalculatedNegativeDeltaX = 0.0f;
 		aCalculatedNegativeDeltaY = 0.0f;
@@ -140,28 +140,28 @@ void Component::validate()
 		// Reduce the size based on parent x, y
 		// Account for negative x, y of this
 		// Accumulate negatives
-		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + _min(0.0f, compRect.aX));
-		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + _min(0.0f, compRect.aY));
+		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min__(0.0f, compRect.aX));
+		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min__(0.0f, compRect.aY));
 		
 		// Account for larger than parent
-		aCalculatedRegion.aWidth = _min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
-		aCalculatedRegion.aHeight = _min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
+		aCalculatedRegion.aWidth = min__(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
+		aCalculatedRegion.aHeight = min__(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
 
 		// Account for positive shift
-		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0f);
-		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0f);
+		aCalculatedRegion.aWidth -= SFLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0f);
+		aCalculatedRegion.aHeight -= SFLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0f);
 		
 		// Account for negative height
-		aCalculatedRegion.aWidth = _max(0.0f, aCalculatedRegion.aWidth);
-		aCalculatedRegion.aHeight = _max(0.0f, aCalculatedRegion.aHeight);
+		aCalculatedRegion.aWidth = max__(0.0f, aCalculatedRegion.aWidth);
+		aCalculatedRegion.aHeight = max__(0.0f, aCalculatedRegion.aHeight);
 
 		// Set the visible x and y based on previous
-		aVisibleRegion.aX = parentVisibleRegion.aX + _max(0.0f, _min(aCalculatedRegion.aX, compRect.aX));
-		aVisibleRegion.aY = parentVisibleRegion.aY + _max(0.0f, _min(aCalculatedRegion.aY, compRect.aY));
+		aVisibleRegion.aX = parentVisibleRegion.aX + max__(0.0f, min__(aCalculatedRegion.aX, compRect.aX));
+		aVisibleRegion.aY = parentVisibleRegion.aY + max__(0.0f, min__(aCalculatedRegion.aY, compRect.aY));
 
 		// Set the region based on if it is even visible
-		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0.0f ? aCalculatedRegion.aWidth : 0.0f);
-		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0.0f ? aCalculatedRegion.aHeight : 0.0f);		
+		aVisibleRegion.aWidth = SFLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0.0f ? aCalculatedRegion.aWidth : 0.0f);
+		aVisibleRegion.aHeight = SFLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0.0f ? aCalculatedRegion.aHeight : 0.0f);		
 	}
 
 	CascadingLayout::doLayout(*this);
@@ -296,11 +296,11 @@ STATUS Component::addMouseListener(MouseListener * xListener)
 		STATUS hr = ComponentEventSource::addMouseListener(xListener);
 		if (xListener != NULL)
 		{
-			eQ->addEventDepthTracker(this, abs(aDepth));
+			eQ->addEventDepthTracker(this, abs__(aDepth));
 		}
 		else
 		{
-			eQ->removeEventDepthTracker(this, abs(aDepth + 1));
+			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
 		}
 		return hr;
 	}
@@ -317,11 +317,11 @@ STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
 		STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
 		if (xListener != NULL)
 		{
-			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(aDepth));
 		}
 		else
 		{
-			eQ->removeEventDepthTracker(this, abs(aDepth + 1));
+			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
 		}
 		return hr;
 	}
@@ -338,11 +338,11 @@ STATUS Component::addFocusListener(FocusListener * xListener)
 
 		if (xListener != NULL)
 		{
-			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(aDepth));
 		}
 		else
 		{
-			eQ->removeEventDepthTracker(this, abs(aDepth + 1));
+			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
 		}
 		return hr;
 	}
@@ -359,11 +359,11 @@ STATUS Component::addActionListener(ActionListener * xListener)
 		STATUS hr = ComponentEventSource::addActionListener(xListener);
 		if (xListener != NULL)
 		{
-			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs(aDepth));
+			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(aDepth));
 		}
 		else
 		{
-			eQ->removeEventDepthTracker(this, abs(aDepth + 1));
+			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
 		}
 		return hr;
 	}

@@ -13,9 +13,9 @@
 
 #ifndef SYSOUT_INT 
 #ifdef _WIN32
-#define SYSOUT_INT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
+#define SYSOUT_SINT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
 #elif __linux__
-#define SYSOUT_INT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
+#define SYSOUT_SINT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
 #endif
 #endif
 

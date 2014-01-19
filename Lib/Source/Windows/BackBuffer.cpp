@@ -110,8 +110,8 @@ STATUS BackBuffer::initialize()
 	swapChainDesc.BufferCount = 1;
 
 	// Set the width and height of the back buffer.
-	swapChainDesc.BufferDesc.Width = UINT(width);
-	swapChainDesc.BufferDesc.Height = UINT(height);
+	swapChainDesc.BufferDesc.Width = SUINT(width);
+	swapChainDesc.BufferDesc.Height = SUINT(height);
 
 	// Set regular 32-bit surface for the back buffer.
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -184,8 +184,8 @@ STATUS BackBuffer::initialize()
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 
 	// Set up the description of the depth buffer.
-	depthBufferDesc.Width = UINT(width);
-	depthBufferDesc.Height = UINT(height);
+	depthBufferDesc.Width = SUINT(width);
+	depthBufferDesc.Height = SUINT(height);
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -268,8 +268,8 @@ STATUS BackBuffer::initialize()
 	device->RSSetState(aDXRasterState);
 	
 	// Setup the viewport for rendering.
-	viewport.Width = UINT(aDims.aWidth = width);
-	viewport.Height = UINT(aDims.aHeight = height);
+	viewport.Width = SUINT(aDims.aWidth = width);
+	viewport.Height = SUINT(aDims.aHeight = height);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
@@ -381,14 +381,14 @@ void BackBuffer::validate()
 	D3DDESTROY(backBuffer);
 	
 	// Update depth buffer description
-	depthBufferDesc.Width = UINT(windowDims.aWidth);
-	depthBufferDesc.Height = UINT(windowDims.aHeight);
+	depthBufferDesc.Width = SUINT(windowDims.aWidth);
+	depthBufferDesc.Height = SUINT(windowDims.aHeight);
 
 	G_SAFELY(device->CreateTexture2D(&depthBufferDesc, 0, &aDXDepthStencilBuffer));
 	G_SAFELY(device->CreateDepthStencilView(aDXDepthStencilBuffer, 0, &aDXDepthStencilView));
 
-	viewport.Width = UINT(aDims.aWidth = windowDims.aWidth);
-	viewport.Height = UINT(aDims.aHeight = windowDims.aHeight);
+	viewport.Width = SUINT(aDims.aWidth = windowDims.aWidth);
+	viewport.Height = SUINT(aDims.aHeight = windowDims.aHeight);
 
 	device->RSSetViewports(1, &viewport);
 }

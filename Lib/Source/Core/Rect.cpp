@@ -20,13 +20,13 @@ void  Rect::memcpySSE2(Rect * xDest, const Rect * xSrc)
 	}
 }
 
-byte Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
+char Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
 {
 	// Memcpy built just for Rect and is optimized for
 	// 64 bit architecture with use of 128 bit registers.
 	// DO NOT USE THIS!
 
-	byte result = 0;
+	char result = 0;
 
 	__asm
 	{

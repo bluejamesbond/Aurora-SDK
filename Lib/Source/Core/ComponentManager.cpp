@@ -52,7 +52,7 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
 	
-	if (addToDepthTracker(xChild, abs(depth)))
+	if (addToDepthTracker(xChild, abs__(depth)))
 	{
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
@@ -71,7 +71,7 @@ bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;
-	int neededZ = INT(xZ);
+	int neededZ = SINT(xZ);
 
 	if (maxZ <= neededZ)
 	{

@@ -52,10 +52,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	QuadExpansionVertex * vertices = xQuadData->aVertices;
 	void * mappedVertices = 0;
 
-	calcLeft = _max_flt(rectX, 0);
-	calcTop = _max_flt(rectY, 0);
-	calcRight = _min_flt(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-	calcBottom = _min_flt(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
+	calcLeft = max__(rectX, 0.0);
+	calcTop = max__(rectY, 0.0);
+	calcRight = min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+	calcBottom = min__(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
 
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
@@ -125,8 +125,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 		goto _createAndUpdateVertex;
 	}
 
-	texLeft = rectX > 0 ? 0.0f : abs(rectX);
-	texTop = rectY > 0 ? 0.0f : abs(rectY);
+	texLeft = rectX > 0 ? 0.0f : abs__(rectX);
+	texTop = rectY > 0 ? 0.0f : abs__(rectY);
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
@@ -147,10 +147,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 
 _createAndUpdateVertex:
 
-	left = _pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-	top = -_pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-	width = _pixelsToRelativeDistance_(winWidth, calcWidth);
-	height = _pixelsToRelativeDistance_(winHeight, calcHeight);
+	left = cvtpx2rp__(winWidth, constraints.aX + calcLeft);
+	top = -cvtpx2rp__(winHeight, constraints.aY + calcTop);
+	width = cvtpx2rd__(winWidth, calcWidth);
+	height = cvtpx2rd__(winHeight, calcHeight);
 
 	// Set up vertices
 	vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
@@ -160,10 +160,10 @@ _createAndUpdateVertex:
 										 xBorderSet->m_top.m_color.m_raw,
 										 xBorderSet->m_right.m_color.m_raw,
 									     xBorderSet->m_bottom.m_color.m_raw);
-	vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, xBorderSet->m_left.m_width),
-											pixelsToRelativeDistance(winHeight, xBorderSet->m_top.m_width),
-											pixelsToRelativeDistance(winWidth, xBorderSet->m_right.m_width),
-											pixelsToRelativeDistance(winHeight, xBorderSet->m_bottom.m_width));
+	vertices[0].aBorderWidths = D3DXVECTOR4(cvtpx2rd__(winWidth, xBorderSet->m_left.m_width),
+											cvtpx2rd__(winHeight, xBorderSet->m_top.m_width),
+											cvtpx2rd__(winWidth, xBorderSet->m_right.m_width),
+											cvtpx2rd__(winHeight, xBorderSet->m_bottom.m_width));
 
 	// Lock the vertex buffer.
 	xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));

@@ -93,7 +93,7 @@ namespace A2D {
 		void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
 		void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
 		void							setVisible(bool xVisibility);
-		void							setName(LPCWSTR  xName);
+		void							setName(wchar_t *  xName);
 		void							setBounds(Rect * xRect);
 		void							setBounds(float xLeft, float xTop, float xWidth, float xHeight);
 		void							setSize(float xWidth, float xHeight);

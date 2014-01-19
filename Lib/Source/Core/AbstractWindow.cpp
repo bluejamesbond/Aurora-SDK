@@ -65,7 +65,7 @@ Color AbstractWindow::getBorderColor()
 * @return LPCWSTR
 *			Long string representation of the name
 */
-LPCWSTR AbstractWindow::getName()
+wchar_t * AbstractWindow::getName()
 {
 	return aName;
 }
@@ -348,9 +348,9 @@ STATUS AbstractWindow::initialize()
 	aWindowDeactivated = new WindowEvent(this, WindowEvent::WINDOW_DEACTIVATED, NULL, WindowEvent::WINDOW_DEACTIVATED);
 	
 	// Initialize MouseEvent resources
-	POINT p;
-	p.x = LONG(aRect.aX);
-	p.y = LONG(aRect.aY);
+	Point p;
+	p.aX = aRect.aX;
+	p.aY = aRect.aY;
 	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
 	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
 	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);

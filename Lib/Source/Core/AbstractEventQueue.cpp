@@ -131,9 +131,9 @@ void AbstractEventQueue::run(int xThreadId)
 	aFrame->createResources();
 
 	// Create event handling resources
-	POINT p;
+	Point p;
 	Component comp;
-	p.x = p.y = 0;
+	p.aX = p.aY = 0.0f;
 	aMouseEvent = new MouseEvent(aFrame, MouseEvent::MOUSE_ENTERED, p, 1);
 	aFocusEvent = new FocusEvent(&comp, FocusEvent::FOCUS_FIRST);
 	aActionEvent = new ActionEvent(aFrame, ActionEvent::ACTION_FIRST, "init");
@@ -209,7 +209,6 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	bool isConsumedFocus = false;
 	bool isValidRegion = false;
 	bool noComponent = false;
-	POINT point;
 	int ID;
 	OrderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
@@ -218,11 +217,11 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 	// Prepare for event handling.
 	OrderedList<OrderedList<Component*>*>::Node<OrderedList<Component*>*> * node = componentLocations._end();
-	point = xEvent->getLocation();
+	Point& point = xEvent->getLocation();
 	ID = xEvent->getID();
 
 	#ifdef A2D_DE__
-	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.x, point.y);
+	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.aX, point.aY);
 	#endif // A2D_DE__
 	while (node)
 	{
@@ -233,8 +232,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			comp = comps->get(i);
 			eventRegion = comp->getVisibleRegion();
 			numPanels += 1;
-			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+			isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
+				point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
 
 			if (isValidRegion)
 			{
@@ -306,8 +305,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		eventRegion = source->getEventRegion();
 		eventRegion->aX = 0;
 		eventRegion->aY = 0;
-		isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-			point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+		isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
+			point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
 
 		if (isValidRegion)
 		{
@@ -359,14 +358,13 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	bool isDone = (isConsumedMouseMove == STATUS_OK && isConsumedMouse == STATUS_OK);
 
 	Rect * eventRegion;
-	POINT point;
 	int ID;
 	bool isValidRegion;
 
 	OrderedList<Component*> * comps;
 	EventSource * source;
 
-	point = xEvent->getLocation();
+	Point& point = xEvent->getLocation();
 	ID = xEvent->getID();
 
 	// Check components.
@@ -379,8 +377,8 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		{
 			source = comps->get(i);
 			eventRegion = source->getEventRegion();
-			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+			isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
+				point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
 
 			if (isValidRegion)
 			{
@@ -431,8 +429,8 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		eventRegion = source->getEventRegion();
 		eventRegion->aX = 0;
 		eventRegion->aY = 0;
-		isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-			point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+		isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
+			point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
 
 		if (isValidRegion)
 		{
@@ -544,7 +542,7 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 	OrderedList<Component*>::Node<Component*> * node;
 
 	int maxZ = aComponentEventSources.size() - 1;
-	int neededZ = INT(xZ);
+	int neededZ = SINT(xZ);
 
 	if (maxZ <= neededZ)
 	{
@@ -606,7 +604,7 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 {
 	int maxZ = aComponentEventSources.size();
-	int neededZ = INT(xZ);
+	int neededZ = SINT(xZ);
 
 	if (maxZ <= neededZ)
 	{

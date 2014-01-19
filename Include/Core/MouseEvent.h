@@ -21,6 +21,7 @@
 
 #include "ExtLibs.h"
 #include "AbstractEvent.h"
+#include "Point.h"
 
 using namespace std;
 
@@ -45,8 +46,8 @@ namespace A2D {
 
 		MouseEvent(string  xString); //<- for testing
 		MouseEvent(EventSource * xSource, int xEventID, int xLocX, int xLocY, int xClickCount);
-		MouseEvent(EventSource * xSource, int xEventID, POINT xPoint, int xClickCount);
-		MouseEvent(EventSource * xSource, int xEventID, POINT xPoint, int xClickCount, int xButton);
+		MouseEvent(EventSource * xSource, int xEventID, Point& xPoint, int xClickCount);
+		MouseEvent(EventSource * xSource, int xEventID, Point& xPoint, int xClickCount, int xButton);
 		virtual ~MouseEvent();
 
 		void print() const;
@@ -65,14 +66,14 @@ namespace A2D {
 		const static int BUTTON2 = 0x500B;
 		const static int BUTTON3 = 0x500C;
 
-		long							getX();
-		long							getY();
+		float							getX();
+		float							getY();
 		int								getButton();
 		int								getClickCount();
-		POINT							getLocation();			// might change POINT later
-		POINT							getAbsoluteLocation();
+		Point&							getLocation();			// might change POINT later
+		Point&							getAbsoluteLocation();
 
-		void							setLocation(POINT xPoint);
+		void							setLocation(Point& xPoint);
 
 	private:
 
@@ -80,7 +81,7 @@ namespace A2D {
 		string							aMouseName;
 		int								aClickCount;
 		int								aButton;
-		POINT							aPoint;
+		Point							aPoint;
 
 	};
 

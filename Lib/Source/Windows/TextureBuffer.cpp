@@ -28,8 +28,8 @@ STATUS TextureBuffer::initialize()
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 
 	// Setup the render target texture description.
-	textureDesc.Width = INT(aDims.aWidth);
-	textureDesc.Height = INT(aDims.aHeight);
+	textureDesc.Width = SINT(aDims.aWidth);
+	textureDesc.Height = SINT(aDims.aHeight);
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

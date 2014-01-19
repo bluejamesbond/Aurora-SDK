@@ -69,7 +69,7 @@ namespace A2D {
 		bool                         aShadowed;
 		bool                         aUndecorated;
 
-		LPCWSTR						 aName;
+		wchar_t *					 aName;
 
 		Dims						 aDrawableRegion;
 		Rect                         aRect;
@@ -98,7 +98,7 @@ namespace A2D {
 		Dims							getMaximumSize();
 		Rect							getBounds();
 		Dims					  		getSize();
-		LPCWSTR                         getName();
+		wchar_t *                         getName();
 		AbstractFrame		   *		getFrame();
 		bool                            isUndecorated();
 		int                             getDefaultCloseOperation();
@@ -154,7 +154,7 @@ namespace A2D {
 		virtual void                    setMinimumSize(float xWidth, float xHeight) = 0;
 		virtual void                    setMaximumSize(float xWidth, float xHeight) = 0;
 		virtual void					setSize(float xWidth, float xHeight) = 0;
-		virtual void                    setName(LPCWSTR xName) = 0;
+		virtual void                    setName(wchar_t * xName) = 0;
 		virtual void                    setUndecorated(bool xUndecoratedFlag) = 0;
 		virtual void                    setDefaultCloseOperation(int xCloseOperation) = 0;
 		virtual void                    setLocationRelativeTo(AbstractWindow * xWindow) = 0;

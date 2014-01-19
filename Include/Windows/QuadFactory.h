@@ -136,10 +136,10 @@ namespace A2D {
 			ColoredTextureVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = max__(rectX, 0.0f);
+			calcTop = max__(rectY, 0.0f);
+			calcRight = min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+			calcBottom = min__(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
 
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
@@ -149,8 +149,8 @@ namespace A2D {
 			top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
 			bottom = top - calcHeight;
 
-			texLeft = rectX > 0 ? 0.0f : abs(rectX);
-			texTop = rectY > 0 ? 0.0f : abs(rectY);
+			texLeft = rectX > 0 ? 0.0f : abs__(rectX);
+			texTop = rectY > 0 ? 0.0f : abs__(rectY);
 			texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 			texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
@@ -230,21 +230,21 @@ namespace A2D {
 			TextureVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = max__(rectX, 0.0f);
+			calcTop = max__(rectY, 0.0f);
+			calcRight = min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+			calcBottom = min__(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
 
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
 
-			left = _pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -_pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = _pixelsToRelativePoint(winWidth, constraints.aX + calcRight);
-			bottom = -_pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
+			left = cvtpx2rp__(winWidth, constraints.aX + calcLeft);
+			top = -cvtpx2rp__(winHeight, constraints.aY + calcTop);
+			right = cvtpx2rd__(winWidth, constraints.aX + calcRight);
+			bottom = -cvtpx2rd__(winHeight, constraints.aY + calcBottom);
 
-			texLeft = rectX > 0 ? 0.0f : abs(rectX);
-			texTop = rectY > 0 ? 0.0f : abs(rectY);
+			texLeft = rectX > 0 ? 0.0f : abs__(rectX);
+			texTop = rectY > 0 ? 0.0f : abs__(rectY);
 			texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 			texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
@@ -310,15 +310,15 @@ namespace A2D {
 			ColorVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = constraints.aX + max(rectX, 0);
-			calcTop = constraints.aY + max(rectY, 0);
-			calcRight = constraints.aX + min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = constraints.aY + min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = constraints.aX + max__(rectX, 0.0f);
+			calcTop = constraints.aY + max__(rectY, 0.0f);
+			calcRight = constraints.aX + min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+			calcBottom = constraints.aY + min__(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
 
-			left = _pixelsToRelativePoint_(winWidth, calcLeft);
-			top = -_pixelsToRelativePoint_(winHeight, calcTop);
-			right = _pixelsToRelativePoint_(winWidth, calcRight);
-			bottom = -_pixelsToRelativePoint_(winHeight, calcBottom);
+			left = cvtpx2rp__(winWidth, calcLeft);
+			top = -cvtpx2rp__(winHeight, calcTop);
+			right = cvtpx2rp__(winWidth, calcRight);
+			bottom = -cvtpx2rp__(winHeight, calcBottom);
 			
 			Color3D& topLeftColor = xPaint->aStart;
 			Color3D& topRightColor = xPaint->aStart;

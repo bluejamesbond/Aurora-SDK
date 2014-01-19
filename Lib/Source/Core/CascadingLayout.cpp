@@ -50,25 +50,25 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		display = component->aDisplay;
 		position = component->aPosition;
 
-		width = TO_PIXELS(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
-		height = TO_PIXELS(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
+		width = cvtsu2px__(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
+		height = cvtsu2px__(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
 
-		marginLeft = TO_PIXELS(component->aMarginLeftUnits, component->aMarginLeft, compRect.aWidth);
-		marginTop = TO_PIXELS(component->aMarginTopUnits, component->aMarginTop, compRect.aHeight);
-		marginBottom = TO_PIXELS(component->aMarginBottomUnits, component->aMarginBottom, compRect.aHeight);
-		marginRight = TO_PIXELS(component->aMarginRightUnits, component->aMarginRight, compRect.aWidth);
+		marginLeft = cvtsu2px__(component->aMarginLeftUnits, component->aMarginLeft, compRect.aWidth);
+		marginTop = cvtsu2px__(component->aMarginTopUnits, component->aMarginTop, compRect.aHeight);
+		marginBottom = cvtsu2px__(component->aMarginBottomUnits, component->aMarginBottom, compRect.aHeight);
+		marginRight = cvtsu2px__(component->aMarginRightUnits, component->aMarginRight, compRect.aWidth);
 
-		positionLeft = TO_PIXELS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
-		positionTop = TO_PIXELS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
-		positionBottom = TO_PIXELS(component->aPositionBottomUnits, component->aPositionBottom, compRect.aHeight);
-		positionRight = TO_PIXELS(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
+		positionLeft = cvtsu2px__(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
+		positionTop = cvtsu2px__(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
+		positionBottom = cvtsu2px__(component->aPositionBottomUnits, component->aPositionBottom, compRect.aHeight);
+		positionRight = cvtsu2px__(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
 		///********************************************************************************//
 
 		if (position == Styles::RELATIVE_)
 		{
 			if (display == Styles::INLINE_BLOCK)
 			{
-				if ((marginLeft + mX + width + marginRight) > (compRect.aWidth + FLT_ONE))
+				if ((marginLeft + mX + width + marginRight) > (compRect.aWidth + 1.0f))
 				{
 					mX = marginLeft;
 					mY = mY + maxElementHeight + marginTop;
@@ -155,7 +155,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			}
 			else/*if (display == Styles::BLOCK)*/
 			{
-				mX = FLT_ZERO;
+				mX = 0.0f;
 				mY = mY + height + marginBottom;
 			}
 		}

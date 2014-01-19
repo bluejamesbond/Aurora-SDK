@@ -79,10 +79,10 @@ namespace A2D{
 		static Paint						ALIZARIN_TO_POMEGRANATE_VERTICAL;
 		static Paint						GREEN_SEA_TO_POMEGRANATE_VERTICAL;
 
-		float								aStartX = FLT_ZERO;
-		float								aStartY = FLT_ZERO;
-		float								aEndX = FLT_ZERO;
-		float								aEndY = FLT_ZERO;
+		float								aStartX = 0.0f;
+		float								aStartY = 0.0f;
+		float								aEndX = 0.0f;
+		float								aEndY = 0.0f;
 
 		Color3D								aStart;
 		Color3D								aEnd;

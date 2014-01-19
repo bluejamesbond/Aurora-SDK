@@ -173,7 +173,7 @@ namespace A2D {
 		virtual void					setSize(Dims * xSize);
 		virtual void					setBounds(Rect * xRect);
 		virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight);
-		virtual void                    setName(LPCWSTR xName);
+		virtual void                    setName(wchar_t * xName);
 		virtual void                    setUndecorated(bool xUndecoratedFlag);
 		virtual void                    setDefaultCloseOperation(int xCloseOperation);
 		virtual void                    setLocationRelativeTo(AbstractWindow * xWindow);

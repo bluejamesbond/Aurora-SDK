@@ -72,6 +72,8 @@
 // - Cached m_t_array is changed
 // - Check for m_arrayed - requires testing
 
+#include "../_A2DCommon.h"
+
 namespace A2D{
 
 	template <class T>
@@ -312,11 +314,11 @@ namespace A2D{
 			// Calculate ammmortization values based on 
 			// the size of T. This will soon have some performance
 			// changes.
-			m_heap_ammort_length = max(sizeof(T), 80) / sizeof(T);
+			m_heap_ammort_length = max__(sizeof(T), 80) / sizeof(T);
 
 			//  Higher size T indicates more
 			// ammortizations during OrderedList lifetime.
-			m_heapptr_ammort_length = max(m_heap_ammort_length / 20, 5);
+			m_heapptr_ammort_length = max__(m_heap_ammort_length / 20, 5);
 			m_fragments_ammort_length = 5;
 
 			// Malloc and prepare the OrderedList
@@ -410,7 +412,7 @@ namespace A2D{
 		{
 			m_arrayed = false;
 
-			index = min(abs(index), m_size);
+			index = min__(abs__(index), m_size);
 
 			if (index == 0)
 			{
@@ -687,8 +689,8 @@ namespace A2D{
 			m_arrayed = false;
 
 			// Precaution
-			start = abs(start);
-			items = abs(items);
+			start = abs__(start);
+			items = abs__(items);
 
 			if (m_size == 0 || (start + items) > m_size) return;
 

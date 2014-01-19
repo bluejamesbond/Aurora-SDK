@@ -71,10 +71,10 @@ typedef unsigned int STATUS;
 #define	DESTROY(x)										if(x)			{ delete x; x = 0; }
 #define D3DDESTROY(x)									if(x)			{ x->Release(); x = 0; }
 #define THREAD_DESTROY(x)								if(x)			{ x->stop(); delete x; x = 0; }
-#define FLOAT(x)										static_cast<float>(x)
-#define INT(x)											static_cast<int>(x)
-#define LONG(x)											static_cast<long>(x)
-#define UINT(x)											static_cast<unsigned int>(x)
+#define SFLOAT(x)										static_cast<float>(x)
+#define SINT(x)											static_cast<int>(x)
+#define SLONG(x)										static_cast<long>(x)
+#define SUINT(x)										static_cast<unsigned int>(x)
 #define IMPLEMENT										= 0
 
 // System independent definitions
@@ -89,36 +89,36 @@ SYSINLINE float SYSCDECL pixToRelPoint_cpy_cpy(float xPixelDimension, float xPix
 
 SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, float xPixels)
 {
-	return abs(xPixels) / xPixelDimension * 2;
+	return xPixels / xPixelDimension * 2;
 }
 
 // Fastest min/max/abs functions
-SYSINLINE float SYSCDECL max_f_cpy_cpy(float a, float b)
+SYSINLINE float SYSCDECL max_cpy_cpy(float a, float b)
 {
 	return (((a) > (b)) ? (a) : (b));
 }
 
-SYSINLINE float SYSCDECL min_f_cpy_cpy(float a, float b)
+SYSINLINE float SYSCDECL min_cpy_cpy(float a, float b)
 {
 	return (((a) < (b)) ? (a) : (b));
 }
 
-SYSINLINE int SYSCDECL max_i_cpy_cpy(int a, int b)
-{
-	return (((a) > (b)) ? (a) : (b));
-}
-
-SYSINLINE int SYSCDECL min_i_cpy_cpy(int a, int b)
-{
-	return (((a) < (b)) ? (a) : (b));
-}
-
-SYSINLINE int SYSCDECL abs_f_cpy(float a)
+SYSINLINE float SYSCDECL abs_cpy(float a)
 {
 	return (((a) < (0.0f)) ? (-a) : (a));
 }
 
-SYSINLINE int SYSCDECL abs_i_cpy(int a)
+SYSINLINE int SYSCDECL max_cpy_cpy(int a, int b)
+{
+	return (((a) > (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL min_cpy_cpy(int a, int b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL abs_cpy(int a)
 {
 	return (((a) < (0)) ? (-a) : (a));
 }
@@ -126,21 +126,16 @@ SYSINLINE int SYSCDECL abs_i_cpy(int a)
 //High performance min/max/abs for
 //floats and int. Any extra variables that need
 //to be used should be added.
-#define max_f(x, y)										max_f_cpy_cpy(x, y)
-#define min_f(x,y)										min_f_cpy_cpy(x, y)
-
-#define max_i(x,y)										max_i_cpy_cpy(x,y)
-#define min_i(x,y)										min_i_cpy_cpy(x, y)
-
-#define abs_f(x)										abs_f_cpy(x)
-#define abs_i(x)										abs_i_cpy(x)
+#define max__(x, y)											max_cpy_cpy(x, y)
+#define min__(x, y)											min_cpy_cpy(x, y)
+#define abs__(x)											abs_cpy(x)
 
 // High performance pixel to relative distance
 // functions.
-#define cvtpx2rp(x, y)									pixToRelPoint_cpy_cpy(x, y)
-#define cvtpx2rd(x, y)									pixToRelDistance_cpy_cpy(x, y)
+#define cvtpx2rp__(x, y)									pixToRelPoint_cpy_cpy(x, y)
+#define cvtpx2rd__(x, y)									pixToRelDistance_cpy_cpy(x, y)
 
 // Convert from units to distance
-#define cvtu2px(unit, value, range)						((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
+#define cvtsu2px__(unit, value, range)						((unit == A2D::Styles::PERCENTAGE) ? SFLOAT(range * (value / 100)) : (value))
 
 #endif

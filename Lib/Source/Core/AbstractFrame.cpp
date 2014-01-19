@@ -15,7 +15,7 @@ AbstractFrame::~AbstractFrame()
 	DESTROY(aGraphics);
 }
 
-void AbstractFrame::setName(LPCWSTR xName)
+void AbstractFrame::setName(wchar_t * xName)
 {
 	aWindow->setName(xName);
 }
