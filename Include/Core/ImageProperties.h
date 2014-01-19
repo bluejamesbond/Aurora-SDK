@@ -32,9 +32,9 @@ namespace A2D {
 
 	struct ImageProperties
 	{
-		int								aOptRepeat = _OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y;      // background-repeat (CSS)
-		int								aOptSizeX = _OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
-		int								aOptSizeY = _OPT_BACKGROUND_SIZE_COVER;       // background-size-x  (CSS)
+		int								aOptRepeat = 0;      // background-repeat (CSS)
+		int								aOptSizeX = 0;       // background-size-x  (CSS)
+		int								aOptSizeY = 0;       // background-size-x  (CSS)
 		int								_alignment = 0; // Use this later if you want.
 
 		static void	memcpySSE2(ImageProperties * xDest, const ImageProperties * xSrc);
