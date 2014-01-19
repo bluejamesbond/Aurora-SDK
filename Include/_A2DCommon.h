@@ -12,59 +12,47 @@
 //
 //------------------------------------------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
+// Style
+//------------------------------------------------------------------------------
+#include "Core/Style.h"
 
-#define _PIPELINE_PREPROCESS_START                       0x2510
-#define _PIPELINE_PREPROCESS_CREATE                      0x2511
-#define _PIPELINE_PREPROCESS_FINISH                      0x2512
+// Debugging
+//------------------------------------------------------------------------------
+#include "_A2DDebug.h"
 
-#define _GRAPHICS_ACTIVE_BUFFER_PRIMARY   		         0x3511
-#define _GRAPHICS_ACTIVE_BUFFER_SECONDARY		         0x3512
-#define _GRAPHICS_ACTIVE_BUFFER_TERTIARY				 0x3513
+// Set namespace
+//------------------------------------------------------------------------------
+using namespace A2D;
 
+// Core Constants
+//------------------------------------------------------------------------------
 #define _WINDOW_BOX_SHADOW_SAFELYTY_RATIO				 2
 #define _WINDOW_RESIZE_EDGE_DISTANCE                     5
 #define _WINDOW_RESIZE_DEFAULT_DISTANCE					 3
 #define _WINDOW_MOVE_BAR_DISTANCE						 25
 #define _WINDOW_MOVE_DEFAULT_DISTANCE					 10
 
-#define _GRAPHICSTOOLKIT_BASIC_TEXTURE_SHADER			 0x4000
-#define _GRAPHICSTOOLKIT_VERTICAL_BLUR_TEXTURE_SHADER    0x4001
-#define _GRAPHICSTOOLKIT_HORIZONTAL_BLUR_TEXTURE_SHADER  0x4002
-
-#define	_OPT_BACKGROUND_REPEAT_REPEAT_X					 0x3001
-#define	_OPT_BACKGROUND_REPEAT_REPEAT_Y					 0x3010
-#define	_OPT_BACKGROUND_REPEAT_NO_REPEAT				 0x3003
-
-#define	_OPT_BACKGROUND_POSITION_CENTER					 0x3004
-#define	_OPT_BACKGROUND_POSITION_TOP					 0x3005
-#define	_OPT_BACKGROUND_POSITION_RIGHT					 0x3006
-#define	_OPT_BACKGROUND_POSITION_BOTTOM					 0x3007
-#define	_OPT_BACKGROUND_POSITION_LEFT					 0x3008
-
-#define	_OPT_BACKGROUND_SIZE_COVER						 0x3009
-#define	_OPT_BACKGROUND_SIZE_STRETCH					 0x300A
-
-// Debugging
-#include "_A2DDebug.h"
-
 // System error focusing on speed
+//------------------------------------------------------------------------------
 #ifndef __STATUS_DEFINED__
 #define __STATUS_DEFINED__
+
 typedef unsigned int STATUS;
 #define _STATUS_TYPEDEF_(_sc)							((STATUS)_sc)
+
 #define STATUS_OK										_STATUS_TYPEDEF_(0)
 #define STATUS_FAIL										_STATUS_TYPEDEF_(1)
 #define STATUS_RETRY									_STATUS_TYPEDEF_(2)
 #define STATUS_FORCE_QUIT								_STATUS_TYPEDEF_(3)
+
 #endif									
 
 // Enable/Disable debugging
+//------------------------------------------------------------------------------
 #define A2D_DE__										"Comment out this line to remove debugging."
 
 // Readability macros
+//------------------------------------------------------------------------------
 #define G_SAFELY(hr)									if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
 #define SAFELY(hr)										if(hr != 0)	{ SYSOUT_STR("Failure detected");	return STATUS_FAIL; }
 #define NULLCHECK(hr)									if(!hr)		{ SYSOUT_STR("Failure detected");	return STATUS_FAIL; }
@@ -78,10 +66,12 @@ typedef unsigned int STATUS;
 #define IMPLEMENT										= 0
 
 // System independent definitions
+//------------------------------------------------------------------------------
 #define SYSINLINE										__forceinline
 #define	SYSCDECL										__cdecl
 
 // Functions for calculating relative point
+//------------------------------------------------------------------------------
 SYSINLINE float SYSCDECL pixToRelPoint_cpy_cpy(float xPixelDimension, float xPixels)
 {
 	return xPixels / (xPixelDimension / 2) - 1;
@@ -93,6 +83,7 @@ SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, float x
 }
 
 // Fastest min/max/abs functions
+//------------------------------------------------------------------------------
 SYSINLINE float SYSCDECL max_cpy_cpy(float a, float b)
 {
 	return (((a) > (b)) ? (a) : (b));
@@ -126,16 +117,19 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
 //High performance min/max/abs for
 //floats and int. Any extra variables that need
 //to be used should be added.
-#define max__(x, y)											max_cpy_cpy(x, y)
-#define min__(x, y)											min_cpy_cpy(x, y)
-#define abs__(x)											abs_cpy(x)
+//------------------------------------------------------------------------------
+#define max__(x, y)										max_cpy_cpy(x, y)
+#define min__(x, y)										min_cpy_cpy(x, y)
+#define abs__(x)										abs_cpy(x)
 
 // High performance pixel to relative distance
 // functions.
-#define cvtpx2rp__(x, y)									pixToRelPoint_cpy_cpy(x, y)
-#define cvtpx2rd__(x, y)									pixToRelDistance_cpy_cpy(x, y)
+//------------------------------------------------------------------------------
+#define cvtpx2rp__(x, y)								pixToRelPoint_cpy_cpy(x, y)
+#define cvtpx2rd__(x, y)								pixToRelDistance_cpy_cpy(x, y)
 
 // Convert from units to distance
-#define cvtsu2px__(unit, value, range)						((unit == A2D::Styles::PERCENTAGE) ? SFLOAT(range * (value / 100)) : (value))
+//------------------------------------------------------------------------------
+#define cvtsu2px__(x_units, x_value, x_range)			((x_units == Style::PERCENTAGE) ? SFLOAT(x_range * (x_value / 100.0)) : (x_value))
 
 #endif

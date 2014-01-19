@@ -105,7 +105,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 	}
 }
 
-void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Styles::Background xBackgroundSettings)
+void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Style::Background xBackgroundSettings)
 {
 	Rect * clip = aClip;
 

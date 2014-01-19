@@ -25,7 +25,7 @@ STATUS QuadFactory::initialize()
 }
 
 // Temporarily moved to cpp to make the build process faster
-void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Styles::Background xBackgroundSettings)
+void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Style::Background xBackgroundSettings)
 {
 	Rect& constraints = aConstraints;
 	Rect * textureClip = xTexture->GetClip();
@@ -60,7 +60,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	calcHeight = calcBottom - calcTop;
 	calcWidth = calcRight - calcLeft;
 		
-	if (xBackgroundSettings.m_layout == Styles::Background::Layout::COVER)
+	if (xBackgroundSettings.m_layout == Style::Background::Layout::COVER)
 	{
 		float usableWidth = rectWidth, 
 			  usableHeight = rectHeight,
@@ -130,14 +130,14 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadDat
 	texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
 	texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
 
-	if (xBackgroundSettings.m_layout == Styles::Background::Layout::REPEAT)
+	if (xBackgroundSettings.m_layout == Style::Background::Layout::REPEAT)
 	{
 		texelLeft = texLeft / textureWidth;
 		texelTop = texTop / textureHeight;
 		texelRight = (calcWidth + texLeft) / textureWidth;
 		texelBottom = (calcHeight + texTop) / textureHeight;
 	}
-	else /*(xBackgroundSettings == Styles::STRETCH_WIDTH_HEIGHT)*/
+	else /*(xBackgroundSettings == Style::STRETCH_WIDTH_HEIGHT)*/
 	{
 		texelLeft = texLeft / rectWidth;
 		texelTop = texTop / rectHeight;

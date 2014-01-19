@@ -24,7 +24,7 @@
 #include "../Core/Paint.h"
 #include "../Core/Pipelineable.h"
 #include "../Core/BorderSet.h"
-#include "../Core/Styles.h"
+#include "../Core/Style.h"
 
 #include "ExtLibs.h"
 #include "DXUtils.h"
@@ -107,7 +107,7 @@ namespace A2D {
 			device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 
-		void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Styles::Background xBackground);
+		void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, BorderSet * xBorderSet, Paint * xPaint, Style::Background xBackground);
 
 		inline bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 		{

@@ -102,7 +102,7 @@ namespace A2D {
 		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 		
-		void							drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Styles::Background xBackgroundSettings);
+		void							drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Style::Background xBackgroundSettings);
 		
 	public:
 

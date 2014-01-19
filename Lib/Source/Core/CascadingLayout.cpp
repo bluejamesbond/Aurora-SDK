@@ -16,8 +16,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		marginLeft, marginTop, marginRight, marginBottom, maxElementHeight = 0.0f, tempVerticalOffset,
 		positionLeft, positionTop, positionRight, positionBottom;
 
-	Styles::Display display;
-	Styles::Position position;
+	Style::Display display;
+	Style::Position position;
 	Rect& compRect = x_component.aOptRegion;
 	Component* component;
 
@@ -64,9 +64,9 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		positionRight = cvtsu2px__(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
 		///********************************************************************************//
 
-		if (position == Styles::RELATIVE_)
+		if (position == Style::RELATIVE_)
 		{
-			if (display == Styles::INLINE_BLOCK)
+			if (display == Style::INLINE_BLOCK)
 			{
 				if ((marginLeft + mX + width + marginRight) > (compRect.aWidth + 1.0f))
 				{
@@ -85,7 +85,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 					firstElement = false;
 				}
 			}
-			else/*if (display == Styles::BLOCK)*/
+			else/*if (display == Style::BLOCK)*/
 			{
 				mX += marginLeft;
 				mY += marginTop;
@@ -94,20 +94,20 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 				firstElement = false;
 			}
 		}
-		else/*if (position == Styles::ABSOLUTE_)*/
+		else/*if (position == Style::ABSOLUTE_)*/
 		{
 			aX = marginLeft;
 			aY = marginTop;
 
 			// left: auto | right: auto
-			if (positionLeft == Styles::AUTO && positionRight == Styles::AUTO) {}
+			if (positionLeft == Style::AUTO && positionRight == Style::AUTO) {}
 			// left: auto | right: X
-			else if (positionLeft == Styles::AUTO)
+			else if (positionLeft == Style::AUTO)
 			{
 				aX += (compRect.aWidth - width) - positionRight;
 			}
 			// left: X | right: auto
-			else if (positionRight == Styles::AUTO)
+			else if (positionRight == Style::AUTO)
 			{
 				aX += positionLeft;
 			}
@@ -119,14 +119,14 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			}
 
 			// top: auto | bottom: auto
-			if (positionTop == Styles::AUTO && positionBottom == Styles::AUTO) {}
+			if (positionTop == Style::AUTO && positionBottom == Style::AUTO) {}
 			// top: auto | bottom: X
-			else if (positionTop == Styles::AUTO)
+			else if (positionTop == Style::AUTO)
 			{
 				aY += (compRect.aWidth - width) - positionBottom;
 			}
 			// top: X | bottom: auto
-			else if (positionBottom == Styles::AUTO)
+			else if (positionBottom == Style::AUTO)
 			{
 				aY += positionTop;
 			}
@@ -138,14 +138,14 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			}
 		}
 
-		if (position == Styles::RELATIVE_)
+		if (position == Style::RELATIVE_)
 		{
 			/***********************************************/
 			component->aVisible = true;
 			component->setBounds(mX + positionLeft + positionRight, mY + positionTop + positionBottom, width, height);
 			/***********************************************/
 
-			if (display == Styles::INLINE_BLOCK)
+			if (display == Style::INLINE_BLOCK)
 			{
 				mX = mX + width + marginRight;
 				// mY = mY;
@@ -153,13 +153,13 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 				// Inline block uses last_height
 				maxElementHeight = (tempVerticalOffset = marginBottom + height) > maxElementHeight ? tempVerticalOffset : maxElementHeight;
 			}
-			else/*if (display == Styles::BLOCK)*/
+			else/*if (display == Style::BLOCK)*/
 			{
 				mX = 0.0f;
 				mY = mY + height + marginBottom;
 			}
 		}
-		else/*if (position == Styles::ABSOLUTE_)*/
+		else/*if (position == Style::ABSOLUTE_)*/
 		{
 			/***********************************************/
 			component->aVisible = true;

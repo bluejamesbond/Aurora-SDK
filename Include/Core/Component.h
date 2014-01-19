@@ -26,7 +26,7 @@
 #include "Pipeline.h"
 #include "Rect.h"
 #include "Paint.h"
-#include "Styles.h"
+#include "Style.h"
 #include "CascadingLayout.h"
 #include "BorderSet.h"
 #include GRAPHICS__
@@ -72,27 +72,27 @@ namespace A2D {
 		Pipeline				*		aPipeline = NULL;
 		ComponentManager        *       aComponentManager = NULL;
 		BorderSet						m_borderSet;
-		Styles::Background				m_backgroundStyle;
+		Style::Background				m_backgroundStyle;
 
 	protected:
 
 		bool                            aVisible = true;
 
-		Styles::Display					aDisplay = Styles::Display::BLOCK;
-		Styles::Position				aPosition = Styles::Position::RELATIVE_;
+		Style::Display					aDisplay = Style::Display::BLOCK;
+		Style::Position				aPosition = Style::Position::RELATIVE_;
 
-		Styles::Units					aSizeWidthUnits = Styles::Units::PIXEL;
-		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;	
+		Style::Units					aSizeWidthUnits = Style::Units::PIXEL;
+		Style::Units					aSizeHeightUnits = Style::Units::PIXEL;	
 		
-		Styles::Units					aMarginLeftUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginTopUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginBottomUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginRightUnits = Styles::Units::PIXEL;
+		Style::Units					aMarginLeftUnits = Style::Units::PIXEL;
+		Style::Units					aMarginTopUnits = Style::Units::PIXEL;
+		Style::Units					aMarginBottomUnits = Style::Units::PIXEL;
+		Style::Units					aMarginRightUnits = Style::Units::PIXEL;
 
-		Styles::Units					aPositionLeftUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionTopUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
+		Style::Units					aPositionLeftUnits = Style::Units::PIXEL;
+		Style::Units					aPositionTopUnits = Style::Units::PIXEL;
+		Style::Units					aPositionBottomUnits = Style::Units::PIXEL;
+		Style::Units					aPositionRightUnits = Style::Units::PIXEL;
 		
 		float							aSizeWidth = 0.0f;
 		float							aSizeHeight = 0.0f;
@@ -109,12 +109,12 @@ namespace A2D {
 
 	public:
 		
-		void							setPosition(Styles::Position xPosition);
-		void							setDisplay(Styles::Display xDisplay);
-		void							setFloat(Styles::Float xFloat);
-		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
-		void							setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
-		void							setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
+		void							setPosition(Style::Position xPosition);
+		void							setDisplay(Style::Display xDisplay);
+		void							setFloat(Style::Float xFloat);
+		void							setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight);
+		void							setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void							setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
 
 		void							forceBounds(bool xForce);
 	

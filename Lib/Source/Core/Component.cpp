@@ -174,7 +174,7 @@ void Component::forceBounds(bool xForce)
 	aForced = xForce;
 }
 
-void Component::setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight)
+void Component::setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight)
 {
 	aSizeWidthUnits = xWidthUnits;
 	aSizeHeightUnits = xHeightUnits;
@@ -183,12 +183,12 @@ void Component::setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units x
 	aSizeHeight = xHeight;
 }
 
-void Component::setDisplay(Styles::Display xDisplay)
+void Component::setDisplay(Style::Display xDisplay)
 {
 	aDisplay = xDisplay;
 }
 
-void Component::setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom)
+void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
 	aMarginLeftUnits = xLeftUnits;
 	aMarginTopUnits = xTopUnits;
@@ -201,7 +201,7 @@ void Component::setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units 
 	aMarginRight = xRight;
 }
 
-void Component::setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom)
+void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
 	aPositionLeftUnits = xLeftUnits;
 	aPositionTopUnits = xTopUnits;
@@ -214,7 +214,7 @@ void Component::setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Un
 	aPositionRight = xRight;
 }
 
-void Component::setPosition(Styles::Position xPosition)
+void Component::setPosition(Style::Position xPosition)
 {
 	aPosition = xPosition;
 }
