@@ -109,10 +109,10 @@ namespace A2D {
 
 	protected:
 
-		virtual STATUS					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
-		virtual STATUS					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
-		virtual STATUS					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
-		virtual STATUS					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
+		virtual STATUS					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) IMPLEMENT;
+		virtual STATUS					createPlatformCompatibleWindow(AbstractWindow ** xWindow) IMPLEMENT;
+		virtual STATUS					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) IMPLEMENT;
+		virtual STATUS					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) IMPLEMENT;
 		
 	public:
 

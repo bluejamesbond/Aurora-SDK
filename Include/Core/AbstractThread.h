@@ -35,7 +35,7 @@ namespace A2D {
 	public:
 
 		AbstractThread(Runnable * xRunnable);
-		virtual ~AbstractThread() = 0;
+		virtual ~AbstractThread() IMPLEMENT;
 
 	private:
 
@@ -61,13 +61,13 @@ namespace A2D {
 	public:
 		
 		virtual int	 id();
-		virtual bool start() = 0;
-		virtual void interrupt() = 0;
-		virtual void resume() = 0;
-		virtual void stop() = 0;
-		virtual bool isAlive() = 0;
-		virtual void waitAll() = 0;
-		virtual int getCurrentThreadId() = 0;
+		virtual bool start() IMPLEMENT;
+		virtual void interrupt() IMPLEMENT;
+		virtual void resume() IMPLEMENT;
+		virtual void stop() IMPLEMENT;
+		virtual bool isAlive() IMPLEMENT;
+		virtual void waitAll() IMPLEMENT;
+		virtual int getCurrentThreadId() IMPLEMENT;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ABSTRACT

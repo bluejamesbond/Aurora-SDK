@@ -20,9 +20,10 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "GXSettings.h"
 #include "AbstractWindow.h"
-#include "../_A2DCommon.h"
 
 namespace A2D {
 
@@ -59,15 +60,15 @@ namespace A2D {
 		Dims							getSize();
 		GXSettings				  *		getSettings();
 
-		virtual void                    setActive() = 0;
-		virtual void                    swap() = 0;
-		virtual void                    clear() = 0;
-		virtual void                    setZBuffer(bool val) = 0;
-		virtual void					validate() = 0;
+		virtual void                    setActive() IMPLEMENT;
+		virtual void                    swap() IMPLEMENT;
+		virtual void                    clear() IMPLEMENT;
+		virtual void                    setZBuffer(bool val) IMPLEMENT;
+		virtual void					validate() IMPLEMENT;
 
 	public:
 
-		virtual STATUS                 initialize() = 0;
+		virtual STATUS                 initialize() IMPLEMENT;
 
 	};
 }

@@ -59,12 +59,12 @@ namespace A2D {
 
 	protected:
 
-		virtual STATUS					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) = 0;
-		virtual unsigned int			getPolygonLayoutElementCount() = 0;
-		virtual	LPCSTR					getTechniqueName() = 0;
-		virtual ID3D10Effect		**	getEffect() = 0;
-		virtual LPCWSTR					getEffectName() = 0;
-		virtual STATUS					getUsableVariablePointers(ID3D10Effect * xEffect) = 0;
+		virtual STATUS					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) IMPLEMENT;
+		virtual unsigned int			getPolygonLayoutElementCount() IMPLEMENT;
+		virtual	LPCSTR					getTechniqueName() IMPLEMENT;
+		virtual ID3D10Effect		**	getEffect() IMPLEMENT;
+		virtual LPCWSTR					getEffectName() IMPLEMENT;
+		virtual STATUS					getUsableVariablePointers(ID3D10Effect * xEffect) IMPLEMENT;
 
 	public:
 

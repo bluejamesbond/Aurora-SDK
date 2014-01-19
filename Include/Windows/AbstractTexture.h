@@ -58,12 +58,12 @@ namespace A2D {
 		void							SetClip(Rect * xClip, int xIndex = 0);
 
 		// Virtual
-		virtual void			*		getPlatformCompatibleResource() = 0;
-		virtual	bool					hasAlpha() = 0;
+		virtual void			*		getPlatformCompatibleResource() IMPLEMENT;
+		virtual	bool					hasAlpha() IMPLEMENT;
 
 	public:
 
-		virtual STATUS                 initialize() = 0;
+		virtual STATUS                 initialize() IMPLEMENT;
 
 	};
 

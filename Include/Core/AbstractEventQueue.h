@@ -100,8 +100,8 @@ namespace A2D{
 	public:
 
 		// Queue
-		virtual bool                    getQueueLock() = 0;
-		virtual void					releaseQueueLock() = 0;
+		virtual bool                    getQueueLock() IMPLEMENT;
+		virtual void					releaseQueueLock() IMPLEMENT;
 		Runnable *						peekEvent();
 		void							popEvent();
 		bool							hasEvent();
@@ -142,7 +142,7 @@ namespace A2D{
 		void							removeAllEvents();
 		void							run(int xThreadId);
 
-		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) = 0;
+		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) IMPLEMENT;
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ABSTRACT

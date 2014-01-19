@@ -64,7 +64,7 @@ namespace A2D {
 		virtual STATUS			addMouseMotionListener(MouseMotionListener * xListener);
 		virtual STATUS			addActionListener(ActionListener * xListener);
 
-		virtual Rect *			getEventRegion() = 0;
+		virtual Rect *			getEventRegion() IMPLEMENT;
 
 		bool					operator==(EventSource& xSource);
 

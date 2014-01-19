@@ -45,7 +45,7 @@ namespace A2D {
 
 		virtual STATUS 		addFocusListener(FocusListener * xListener);
 
-		Rect				*	getEventRegion() = 0;
+		Rect				*	getEventRegion() IMPLEMENT;
 
 	protected:
 
