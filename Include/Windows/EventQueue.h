@@ -29,42 +29,42 @@
 
 namespace A2D {
 
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class Frame;
-	class Thread;
+    class Frame;
+    class Thread;
 
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class EventQueue : public AbstractEventQueue
-	{
-	public:
+    class EventQueue : public AbstractEventQueue
+    {
+    public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+        EventQueue::EventQueue(AbstractFrame * xFrame);
 
-		EventQueue::~EventQueue();
+        EventQueue::~EventQueue();
 
-	private:
+    private:
 
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
+        HANDLE aEventQueueLock;
+        HINSTANCE aHIsntance;
 
-	public:
+    public:
 
-		// Queue
-		virtual bool                    getQueueLock();
-		virtual void                    releaseQueueLock();
+        // Queue
+        virtual bool                    getQueueLock();
+        virtual void                    releaseQueueLock();
 
-	public:
+    public:
 
-		// Thread - Move from OS level to Global level!!!
-		virtual AbstractThread *		createPlatformCompatibleThread(Runnable * xRunnable);
+        // Thread - Move from OS level to Global level!!!
+        virtual AbstractThread *        createPlatformCompatibleThread(Runnable * xRunnable);
 
-	};
+    };
 }
 
 #endif

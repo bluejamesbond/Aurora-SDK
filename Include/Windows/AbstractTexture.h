@@ -26,46 +26,46 @@
 
 namespace A2D {
 
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTexture;
+    class AbstractTexture;
 
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTexture : public Pipelineable
-	{
-	public:
+    class AbstractTexture : public Pipelineable
+    {
+    public:
 
-		virtual ~AbstractTexture() {};
+        virtual ~AbstractTexture() {};
 
-	protected:
+    protected:
 
-		// Variables
-		Dims							aDims;
-		Rect							aClip;
+        // Variables
+        Dims                            aDims;
+        Rect                            aClip;
 
-	public:
+    public:
 
-		// Accessors
-		Dims					*		GetSize();
-		Rect					*		GetClip(int xIndex = 0);
+        // Accessors
+        Dims                    *       GetSize();
+        Rect                    *       GetClip(int xIndex = 0);
 
-		// Mutators
-		void							SetClip(Rect * xClip, int xIndex = 0);
+        // Mutators
+        void                            SetClip(Rect * xClip, int xIndex = 0);
 
-		// Virtual
-		virtual void			*		getPlatformCompatibleResource() IMPLEMENT;
-		virtual	bool					hasAlpha() IMPLEMENT;
+        // Virtual
+        virtual void            *       getPlatformCompatibleResource() IMPLEMENT;
+        virtual bool                    hasAlpha() IMPLEMENT;
 
-	public:
+    public:
 
-		virtual STATUS                 initialize() IMPLEMENT;
+        virtual STATUS                 initialize() IMPLEMENT;
 
-	};
+    };
 
 }
 

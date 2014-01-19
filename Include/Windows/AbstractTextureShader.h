@@ -27,51 +27,51 @@
 
 namespace A2D {
 
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class Abstract;
+    class Abstract;
 
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTextureShader : public AbstractShader
-	{
-	public:
+    class AbstractTextureShader : public AbstractShader
+    {
+    public:
 
-		AbstractTextureShader(ID3D10Device ** xDevice);
-		virtual ~AbstractTextureShader();
+        AbstractTextureShader(ID3D10Device ** xDevice);
+        virtual ~AbstractTextureShader();
 
-	private:
+    private:
 
-		static Texture						*	aTexture;
-		static float						**	aProjectionMatrix;
-		static ID3D10Effect					*	aTextureEffect;
-		static ID3D10EffectMatrixVariable	*	aWorldMatrixPtr;
-		static ID3D10EffectMatrixVariable	*	aViewMatrixPtr;
-		static ID3D10EffectMatrixVariable	*	aProjectionMatrixPtr;
-		static ID3D10EffectShaderResourceVariable*   aTexturePtr;
+        static Texture                      *   aTexture;
+        static float                        **  aProjectionMatrix;
+        static ID3D10Effect                 *   aTextureEffect;
+        static ID3D10EffectMatrixVariable   *   aWorldMatrixPtr;
+        static ID3D10EffectMatrixVariable   *   aViewMatrixPtr;
+        static ID3D10EffectMatrixVariable   *   aProjectionMatrixPtr;
+        static ID3D10EffectShaderResourceVariable*   aTexturePtr;
 
-	public:
+    public:
 
-		void									setTexture(Texture * xTexture);
-		static void								setViewMatrix(float ** xMatrix);
-		static void								setWorldMatrix(float ** xMatrix);
-		static void								setProjectionMatrix(float ** xMatrix);
-		static void								reloadProjectionMatrix();
+        void                                    setTexture(Texture * xTexture);
+        static void                             setViewMatrix(float ** xMatrix);
+        static void                             setWorldMatrix(float ** xMatrix);
+        static void                             setProjectionMatrix(float ** xMatrix);
+        static void                             reloadProjectionMatrix();
 
-	protected:
+    protected:
 
-		virtual ID3D10Effect				**	getEffect();
-		virtual LPCWSTR							getEffectName();
-		virtual STATUS							getUsableVariablePointers(ID3D10Effect * xEffect);
-		virtual STATUS							createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) IMPLEMENT;
-		virtual unsigned int					getPolygonLayoutElementCount() IMPLEMENT;
-		virtual	LPCSTR							getTechniqueName() IMPLEMENT;
+        virtual ID3D10Effect                **  getEffect();
+        virtual LPCWSTR                         getEffectName();
+        virtual STATUS                          getUsableVariablePointers(ID3D10Effect * xEffect);
+        virtual STATUS                          createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) IMPLEMENT;
+        virtual unsigned int                    getPolygonLayoutElementCount() IMPLEMENT;
+        virtual LPCSTR                          getTechniqueName() IMPLEMENT;
 
-	};
+    };
 }
 
 #endif

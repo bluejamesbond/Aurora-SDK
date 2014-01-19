@@ -37,122 +37,122 @@
 
 namespace A2D{
 
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame;
-	class AbstractWindow;
-	class Window;
-	class WindowEvent;
+    class AbstractFrame;
+    class AbstractWindow;
+    class Window;
+    class WindowEvent;
 
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractEventQueue : public Runnable
-	{
+    class AbstractEventQueue : public Runnable
+    {
 
-		friend class					AbstractWindow;
-		friend class					AbstractFrame;
+        friend class                    AbstractWindow;
+        friend class                    AbstractFrame;
 
-	public:
+    public:
 
-		AbstractEventQueue(AbstractFrame * xFrame);
-		~AbstractEventQueue();
+        AbstractEventQueue(AbstractFrame * xFrame);
+        ~AbstractEventQueue();
 
-	private:
+    private:
 
-		OrderedList<Runnable*>			aEventQueue;
-		Runnable               *		aImmediateRunnable = NULL;
-		AbstractThread		   *		aThread = NULL;
+        OrderedList<Runnable*>          aEventQueue;
+        Runnable               *        aImmediateRunnable = NULL;
+        AbstractThread         *        aThread = NULL;
 
-	protected:
+    protected:
 
-		AbstractFrame		  *			aFrame;
+        AbstractFrame         *         aFrame;
 
-	public:
+    public:
 
-		void                            invokeLater(Runnable * xRunnable);
-		void                            invokeAndWait(Runnable * xRunnable);
-		void                            clearQueue();
-		bool							dispatchNextEvent();
-		AbstractThread		 *			getDispatchingThread();
+        void                            invokeLater(Runnable * xRunnable);
+        void                            invokeAndWait(Runnable * xRunnable);
+        void                            clearQueue();
+        bool                            dispatchNextEvent();
+        AbstractThread       *          getDispatchingThread();
 
-		static bool						isDispatchingThread(int xFrameId);
-		void							invokeRerender();
-		void							invokeRevalidate();
-		void							invokeReset();
+        static bool                     isDispatchingThread(int xFrameId);
+        void                            invokeRerender();
+        void                            invokeRevalidate();
+        void                            invokeReset();
 
-		void                            invokeAnimationFrame(int xTime, Runnable * xRunnable);
+        void                            invokeAnimationFrame(int xTime, Runnable * xRunnable);
 
-		int		 						waitForAllDispatchingThreads();
+        int                             waitForAllDispatchingThreads();
 
-		void							startDispatchingThread();
-		void							stopDispatchingThread();
-		void							interruptDispatchingThread();
-		void							resumeDispatchingThread();
+        void                            startDispatchingThread();
+        void                            stopDispatchingThread();
+        void                            interruptDispatchingThread();
+        void                            resumeDispatchingThread();
 
-		static AbstractEventQueue*		aClassInstance;
-		static AbstractEventQueue*		getInstance();
+        static AbstractEventQueue*      aClassInstance;
+        static AbstractEventQueue*      getInstance();
 
 
-	public:
+    public:
 
-		// Queue
-		virtual bool                    getQueueLock() IMPLEMENT;
-		virtual void					releaseQueueLock() IMPLEMENT;
-		Runnable *						peekEvent();
-		void							popEvent();
-		bool							hasEvent();
+        // Queue
+        virtual bool                    getQueueLock() IMPLEMENT;
+        virtual void                    releaseQueueLock() IMPLEMENT;
+        Runnable *                      peekEvent();
+        void                            popEvent();
+        bool                            hasEvent();
 
-	public:
+    public:
 
-		// Event handling
-		void							processMouseEvent(MouseEvent * xEvent);
-		void							processFocusEvent(FocusEvent * xEvent);
-		STATUS							processActionEvent(ActionEvent * xEvent);
-		void							processWindowEvent(WindowEvent * xEvent);
-		void							processMouseMotionEvent(MouseEvent * xEvent);
+        // Event handling
+        void                            processMouseEvent(MouseEvent * xEvent);
+        void                            processFocusEvent(FocusEvent * xEvent);
+        STATUS                          processActionEvent(ActionEvent * xEvent);
+        void                            processWindowEvent(WindowEvent * xEvent);
+        void                            processMouseMotionEvent(MouseEvent * xEvent);
 
-		void							addEventDepthTracker(Component * xSource, float xZ);
-		void							removeEventDepthTracker(Component * xSource, float xZ);
+        void                            addEventDepthTracker(Component * xSource, float xZ);
+        void                            removeEventDepthTracker(Component * xSource, float xZ);
 
-		Component					*	findNextCompListener(Component * xSource);
-		Component					*	findPrevCompListener(Component * xSource);
+        Component                   *   findNextCompListener(Component * xSource);
+        Component                   *   findPrevCompListener(Component * xSource);
 
-	private:
+    private:
 
-		bool							hasListener(EventSource * xSource);
+        bool                            hasListener(EventSource * xSource);
 
-		bool							aMousePressed = false;
-		MouseEvent					*	aMouseEvent; 
-		FocusEvent					*	aFocusEvent;
-		ActionEvent					*	aActionEvent;
+        bool                            aMousePressed = false;
+        MouseEvent                  *   aMouseEvent; 
+        FocusEvent                  *   aFocusEvent;
+        ActionEvent                 *   aActionEvent;
 
-		Component					*	aLastFocusedComp = 0;
-		EventSource					*	aLastSource = 0;
-		Rect						*	aLastVisibleRegion = 0;
-		OrderedList<OrderedList<Component*>*> aComponentEventSources;
-		OrderedList<EventSource *>		aEventSourcesList;
+        Component                   *   aLastFocusedComp = 0;
+        EventSource                 *   aLastSource = 0;
+        Rect                        *   aLastVisibleRegion = 0;
+        OrderedList<OrderedList<Component*>*> aComponentEventSources;
+        OrderedList<EventSource *>      aEventSourcesList;
 
-	protected:
+    protected:
 
-		void							pushEvent(Runnable * xRunnable);
-		void							removeAllEvents();
-		void							run(int xThreadId);
+        void                            pushEvent(Runnable * xRunnable);
+        void                            removeAllEvents();
+        void                            run(int xThreadId);
 
-		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) IMPLEMENT;
+        virtual AbstractThread*         createPlatformCompatibleThread(Runnable * xRunnable) IMPLEMENT;
 
-		////////////////////////////////////////////////////////////////////////////////
-		// ABSTRACT
-		////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        // ABSTRACT
+        ////////////////////////////////////////////////////////////////////////////////
 
-	public:
+    public:
 
-		virtual STATUS                 initialize();
+        virtual STATUS                 initialize();
 
-	};
+    };
 }
 
 #endif
