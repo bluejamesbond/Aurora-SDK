@@ -19,7 +19,6 @@ AbstractThread::~AbstractThread()
 	aInstanceCount--;
 }
 
-
 void AbstractThread::fire()
 {
 	if (aRunnable)
@@ -37,7 +36,6 @@ int AbstractThread::instanceCount()
 {
 	return aInstanceCount + 1;
 }
-
 
 AbstractThread* AbstractThread::getSingleton()
 {

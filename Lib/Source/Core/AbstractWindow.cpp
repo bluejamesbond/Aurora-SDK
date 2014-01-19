@@ -307,8 +307,8 @@ STATUS AbstractWindow::initialize()
 	aRect.aHeight = 600;
 
 	// Default minimium is 0,0
-	aMinDims.aWidth = FLT_ZERO;
-	aMinDims.aHeight = FLT_ZERO;
+	aMinDims.aWidth = 0.0f;
+	aMinDims.aHeight = 0.0f;
 
 	// Default maximum is full screen
 	aMaxDims.aWidth = FLT_MAX;

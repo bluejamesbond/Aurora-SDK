@@ -691,9 +691,9 @@ void Window::spliceToNinePatch(Gdiplus::Image * src, Gdiplus::Image * dest, floa
 {
 	Gdiplus::Graphics graphics(dest);
 
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
+	graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
+	graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
+	graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
 }
 
 float* Window::getGaussianKernel(int xRadius)
@@ -889,15 +889,15 @@ STATUS Window::createShadowResources()
 
 	// Cache as 9-patch
 
-	spliceToNinePatch(blurred, aTopLeftShadow, FLT_ZERO, FLT_ZERO, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomLeftShadow, FLT_ZERO, relativeDim - radiusSafety, radiusSafety, radiusSafety);
+	spliceToNinePatch(blurred, aTopLeftShadow, 0.0f, 0.0f, radiusSafety, radiusSafety);
+	spliceToNinePatch(blurred, aBottomLeftShadow, 0.0f, relativeDim - radiusSafety, radiusSafety, radiusSafety);
 	spliceToNinePatch(blurred, aBottomRightShadow, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aTopRightShadow, relativeDim - radiusSafety, FLT_ZERO, radiusSafety, radiusSafety);
+	spliceToNinePatch(blurred, aTopRightShadow, relativeDim - radiusSafety, 0.0f, radiusSafety, radiusSafety);
 
-	spliceToNinePatch(blurred, aTopShadow, radiusSafety, FLT_ZERO, FLT_ONE, radius);
-	spliceToNinePatch(blurred, aLeftShadow, FLT_ZERO, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, FLT_ONE, radius);
+	spliceToNinePatch(blurred, aTopShadow, radiusSafety, 0.0f, 1.0f, radius);
+	spliceToNinePatch(blurred, aLeftShadow, 0.0f, radiusSafety, radius, 1.0f);
+	spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, 1.0f);
+	spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, 1.0f, radius);
 
 	aTopShadowBrush = new Gdiplus::TextureBrush(aTopShadow);
 	aLeftShadowBrush = new Gdiplus::TextureBrush(aLeftShadow);
@@ -1005,11 +1005,11 @@ void Window::paintComponent(Gdiplus::Graphics& graphics)
 	rightShadowBrush->ResetTransform();
 	bottomShadowBrush->ResetTransform();
 
-	topShadowBrush->TranslateTransform(shadowPadding, FLT_ZERO);
-	graphics.FillRectangle(topShadowBrush, shadowPadding, FLT_ZERO, relativeWidth - shadowPadding * 2, padding);
+	topShadowBrush->TranslateTransform(shadowPadding, 0.0f);
+	graphics.FillRectangle(topShadowBrush, shadowPadding, 0.0f, relativeWidth - shadowPadding * 2, padding);
 
-	leftShadowBrush->TranslateTransform(FLT_ZERO, shadowPadding);
-	graphics.FillRectangle(leftShadowBrush, FLT_ZERO, shadowPadding, padding, relativeHeight - shadowPadding * 2);
+	leftShadowBrush->TranslateTransform(0.0f, shadowPadding);
+	graphics.FillRectangle(leftShadowBrush, 0.0f, shadowPadding, padding, relativeHeight - shadowPadding * 2);
 
 	rightShadowBrush->TranslateTransform(relativeWidth - padding, shadowPadding);
 	graphics.FillRectangle(rightShadowBrush, relativeWidth - padding, shadowPadding, padding, relativeHeight - shadowPadding * 2);
@@ -1017,9 +1017,9 @@ void Window::paintComponent(Gdiplus::Graphics& graphics)
 	bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
 	graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
 
-	graphics.DrawImage(topLeftShadow, FLT_ZERO, FLT_ZERO, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomLeftShadow, FLT_ZERO, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
-	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, FLT_ZERO, shadowPadding, shadowPadding);
+	graphics.DrawImage(topLeftShadow, 0.0f, 0.0f, shadowPadding, shadowPadding);
+	graphics.DrawImage(bottomLeftShadow, 0.0f, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
+	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, 0.0f, shadowPadding, shadowPadding);
 	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
 
 	// ## THIS IS A VERY SLOW PROCESS
@@ -1250,7 +1250,7 @@ void Window::setShadowed(bool xShadowed)
 {
 	aShadowed = xShadowed;
 
-	setShadowRadius(FLT_ZERO);
+	setShadowRadius(0.0f);
 }
 
 void Window::setShadowColor(Color * xShadowColor)

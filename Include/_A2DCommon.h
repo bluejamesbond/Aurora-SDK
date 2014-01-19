@@ -16,58 +16,58 @@
 // DEFINE
 ////////////////////////////////////////////////////////////////////////////////
 
+#define _PIPELINE_PREPROCESS_START                       0x2510
+#define _PIPELINE_PREPROCESS_CREATE                      0x2511
+#define _PIPELINE_PREPROCESS_FINISH                      0x2512
 
-#define _PIPELINE_PREPROCESS_START                         0x2510
-#define _PIPELINE_PREPROCESS_CREATE                        0x2511
-#define _PIPELINE_PREPROCESS_FINISH                        0x2512
+#define _GRAPHICS_ACTIVE_BUFFER_PRIMARY   		         0x3511
+#define _GRAPHICS_ACTIVE_BUFFER_SECONDARY		         0x3512
+#define _GRAPHICS_ACTIVE_BUFFER_TERTIARY				 0x3513
 
-#define _GRAPHICS_ACTIVE_BUFFER_PRIMARY   		          0x3511
-#define _GRAPHICS_ACTIVE_BUFFER_SECONDARY		          0x3512
-#define _GRAPHICS_ACTIVE_BUFFER_TERTIARY					  0x3513
+#define _WINDOW_BOX_SHADOW_SAFELYTY_RATIO				 2
+#define _WINDOW_RESIZE_EDGE_DISTANCE                     5
+#define _WINDOW_RESIZE_DEFAULT_DISTANCE					 3
+#define _WINDOW_MOVE_BAR_DISTANCE						 25
+#define _WINDOW_MOVE_DEFAULT_DISTANCE					 10
 
-#define _WINDOW_BOX_SHADOW_SAFELYTY_RATIO					  2
-#define _WINDOW_RESIZE_EDGE_DISTANCE                       5
-#define _WINDOW_RESIZE_DEFAULT_DISTANCE					  3
-#define _WINDOW_MOVE_BAR_DISTANCE							25
-#define _WINDOW_MOVE_DEFAULT_DISTANCE						10
+#define _GRAPHICSTOOLKIT_BASIC_TEXTURE_SHADER			 0x4000
+#define _GRAPHICSTOOLKIT_VERTICAL_BLUR_TEXTURE_SHADER    0x4001
+#define _GRAPHICSTOOLKIT_HORIZONTAL_BLUR_TEXTURE_SHADER  0x4002
 
-#define _GRAPHICSTOOLKIT_BASIC_TEXTURE_SHADER			  0x4000
-#define _GRAPHICSTOOLKIT_VERTICAL_BLUR_TEXTURE_SHADER      0x4001
-#define _GRAPHICSTOOLKIT_HORIZONTAL_BLUR_TEXTURE_SHADER    0x4002
+#define	_OPT_BACKGROUND_REPEAT_REPEAT_X					 0x3001
+#define	_OPT_BACKGROUND_REPEAT_REPEAT_Y					 0x3010
+#define	_OPT_BACKGROUND_REPEAT_NO_REPEAT				 0x3003
 
-#define	_OPT_BACKGROUND_REPEAT_REPEAT_X					  0x3001
-#define	_OPT_BACKGROUND_REPEAT_REPEAT_Y					  0x3010
-#define	_OPT_BACKGROUND_REPEAT_NO_REPEAT					  0x3003
+#define	_OPT_BACKGROUND_POSITION_CENTER					 0x3004
+#define	_OPT_BACKGROUND_POSITION_TOP					 0x3005
+#define	_OPT_BACKGROUND_POSITION_RIGHT					 0x3006
+#define	_OPT_BACKGROUND_POSITION_BOTTOM					 0x3007
+#define	_OPT_BACKGROUND_POSITION_LEFT					 0x3008
 
-#define	_OPT_BACKGROUND_POSITION_CENTER					  0x3004
-#define	_OPT_BACKGROUND_POSITION_TOP						  0x3005
-#define	_OPT_BACKGROUND_POSITION_RIGHT					  0x3006
-#define	_OPT_BACKGROUND_POSITION_BOTTOM					  0x3007
-#define	_OPT_BACKGROUND_POSITION_LEFT					  0x3008
-
-#define	_OPT_BACKGROUND_SIZE_COVER							  0x3009
-#define	_OPT_BACKGROUND_SIZE_STRETCH						  0x300A
-
-#define FLT_255												  255.0f
-#define FLT_ZERO                                              0.0f
-#define FLT_ONE                                               1.0f
-
-#ifndef max
-#define max(a,b)										(((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)										(((a) < (b)) ? (a) : (b))
-#endif
+#define	_OPT_BACKGROUND_SIZE_COVER						 0x3009
+#define	_OPT_BACKGROUND_SIZE_STRETCH					 0x300A
 
 // Debugging
 #include "_A2DDebug.h"
 
+// System error focusing on speed
+#ifndef __STATUS_DEFINED__
+#define __STATUS_DEFINED__
+typedef unsigned int STATUS;
+#define _STATUS_TYPEDEF_(_sc)							((STATUS)_sc)
+#define STATUS_OK										_STATUS_TYPEDEF_(0)
+#define STATUS_FAIL										_STATUS_TYPEDEF_(1)
+#define STATUS_RETRY									_STATUS_TYPEDEF_(2)
+#define STATUS_FORCE_QUIT								_STATUS_TYPEDEF_(3)
+#endif									
+
+// Enable/Disable debugging
 #define A2D_DE__										"Comment out this line to remove debugging."
 
+// Readability macros
 #define G_SAFELY(hr)									if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
-#define SAFELY(hr)										if(hr != 0)	{ SYSOUT_STR("Failure detected");	return E_FAIL; }
-#define NULLCHECK(hr)									if(!hr)		{ SYSOUT_STR("Failure detected");	return E_FAIL; }
+#define SAFELY(hr)										if(hr != 0)	{ SYSOUT_STR("Failure detected");	return STATUS_FAIL; }
+#define NULLCHECK(hr)									if(!hr)		{ SYSOUT_STR("Failure detected");	return STATUS_FAIL; }
 #define	DESTROY(x)										if(x)			{ delete x; x = 0; }
 #define D3DDESTROY(x)									if(x)			{ x->Release(); x = 0; }
 #define THREAD_DESTROY(x)								if(x)			{ x->stop(); delete x; x = 0; }
@@ -75,108 +75,72 @@
 #define INT(x)											static_cast<int>(x)
 #define LONG(x)											static_cast<long>(x)
 #define UINT(x)											static_cast<unsigned int>(x)
-#define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
+#define IMPLEMENT										= 0
 
-// Speed : Fast
-inline float _pixelsToRelativePoint(float& xPixelDimension, float xPixels)
+// System independent definitions
+#define SYSINLINE										__forceinline
+#define	SYSCDECL										__cdecl
+
+// Functions for calculating relative point
+SYSINLINE float SYSCDECL pixToRelPoint_cpy_cpy(float xPixelDimension, float xPixels)
 {
 	return xPixels / (xPixelDimension / 2) - 1;
 }
 
-// Speed : Fast
-inline float _pixelsToRelativeDistance(float& xPixelDimension, float xPixels)
+SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, float xPixels)
 {
 	return abs(xPixels) / xPixelDimension * 2;
 }
 
-// Speed : Fastest
-inline float _pixelsToRelativePoint_(float& xPixelDimension, float& xPixels)
-{
-	return xPixels / (xPixelDimension / 2) - 1;
-}
-
-// Speed : Fastest
-inline float _pixelsToRelativeDistance_(float& xPixelDimension, float& xPixels)
-{
-	return abs(xPixels) / xPixelDimension * 2;
-}
-
-// Speed : Fast
-inline float pixelsToRelativeDistance(float& xPixelDimension, unsigned int xPixels)
-{
-	return xPixels / xPixelDimension * 2;
-}
-
-// Speed : Slow
-inline float inline_max(float a, float b)
+// Fastest min/max/abs functions
+SYSINLINE float SYSCDECL max_f_cpy_cpy(float a, float b)
 {
 	return (((a) > (b)) ? (a) : (b));
 }
 
-// Speed : Fast
-inline float _inline_max(float& a, float b)
+SYSINLINE float SYSCDECL min_f_cpy_cpy(float a, float b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL max_i_cpy_cpy(int a, int b)
 {
 	return (((a) > (b)) ? (a) : (b));
 }
 
-// Speed : Fastest
-inline float _inline_max_(float& a, float& b)
-{
-	return (((a) > (b)) ? (a) : (b));
-}
-
-// Speed : Slow
-inline float inline_min(float a, float b)
+SYSINLINE int SYSCDECL min_i_cpy_cpy(int a, int b)
 {
 	return (((a) < (b)) ? (a) : (b));
 }
 
-// Speed : Fast
-inline float _inline_min(float& a, float b)
+SYSINLINE int SYSCDECL abs_f_cpy(float a)
 {
-	return (((a) < (b)) ? (a) : (b));
+	return (((a) < (0.0f)) ? (-a) : (a));
 }
 
-// Speed : Fastest
-inline float _inline_min_(float& a, float& b)
+SYSINLINE int SYSCDECL abs_i_cpy(int a)
 {
-	return (((a) < (b)) ? (a) : (b));
+	return (((a) < (0)) ? (-a) : (a));
 }
 
-#ifndef max_flt
-#define max_flt(a,b)									inline_max(a, b)
-#endif
+//High performance min/max/abs for
+//floats and int. Any extra variables that need
+//to be used should be added.
+#define max_f(x, y)										max_f_cpy_cpy(x, y)
+#define min_f(x,y)										min_f_cpy_cpy(x, y)
 
-#ifndef _max_flt
-#define _max_flt(a,b)									_inline_max(a, b)
-#endif
+#define max_i(x,y)										max_i_cpy_cpy(x,y)
+#define min_i(x,y)										min_i_cpy_cpy(x, y)
 
-#ifndef _max_flt_
-#define _max_flt_(a,b)									_inline_max_(a, b)
-#endif
+#define abs_f(x)										abs_f_cpy(x)
+#define abs_i(x)										abs_i_cpy(x)
 
-#ifndef _min_flt
-#define _min_flt(a,b)									_inline_min(a, b)
-#endif
+// High performance pixel to relative distance
+// functions.
+#define cvtpx2rp(x, y)									pixToRelPoint_cpy_cpy(x, y)
+#define cvtpx2rd(x, y)									pixToRelDistance_cpy_cpy(x, y)
 
-#ifndef _max
-#define _max(a,b)										inline_max(a, b)
-#endif
-
-#ifndef _min
-#define _min(a,b)										inline_min(a, b)
-#endif
-
-
-
-#ifndef __STATUS_DEFINED__
-#define __STATUS_DEFINED__
-typedef unsigned int STATUS;
-#define _STATUS_TYPEDEF_(_sc)									((STATUS)_sc)
-#define STATUS_OK												_STATUS_TYPEDEF_(0)
-#define STATUS_FAIL												_STATUS_TYPEDEF_(1)
-#define STATUS_RETRY											_STATUS_TYPEDEF_(2)
-#define STATUS_FORCE_QUIT										_STATUS_TYPEDEF_(3)
-#endif									3
+// Convert from units to distance
+#define cvtu2px(unit, value, range)						((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
 
 #endif

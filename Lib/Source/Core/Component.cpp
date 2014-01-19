@@ -118,13 +118,13 @@ void Component::validate()
 
 	if (!hasParent)
 	{
-		aCalculatedRegion.aX = _max(FLT_ZERO, compRect.aX);
-		aCalculatedRegion.aY = _max(FLT_ZERO, compRect.aY);
-		aCalculatedRegion.aWidth = _max(FLT_ZERO, compRect.aWidth);
-		aCalculatedRegion.aHeight = _max(FLT_ZERO, compRect.aHeight);
+		aCalculatedRegion.aX = _max(0.0f, compRect.aX);
+		aCalculatedRegion.aY = _max(0.0f, compRect.aY);
+		aCalculatedRegion.aWidth = _max(0.0f, compRect.aWidth);
+		aCalculatedRegion.aHeight = _max(0.0f, compRect.aHeight);
 
-		aCalculatedNegativeDeltaX = FLT_ZERO;
-		aCalculatedNegativeDeltaY = FLT_ZERO;
+		aCalculatedNegativeDeltaX = 0.0f;
+		aCalculatedNegativeDeltaY = 0.0f;
 	}
 	else
 	{
@@ -140,28 +140,28 @@ void Component::validate()
 		// Reduce the size based on parent x, y
 		// Account for negative x, y of this
 		// Accumulate negatives
-		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + _min(FLT_ZERO, compRect.aX));
-		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + _min(FLT_ZERO, compRect.aY));
+		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + _min(0.0f, compRect.aX));
+		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + _min(0.0f, compRect.aY));
 		
 		// Account for larger than parent
 		aCalculatedRegion.aWidth = _min(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
 		aCalculatedRegion.aHeight = _min(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
 
 		// Account for positive shift
-		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : FLT_ZERO);
-		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : FLT_ZERO);
+		aCalculatedRegion.aWidth -= FLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0f);
+		aCalculatedRegion.aHeight -= FLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0f);
 		
 		// Account for negative height
-		aCalculatedRegion.aWidth = _max(FLT_ZERO, aCalculatedRegion.aWidth);
-		aCalculatedRegion.aHeight = _max(FLT_ZERO, aCalculatedRegion.aHeight);
+		aCalculatedRegion.aWidth = _max(0.0f, aCalculatedRegion.aWidth);
+		aCalculatedRegion.aHeight = _max(0.0f, aCalculatedRegion.aHeight);
 
 		// Set the visible x and y based on previous
-		aVisibleRegion.aX = parentVisibleRegion.aX + _max(FLT_ZERO, _min(aCalculatedRegion.aX, compRect.aX));
-		aVisibleRegion.aY = parentVisibleRegion.aY + _max(FLT_ZERO, _min(aCalculatedRegion.aY, compRect.aY));
+		aVisibleRegion.aX = parentVisibleRegion.aX + _max(0.0f, _min(aCalculatedRegion.aX, compRect.aX));
+		aVisibleRegion.aY = parentVisibleRegion.aY + _max(0.0f, _min(aCalculatedRegion.aY, compRect.aY));
 
 		// Set the region based on if it is even visible
-		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= FLT_ZERO ? aCalculatedRegion.aWidth : FLT_ZERO);
-		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= FLT_ZERO ? aCalculatedRegion.aHeight : FLT_ZERO);		
+		aVisibleRegion.aWidth = FLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0.0f ? aCalculatedRegion.aWidth : 0.0f);
+		aVisibleRegion.aHeight = FLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0.0f ? aCalculatedRegion.aHeight : 0.0f);		
 	}
 
 	CascadingLayout::doLayout(*this);
