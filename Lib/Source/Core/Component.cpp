@@ -354,7 +354,7 @@ STATUS Component::addMouseListener(MouseListener * xListener)
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
         }
 
         return hr;
@@ -377,7 +377,7 @@ STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
         }
 
         return hr;
@@ -400,7 +400,7 @@ STATUS Component::addFocusListener(FocusListener * xListener)
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
         }
 
         return hr;
@@ -423,7 +423,7 @@ STATUS Component::addActionListener(ActionListener * xListener)
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
         }
 
         return hr;
