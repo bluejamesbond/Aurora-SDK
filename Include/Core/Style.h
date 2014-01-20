@@ -15,6 +15,8 @@
 //
 //------------------------------------------------------------------------------
 
+#include "Color3D.h"
+
 namespace A2D{
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -90,6 +92,44 @@ namespace A2D{
 				m_bottom(0.0f),
 				m_right(0.0f)
 			{
+			}
+		};
+
+		struct PIXELDISTANCESET4
+		{
+			unsigned int				m_left;
+			unsigned int				m_top;
+			unsigned int				m_bottom;
+			unsigned int				m_right;
+
+			PIXELDISTANCESET4() :
+				m_left(0),
+				m_top(0),
+				m_bottom(0),
+				m_right(0)
+			{
+			}
+		};
+
+		struct BORDERSET4
+		{
+			Color3D m_leftColor;
+			Color3D m_topColor;
+			Color3D m_rightColor;
+			Color3D m_bottomColor;
+
+			DISTANCESET4 m_borderWidths;
+			PIXELDISTANCESET4 m_borderWidthsInPixels;
+
+			bool m_inset; // unused
+
+			BORDERSET4() :
+				m_inset(false)
+			{
+				Color3D::from(m_leftColor, Color3D::RED);
+				Color3D::from(m_topColor, Color3D::BLUE);
+				Color3D::from(m_rightColor, Color3D::YELLOW);
+				Color3D::from(m_bottomColor, Color3D::RED);
 			}
 		};
 

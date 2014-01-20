@@ -25,13 +25,10 @@
 #include "OrderedList.h"
 #include "ImageProperties.h"
 #include "Pipeline.h"
-#include "Rect.h"
-#include "Paint.h"
-#include "Style.h"
 #include "CascadingLayout.h"
-#include "BorderSet.h"
 #include GRAPHICS__
 #include "ComponentEventSource.h"
+#include "COMPONENTRENDERSTYLESET.h"
 
 namespace A2D {
 
@@ -54,7 +51,7 @@ namespace A2D {
     {
         friend class ComponentManager;
         friend class CascadingLayout;
-        friend class AbstractEventQueue;
+		friend class AbstractEventQueue;
 
     public:
 
@@ -63,7 +60,6 @@ namespace A2D {
 
     private:
 
-        float                       m_depth;
 
         bool                        m_forcedBounds;
         bool                        m_focused;
@@ -73,53 +69,42 @@ namespace A2D {
         Component*                  m_parent;
         OrderedList<Component*>     m_children;
         ComponentManager*           m_componentManager;
-        BorderSet                   m_borderSet;
 
         Component*                  m_nextCompListener;
         Component*                  m_prevCompListener;
-
+		
     protected:
 
-		bool                        m_visible;
 		bool                        m_validatedContents;
-
-		float						m_fullWidth;
-		float						m_fullHeight;
 		
-        Style::Background           m_backgroundStyle;
-        Style::Display              m_display;
-        Style::Position             m_position;  
-
-		Style::DISTANCESET2         m_size;
-		Style::DISTANCESET4         m_margins;
-		Style::DISTANCESET4         m_positioning;
-		Style::DISTANCESET4         m_padding;
-
         float                       m_calculatedNegativeDeltaX;
         float                       m_calculatedNegativeDeltaY;
+		
+		COMPONENTRENDERSTYLESET		m_styleSet;
 
-        Rect                        m_region;
-        Rect                        m_backgroundRegion;
+		Rect                        m_region;
+		Rect                        m_backgroundRegion;
         Rect                        m_calculatedRegion;
         Rect                        m_visibleRegion;
 
 		Pipeline*                   m_pipeline;
-		Graphics*                   m_graphics;
-        LPCWSTR                     m_backgroundSrc;          
-        Paint                       m_backgroundPaint;        
+		Graphics*                   m_graphics;    
 
     public:
         
         void                        setDoubleBuffered(bool xDoubleBuffer);
-        void                        setBackgroundImage(LPCWSTR xOptBackgroundImage)     { m_backgroundSrc = xOptBackgroundImage;    };
-        void                        setBackgroundPaint(Paint& xOptPaint)                { Paint::from(m_backgroundPaint, xOptPaint); };
+		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
+		void                        setBackgroundPaint(Paint& xOptPaint);
         void                        setPosition(Style::Position xPosition);
         void                        setDisplay(Style::Display xDisplay);
         void                        setFloat(Style::Float xFloat);
         void                        setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight);
         void                        setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
         void                        setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-        void                        setDepth(float xDepth);
+		void                        setPadding(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void                        setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
+		void                        setDepth(float xDepth);
         void                        setGraphics(Graphics& xGraphics);
         void                        setParent(Component& xComponent);
         void                        setFrame(AbstractFrame& xFrame);
@@ -149,8 +134,8 @@ namespace A2D {
         Rect*                       getVisibleRegion();
         Rect*                       getBoundsAsPtr();
         Rect                        getBounds();
-        LPCWSTR                     getBackgroundImage()                                { return m_backgroundSrc; };
-        Paint&                      getBackgroundPaint()                                { return m_backgroundPaint; };
+		LPCWSTR                     getBackgroundImage();
+		Paint&                      getBackgroundPaint();
  
         bool                        isDoubleBuffered();     
 
@@ -159,7 +144,6 @@ namespace A2D {
         virtual void                paintComponent();
         virtual void                paintComponentBorder();
         virtual Rect*               getEventRegion();
-        void                        setBounds(Rect& xRect);
 
     ////////////////////////////////////////////////////////////////////////////////
     // INLINE
@@ -175,7 +159,8 @@ namespace A2D {
             m_backgroundRegion.aWidth = xWidth;
             m_backgroundRegion.aHeight = xHeight;
 
-            m_validatedContents = false;
+			m_validatedContents = false;
+			m_styleSet.markRequestRegionAsDirty();
         }
 
     };

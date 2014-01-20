@@ -26,7 +26,7 @@
 #include "../Core/ImageProperties.h"
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
-#include "../Core/BorderSet.h"
+#include "../Core/COMPONENTRENDERSTYLESET.h"
 
 #include "VertexTypes.h"
 #include "BackBuffer.h"
@@ -102,7 +102,7 @@ namespace A2D {
 		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 		
-		void							drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Style::Background xBackgroundSettings);
+		void							drawComponent(Pipeline ** xPipeline, COMPONENTRENDERSTYLESET& x_renderSet);
 		
 	public:
 

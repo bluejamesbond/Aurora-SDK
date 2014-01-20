@@ -1325,12 +1325,7 @@ void Window::render()
 
         // Paint the component
         //------------------------------------------------------------------------------
-        paintComponent(graphics);
-        
-		if (aOptBorderWidth > 0)
-        {
-            paintComponentBorder(graphics);
-        }
+        paintComponent(graphics);        
 
         // Paint from frameBuffer of the child HWND into the 
         // the parent HWND
@@ -1353,7 +1348,14 @@ void Window::render()
             ReleaseDC(aParentHWnd, memDCChild);
             DeleteObject(memBitmapChild);
             DeleteObject(memDCChild);
-        }
+		}
+
+		// Paint the component border
+		//------------------------------------------------------------------------------
+		if (aOptBorderWidth > 0)
+		{
+			paintComponentBorder(graphics);
+		}
         
         // Blend function required for UpdateLayeredWindow and updat the data
         //------------------------------------------------------------------------------

@@ -311,6 +311,8 @@ void AbstractFrame::update()
 		
 		aComponentManager->update_forward();
 
+		aValidatedContents = true;
+
 		return;
 	}
 

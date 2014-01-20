@@ -105,12 +105,13 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 	}
 }
 
-void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, BorderSet& xBorderSet, Paint& xPaint, Style::Background xBackgroundSettings)
+void Graphics::drawComponent(Pipeline ** xPipeline, COMPONENTRENDERSTYLESET& x_renderSet)
 {
 	Rect * clip = aClip;
+	Rect * rect = x_renderSet.m_region;
 
 	// Check if drawing request is even visible
-	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+	if (clip->aWidth <= 0.0f || clip->aHeight <= 0.0f)	return;
 
 	// Cache all the classes that are going to be 
 	// used.
@@ -134,7 +135,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, 
 		G_SAFELY(quadExpansionShader->initialize());
 
 		// Create the texture
-		texture = new Texture(aDevice, xSrc);
+		texture = new Texture(aDevice, x_renderSet.m_backgroundSrc);
 		G_SAFELY(texture->initialize());
 
 		// Create the QuadData
@@ -173,7 +174,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, 
 	quadData = static_cast<QuadData<QuadExpansionVertex, 1>*>(pipelineables[2]);
 
 	// Check if the texture needs updating
-	if (texture->update(xSrc))
+	if (texture->update(x_renderSet.m_backgroundSrc))
 	{
 		// Update the shader resource with the
 		// new texture
@@ -181,7 +182,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, 
 	}
 
 	// Update the buffer
-	quadFactory->updateVertexBuffer(quadData, &xRect, texture, &xBorderSet, &xPaint, xBackgroundSettings);
+	quadFactory->updateVertexBuffer(quadData, x_renderSet, texture);
 
 	// Render the quad
 	quadFactory->renderQuad(quadData->aVertexBuffer, sizeof(QuadExpansionVertex));

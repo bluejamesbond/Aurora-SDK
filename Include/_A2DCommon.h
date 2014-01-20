@@ -12,17 +12,9 @@
 //
 //------------------------------------------------------------------------------
 
-// Style
-//------------------------------------------------------------------------------
-#include "Core/Style.h"
-
 // Debugging
 //------------------------------------------------------------------------------
 #include "_A2DDebug.h"
-
-// Set namespace
-//------------------------------------------------------------------------------
-using namespace A2D;
 
 // Core Constants
 //------------------------------------------------------------------------------
@@ -74,12 +66,17 @@ typedef unsigned int STATUS;
 //------------------------------------------------------------------------------
 SYSINLINE float SYSCDECL pixToRelPoint_cpy_cpy(float xPixelDimension, float xPixels)
 {
-    return xPixels / (xPixelDimension / 2) - 1;
+    return xPixels / (xPixelDimension / 2.0f) - 1.0f;
 }
 
 SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, float xPixels)
 {
-    return xPixels / xPixelDimension * 2;
+    return xPixels / xPixelDimension * 2.0f;
+}
+
+SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, unsigned int xPixels)
+{
+	return xPixels / xPixelDimension * 2.0f;
 }
 
 // Fastest min/max/abs functions

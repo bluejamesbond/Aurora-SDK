@@ -11,8 +11,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	OrderedList<Component*>::Node<Component*> * start = x_component.m_children._head();
 
 	float height, width, mX = 0, mY = 0, aX = 0, aY = 0,
-		marginLeft, marginTop, marginRight, marginBottom, maxElementHeight = 0.0f, tempVerticalOffset,
-		positionLeft, positionTop, positionRight, positionBottom;
+		maxElementHeight = 0.0f, tempVerticalOffset;
 
 	Style::Display display;
 	Style::Position position;
@@ -40,33 +39,47 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			SYSOUT_STR("[CascadingLayout] Skipping calculations. Component out of window.");
 			#endif // A2D_DE__
 
-			component->m_visible = false;
+			component->m_styleSet.m_visible = false;
 			continue;
 		}
 
-		///*************************************** CACHE **********************************//
-		display = component->m_display;
-		position = component->m_position;
+		// FIXME Update on resize only
+		//------------------------------------------------------------------------------
+		display = component->m_styleSet.m_display;
+		position = component->m_styleSet.m_position;
 
-		Style::DISTANCESET2& size = component->m_size;
+		Style::DISTANCESET2& size = component->m_styleSet.m_size;
 
 		width = cvtsu2px__(size.m_widthUnits, size.m_width, compRect.aWidth);
 		height = cvtsu2px__(size.m_heightUnits, size.m_height, compRect.aHeight);
 
-		Style::DISTANCESET4& margins = component->m_margins;
+		Style::DISTANCESET4& margins = component->m_styleSet.m_margins;
 
-		marginLeft = cvtsu2px__(margins.m_leftUnits, margins.m_left, compRect.aWidth);
-		marginTop = cvtsu2px__(margins.m_topUnits, margins.m_top, compRect.aHeight);
-		marginBottom = cvtsu2px__(margins.m_bottomUnits, margins.m_bottom, compRect.aHeight);
-		marginRight = cvtsu2px__(margins.m_rightUnits, margins.m_right, compRect.aWidth);
+		float marginLeft = cvtsu2px__(margins.m_leftUnits, margins.m_left, compRect.aWidth);
+		float marginTop = cvtsu2px__(margins.m_topUnits, margins.m_top, compRect.aHeight);
+		float marginBottom = cvtsu2px__(margins.m_bottomUnits, margins.m_bottom, compRect.aHeight);
+		float marginRight = cvtsu2px__(margins.m_rightUnits, margins.m_right, compRect.aWidth);
 		
-		Style::DISTANCESET4& positioning = component->m_positioning;
+		Style::DISTANCESET4& positioning = component->m_styleSet.m_positioning;
 
-		positionLeft = cvtsu2px__(positioning.m_leftUnits, positioning.m_left, compRect.aWidth);
-		positionTop = cvtsu2px__(positioning.m_topUnits, positioning.m_top, compRect.aHeight);
-		positionBottom = cvtsu2px__(positioning.m_bottomUnits, positioning.m_bottom, compRect.aHeight);
-		positionRight = cvtsu2px__(positioning.m_rightUnits, positioning.m_right, compRect.aWidth);
-		///********************************************************************************//
+		float positionLeft = cvtsu2px__(positioning.m_leftUnits, positioning.m_left, compRect.aWidth);
+		float positionTop = cvtsu2px__(positioning.m_topUnits, positioning.m_top, compRect.aHeight);
+		float positionBottom = cvtsu2px__(positioning.m_bottomUnits, positioning.m_bottom, compRect.aHeight);
+		float positionRight = cvtsu2px__(positioning.m_rightUnits, positioning.m_right, compRect.aWidth);
+
+		Style::DISTANCESET4& borderWidths = component->m_styleSet.m_borders.m_borderWidths;
+		Style::PIXELDISTANCESET4& borderWidthsPix = component->m_styleSet.m_borders.m_borderWidthsInPixels;
+
+		borderWidthsPix.m_left = SUINT(cvtsu2px__(borderWidths.m_leftUnits, borderWidths.m_left, compRect.aWidth));
+		borderWidthsPix.m_top = SUINT(cvtsu2px__(borderWidths.m_topUnits, borderWidths.m_top, compRect.aHeight));
+		borderWidthsPix.m_right = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_bottom, compRect.aHeight));
+		borderWidthsPix.m_bottom = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_right, compRect.aWidth));
+
+		// Mark the border widths as dirty since
+		// borderWidths are affected by validation
+		// windowResize
+		//------------------------------------------------------------------------------
+		component->m_styleSet.markBorderWidthsAsDirty();
 
 		if (position == Style::RELATIVE_)
 		{
@@ -144,10 +157,10 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 
 		if (position == Style::RELATIVE_)
 		{
-			/***********************************************/
-			component->m_visible = true;
+			// Update bounds
+			//------------------------------------------------------------------------------
+			component->m_styleSet.m_visible = true;
 			component->setBounds(mX + positionLeft + positionRight, mY + positionTop + positionBottom, width, height);
-			/***********************************************/
 
 			if (display == Style::INLINE_BLOCK)
 			{
@@ -165,10 +178,10 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		}
 		else/*if (position == Style::ABSOLUTE_)*/
 		{
-			/***********************************************/
-			component->m_visible = true;
+			// Update bounds
+			//------------------------------------------------------------------------------
+			component->m_styleSet.m_visible = true;
 			component->setBounds(aX, aY, width, height);
-			/***********************************************/
 		}
 
 		start = start->right;

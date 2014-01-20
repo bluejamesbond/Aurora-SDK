@@ -23,7 +23,7 @@ STATUS ComponentManager::initialize()
 	// Set based on camera properties later
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
-
+	//------------------------------------------------------------------------------
 	root.setDepth(0.0f);
 	root.setGraphics(*static_cast<Graphics*>(aGraphics));
 
@@ -97,7 +97,7 @@ void ComponentManager::update()
 
 	backBuffer->setActive();
 	backBuffer->clear();
-//	backBuffer->setZBuffer(false);
+	backBuffer->setZBuffer(true);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.reverse_iterator();
@@ -122,7 +122,6 @@ void ComponentManager::update()
 		}
 	}
 
-//	backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }
 
@@ -132,7 +131,7 @@ void ComponentManager::update_forward()
 
 	backBuffer->setActive();
 	backBuffer->clear();
-	//backBuffer->setZBuffer(false);
+	backBuffer->setZBuffer(false);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.iterator();
@@ -157,6 +156,5 @@ void ComponentManager::update_forward()
 		}
 	}
 
-	//backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }
