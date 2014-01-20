@@ -70,6 +70,19 @@ namespace A2D{
 			}
 		};
 
+		struct PIXELDISTANCESETUINT2
+		{
+			unsigned int                m_width;
+			unsigned int                m_height;
+
+			PIXELDISTANCESETUINT2() :
+				m_width(0),
+				m_height(0)
+			{
+			}
+		};
+
+
 		struct DISTANCESET4
 		{
 			Style::Units                m_leftUnits;
@@ -95,14 +108,30 @@ namespace A2D{
 			}
 		};
 
-		struct PIXELDISTANCESET4
+		struct PIXELDISTANCESETUINT4
 		{
 			unsigned int				m_left;
 			unsigned int				m_top;
 			unsigned int				m_bottom;
 			unsigned int				m_right;
 
-			PIXELDISTANCESET4() :
+			PIXELDISTANCESETUINT4() :
+				m_left(0),
+				m_top(0),
+				m_bottom(0),
+				m_right(0)
+			{
+			}
+		};
+
+		struct PIXELDISTANCESETINT4
+		{
+			int							m_left;
+			int							m_top;
+			int							m_bottom;
+			int							m_right;
+
+			PIXELDISTANCESETINT4() :
 				m_left(0),
 				m_top(0),
 				m_bottom(0),
@@ -119,7 +148,7 @@ namespace A2D{
 			Color3D m_bottomColor;
 
 			DISTANCESET4 m_borderWidths;
-			PIXELDISTANCESET4 m_borderWidthsInPixels;
+			PIXELDISTANCESETUINT4 m_borderWidthsInPixels;
 
 			bool m_inset; // unused
 

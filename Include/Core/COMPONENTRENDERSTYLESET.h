@@ -59,10 +59,16 @@ namespace A2D {
 		Style::Position             m_position;
 
 		Style::BORDERSET4           m_borders;
+
 		Style::DISTANCESET2         m_size;
 		Style::DISTANCESET4         m_margins;
 		Style::DISTANCESET4         m_positioning;
 		Style::DISTANCESET4         m_padding;
+
+		Style::PIXELDISTANCESETUINT2	m_precalculatedSize;
+		Style::PIXELDISTANCESETINT4     m_precalculatedMargins;
+		Style::PIXELDISTANCESETINT4     m_precalculatedPositioning;
+		Style::PIXELDISTANCESETINT4     m_precalculatedPadding;
 
 		wchar_t*                    m_backgroundSrc;
 		Paint                       m_backgroundPaint;

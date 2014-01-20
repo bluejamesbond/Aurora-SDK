@@ -76,6 +76,7 @@ namespace A2D {
     protected:
 
 		bool                        m_validatedContents;
+		bool						m_componentTreeValidationRequest;
 		
         float                       m_calculatedNegativeDeltaX;
         float                       m_calculatedNegativeDeltaY;
@@ -162,7 +163,6 @@ namespace A2D {
 			m_validatedContents = false;
 			m_styleSet.markRequestRegionAsDirty();
         }
-
     };
 }
 #endif

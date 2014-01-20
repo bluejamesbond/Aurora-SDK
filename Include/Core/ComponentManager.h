@@ -76,13 +76,15 @@ namespace A2D {
 		{
 			// FIX ME ... use scrollLeft and variables like that to find offset
 
-			Style::PIXELDISTANCESET4& borderWidths = aRoot->m_styleSet.m_borders.m_borderWidthsInPixels;
+			Style::PIXELDISTANCESETUINT4& borderWidths = aRoot->m_styleSet.m_borders.m_borderWidthsInPixels;
 
 			aBackBuffer->validate();
 			aRoot->setBounds(SFLOAT(borderWidths.m_left),
 							 SFLOAT(borderWidths.m_top),
 							 aBackBufferDims->aWidth - SFLOAT(borderWidths.m_left + borderWidths.m_right),
 							 aBackBufferDims->aHeight - SFLOAT(borderWidths.m_top + borderWidths.m_bottom));
+
+			aRoot->m_componentTreeValidationRequest = true;
 		}
 
 	};

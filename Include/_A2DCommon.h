@@ -127,6 +127,6 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
 
 // Convert from units to distance
 //------------------------------------------------------------------------------
-#define cvtsu2px__(x_units, x_value, x_range)           ((x_units == Style::PERCENTAGE) ? SFLOAT(x_range * (x_value / 100.0)) : (x_value))
+#define cvtsu2px__(x_units, x_value, x_range)           ((x_units == Style::PERCENTAGE) ? SINT(x_range * (x_value / 100.0f)) : SINT(x_value))
 
 #endif

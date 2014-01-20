@@ -15,7 +15,8 @@ Component::Component() :
     m_focused(false),
     m_focusable(true),
     m_nextCompListener(NULL),
-	m_prevCompListener(NULL)
+	m_prevCompListener(NULL),
+	m_componentTreeValidationRequest(false)
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
@@ -175,13 +176,15 @@ void Component::validate()
         // Set the region based on if it is even visible
 		//------------------------------------------------------------------------------
         m_visibleRegion.aWidth = SFLOAT((m_calculatedRegion.aX + compRect.aWidth) >= 0.0f ? m_calculatedRegion.aWidth : 0.0f);
-        m_visibleRegion.aHeight = SFLOAT((m_calculatedRegion.aY + compRect.aHeight) >= 0.0f ? m_calculatedRegion.aHeight : 0.0f); 		
+        m_visibleRegion.aHeight = SFLOAT((m_calculatedRegion.aY + compRect.aHeight) >= 0.0f ? m_calculatedRegion.aHeight : 0.0f); 	
     }
 
     CascadingLayout::doLayout(*this);
+	
+	m_validatedContents = true;
+	m_componentTreeValidationRequest = false;
 
 	m_styleSet.markVisibleRegionAsDirty();
-    m_validatedContents = true;
 }
 
 void Component::forceBounds(bool xForce)
