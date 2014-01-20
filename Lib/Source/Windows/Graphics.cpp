@@ -194,8 +194,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 	Texture * texture;
 	QuadData<TextureVertex, 6> * quadData;
-	Font * museo;
-	
+	Font * museo;	
 
 	string input = "hi there";
 

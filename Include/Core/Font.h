@@ -42,6 +42,9 @@ namespace A2D {
 	// DEFINE
 	////////////////////////////////////////////////////////////////////////////////
 
+	#define FONT_APPEND_TEX_LOC			".png"
+	#define FONT_APPEND_INFO_LOC		".txt"
+
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
@@ -50,9 +53,10 @@ namespace A2D {
 	{
 
 		friend class Graphics;
+		friend class TextFactory;
 
 	public:
-		Font(string  xFontDataLoc);
+		Font(string xFontName);
 		~Font();
 
 	public:
@@ -61,6 +65,9 @@ namespace A2D {
 
 		//void							setFontDataLoc(string xLocation);
 
+		//const static string				MUSEO = "museo";
+		//const static string				ARIAL = "arial";
+
 	private:
 
 		STATUS							LoadFontData();
@@ -68,7 +75,7 @@ namespace A2D {
 
 	private:
 
-		string							aFontDataLoc;
+		string							aFontName;
 		unsigned short					aLineHeight;
 		unsigned short					aBase;
 		unsigned short					aWidth;

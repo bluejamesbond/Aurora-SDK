@@ -22,9 +22,11 @@ STATUS Font::LoadFontData()
 	string Read, Key, Value;
 	size_t i;
 
+	string fontLoc = aFontName.append(FONT_APPEND_INFO_LOC);
+
 	filebuf fileBuffer;
 
-	if (fileBuffer.open(aFontDataLoc.c_str(), std::ios::in))
+	if (fileBuffer.open(fontLoc.c_str(), std::ios::in))
 	{
 		istream inputStream(&fileBuffer);
 		while (!inputStream.eof())

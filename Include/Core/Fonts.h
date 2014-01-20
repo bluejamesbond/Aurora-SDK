@@ -34,6 +34,8 @@ namespace A2D{
 	struct Fonts
 	{
 
+		string								aFontLocation;
+
 		static Fonts                        MUSEO;
 
 		Fonts(string xFontName);

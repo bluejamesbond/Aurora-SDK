@@ -6,3 +6,6 @@ using namespace A2D;
 
 Fonts Fonts::MUSEO(FONTS_DEFAULT_LOCATION "museo");
 
+Fonts::Fonts(string xFontName) : 
+aFontLocation(xFontName)
+{}

@@ -26,7 +26,7 @@
 #include "ExtLibs.h"
 #include "DXUtils.h"
 #include "Texture.h"
-
+#include "Text.h"
 
 namespace A2D {
 
@@ -105,16 +105,16 @@ namespace A2D {
 
 		inline void TextFactory::renderText(ID3D10Buffer * xVertexBuffer, unsigned int xStride)
 		{
-			ID3D10Device  *	device = *aDevice;
-			unsigned int offset = 0;
+			//ID3D10Device  *	device = *aDevice;
+			//unsigned int offset = 0;
 
-			// Set the vertex buffer to active in the input 
-			// assembler so it can be rendered.
-			device->IASetVertexBuffers(0, 1, &xVertexBuffer, &xStride, &offset);
+			//// Set the vertex buffer to active in the input 
+			//// assembler so it can be rendered.
+			//device->IASetVertexBuffers(0, 1, &xVertexBuffer, &xStride, &offset);
 
-			// Set the index buffer to active in the input
-			// assembler so it can be rendered.
-			device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			//// Set the index buffer to active in the input
+			//// assembler so it can be rendered.
+			//device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 
 		inline bool TextFactory::updateVertexBuffer(Text * xText, Rect * xRect)

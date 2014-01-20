@@ -1,25 +1,18 @@
 
 #include "../../../Include/Windows/ExtLibs.h"
-#include "../../../Include/Windows/QuadFactory.h"
+#include "../../../Include/Windows/TextFactory.h"
 
 using namespace A2D;
 
-QuadFactory::QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims)
-{
-	aDevice = xDevice;
-	aWindowDims = xWindowDims;
-}
+TextFactory::TextFactory(ID3D10Device ** xDevice, Dims * xWindowDims) :
+aDevice(xDevice), aWindowDims(xWindowDims)
+{}
 
-QuadFactory::~QuadFactory()
-{
-	D3DDESTROY(aVertexBuffer);
-	D3DDESTROY(aIndexBuffer);
-}
+TextFactory::~TextFactory()
+{}
 
-STATUS QuadFactory::initialize()
+STATUS TextFactory::initialize()
 {
-	SAFELY(DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
-	SAFELY(DXUtils::CreateDefaultIndexBuffer(*aDevice, &aIndexBuffer, 6));
 
 	return STATUS_OK;
 }
