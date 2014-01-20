@@ -60,7 +60,7 @@ typedef unsigned int STATUS;
 // Deconst is very dangerous
 // Use with caution.
 //------------------------------------------------------------------------------
-#define	unconst__(x)									(const_cast<x*>(this))
+#define	unconst__(x)									(const_cast<x>(this))
 
 // System independent definitions
 //------------------------------------------------------------------------------

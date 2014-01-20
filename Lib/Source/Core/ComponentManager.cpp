@@ -52,9 +52,9 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 	xChild.setParent(xParent);
 	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
-	xChild.setComponentManager(*unconst__(ComponentManager));
+	xChild.setComponentManager(*unconst__(ComponentManager*));
 
-	if (unconst__(ComponentManager)->addToDepthTracker(xChild))
+	if (unconst__(ComponentManager*)->addToDepthTracker(xChild))
 	{
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
