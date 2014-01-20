@@ -12,28 +12,8 @@ Component::Component() :
     m_parent(NULL),
     m_pipeline(NULL),
     m_componentManager(NULL),
-    m_displayStyle(Style::Display::BLOCK),
-    m_positionStyle(Style::Position::RELATIVE_),
-    m_sizeWidthUnitsStyle(Style::Units::PIXEL),
-    m_sizeHeightUnitsStyle(Style::Units::PIXEL),
-    m_marginLeftUnitsStyle(Style::Units::PIXEL),
-    m_marginTopUnitsStyle(Style::Units::PIXEL),
-    m_marginBottomUnitsStyle(Style::Units::PIXEL),
-    m_marginRightUnitsStyle(Style::Units::PIXEL),
-    m_positionLeftUnitsStyle(Style::Units::PIXEL),
-    m_positionTopUnitsStyle(Style::Units::PIXEL),
-    m_positionBottomUnitsStyle(Style::Units::PIXEL),
-    m_positionRightUnitsStyle(Style::Units::PIXEL),
-    m_sizeWidth(0.0f),
-    m_sizeHeight(0.0f),
-    m_marginLeft(0.0f),
-    m_marginTop(0.0f),
-    m_marginBottom(0.0f),
-    m_marginRight(0.0f),
-    m_positionLeft(0.0f),
-    m_positionTop(0.0f),
-    m_positionBottom(0.0f),
-    m_positionRight(0.0f),
+    m_display(Style::Display::BLOCK),
+    m_position(Style::Position::RELATIVE_),
     m_backgroundSrc(NULL),
     m_calculatedNegativeDeltaX(0.0f),
     m_calculatedNegativeDeltaY(0.0f),
@@ -41,7 +21,6 @@ Component::Component() :
     m_focusable(true),
     m_nextCompListener(NULL),
     m_prevCompListener(NULL)
-
 {
 }
 
@@ -111,6 +90,7 @@ void Component::add(Component& xContainer)
 
 void Component::remove(Component& xContainer)
 {
+	// FIXME Use remove_request
     m_children.remove(&xContainer);
 }
 
@@ -214,54 +194,58 @@ void Component::forceBounds(bool xForce)
 
 void Component::setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight)
 {
-    m_sizeWidthUnitsStyle = xWidthUnits;
-    m_sizeHeightUnitsStyle = xHeightUnits;
+	Style::DISTANCESET2& size = m_size;
 
-    m_sizeWidth = xWidth;
-    m_sizeHeight = xHeight;
+	size.m_widthUnits = xWidthUnits;
+	size.m_heightUnits = xHeightUnits;
+	size.m_width = xWidth;
+	size.m_height = xHeight;
 }
 
 void Component::setDisplay(Style::Display xDisplay)
 {
-    m_displayStyle = xDisplay;
+    m_display = xDisplay;
 }
 
 void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-    m_marginLeftUnitsStyle = xLeftUnits;
-    m_marginTopUnitsStyle = xTopUnits;
-    m_marginBottomUnitsStyle = xRightUnits;
-    m_marginRightUnitsStyle = xBottomUnits;
+	Style::DISTANCESET4& margins = m_margins;
 
-    m_marginLeft = xLeft;
-    m_marginTop = xTop;
-    m_marginBottom = xBottom;
-    m_marginRight = xRight;
+	margins.m_leftUnits = xLeftUnits;
+	margins.m_topUnits = xTopUnits;
+	margins.m_rightUnits = xRightUnits;
+	margins.m_bottomUnits = xBottomUnits;
+
+	margins.m_left = xLeft;
+	margins.m_top = xTop;
+	margins.m_bottom = xBottom;
+	margins.m_right = xRight;
 }
 
 void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-    m_positionLeftUnitsStyle = xLeftUnits;
-    m_positionTopUnitsStyle = xTopUnits;
-    m_positionBottomUnitsStyle = xRightUnits;
-    m_positionRightUnitsStyle = xBottomUnits;
+	Style::DISTANCESET4& positioning = m_positioning;
 
-    m_positionLeft = xLeft;
-    m_positionTop = xTop;
-    m_positionBottom = xBottom;
-    m_positionRight = xRight;
+	positioning.m_leftUnits = xLeftUnits;
+	positioning.m_topUnits = xTopUnits;
+	positioning.m_rightUnits = xRightUnits;
+	positioning.m_bottomUnits = xBottomUnits;
+
+	positioning.m_left = xLeft;
+	positioning.m_top = xTop;
+	positioning.m_bottom = xBottom;
+	positioning.m_right = xRight;
 }
 
 void Component::setPosition(Style::Position xPosition)
 {
-    m_positionStyle = xPosition;
+    m_position = xPosition;
 }
 
 STATUS Component::initialize()
 {
     return STATUS_OK;
 }
-
 
 void Component::paintComponent()
 {

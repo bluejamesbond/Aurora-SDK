@@ -45,21 +45,27 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		}
 
 		///*************************************** CACHE **********************************//
-		display = component->m_displayStyle;
-		position = component->m_positionStyle;
+		display = component->m_display;
+		position = component->m_position;
 
-		width = cvtsu2px__(component->m_sizeWidthUnitsStyle, component->m_sizeWidth, compRect.aWidth);
-		height = cvtsu2px__(component->m_sizeHeightUnitsStyle, component->m_sizeHeight, compRect.aHeight);
+		Style::DISTANCESET2& size = component->m_size;
 
-		marginLeft = cvtsu2px__(component->m_marginLeftUnitsStyle, component->m_marginLeft, compRect.aWidth);
-		marginTop = cvtsu2px__(component->m_marginTopUnitsStyle, component->m_marginTop, compRect.aHeight);
-		marginBottom = cvtsu2px__(component->m_marginBottomUnitsStyle, component->m_marginBottom, compRect.aHeight);
-		marginRight = cvtsu2px__(component->m_marginRightUnitsStyle, component->m_marginRight, compRect.aWidth);
+		width = cvtsu2px__(size.m_widthUnits, size.m_width, compRect.aWidth);
+		height = cvtsu2px__(size.m_heightUnits, size.m_height, compRect.aHeight);
 
-		positionLeft = cvtsu2px__(component->m_positionLeftUnitsStyle, component->m_positionLeft, compRect.aWidth);
-		positionTop = cvtsu2px__(component->m_positionTopUnitsStyle, component->m_positionTop, compRect.aHeight);
-		positionBottom = cvtsu2px__(component->m_positionBottomUnitsStyle, component->m_positionBottom, compRect.aHeight);
-		positionRight = cvtsu2px__(component->m_positionRightUnitsStyle, component->m_positionRight, compRect.aWidth);
+		Style::DISTANCESET4& margins = component->m_margins;
+
+		marginLeft = cvtsu2px__(margins.m_leftUnits, margins.m_left, compRect.aWidth);
+		marginTop = cvtsu2px__(margins.m_topUnits, margins.m_top, compRect.aHeight);
+		marginBottom = cvtsu2px__(margins.m_bottomUnits, margins.m_bottom, compRect.aHeight);
+		marginRight = cvtsu2px__(margins.m_rightUnits, margins.m_right, compRect.aWidth);
+		
+		Style::DISTANCESET4& positioning = component->m_positioning;
+
+		positionLeft = cvtsu2px__(positioning.m_leftUnits, positioning.m_left, compRect.aWidth);
+		positionTop = cvtsu2px__(positioning.m_topUnits, positioning.m_top, compRect.aHeight);
+		positionBottom = cvtsu2px__(positioning.m_bottomUnits, positioning.m_bottom, compRect.aHeight);
+		positionRight = cvtsu2px__(positioning.m_rightUnits, positioning.m_right, compRect.aWidth);
 		///********************************************************************************//
 
 		if (position == Style::RELATIVE_)

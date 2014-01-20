@@ -80,49 +80,31 @@ namespace A2D {
 
     protected:
 
-        bool                        m_visible;
+		bool                        m_visible;
+		bool                        m_validatedContents;
 
-        Pipeline*                   m_pipeline;
+		float						m_fullWidth;
+		float						m_fullHeight;
+		
         Style::Background           m_backgroundStyle;
+        Style::Display              m_display;
+        Style::Position             m_position;  
 
-        Style::Display              m_displayStyle;
-        Style::Position             m_positionStyle;
+		Style::DISTANCESET2         m_size;
+		Style::DISTANCESET4         m_margins;
+		Style::DISTANCESET4         m_positioning;
+		Style::DISTANCESET4         m_padding;
 
-        Style::Units                m_sizeWidthUnitsStyle;
-        Style::Units                m_sizeHeightUnitsStyle;     
-
-        Style::Units                m_marginLeftUnitsStyle;
-        Style::Units                m_marginTopUnitsStyle;
-        Style::Units                m_marginBottomUnitsStyle;
-        Style::Units                m_marginRightUnitsStyle;
-
-        Style::Units                m_positionLeftUnitsStyle;
-        Style::Units                m_positionTopUnitsStyle;
-        Style::Units                m_positionBottomUnitsStyle;
-        Style::Units                m_positionRightUnitsStyle;
-        
-        float                       m_sizeWidth;
-        float                       m_sizeHeight;
-
-        float                       m_marginLeft;
-        float                       m_marginTop;
-        float                       m_marginBottom;
-        float                       m_marginRight;
-
-        float                       m_positionLeft;
-        float                       m_positionTop;
-        float                       m_positionBottom;
-        float                       m_positionRight;
-
-        bool                        m_validatedContents;
         float                       m_calculatedNegativeDeltaX;
         float                       m_calculatedNegativeDeltaY;
-        Graphics*                   m_graphics;
+
         Rect                        m_region;
         Rect                        m_backgroundRegion;
         Rect                        m_calculatedRegion;
         Rect                        m_visibleRegion;
 
+		Pipeline*                   m_pipeline;
+		Graphics*                   m_graphics;
         LPCWSTR                     m_backgroundSrc;          
         Paint                       m_backgroundPaint;        
 

@@ -51,6 +51,48 @@ namespace A2D{
 			PERCENTAGE
 		};
 
+		struct DISTANCESET2
+		{
+			Style::Units                m_widthUnits;
+			Style::Units                m_heightUnits;
+
+			float                       m_width;
+			float                       m_height;
+
+			DISTANCESET2() :
+				m_widthUnits(Style::Units::PIXEL),
+				m_heightUnits(Style::Units::PIXEL),
+				m_width(0.0f),
+				m_height(0.0f)
+			{
+			}
+		};
+
+		struct DISTANCESET4
+		{
+			Style::Units                m_leftUnits;
+			Style::Units                m_topUnits;
+			Style::Units                m_bottomUnits;
+			Style::Units                m_rightUnits;
+			
+			float                       m_left;
+			float                       m_top;
+			float                       m_bottom;
+			float                       m_right;
+
+			DISTANCESET4() :
+				m_leftUnits(Style::Units::PIXEL),
+				m_topUnits(Style::Units::PIXEL),
+				m_bottomUnits(Style::Units::PIXEL),
+				m_rightUnits(Style::Units::PIXEL),
+				m_left(0.0f),
+				m_top(0.0f),
+				m_bottom(0.0f),
+				m_right(0.0f)
+			{
+			}
+		};
+
 		static float AUTO;
 		
 		struct Background
