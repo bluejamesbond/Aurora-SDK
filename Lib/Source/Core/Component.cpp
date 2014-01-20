@@ -34,7 +34,7 @@ Component& Component::getParent()
     return *m_parent;
 }
 
-float Component::getDepth()
+int Component::getDepth()
 {
 	return m_styleSet.m_depth;
 }
@@ -54,7 +54,7 @@ Graphics& Component::getGraphics()
     return *m_graphics;
 }
 
-void Component::setDepth( float xDepth)
+void Component::setDepth(int xDepth)
 {
 	m_styleSet.m_depth = xDepth;
 
@@ -64,6 +64,11 @@ void Component::setDepth( float xDepth)
 void Component::setFrame(AbstractFrame& xFrame)
 {
     m_frame = &xFrame;
+}
+
+void Component::setComponentManager(ComponentManager& x_componentManager)
+{
+	m_componentManager = &x_componentManager;
 }
 
 void Component::setParent(Component& xParent)

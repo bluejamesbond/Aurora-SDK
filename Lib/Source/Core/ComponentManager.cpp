@@ -24,10 +24,11 @@ STATUS ComponentManager::initialize()
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
 	//------------------------------------------------------------------------------
-	root.setDepth(0.0f);
 	root.setGraphics(*static_cast<Graphics*>(aGraphics));
+	root.setComponentManager(*this);
+	root.setDepth(0);
 
-	addToDepthTracker(root, 0.0f);
+	addToDepthTracker(root);
 
 	return STATUS_OK;
 }
@@ -41,9 +42,9 @@ AbstractWindow * ComponentManager::getWindow()
 
 STATUS ComponentManager::add(Component& xParent, Component& xChild)
 {
-	float depth = xParent.getDepth();
+	int depth = xParent.getDepth();
 
-	if (depth == FLT_MIN)
+	if (depth == INT_MIN)
 	{
 		return STATUS_FAIL;
 	}
@@ -51,8 +52,9 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 	xChild.setParent(xParent);
 	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
-	
-	if (addToDepthTracker(xChild, abs__(depth)))
+	xChild.setComponentManager(*this);
+
+	if (addToDepthTracker(xChild))
 	{
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
@@ -63,15 +65,14 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 	return STATUS_FAIL;
 }
 
-bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
+bool ComponentManager::addToDepthTracker(Component& xComponent)
 {
 	// Call eventDepthTracker also.
-	xComponent.m_componentManager = this;
-	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
+	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xComponent.getDepth());
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;
-	int neededZ = SINT(xZ);
+	int neededZ = xComponent.getDepth();
 
 	if (maxZ <= neededZ)
 	{
@@ -88,10 +89,10 @@ bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
 	}
 
 
-	return 1;
+	return true;
 }
 
-void ComponentManager::update()
+void ComponentManager::updateTopToBottom()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
@@ -125,7 +126,7 @@ void ComponentManager::update()
 	backBuffer->swap();
 }
 
-void ComponentManager::update_forward()
+void ComponentManager::updateBottomToTop()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 

@@ -55,7 +55,7 @@ namespace A2D {
 		bool                        m_visible;
 
 		float						m_opacity;
-		float                       m_depth;
+		int		                    m_depth;
 
 		const Rect*                 m_region;
 		const Rect*                 m_visibleRegion;
@@ -88,7 +88,7 @@ namespace A2D {
 		bool						m_dirtyOpacityDepth;
 		
 		A2DCOMPONENTRENDERSTYLESET() :
-			m_depth(0.0f),
+			m_depth(INT_MIN),
 			m_opacity(1.0f),
 			m_visible(true),
 			m_display(Style::Display::BLOCK),

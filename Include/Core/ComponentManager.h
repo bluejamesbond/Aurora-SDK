@@ -43,6 +43,8 @@ namespace A2D {
 	class ComponentManager
 	{
 
+		friend class AbstractFrame;
+
 	private:
 
 		const Dims								   *   aBackBufferDims;
@@ -64,9 +66,12 @@ namespace A2D {
 		~ComponentManager();
 
 		STATUS										  add(Component& xParent, Component& xChild);
-		bool										  addToDepthTracker(Component& xComponent, float xZ);
-		void										  update();
-		void										  update_forward();
+
+	private:
+
+		bool										  addToDepthTracker(Component& xComponent);
+		void										  updateTopToBottom();
+		void										  updateBottomToTop();
 
 	public:
 

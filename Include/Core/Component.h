@@ -26,6 +26,7 @@
 #include "ImageProperties.h"
 #include "Pipeline.h"
 #include "CascadingLayout.h"
+#include "Easing.h"
 #include GRAPHICS__
 #include "ComponentEventSource.h"
 #include "A2DCOMPONENTRENDERSTYLESET.h"
@@ -105,10 +106,6 @@ namespace A2D {
 		void                        setPadding(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
 		void                        setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
 		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
-		void                        setDepth(float xDepth);
-        void                        setGraphics(Graphics& xGraphics);
-        void                        setParent(Component& xComponent);
-        void                        setFrame(AbstractFrame& xFrame);
         void                        setFocusable(bool xFocusable);
   
         STATUS                      requestFocus();
@@ -127,7 +124,7 @@ namespace A2D {
         void                        forceBounds(bool xForce);
         virtual STATUS              initialize();  
 
-        float                       getDepth();
+		int							getDepth();
         Graphics&                   getGraphics();
         Component&                  getParent();
         Component&                  getRoot();
@@ -139,6 +136,14 @@ namespace A2D {
 		Paint&                      getBackgroundPaint();
  
         bool                        isDoubleBuffered();     
+
+	private:
+
+		void                        setDepth(int xDepth);
+		void                        setGraphics(Graphics& xGraphics);
+		void                        setParent(Component& xComponent);
+		void                        setFrame(AbstractFrame& xFrame);
+		void						setComponentManager(ComponentManager& x_componentManager);
 
     protected:
 

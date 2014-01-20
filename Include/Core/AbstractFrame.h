@@ -38,8 +38,6 @@ namespace A2D {
     ////////////////////////////////////////////////////////////////////////////////
 
     class   Abstract;
-    class   Container;
-    struct  CameraProperties;
     class   BackBuffer;
     class   RootPane;
     class   Graphics;
@@ -102,9 +100,9 @@ namespace A2D {
         void                            setLocationRelativeTo(AbstractFrame * xFrame);
         void                            setVsync(bool xVsync);
         void                            setDefaultCloseOperation(int xOperation);
-        AbstractWindow          *       getWindow();
-        void                            run(int xThreadId);
-        ComponentManager*               getComponentManager();
+		void                            run(int xThreadId);
+		AbstractWindow*					getWindow();
+        ComponentManager*				getComponentManager();
 
 
     protected:

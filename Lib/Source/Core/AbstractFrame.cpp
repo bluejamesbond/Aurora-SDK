@@ -309,12 +309,12 @@ void AbstractFrame::update()
 	{
 		aComponentManager->validate();
 		
-		aComponentManager->update_forward();
+		aComponentManager->updateBottomToTop();
 
 		aValidatedContents = true;
 
 		return;
 	}
 
-	aComponentManager->update();
+	aComponentManager->updateTopToBottom();
 }
