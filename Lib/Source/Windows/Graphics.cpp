@@ -105,7 +105,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 	}
 }
 
-void Graphics::drawComponent(Pipeline ** xPipeline, COMPONENTRENDERSTYLESET& x_renderSet)
+void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet)
 {
 	Rect * clip = aClip;
 	const Rect * rect = x_renderSet.m_region;
@@ -181,8 +181,12 @@ void Graphics::drawComponent(Pipeline ** xPipeline, COMPONENTRENDERSTYLESET& x_r
 		quadExpansionShader->setTexture(texture);
 	}
 
-	// Update the buffer
-	quadFactory->updateVertexBuffer(quadData, x_renderSet, texture);
+	// Update the buffer iff it is marked
+	// as dirty
+	if (x_renderSet.m_dirty)
+	{
+		quadFactory->updateVertexBuffer(quadData, x_renderSet, texture);
+	}
 
 	// Render the quad
 	quadFactory->renderQuad(quadData->aVertexBuffer, sizeof(QuadExpansionVertex));

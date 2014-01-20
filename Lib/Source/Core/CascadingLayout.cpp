@@ -76,30 +76,30 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			SYSOUT_STR("[CascadingLayout] Requesting recalculations due to parent resize.");
 			#endif // A2D_DE__
 
-			Style::DISTANCESET2& size = component->m_styleSet.m_size;
-			Style::PIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
+			A2DDISTANCESET2& size = component->m_styleSet.m_size;
+			A2DPIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
 
 			width = precalculatedSize.m_width = SUINT(cvtsu2px__(size.m_widthUnits, size.m_width, compWidth));
 			height = precalculatedSize.m_height = SUINT(cvtsu2px__(size.m_heightUnits, size.m_height, compHeight));
 
-			Style::DISTANCESET4& margins = component->m_styleSet.m_margins;
-			Style::PIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
+			A2DDISTANCESET4& margins = component->m_styleSet.m_margins;
+			A2DPIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
 
 			marginLeft = precalculatedMargins.m_left = cvtsu2px__(margins.m_leftUnits, margins.m_left, compWidth);
 			marginTop = precalculatedMargins.m_top = cvtsu2px__(margins.m_topUnits, margins.m_top, compHeight);
 			marginRight = precalculatedMargins.m_right = cvtsu2px__(margins.m_rightUnits, margins.m_right, compWidth);
 			marginBottom = precalculatedMargins.m_bottom = cvtsu2px__(margins.m_bottomUnits, margins.m_bottom, compHeight);
 
-			Style::DISTANCESET4& positioning = component->m_styleSet.m_positioning;
-			Style::PIXELDISTANCESETINT4& precalculatedPositioning = component->m_styleSet.m_precalculatedPositioning;
+			A2DDISTANCESET4& positioning = component->m_styleSet.m_positioning;
+			A2DPIXELDISTANCESETINT4& precalculatedPositioning = component->m_styleSet.m_precalculatedPositioning;
 
 			positionLeft = precalculatedPositioning.m_left = cvtsu2px__(positioning.m_leftUnits, positioning.m_left, compWidth);
 			positionTop = precalculatedPositioning.m_top = cvtsu2px__(positioning.m_topUnits, positioning.m_top, compHeight);
 			positionRight = precalculatedPositioning.m_right = cvtsu2px__(positioning.m_rightUnits, positioning.m_right, compWidth);
 			positionBottom = precalculatedPositioning.m_bottom = cvtsu2px__(positioning.m_bottomUnits, positioning.m_bottom, compHeight);
 
-			Style::DISTANCESET4& borderWidths = component->m_styleSet.m_borders.m_borderWidths;
-			Style::PIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
+			A2DDISTANCESET4& borderWidths = component->m_styleSet.m_borders.m_borderWidths;
+			A2DPIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
 			borderLeft = precalculatedBorderWidths.m_left = SUINT(cvtsu2px__(borderWidths.m_leftUnits, borderWidths.m_left, compWidth));
 			borderTop = precalculatedBorderWidths.m_top = SUINT(cvtsu2px__(borderWidths.m_topUnits, borderWidths.m_top, compHeight));
@@ -118,26 +118,26 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		}
 		else
 		{
-			Style::PIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
+			A2DPIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
 
 			width = precalculatedSize.m_width;
 			height = precalculatedSize.m_height;
 
-			Style::PIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
+			A2DPIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
 
 			marginLeft = precalculatedMargins.m_left;
 			marginTop = precalculatedMargins.m_top;
 			marginRight = precalculatedMargins.m_right;
 			marginBottom = precalculatedMargins.m_bottom;
 
-			Style::PIXELDISTANCESETINT4& precalculatedPositioning = component->m_styleSet.m_precalculatedPositioning;
+			A2DPIXELDISTANCESETINT4& precalculatedPositioning = component->m_styleSet.m_precalculatedPositioning;
 
 			positionLeft = precalculatedPositioning.m_left;
 			positionTop = precalculatedPositioning.m_top;
 			positionRight = precalculatedPositioning.m_right;
 			positionBottom = precalculatedPositioning.m_bottom;
 
-			Style::PIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
+			A2DPIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
 			borderLeft = precalculatedBorderWidths.m_left;
 			borderTop = precalculatedBorderWidths.m_top;

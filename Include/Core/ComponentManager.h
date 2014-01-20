@@ -76,7 +76,7 @@ namespace A2D {
 		{
 			// FIX ME ... use scrollLeft and variables like that to find offset
 
-			Style::PIXELDISTANCESETUINT4& borderWidths = aRoot->m_styleSet.m_borders.m_precalculatedBorderWidths;
+			A2DPIXELDISTANCESETUINT4& borderWidths = aRoot->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
 			aBackBuffer->validate();
 			aRoot->setBounds(SFLOAT(borderWidths.m_left),

@@ -20,13 +20,15 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/../_A2DCommon.h"
+#include "../_A2DCommon.h"
+
 #include "../Core/Paint.h"
 #include "../Core/Color3D.h"
 #include "../Core/ImageProperties.h"
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
-#include "../Core/COMPONENTRENDERSTYLESET.h"
+
+#include "../Core/A2DCOMPONENTRENDERSTYLESET.h"
 
 #include "VertexTypes.h"
 #include "BackBuffer.h"
@@ -102,7 +104,7 @@ namespace A2D {
 		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 		
-		void							drawComponent(Pipeline ** xPipeline, COMPONENTRENDERSTYLESET& x_renderSet);
+		void							drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet);
 		
 	public:
 

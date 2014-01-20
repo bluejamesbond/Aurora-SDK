@@ -25,7 +25,7 @@ STATUS QuadFactory::initialize()
 }
 
 // Temporarily moved to cpp to make the build process faster
-void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadData, COMPONENTRENDERSTYLESET& x_renderSet, Texture * x_texture)
+void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadData, A2DCOMPONENTRENDERSTYLESET& x_renderSet, Texture * x_texture)
 {
 	float winWidth = aWindowDims->aWidth;
 	float winHeight = aWindowDims->aHeight;

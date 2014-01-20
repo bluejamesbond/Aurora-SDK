@@ -28,7 +28,7 @@
 #include "CascadingLayout.h"
 #include GRAPHICS__
 #include "ComponentEventSource.h"
-#include "COMPONENTRENDERSTYLESET.h"
+#include "A2DCOMPONENTRENDERSTYLESET.h"
 
 namespace A2D {
 
@@ -81,7 +81,7 @@ namespace A2D {
         float                       m_calculatedNegativeDeltaX;
         float                       m_calculatedNegativeDeltaY;
 		
-		COMPONENTRENDERSTYLESET		m_styleSet;
+		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
 
 		Rect                        m_region;
 		Rect                        m_backgroundRegion;

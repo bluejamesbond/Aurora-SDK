@@ -27,6 +27,12 @@
 #include "Paint.h"
 #include "Style.h"
 
+#include "A2DBORDERSET4.h"
+#include "A2DDISTANCESET2.h"
+#include "A2DDISTANCESET4.h"
+#include "A2DPIXELDISTANCESETUINT2.h"
+#include "A2DPIXELDISTANCESETINT4.h"
+
 namespace A2D {
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +50,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	struct COMPONENTRENDERSTYLESET
+	struct A2DCOMPONENTRENDERSTYLESET
 	{
 		bool                        m_visible;
 
@@ -58,17 +64,17 @@ namespace A2D {
 		Style::Display              m_display;
 		Style::Position             m_position;
 
-		Style::BORDERSET4           m_borders;
+		A2DBORDERSET4				m_borders;
 
-		Style::DISTANCESET2         m_size;
-		Style::DISTANCESET4         m_margins;
-		Style::DISTANCESET4         m_positioning;
-		Style::DISTANCESET4         m_padding;
+		A2DDISTANCESET2				m_size;
+		A2DDISTANCESET4				m_margins;
+		A2DDISTANCESET4				m_positioning;
+		A2DDISTANCESET4				m_padding;
 
-		Style::PIXELDISTANCESETUINT2	m_precalculatedSize;
-		Style::PIXELDISTANCESETINT4     m_precalculatedMargins;
-		Style::PIXELDISTANCESETINT4     m_precalculatedPositioning;
-		Style::PIXELDISTANCESETINT4     m_precalculatedPadding;
+		A2DPIXELDISTANCESETUINT2	m_precalculatedSize;
+		A2DPIXELDISTANCESETINT4     m_precalculatedMargins;
+		A2DPIXELDISTANCESETINT4     m_precalculatedPositioning;
+		A2DPIXELDISTANCESETINT4     m_precalculatedPadding;
 
 		wchar_t*                    m_backgroundSrc;
 		Paint                       m_backgroundPaint;
@@ -80,9 +86,8 @@ namespace A2D {
 		bool						m_dirtyBorderColors;
 		bool						m_dirtyBorderWidths;
 		bool						m_dirtyOpacityDepth;
-
-
-		COMPONENTRENDERSTYLESET() :
+		
+		A2DCOMPONENTRENDERSTYLESET() :
 			m_depth(0.0f),
 			m_opacity(1.0f),
 			m_visible(true),
@@ -98,14 +103,15 @@ namespace A2D {
 		{
 		}
 
-		inline void markRequestRegionAsDirty()		{ m_dirty = m_dirtyRequestRegion = true; }
-		inline void markVisibleRegionAsDirty()		{ m_dirty = m_dirtyVisbleRegion = true; }
-		inline void markBackgroundAsDirty()			{ m_dirty = m_dirtyBackground = true; }
-		inline void markBorderWidthsAsDirty()		{ m_dirty = m_dirtyBorderWidths = true; }
-		inline void markBorderColorsAsDirty()		{ m_dirty = m_dirtyBorderColors = true; }
-		inline void markOpacityDepthAsDirty()		{ m_dirty = m_dirtyOpacityDepth = true; }
+		inline void					markRequestRegionAsDirty()		{ m_dirty = m_dirtyRequestRegion = true; }
+		inline void					markVisibleRegionAsDirty()		{ m_dirty = m_dirtyVisbleRegion = true; }
+		inline void					markBackgroundAsDirty()			{ m_dirty = m_dirtyBackground = true; }
+		inline void					markBorderWidthsAsDirty()		{ m_dirty = m_dirtyBorderWidths = true; }
+		inline void					markBorderColorsAsDirty()		{ m_dirty = m_dirtyBorderColors = true; }
+		inline void					markOpacityAsDirty()			{ m_dirty = m_dirtyOpacityDepth = true; }
+		inline void					markDepthAsDirty()				{ m_dirty = m_dirtyOpacityDepth = true; }
 
-		inline bool isDirty()						{ return m_dirty; };
+		inline bool					isDirty()						{ return m_dirty; };
 	};
 }
 

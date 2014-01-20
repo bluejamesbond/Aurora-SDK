@@ -58,7 +58,7 @@ void Component::setDepth( float xDepth)
 {
 	m_styleSet.m_depth = xDepth;
 
-	m_styleSet.markOpacityDepthAsDirty();
+	m_styleSet.markDepthAsDirty();
 }
 
 void Component::setFrame(AbstractFrame& xFrame)
@@ -194,7 +194,7 @@ void Component::forceBounds(bool xForce)
 
 void Component::setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight)
 {
-	Style::DISTANCESET2& size = m_styleSet.m_size;
+	A2DDISTANCESET2& size = m_styleSet.m_size;
 
 	size.m_widthUnits = xWidthUnits;
 	size.m_heightUnits = xHeightUnits;
@@ -213,7 +213,7 @@ void Component::setDisplay(Style::Display xDisplay)
 
 void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-	Style::DISTANCESET4& margins = m_styleSet.m_margins;
+	A2DDISTANCESET4& margins = m_styleSet.m_margins;
 
 	margins.m_leftUnits = xLeftUnits;
 	margins.m_topUnits = xTopUnits;
@@ -230,7 +230,7 @@ void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xT
 
 void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-	Style::DISTANCESET4& positioning = m_styleSet.m_positioning;
+	A2DDISTANCESET4& positioning = m_styleSet.m_positioning;
 
 	positioning.m_leftUnits = xLeftUnits;
 	positioning.m_topUnits = xTopUnits;
@@ -247,7 +247,7 @@ void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Unit
 
 void Component::setPadding(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-	Style::DISTANCESET4& padding = m_styleSet.m_padding;
+	A2DDISTANCESET4& padding = m_styleSet.m_padding;
 
 	padding.m_leftUnits = xLeftUnits;
 	padding.m_topUnits = xTopUnits;
@@ -442,7 +442,7 @@ void Component::setBackgroundPaint(Paint& xOptPaint)
 
 void Component::setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-	Style::DISTANCESET4& bordersWidths = m_styleSet.m_borders.m_borderWidths;
+	A2DDISTANCESET4& bordersWidths = m_styleSet.m_borders.m_borderWidths;
 
 	bordersWidths.m_leftUnits = xLeftUnits;
 	bordersWidths.m_topUnits = xTopUnits;
@@ -460,7 +460,7 @@ void Component::setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Uni
 
 void Component::setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom)
 {
-	Style::BORDERSET4& borders = m_styleSet.m_borders;
+	A2DBORDERSET4& borders = m_styleSet.m_borders;
 
 	Color3D::from(borders.m_leftColor, xLeft);
 	Color3D::from(borders.m_topColor, xTop);
