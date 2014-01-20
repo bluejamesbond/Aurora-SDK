@@ -112,7 +112,7 @@ namespace A2D {
 		inline bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 		{
 			Rect& constraints = aConstraints;
-			Rect * textureClip = xTexture->GetClip();
+			const Rect * textureClip = xTexture->GetClip();
 
 			int textureDimsChange = 0;
 			int textureClipChange = 0;
@@ -205,7 +205,7 @@ namespace A2D {
 		inline bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
 		{
 			Rect& constraints = aConstraints;
-			Rect * textureClip = xTexture->GetClip();
+			const Rect * textureClip = xTexture->GetClip();
 
 			int textureDimsChange = 0;
 			int textureClipChange = 0;

@@ -51,8 +51,8 @@ namespace A2D {
 		float						m_opacity;
 		float                       m_depth;
 
-		Rect*                       m_region;
-		Rect*                       m_visibleRegion;
+		const Rect*                 m_region;
+		const Rect*                 m_visibleRegion;
 
 		Style::Background           m_backgroundStyle;
 		Style::Display              m_display;

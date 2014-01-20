@@ -37,8 +37,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 	//------------------------------------------------------------------------------
 	if (x_renderSet.m_dirtyRequestRegion || x_renderSet.m_dirtyVisbleRegion)
 	{
-		Rect& constraints = *x_renderSet.m_visibleRegion;
-
+		const Rect& constraints = *x_renderSet.m_visibleRegion;
+		
 		float rectX = 0.0f;
 		float rectY = 0.0f;
 		float rectWidth = x_renderSet.m_region->aWidth;
@@ -179,10 +179,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 	
 	if (x_renderSet.m_dirtyBorderWidths)
 	{
-		vertices[0].aBorderWidths = D3DXVECTOR4(cvtpx2rd__(winWidth, x_renderSet.m_borders.m_borderWidthsInPixels.m_left),
-												cvtpx2rd__(winHeight, x_renderSet.m_borders.m_borderWidthsInPixels.m_top),
-												cvtpx2rd__(winWidth, x_renderSet.m_borders.m_borderWidthsInPixels.m_right),
-												cvtpx2rd__(winHeight, x_renderSet.m_borders.m_borderWidthsInPixels.m_bottom));
+		vertices[0].aBorderWidths = D3DXVECTOR4(cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_left),
+												cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_top),
+												cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_right),
+												cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom));
 		x_renderSet.m_dirtyBorderWidths = false;
 	}
 

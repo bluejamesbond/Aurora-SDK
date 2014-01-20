@@ -52,7 +52,7 @@ namespace A2D {
 
         // Accessors
         Dims                    *       GetSize();
-        Rect                    *       GetClip(int xIndex = 0);
+        const Rect              *       GetClip(int xIndex = 0);
 
         // Mutators
         void                            SetClip(Rect * xClip, int xIndex = 0);

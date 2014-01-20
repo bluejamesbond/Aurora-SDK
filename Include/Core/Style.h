@@ -148,7 +148,7 @@ namespace A2D{
 			Color3D m_bottomColor;
 
 			DISTANCESET4 m_borderWidths;
-			PIXELDISTANCESETUINT4 m_borderWidthsInPixels;
+			PIXELDISTANCESETUINT4 m_precalculatedBorderWidths;
 
 			bool m_inset; // unused
 
@@ -191,38 +191,26 @@ namespace A2D{
 				X_Y,
 				NONE
 			};
-
-			/**************************************/
-
+			
 			Layout m_layout;
-
-			/**************************************/
-
+			
 			Units m_customPositionXUnits;
 			Units m_customPositionYUnits;
 
 			float m_customPositionX;
 			float m_customPositionY;
-
-			/**************************************/
-
+			
 			Units m_customSizeWidthUnits;
 			Units m_customSizeHeightUnits;
 
 			float m_customSizeWidth;
 			float m_customSizeHeight;
 
-			/**************************************/
-
 			Repeat m_repeat;
-
-			/**************************************/
-
+			
 			Position m_positionX;
 			Position m_positionY;
-
-			/**************************************/
-
+			
 			Background() :
 				m_layout(Layout::COVER),
 				m_positionX(Position::CENTER),

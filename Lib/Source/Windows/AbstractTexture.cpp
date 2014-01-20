@@ -15,7 +15,7 @@ Dims* AbstractTexture::GetSize()
 	return &aDims;
 }
 
-Rect* AbstractTexture::GetClip(int xIndex)
+const Rect* AbstractTexture::GetClip(int xIndex)
 {
 	return &aClip;
 }

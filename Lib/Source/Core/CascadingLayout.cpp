@@ -65,13 +65,17 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			continue;
 		}
 
-		// FIXME Update on resize only
+		// FIXME Update on parent resize only
 		//------------------------------------------------------------------------------
 		display = component->m_styleSet.m_display;
 		position = component->m_styleSet.m_position;
 			
 		if (x_component.m_componentTreeValidationRequest)
 		{
+			#ifdef A2D_DE__			
+			SYSOUT_STR("[CascadingLayout] Requesting recalculations due to parent resize.");
+			#endif // A2D_DE__
+
 			Style::DISTANCESET2& size = component->m_styleSet.m_size;
 			Style::PIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
 
@@ -95,7 +99,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			positionBottom = precalculatedPositioning.m_bottom = cvtsu2px__(positioning.m_bottomUnits, positioning.m_bottom, compHeight);
 
 			Style::DISTANCESET4& borderWidths = component->m_styleSet.m_borders.m_borderWidths;
-			Style::PIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_borderWidthsInPixels;
+			Style::PIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
 			borderLeft = precalculatedBorderWidths.m_left = SUINT(cvtsu2px__(borderWidths.m_leftUnits, borderWidths.m_left, compWidth));
 			borderTop = precalculatedBorderWidths.m_top = SUINT(cvtsu2px__(borderWidths.m_topUnits, borderWidths.m_top, compHeight));
@@ -133,7 +137,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			positionRight = precalculatedPositioning.m_right;
 			positionBottom = precalculatedPositioning.m_bottom;
 
-			Style::PIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_borderWidthsInPixels;
+			Style::PIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
 			borderLeft = precalculatedBorderWidths.m_left;
 			borderTop = precalculatedBorderWidths.m_top;

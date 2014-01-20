@@ -108,7 +108,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 void Graphics::drawComponent(Pipeline ** xPipeline, COMPONENTRENDERSTYLESET& x_renderSet)
 {
 	Rect * clip = aClip;
-	Rect * rect = x_renderSet.m_region;
+	const Rect * rect = x_renderSet.m_region;
 
 	// Check if drawing request is even visible
 	if (clip->aWidth <= 0.0f || clip->aHeight <= 0.0f)	return;
