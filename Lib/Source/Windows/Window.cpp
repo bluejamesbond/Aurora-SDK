@@ -233,14 +233,12 @@ HWND Window::createCompatibleWindow(bool isParent)
     width = SINT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
     height = SINT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
     lStyle = SINT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
-    lExStyle = SINT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+	lExStyle = SINT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
     hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
     titleName = aName;
 
     hWnd = CreateWindowEx(lExStyle, aClassName->c_str(), titleName, lStyle, left, top, width, height, hwndParent, NULL, aHInstance, this);
-
-    aStyle = WS_EX_APPWINDOW;
-
+	
     if (aChildHWnd && aParentHWnd)
     {
         // Force the child on top of parent!
