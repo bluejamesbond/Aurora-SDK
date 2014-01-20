@@ -55,7 +55,7 @@ namespace A2D {
 		bool                        m_visible;
 
 		float						m_opacity;
-		int		                    m_depth;
+		float	                    m_depth;
 
 		const Rect*                 m_region;
 		const Rect*                 m_visibleRegion;

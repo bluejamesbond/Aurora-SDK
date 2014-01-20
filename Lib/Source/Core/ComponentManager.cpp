@@ -40,7 +40,7 @@ AbstractWindow * ComponentManager::getWindow()
 	return aWindow;
 }
 
-STATUS ComponentManager::add(Component& xParent, Component& xChild)
+STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 {
 	int depth = xParent.getDepth();
 
@@ -52,9 +52,9 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 	xChild.setParent(xParent);
 	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
-	xChild.setComponentManager(*this);
+	xChild.setComponentManager(*unconst__(ComponentManager));
 
-	if (addToDepthTracker(xChild))
+	if (unconst__(ComponentManager)->addToDepthTracker(xChild))
 	{
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap

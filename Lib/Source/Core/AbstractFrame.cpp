@@ -207,7 +207,7 @@ void AbstractFrame::dispose()
 	}
 }
 
-ComponentManager * AbstractFrame::getComponentManager()
+const ComponentManager * AbstractFrame::getComponentManager()
 {
 	return aComponentManager;
 }

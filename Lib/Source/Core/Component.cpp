@@ -36,7 +36,7 @@ Component& Component::getParent()
 
 int Component::getDepth()
 {
-	return m_styleSet.m_depth;
+	return SINT(SINT(m_styleSet.m_depth));
 }
 
 AbstractFrame& Component::getFrame()
@@ -56,7 +56,7 @@ Graphics& Component::getGraphics()
 
 void Component::setDepth(int xDepth)
 {
-	m_styleSet.m_depth = xDepth;
+	m_styleSet.m_depth = SFLOAT(xDepth);
 
 	m_styleSet.markDepthAsDirty();
 }
@@ -345,16 +345,16 @@ STATUS Component::addMouseListener(MouseListener * xListener)
     if (m_componentManager != NULL)
     {
         // Add depth manually
+		STATUS hr = ComponentEventSource::addMouseListener(xListener);
         AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
-        STATUS hr = ComponentEventSource::addMouseListener(xListener);
 
         if (xListener != NULL)
         {
-			eQ->addEventDepthTracker(this, abs__(m_styleSet.m_depth));
+			eQ->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(m_styleSet.m_depth + 1.0f));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
         }
 
         return hr;
@@ -368,16 +368,16 @@ STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
     if (m_componentManager != NULL)
     {
         // Add depth manually
+		STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
         AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
-        STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
 
         if (xListener != NULL)
         {
-			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(m_styleSet.m_depth));
+			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(m_styleSet.m_depth + 1.0f));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
         }
 
         return hr;
@@ -396,11 +396,11 @@ STATUS Component::addFocusListener(FocusListener * xListener)
 
         if (xListener != NULL)
         {
-			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(m_styleSet.m_depth));
+			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(m_styleSet.m_depth + 1.0f));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
         }
 
         return hr;
@@ -414,20 +414,21 @@ STATUS Component::addActionListener(ActionListener * xListener)
     if (m_componentManager != NULL)
     {
         // Add depth manually
+		STATUS hr = ComponentEventSource::addActionListener(xListener);
         AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
-        STATUS hr = ComponentEventSource::addActionListener(xListener);
 
         if (xListener != NULL)
         {
-			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(m_styleSet.m_depth));
+			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(m_styleSet.m_depth + 1.0f));
+			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth + 1)));
         }
 
         return hr;
     }
+
     return ComponentEventSource::addActionListener(xListener);
 }
 

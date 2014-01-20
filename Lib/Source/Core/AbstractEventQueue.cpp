@@ -525,7 +525,7 @@ void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
 	win->aCurrentState = xEvent->getID();
 }
 
-void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
+void AbstractEventQueue::addEventDepthTracker(Component * xSource, int xZ)
 {
 	//OrderedList<OrderedList<EventSource*>*>::Node<OrderedList<EventSource*>*> * node = aEventSources._end();
 
@@ -542,7 +542,7 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 	OrderedList<Component*>::Node<Component*> * node;
 
 	int maxZ = aComponentEventSources.size() - 1;
-	int neededZ = SINT(xZ);
+	int neededZ = xZ;
 
 	if (maxZ <= neededZ)
 	{
@@ -601,7 +601,7 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 
 }
 
-void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
+void AbstractEventQueue::removeEventDepthTracker(Component * xSource, int xZ)
 {
 	int maxZ = aComponentEventSources.size();
 	int neededZ = SINT(xZ);

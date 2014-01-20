@@ -102,7 +102,7 @@ namespace A2D {
         void                            setDefaultCloseOperation(int xOperation);
 		void                            run(int xThreadId);
 		AbstractWindow*					getWindow();
-        ComponentManager*				getComponentManager();
+        const ComponentManager*			getComponentManager();
 
 
     protected:

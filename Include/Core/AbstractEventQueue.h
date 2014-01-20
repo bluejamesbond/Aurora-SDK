@@ -115,8 +115,8 @@ namespace A2D{
         void                            processWindowEvent(WindowEvent * xEvent);
         void                            processMouseMotionEvent(MouseEvent * xEvent);
 
-        void                            addEventDepthTracker(Component * xSource, float xZ);
-        void                            removeEventDepthTracker(Component * xSource, float xZ);
+		void                            addEventDepthTracker(Component * xSource, int xZ);
+        void                            removeEventDepthTracker(Component * xSource, int xZ);
 
         Component                   *   findNextCompListener(Component * xSource);
         Component                   *   findPrevCompListener(Component * xSource);

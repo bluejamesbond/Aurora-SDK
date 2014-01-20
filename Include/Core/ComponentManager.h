@@ -65,7 +65,7 @@ namespace A2D {
 		ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow);
 		~ComponentManager();
 
-		STATUS										  add(Component& xParent, Component& xChild);
+		STATUS										  add(Component& xParent, Component& xChild) const;
 
 	private:
 
