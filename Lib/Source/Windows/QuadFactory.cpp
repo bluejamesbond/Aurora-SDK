@@ -4,7 +4,7 @@
 
 using namespace A2D;
 
-QuadFactory::QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims)
+QuadFactory::QuadFactory(ID3D10Device ** xDevice, const Dims * xWindowDims)
 {
 	aDevice = xDevice;
 	aWindowDims = xWindowDims;

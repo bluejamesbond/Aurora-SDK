@@ -93,13 +93,13 @@ namespace A2D {
 
 	public:
 
-		Dims&					  		getSizeAsPtr(); // internal use only
+		const Dims&				  		getSizeAsPtr(); // internal use only
 		Dims&					  		getDrawableRegionAsPtr(); // internal use only
 		Dims							getMinimumSize();
 		Dims							getMaximumSize();
 		Rect							getBounds();
 		Dims					  		getSize();
-		wchar_t *                         getName();
+		wchar_t *                       getName();
 		AbstractFrame		   *		getFrame();
 		bool                            isUndecorated();
 		int                             getDefaultCloseOperation();

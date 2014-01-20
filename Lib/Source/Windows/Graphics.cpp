@@ -29,7 +29,7 @@ BackBuffer * Graphics::getBackBuffer()
 	return aBackBuffer;
 }
 
-Dims * Graphics::getDrawableDimensions()
+const Dims * Graphics::getDrawableDimensions()
 {
 	return aBackBufferDims;
 }
@@ -274,7 +274,7 @@ STATUS Graphics::initialize()
 {
 //	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
-	Dims* size = aBackBufferDims;
+	const Dims* size = aBackBufferDims;
 	ID3D10Device ** device = aDevice;
 		
 	//cameraProperties.aPositionX = 0.0f;

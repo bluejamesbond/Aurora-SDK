@@ -74,7 +74,7 @@ namespace A2D {
 		float                *			aProjection3DMatrix;
 
 		BackBuffer			 *			aBackBuffer;
-		Dims				 *			aBackBufferDims;
+		const Dims			 *			aBackBufferDims;
 		GXSettings			 *			aBackBufferSettings;
 
 		CameraProperties				aCameraProperties;
@@ -93,7 +93,7 @@ namespace A2D {
 
 	public:
 
-		Dims*							getDrawableDimensions();
+		const Dims*						getDrawableDimensions();
 		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
 		

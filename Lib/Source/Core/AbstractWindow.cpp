@@ -83,7 +83,7 @@ Rect AbstractWindow::getBounds()
 	return aRect;
 }
 
-Dims& AbstractWindow::getSizeAsPtr()
+const Dims& AbstractWindow::getSizeAsPtr()
 {
 	return *static_cast<Dims*>(&aRect);
 }

@@ -56,7 +56,7 @@ namespace A2D {
 
 	public:
 
-		Dims					  *		getSizeAsPtr();
+		const Dims				  *		getSizeAsPtr();
 		Dims							getSize();
 		GXSettings				  *		getSettings();
 
