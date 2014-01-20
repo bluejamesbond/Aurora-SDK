@@ -66,7 +66,7 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
 {
 	// Call eventDepthTracker also.
-	xComponent.aComponentManager = this;
+	xComponent.m_componentManager = this;
 	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
 	UnorderedList<Component*> * peerComponents;
 

@@ -252,7 +252,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 						// Focus event handling AFTER CLICKED (aka mouseUpRelease)
 						// NOTE: We may change this later once we have keyboard listeners.
-						if (comp->isFocusable && !comp->isFocused && !isConsumedFocus) // Check if already focused/focusable.
+						if (comp->m_focusable && !comp->m_focused && !isConsumedFocus) // Check if already focused/focusable.
 						{
 							// Only the top level components can get focus.
 							isConsumedFocus = true;
@@ -279,7 +279,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					}
 					else
 					{
-						comp = comp->aNextCompListener;
+						comp = comp->m_nextCompListener;
 					}
 				}
 				// Once we are here, that means no components processed the event, 
@@ -498,7 +498,7 @@ void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 	Component * comp = xEvent->GetComponent();
 
 	// We enable focus regardless of the component's focusListener (if it has one or not).
-	comp->isFocused = true;
+	comp->m_focused = true;
 
 	// Fire focus gained event from component that gained focus.
 	comp->processFocusEvent(aFocusEvent);
@@ -508,7 +508,7 @@ void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 		// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
 		aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
 		// We are not doing a check here. Possible errors may come.
-		aLastFocusedComp->isFocused = false;
+		aLastFocusedComp->m_focused = false;
 		aLastFocusedComp->processFocusEvent(aFocusEvent);
 	}
 	// Set newly focused component.
@@ -558,9 +558,9 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 		Component * nextComp = findNextCompListener(xSource);
 		if (nextComp)
 		{
-			nextComp->aPrevCompListener = xSource;
+			nextComp->m_prevCompListener = xSource;
 		}
-		xSource->aNextCompListener = nextComp;
+		xSource->m_nextCompListener = nextComp;
 	}
 	else
 	{
@@ -581,18 +581,18 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 		Component * nodeComp = findNextCompListener(xSource);
 		if (nodeComp) // Found parent that has listener.
 		{
-			xSource->aPrevCompListener = nodeComp->aPrevCompListener;
-			xSource->aNextCompListener = nodeComp;
-			nodeComp->aPrevCompListener = xSource;
+			xSource->m_prevCompListener = nodeComp->m_prevCompListener;
+			xSource->m_nextCompListener = nodeComp;
+			nodeComp->m_prevCompListener = xSource;
 		}
 		else // No parent has listener. Look for children listeners.
 		{
 			nodeComp = findPrevCompListener(xSource);
 			if (nodeComp)
 			{
-				nodeComp->aNextCompListener = xSource;
+				nodeComp->m_nextCompListener = xSource;
 			}
-			xSource->aPrevCompListener = nodeComp;
+			xSource->m_prevCompListener = nodeComp;
 		}
 
 	}
@@ -619,16 +619,16 @@ void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 		comp = node->value;
 		if (comp == xSource) // If found, we remove and connect node pointers.
 		{
-			Component * prev = comp->aPrevCompListener;
-			Component * next = comp->aNextCompListener;
+			Component * prev = comp->m_prevCompListener;
+			Component * next = comp->m_nextCompListener;
 
 			if (prev)
 			{
-				prev->aNextCompListener = next;
+				prev->m_nextCompListener = next;
 			}
 			if (next)
 			{
-				next->aPrevCompListener = prev;
+				next->m_prevCompListener = prev;
 			}
 			peerEventSources->remove_request(&comp->aRemoveTicket);
 			return;
@@ -643,14 +643,14 @@ void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 Component * AbstractEventQueue::findNextCompListener(Component * xSource)
 {
 	Component * comp;
-	comp = xSource->aParent;
+	comp = xSource->m_parent;
 	while (comp)
 	{
 		if (hasListener(comp))
 		{
 			return comp;
 		}
-		comp = comp->aParent;
+		comp = comp->m_parent;
 	}
 	// Didnt find a parent with listener
 	return NULL;
@@ -658,7 +658,7 @@ Component * AbstractEventQueue::findNextCompListener(Component * xSource)
 
 Component * AbstractEventQueue::findPrevCompListener(Component * xSource)
 {
-	OrderedList<Component*> children = xSource->aChildren;
+	OrderedList<Component*> children = xSource->m_children;
 	OrderedList<Component*>::Node<Component*> * nodeC = children._end();
 	Component * prevComp;
 	while (nodeC)

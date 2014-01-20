@@ -3,14 +3,12 @@
 #include "../../../include/Core/CascadingLayout.h"
 #include "../../../include/Core/Component.h"
 
-#include <time.h>
-
 using namespace A2D;
 
 void _fastcall CascadingLayout::doLayout(Component& x_component)
 {
-	int size = x_component.aChildren.size();
-	OrderedList<Component*>::Node<Component*> * start = x_component.aChildren._head();
+	int size = x_component.m_children.size();
+	OrderedList<Component*>::Node<Component*> * start = x_component.m_children._head();
 
 	float height, width, mX = 0, mY = 0, aX = 0, aY = 0,
 		marginLeft, marginTop, marginRight, marginBottom, maxElementHeight = 0.0f, tempVerticalOffset,
@@ -18,7 +16,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 
 	Style::Display display;
 	Style::Position position;
-	Rect& compRect = x_component.aOptRegion;
+	Rect& compRect = x_component.m_region;
 	Component* component;
 
 	bool firstElement = true;
@@ -27,7 +25,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	{
 		component = start->value;
 
-		if (component->aForced)
+		if (component->m_forcedBounds)
 		{
 			#ifdef A2D_DE__			
 			SYSOUT_STR("[CascadingLayout] Skipping calculations. Using forced bounds.");
@@ -42,26 +40,26 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			SYSOUT_STR("[CascadingLayout] Skipping calculations. Component out of window.");
 			#endif // A2D_DE__
 
-			component->aVisible = false;
+			component->m_visible = false;
 			continue;
 		}
 
 		///*************************************** CACHE **********************************//
-		display = component->aDisplay;
-		position = component->aPosition;
+		display = component->m_displayStyle;
+		position = component->m_positionStyle;
 
-		width = cvtsu2px__(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
-		height = cvtsu2px__(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
+		width = cvtsu2px__(component->m_sizeWidthUnitsStyle, component->m_sizeWidth, compRect.aWidth);
+		height = cvtsu2px__(component->m_sizeHeightUnitsStyle, component->m_sizeHeight, compRect.aHeight);
 
-		marginLeft = cvtsu2px__(component->aMarginLeftUnits, component->aMarginLeft, compRect.aWidth);
-		marginTop = cvtsu2px__(component->aMarginTopUnits, component->aMarginTop, compRect.aHeight);
-		marginBottom = cvtsu2px__(component->aMarginBottomUnits, component->aMarginBottom, compRect.aHeight);
-		marginRight = cvtsu2px__(component->aMarginRightUnits, component->aMarginRight, compRect.aWidth);
+		marginLeft = cvtsu2px__(component->m_marginLeftUnitsStyle, component->m_marginLeft, compRect.aWidth);
+		marginTop = cvtsu2px__(component->m_marginTopUnitsStyle, component->m_marginTop, compRect.aHeight);
+		marginBottom = cvtsu2px__(component->m_marginBottomUnitsStyle, component->m_marginBottom, compRect.aHeight);
+		marginRight = cvtsu2px__(component->m_marginRightUnitsStyle, component->m_marginRight, compRect.aWidth);
 
-		positionLeft = cvtsu2px__(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
-		positionTop = cvtsu2px__(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
-		positionBottom = cvtsu2px__(component->aPositionBottomUnits, component->aPositionBottom, compRect.aHeight);
-		positionRight = cvtsu2px__(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
+		positionLeft = cvtsu2px__(component->m_positionLeftUnitsStyle, component->m_positionLeft, compRect.aWidth);
+		positionTop = cvtsu2px__(component->m_positionTopUnitsStyle, component->m_positionTop, compRect.aHeight);
+		positionBottom = cvtsu2px__(component->m_positionBottomUnitsStyle, component->m_positionBottom, compRect.aHeight);
+		positionRight = cvtsu2px__(component->m_positionRightUnitsStyle, component->m_positionRight, compRect.aWidth);
 		///********************************************************************************//
 
 		if (position == Style::RELATIVE_)
@@ -141,7 +139,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		if (position == Style::RELATIVE_)
 		{
 			/***********************************************/
-			component->aVisible = true;
+			component->m_visible = true;
 			component->setBounds(mX + positionLeft + positionRight, mY + positionTop + positionBottom, width, height);
 			/***********************************************/
 
@@ -162,7 +160,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		else/*if (position == Style::ABSOLUTE_)*/
 		{
 			/***********************************************/
-			component->aVisible = true;
+			component->m_visible = true;
 			component->setBounds(aX, aY, width, height);
 			/***********************************************/
 		}

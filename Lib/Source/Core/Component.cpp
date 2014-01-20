@@ -5,7 +5,45 @@
 
 using namespace A2D;
 
-Component::Component(){}
+Component::Component() :
+    m_depth(0.0f),
+    m_forcedBounds(false),
+    m_visible(true),
+    m_parent(NULL),
+    m_pipeline(NULL),
+    m_componentManager(NULL),
+    m_displayStyle(Style::Display::BLOCK),
+    m_positionStyle(Style::Position::RELATIVE_),
+    m_sizeWidthUnitsStyle(Style::Units::PIXEL),
+    m_sizeHeightUnitsStyle(Style::Units::PIXEL),
+    m_marginLeftUnitsStyle(Style::Units::PIXEL),
+    m_marginTopUnitsStyle(Style::Units::PIXEL),
+    m_marginBottomUnitsStyle(Style::Units::PIXEL),
+    m_marginRightUnitsStyle(Style::Units::PIXEL),
+    m_positionLeftUnitsStyle(Style::Units::PIXEL),
+    m_positionTopUnitsStyle(Style::Units::PIXEL),
+    m_positionBottomUnitsStyle(Style::Units::PIXEL),
+    m_positionRightUnitsStyle(Style::Units::PIXEL),
+    m_sizeWidth(0.0f),
+    m_sizeHeight(0.0f),
+    m_marginLeft(0.0f),
+    m_marginTop(0.0f),
+    m_marginBottom(0.0f),
+    m_marginRight(0.0f),
+    m_positionLeft(0.0f),
+    m_positionTop(0.0f),
+    m_positionBottom(0.0f),
+    m_positionRight(0.0f),
+    m_backgroundSrc(NULL),
+    m_calculatedNegativeDeltaX(0.0f),
+    m_calculatedNegativeDeltaY(0.0f),
+    m_focused(false),
+    m_focusable(true),
+    m_nextCompListener(NULL),
+    m_prevCompListener(NULL)
+
+{
+}
 
 Component::~Component(){}
 
@@ -13,359 +51,359 @@ void Component::paintComponentBorder(){}
 
 Component& Component::getParent()
 {
-	return *aParent;
+    return *m_parent;
 }
 
 float Component::getDepth()
 {
-	return aDepth;
+    return m_depth;
 }
 
 AbstractFrame& Component::getFrame()
 {
-	return *aFrame;
+    return *m_frame;
 }
 
 void Component::setGraphics(Graphics& xGraphics)
 {
-	aGraphics = &xGraphics;
+    m_graphics = &xGraphics;
 }
 
 Graphics& Component::getGraphics()
 {
-	return *aGraphics;
+    return *m_graphics;
 }
 
 void Component::setDepth( float xDepth)
 {
-	aDepth = xDepth;
+    m_depth = xDepth;
 }
 
 void Component::setFrame(AbstractFrame& xFrame)
 {
-	aFrame = &xFrame;
+    m_frame = &xFrame;
 }
 
 void Component::setParent(Component& xParent)
 {
-	aParent = &xParent;
+    m_parent = &xParent;
 }
 
 Rect Component::getBounds()
 {
-	return aOptRegion;
+    return m_region;
 }
 
-Rect * Component::getBoundsAtPtr()
+Rect * Component::getBoundsAsPtr()
 {
-	return &aOptRegion;
+    return &m_region;
 }
 
 Rect * Component::getVisibleRegion()
 {
-	return &aVisibleRegion;
+    return &m_visibleRegion;
 }
 
 void Component::add(Component& xContainer)
 {
-	aChildren.push_back(&xContainer, NULL);
+    m_children.push_back(&xContainer, NULL);
 }
 
 void Component::remove(Component& xContainer)
 {
-	aChildren.remove(&xContainer);
+    m_children.remove(&xContainer);
 }
 
 void Component::setBounds(Rect& xRect)
 {
-	aOptRegion.aWidth = xRect.aWidth;
-	aOptRegion.aHeight = xRect.aHeight;
-	aOptRegion.aX = xRect.aX;
-	aOptRegion.aY = xRect.aY;
+    m_region.aWidth = xRect.aWidth;
+    m_region.aHeight = xRect.aHeight;
+    m_region.aX = xRect.aX;
+    m_region.aY = xRect.aY;
 
-	aOptBackgroundRegion.aWidth = xRect.aWidth;
-	aOptBackgroundRegion.aHeight = xRect.aHeight;
+    m_backgroundRegion.aWidth = xRect.aWidth;
+    m_backgroundRegion.aHeight = xRect.aHeight;
 
-	invalidate();
+    invalidate();
 }
 
 void Component::invalidate()
 {
-	aValidatedContents = false;
+    m_validatedContents = false;
 }
 
 void Component::revalidate()
 {
-	validate();
+    validate();
 }
 
 void Component::validated()
 {
-	aValidatedContents = true;
+    m_validatedContents = true;
 }
 
 void Component::validate()
 {
-	Component * parentComp = aParent;
-	Rect& compRect = aOptRegion;
-	bool hasParent = parentComp != NULL;
+    Component * parentComp = m_parent;
+    Rect& compRect = m_region;
+    bool hasParent = parentComp != NULL;
 
-	if (!aVisible)
-	{
-		aValidatedContents = true;
-		return;
-	}
+    if (!m_visible)
+    {
+        m_validatedContents = true;
+        return;
+    }
 
-	if (!hasParent)
-	{
-		aVisibleRegion.aX = aCalculatedRegion.aX = max__(0.0f, compRect.aX);
-		aVisibleRegion.aY = aCalculatedRegion.aY = max__(0.0f, compRect.aY);
-		aVisibleRegion.aWidth = aCalculatedRegion.aWidth = max__(0.0f, compRect.aWidth);
-		aVisibleRegion.aHeight = aCalculatedRegion.aHeight = max__(0.0f, compRect.aHeight);
+    if (!hasParent)
+    {
+        m_visibleRegion.aX = m_calculatedRegion.aX = max__(0.0f, compRect.aX);
+        m_visibleRegion.aY = m_calculatedRegion.aY = max__(0.0f, compRect.aY);
+        m_visibleRegion.aWidth = m_calculatedRegion.aWidth = max__(0.0f, compRect.aWidth);
+        m_visibleRegion.aHeight = m_calculatedRegion.aHeight = max__(0.0f, compRect.aHeight);
 
-		aCalculatedNegativeDeltaX = 0.0f;
-		aCalculatedNegativeDeltaY = 0.0f;
-	}
-	else
-	{
-		float sX, sY;
-		Rect& parentRect = parentComp->aOptRegion;
-		Rect& parentCalculatedRegion = parentComp->aCalculatedRegion;
-		Rect& parentVisibleRegion = parentComp->aVisibleRegion;
-				
-		// Running x and y
-		aCalculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
-		aCalculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
-		
-		// Reduce the size based on parent x, y
-		// Account for negative x, y of this
-		// Accumulate negatives
-		aCalculatedRegion.aWidth = compRect.aWidth + (aCalculatedNegativeDeltaX = parentComp->aCalculatedNegativeDeltaX + min__(0.0f, compRect.aX));
-		aCalculatedRegion.aHeight = compRect.aHeight + (aCalculatedNegativeDeltaY = parentComp->aCalculatedNegativeDeltaY + min__(0.0f, compRect.aY));
-		
-		// Account for larger than parent
-		aCalculatedRegion.aWidth = min__(aCalculatedRegion.aWidth, parentCalculatedRegion.aWidth);
-		aCalculatedRegion.aHeight = min__(aCalculatedRegion.aHeight, parentCalculatedRegion.aHeight);
+        m_calculatedNegativeDeltaX = 0.0f;
+        m_calculatedNegativeDeltaY = 0.0f;
+    }
+    else
+    {
+        float sX, sY;
+        Rect& parentRect = parentComp->m_region;
+        Rect& parentCalculatedRegion = parentComp->m_calculatedRegion;
+        Rect& parentVisibleRegion = parentComp->m_visibleRegion;
+                
+        // Running x and y
+        m_calculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
+        m_calculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
+        
+        // Reduce the size based on parent x, y
+        // Account for negative x, y of this
+        // Accumulate negatives
+        m_calculatedRegion.aWidth = compRect.aWidth + (m_calculatedNegativeDeltaX = parentComp->m_calculatedNegativeDeltaX + min__(0.0f, compRect.aX));
+        m_calculatedRegion.aHeight = compRect.aHeight + (m_calculatedNegativeDeltaY = parentComp->m_calculatedNegativeDeltaY + min__(0.0f, compRect.aY));
+        
+        // Account for larger than parent
+        m_calculatedRegion.aWidth = min__(m_calculatedRegion.aWidth, parentCalculatedRegion.aWidth);
+        m_calculatedRegion.aHeight = min__(m_calculatedRegion.aHeight, parentCalculatedRegion.aHeight);
 
-		// Account for positive shift
-		aCalculatedRegion.aWidth -= SFLOAT((sX = (compRect.aX + aCalculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0f);
-		aCalculatedRegion.aHeight -= SFLOAT((sY = (compRect.aY + aCalculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0f);
-		
-		// Account for negative height
-		aCalculatedRegion.aWidth = max__(0.0f, aCalculatedRegion.aWidth);
-		aCalculatedRegion.aHeight = max__(0.0f, aCalculatedRegion.aHeight);
+        // Account for positive shift
+        m_calculatedRegion.aWidth -= SFLOAT((sX = (compRect.aX + m_calculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0f);
+        m_calculatedRegion.aHeight -= SFLOAT((sY = (compRect.aY + m_calculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0f);
+        
+        // Account for negative height
+        m_calculatedRegion.aWidth = max__(0.0f, m_calculatedRegion.aWidth);
+        m_calculatedRegion.aHeight = max__(0.0f, m_calculatedRegion.aHeight);
 
-		// Set the visible x and y based on previous
-		aVisibleRegion.aX = parentVisibleRegion.aX + max__(0.0f, min__(aCalculatedRegion.aX, compRect.aX));
-		aVisibleRegion.aY = parentVisibleRegion.aY + max__(0.0f, min__(aCalculatedRegion.aY, compRect.aY));
+        // Set the visible x and y based on previous
+        m_visibleRegion.aX = parentVisibleRegion.aX + max__(0.0f, min__(m_calculatedRegion.aX, compRect.aX));
+        m_visibleRegion.aY = parentVisibleRegion.aY + max__(0.0f, min__(m_calculatedRegion.aY, compRect.aY));
 
-		// Set the region based on if it is even visible
-		aVisibleRegion.aWidth = SFLOAT((aCalculatedRegion.aX + compRect.aWidth) >= 0.0f ? aCalculatedRegion.aWidth : 0.0f);
-		aVisibleRegion.aHeight = SFLOAT((aCalculatedRegion.aY + compRect.aHeight) >= 0.0f ? aCalculatedRegion.aHeight : 0.0f);		
-	}
+        // Set the region based on if it is even visible
+        m_visibleRegion.aWidth = SFLOAT((m_calculatedRegion.aX + compRect.aWidth) >= 0.0f ? m_calculatedRegion.aWidth : 0.0f);
+        m_visibleRegion.aHeight = SFLOAT((m_calculatedRegion.aY + compRect.aHeight) >= 0.0f ? m_calculatedRegion.aHeight : 0.0f);       
+    }
 
-	CascadingLayout::doLayout(*this);
+    CascadingLayout::doLayout(*this);
 
-	aValidatedContents = true;
+    m_validatedContents = true;
 }
 
 void Component::forceBounds(bool xForce)
 {
-	aForced = xForce;
+    m_forcedBounds = xForce;
 }
 
 void Component::setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight)
 {
-	aSizeWidthUnits = xWidthUnits;
-	aSizeHeightUnits = xHeightUnits;
+    m_sizeWidthUnitsStyle = xWidthUnits;
+    m_sizeHeightUnitsStyle = xHeightUnits;
 
-	aSizeWidth = xWidth;
-	aSizeHeight = xHeight;
+    m_sizeWidth = xWidth;
+    m_sizeHeight = xHeight;
 }
 
 void Component::setDisplay(Style::Display xDisplay)
 {
-	aDisplay = xDisplay;
+    m_displayStyle = xDisplay;
 }
 
 void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-	aMarginLeftUnits = xLeftUnits;
-	aMarginTopUnits = xTopUnits;
-	aMarginBottomUnits = xRightUnits;
-	aMarginRightUnits = xBottomUnits;
+    m_marginLeftUnitsStyle = xLeftUnits;
+    m_marginTopUnitsStyle = xTopUnits;
+    m_marginBottomUnitsStyle = xRightUnits;
+    m_marginRightUnitsStyle = xBottomUnits;
 
-	aMarginLeft = xLeft;
-	aMarginTop = xTop;
-	aMarginBottom = xBottom;
-	aMarginRight = xRight;
+    m_marginLeft = xLeft;
+    m_marginTop = xTop;
+    m_marginBottom = xBottom;
+    m_marginRight = xRight;
 }
 
 void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
 {
-	aPositionLeftUnits = xLeftUnits;
-	aPositionTopUnits = xTopUnits;
-	aPositionBottomUnits = xRightUnits;
-	aPositionRightUnits = xBottomUnits;
+    m_positionLeftUnitsStyle = xLeftUnits;
+    m_positionTopUnitsStyle = xTopUnits;
+    m_positionBottomUnitsStyle = xRightUnits;
+    m_positionRightUnitsStyle = xBottomUnits;
 
-	aPositionLeft = xLeft;
-	aPositionTop = xTop;
-	aPositionBottom = xBottom;
-	aPositionRight = xRight;
+    m_positionLeft = xLeft;
+    m_positionTop = xTop;
+    m_positionBottom = xBottom;
+    m_positionRight = xRight;
 }
 
 void Component::setPosition(Style::Position xPosition)
 {
-	aPosition = xPosition;
+    m_positionStyle = xPosition;
 }
 
 STATUS Component::initialize()
 {
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 
 void Component::paintComponent()
 {
-	if (!aVisible)
-	{
-		return;
-	}
+    if (!m_visible)
+    {
+        return;
+    }
 
-	Graphics& graphics = *aGraphics;
+    Graphics& graphics = *m_graphics;
 
-	if (aOptBackgroundSrc != NULL)
-	{
-		graphics.drawComponent(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, m_borderSet, aOptBackgroundPaint, m_backgroundStyle);
-	}
-	else
-	{
-		graphics.fillRect(&aPipeline, aOptBackgroundRegion, aOptBackgroundPaint);
-	}
+    if (m_backgroundSrc != NULL)
+    {
+        graphics.drawComponent(&m_pipeline, m_backgroundRegion, m_backgroundSrc, m_borderSet, m_backgroundPaint, m_backgroundStyle);
+    }
+    else
+    {
+        graphics.fillRect(&m_pipeline, m_backgroundRegion, m_backgroundPaint);
+    }
 }
 
 void Component::update()
 {
-	Graphics& graphics = *aGraphics;
+    Graphics& graphics = *m_graphics;
 
-	if (!aValidatedContents)
-	{
-		validate();
-	}
+    if (!m_validatedContents)
+    {
+        validate();
+    }
 
-	graphics.setClip(&aVisibleRegion, aDepth);
+    graphics.setClip(&m_visibleRegion, m_depth);
 
-	// Render the current component
-	paintComponent();
+    // Render the current component
+    paintComponent();
 
-	// Force region
-	graphics.setClip(&aVisibleRegion, aDepth);
+    // Force region
+    graphics.setClip(&m_visibleRegion, m_depth);
 
-	// Render the currect component border
-	paintComponentBorder();
+    // Render the currect component border
+    paintComponentBorder();
 }
 
 STATUS Component::requestFocus()
 {
-	// Also it's broken, as aFrame is not initialized.
-	if (isFocusable && !isFocused)
-	{
-		FocusEvent& focusRequest = *new FocusEvent(this, FocusEvent::FOCUS_GAINED);
-		Toolkit::getSystemEventQueue(aFrame->id())->processFocusEvent(&focusRequest);
-	}
-	return STATUS_OK;
+    // Also it's broken, as aFrame is not initialized.
+    if (m_focusable && !m_focused)
+    {
+        FocusEvent& focusRequest = *new FocusEvent(this, FocusEvent::FOCUS_GAINED);
+        Toolkit::getSystemEventQueue(m_frame->id())->processFocusEvent(&focusRequest);
+    }
+    return STATUS_OK;
 }
 
 void Component::setFocusable(bool xFocusable)
 {
-	isFocusable = xFocusable;
+    m_focusable = xFocusable;
 }
 
 Rect * Component::getEventRegion()
 {
-	return &aVisibleRegion;
+    return &m_visibleRegion;
 }
 
 STATUS Component::addMouseListener(MouseListener * xListener)
 {
-	if (aComponentManager != NULL)
-	{
-		// Add depth manually
-		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
+    if (m_componentManager != NULL)
+    {
+        // Add depth manually
+        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
 
-		STATUS hr = ComponentEventSource::addMouseListener(xListener);
-		if (xListener != NULL)
-		{
-			eQ->addEventDepthTracker(this, abs__(aDepth));
-		}
-		else
-		{
-			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
-		}
-		return hr;
-	}
-	return ComponentEventSource::addMouseListener(xListener);
+        STATUS hr = ComponentEventSource::addMouseListener(xListener);
+        if (xListener != NULL)
+        {
+            eQ->addEventDepthTracker(this, abs__(m_depth));
+        }
+        else
+        {
+            eQ->removeEventDepthTracker(this, abs__(m_depth + 1.0f));
+        }
+        return hr;
+    }
+    return ComponentEventSource::addMouseListener(xListener);
 }
 
 STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
 {
-	if (aComponentManager != NULL)
-	{
-		// Add depth manually
-		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
+    if (m_componentManager != NULL)
+    {
+        // Add depth manually
+        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
 
-		STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
-		if (xListener != NULL)
-		{
-			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(aDepth));
-		}
-		else
-		{
-			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
-		}
-		return hr;
-	}
-	return ComponentEventSource::addMouseMotionListener(xListener);
+        STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
+        if (xListener != NULL)
+        {
+            Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(m_depth));
+        }
+        else
+        {
+            eQ->removeEventDepthTracker(this, abs__(m_depth + 1.0f));
+        }
+        return hr;
+    }
+    return ComponentEventSource::addMouseMotionListener(xListener);
 }
 
 STATUS Component::addFocusListener(FocusListener * xListener)
 {
-	if (aComponentManager != NULL)
-	{
-		// Add depth manually
-		STATUS hr = ComponentEventSource::addFocusListener(xListener);
-		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
+    if (m_componentManager != NULL)
+    {
+        // Add depth manually
+        STATUS hr = ComponentEventSource::addFocusListener(xListener);
+        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
 
-		if (xListener != NULL)
-		{
-			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(aDepth));
-		}
-		else
-		{
-			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
-		}
-		return hr;
-	}
-	return ComponentEventSource::addFocusListener(xListener);
+        if (xListener != NULL)
+        {
+            Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(m_depth));
+        }
+        else
+        {
+            eQ->removeEventDepthTracker(this, abs__(m_depth + 1));
+        }
+        return hr;
+    }
+    return ComponentEventSource::addFocusListener(xListener);
 }
 
 STATUS Component::addActionListener(ActionListener * xListener)
 {
-	if (aComponentManager != NULL)
-	{
-		// Add depth manually
-		AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id());
+    if (m_componentManager != NULL)
+    {
+        // Add depth manually
+        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
 
-		STATUS hr = ComponentEventSource::addActionListener(xListener);
-		if (xListener != NULL)
-		{
-			Toolkit::getSystemEventQueue(aComponentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(aDepth));
-		}
-		else
-		{
-			eQ->removeEventDepthTracker(this, abs__(aDepth + 1));
-		}
-		return hr;
-	}
-	return ComponentEventSource::addActionListener(xListener);
+        STATUS hr = ComponentEventSource::addActionListener(xListener);
+        if (xListener != NULL)
+        {
+            Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(m_depth));
+        }
+        else
+        {
+            eQ->removeEventDepthTracker(this, abs__(m_depth + 1.0f));
+        }
+        return hr;
+    }
+    return ComponentEventSource::addActionListener(xListener);
 }

@@ -21,6 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../_A2DLinkers.h"
+
 #include "OrderedList.h"
 #include "ImageProperties.h"
 #include "Pipeline.h"
@@ -38,181 +39,162 @@ namespace A2D {
     // FORWARD DECLARATIONS
     ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame;
+    class AbstractFrame;
     class Abstract;
-	class Graphics;
-	class Component;
-	struct ImageProperties;
-        class ComponentManager;
+    class Graphics;
+    class Component;
+    struct ImageProperties;
+    class ComponentManager;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
     class Component : public ComponentEventSource
-	{
-		friend class ComponentManager;
-		friend class CascadingLayout;
-                friend class AbstractEventQueue;
+    {
+        friend class ComponentManager;
+        friend class CascadingLayout;
+        friend class AbstractEventQueue;
 
-	public:
+    public:
 
-		Component();
-		~Component();
+        Component();
+        ~Component();
 
-	private:
+    private:
 
-		float							aDepth = 0;
+        float                       m_depth;
 
-		bool							aForced = false;
+        bool                        m_forcedBounds;
+        bool                        m_focused;
+        bool                        m_focusable;
 
-		AbstractFrame		    *		aFrame;
-		Component			    *		aParent = NULL;
-		OrderedList<Component*>			aChildren;
-		Pipeline				*		aPipeline = NULL;
-		ComponentManager        *       aComponentManager = NULL;
-		BorderSet						m_borderSet;
-		Style::Background				m_backgroundStyle;
+        AbstractFrame*              m_frame;
+        Component*                  m_parent;
+        OrderedList<Component*>     m_children;
+        ComponentManager*           m_componentManager;
+        BorderSet                   m_borderSet;
 
-	protected:
+        Component*                  m_nextCompListener;
+        Component*                  m_prevCompListener;
 
-		bool                            aVisible = true;
-
-		Style::Display					aDisplay = Style::Display::BLOCK;
-		Style::Position				aPosition = Style::Position::RELATIVE_;
-
-		Style::Units					aSizeWidthUnits = Style::Units::PIXEL;
-		Style::Units					aSizeHeightUnits = Style::Units::PIXEL;	
-		
-		Style::Units					aMarginLeftUnits = Style::Units::PIXEL;
-		Style::Units					aMarginTopUnits = Style::Units::PIXEL;
-		Style::Units					aMarginBottomUnits = Style::Units::PIXEL;
-		Style::Units					aMarginRightUnits = Style::Units::PIXEL;
-
-		Style::Units					aPositionLeftUnits = Style::Units::PIXEL;
-		Style::Units					aPositionTopUnits = Style::Units::PIXEL;
-		Style::Units					aPositionBottomUnits = Style::Units::PIXEL;
-		Style::Units					aPositionRightUnits = Style::Units::PIXEL;
-		
-		float							aSizeWidth = 0.0f;
-		float							aSizeHeight = 0.0f;
-
-		float							aMarginLeft = 0.0f;
-		float							aMarginTop = 0.0f;
-		float							aMarginBottom = 0.0f;
-		float							aMarginRight = 0.0f;
-
-		float							aPositionLeft = 0.0f;
-		float							aPositionTop = 0.0f;
-		float							aPositionBottom = 0.0f;
-		float							aPositionRight = 0.0f;
-
-	public:
-		
-		void							setPosition(Style::Position xPosition);
-		void							setDisplay(Style::Display xDisplay);
-		void							setFloat(Style::Float xFloat);
-		void							setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight);
-		void							setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-		void							setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-
-		void							forceBounds(bool xForce);
-	
-	public:
-
-		Rect *							getBoundsAtPtr();
-		void							setDepth(float xDepth);
-		void							setGraphics(Graphics& xGraphics);
-		void                            setParent(Component& xComponent);
-		void							setFrame(AbstractFrame& xFrame);
-		void							add(Component& xComponent);
-		void							remove(Component& xComponent);
-		
-        public:
-
-        STATUS                          requestFocus();
-        void                            setFocusable(bool xFocusable);
-		virtual Rect     *              getEventRegion();
-
-        STATUS                          addMouseListener(MouseListener * xListener);
-        STATUS                          addMouseMotionListener(MouseMotionListener * xListener);
-        STATUS                          addFocusListener(FocusListener * xListener);
-        STATUS                          addActionListener(ActionListener * xListener);
-
-        private:
-
-        bool                            isFocused = false;
-        bool                            isFocusable = true;
-        Component               *       aNextCompListener = 0;
-        Component               *       aPrevCompListener = 0;
-                
     protected:
 
-		bool                            aValidatedContents;
-		float							aCalculatedNegativeDeltaX = 0.0f;
-		float							aCalculatedNegativeDeltaY = 0.0f;
-		Graphics                *       aGraphics;
-		Rect                            aOptRegion;
-		Rect                            aOptBackgroundRegion;
-		Rect                            aCalculatedRegion;
-		Rect                            aVisibleRegion;
+        bool                        m_visible;
 
-        LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
-        Paint                           aOptBackgroundPaint;			        // background-color  (CSS)
+        Pipeline*                   m_pipeline;
+        Style::Background           m_backgroundStyle;
 
-        virtual void                    paintComponent();
-        virtual void                    paintComponentBorder();
+        Style::Display              m_displayStyle;
+        Style::Position             m_positionStyle;
 
-	protected:
-		
-		void							validate();
+        Style::Units                m_sizeWidthUnitsStyle;
+        Style::Units                m_sizeHeightUnitsStyle;     
+
+        Style::Units                m_marginLeftUnitsStyle;
+        Style::Units                m_marginTopUnitsStyle;
+        Style::Units                m_marginBottomUnitsStyle;
+        Style::Units                m_marginRightUnitsStyle;
+
+        Style::Units                m_positionLeftUnitsStyle;
+        Style::Units                m_positionTopUnitsStyle;
+        Style::Units                m_positionBottomUnitsStyle;
+        Style::Units                m_positionRightUnitsStyle;
+        
+        float                       m_sizeWidth;
+        float                       m_sizeHeight;
+
+        float                       m_marginLeft;
+        float                       m_marginTop;
+        float                       m_marginBottom;
+        float                       m_marginRight;
+
+        float                       m_positionLeft;
+        float                       m_positionTop;
+        float                       m_positionBottom;
+        float                       m_positionRight;
+
+        bool                        m_validatedContents;
+        float                       m_calculatedNegativeDeltaX;
+        float                       m_calculatedNegativeDeltaY;
+        Graphics*                   m_graphics;
+        Rect                        m_region;
+        Rect                        m_backgroundRegion;
+        Rect                        m_calculatedRegion;
+        Rect                        m_visibleRegion;
+
+        LPCWSTR                     m_backgroundSrc;          
+        Paint                       m_backgroundPaint;        
 
     public:
+        
+        void                        setDoubleBuffered(bool xDoubleBuffer);
+        void                        setBackgroundImage(LPCWSTR xOptBackgroundImage)     { m_backgroundSrc = xOptBackgroundImage;    };
+        void                        setBackgroundPaint(Paint& xOptPaint)                { Paint::from(m_backgroundPaint, xOptPaint); };
+        void                        setPosition(Style::Position xPosition);
+        void                        setDisplay(Style::Display xDisplay);
+        void                        setFloat(Style::Float xFloat);
+        void                        setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight);
+        void                        setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+        void                        setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+        void                        setDepth(float xDepth);
+        void                        setGraphics(Graphics& xGraphics);
+        void                        setParent(Component& xComponent);
+        void                        setFrame(AbstractFrame& xFrame);
+        void                        setFocusable(bool xFocusable);
+  
+        STATUS                      requestFocus();
+        STATUS                      addMouseListener(MouseListener * xListener);
+        STATUS                      addMouseMotionListener(MouseMotionListener * xListener);
+        STATUS                      addFocusListener(FocusListener * xListener);
+        STATUS                      addActionListener(ActionListener * xListener);
 
-		void							revalidate();
-		void							validated();
-		void							invalidate();
+        void                        update();
+        void                        validate();
+        void                        revalidate();
+        void                        validated();
+        void                        invalidate();
+        void                        add(Component& xComponent);
+        void                        remove(Component& xComponent);
+        void                        forceBounds(bool xForce);
+        virtual STATUS              initialize();  
 
-		float							getDepth();
-		Graphics&						getGraphics();
-		Component&						getParent();
-		Component&						getRoot();
-		AbstractFrame&					getFrame();
-        Rect *                          getVisibleRegion();
+        float                       getDepth();
+        Graphics&                   getGraphics();
+        Component&                  getParent();
+        Component&                  getRoot();
+        AbstractFrame&              getFrame();
+        Rect*                       getVisibleRegion();
+        Rect*                       getBoundsAsPtr();
+        Rect                        getBounds();
+        LPCWSTR                     getBackgroundImage()                                { return m_backgroundSrc; };
+        Paint&                      getBackgroundPaint()                                { return m_backgroundPaint; };
+ 
+        bool                        isDoubleBuffered();     
 
-		void							update();
-		Rect                            getBounds();
-		void                            setBounds(Rect& xRect);
-        bool                            isDoubleBuffered();
-        LPCWSTR                         getBackgroundImage()                                                   { return aOptBackgroundSrc;	 };
-		Paint&                          getBackgroundPaint()                                                   { return aOptBackgroundPaint; };
-		        
-        void                            setDoubleBuffered(bool xDoubleBuffer);
-        void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)						   { aOptBackgroundSrc = xOptBackgroundImage;	  };
-		void                            setBackgroundPaint(Paint& xOptPaint)                                   { Paint::from(aOptBackgroundPaint, xOptPaint); };
+    protected:
 
-    public:
+        virtual void                paintComponent();
+        virtual void                paintComponentBorder();
+        virtual Rect*               getEventRegion();
+        void                        setBounds(Rect& xRect);
 
-        virtual STATUS                 initialize();
+    ////////////////////////////////////////////////////////////////////////////////
+    // INLINE
+    ////////////////////////////////////////////////////////////////////////////////
 
-	////////////////////////////////////////////////////////////////////////////////
-	// INLINE
-	////////////////////////////////////////////////////////////////////////////////
+        inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
+        {
+            m_region.aWidth = xWidth;
+            m_region.aHeight = xHeight;
+            m_region.aX = xX;
+            m_region.aY = xY;
 
-	protected:
+            m_backgroundRegion.aWidth = xWidth;
+            m_backgroundRegion.aHeight = xHeight;
 
-		inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
-		{
-			aOptRegion.aWidth = xWidth;
-			aOptRegion.aHeight = xHeight;
-			aOptRegion.aX = xX;
-			aOptRegion.aY = xY;
-
-			aOptBackgroundRegion.aWidth = xWidth;
-			aOptBackgroundRegion.aHeight = xHeight;
-
-			aValidatedContents = false;
-		}
+            m_validatedContents = false;
+        }
 
     };
 }
