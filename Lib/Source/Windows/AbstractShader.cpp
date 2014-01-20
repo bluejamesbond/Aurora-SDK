@@ -45,6 +45,7 @@ void AbstractShader::renderShader()
 {
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	unsigned int i;
+	int indexCount = aIndexCount;
 
 	// Cache the device onto L1 CPU cache for speed
 	ID3D10Device * device = *aDevice;
@@ -74,6 +75,6 @@ void AbstractShader::renderShader()
 	{
 		// hard coded 6. change this to a variable later.
 		technique->GetPassByIndex(i)->Apply(0);
-		device->DrawIndexed(6, 0, 0);
+		device->DrawIndexed(indexCount, 0, 0);
 	}
 }

@@ -45,6 +45,7 @@ namespace A2D {
 		ID3D10EffectTechnique		*	aTechnique;
 		ID3D10InputLayout			*	aLayout;
 		bool							aHasAlpha = false;
+		int								aIndexCount = 6;
 
 
 	private:

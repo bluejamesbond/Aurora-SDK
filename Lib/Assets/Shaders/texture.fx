@@ -125,6 +125,9 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 	
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+	return textureColor; 
+
 	dist = textureColor.a;
 	textureColor = saturate(textureColor);
 	const float smoothing = 2.0 / 16.0;
@@ -235,11 +238,11 @@ float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
 	float SHADOW_OFFSET = 0.004;
 	float alphaShadowMaskDistance;
 
-	shadowTexel = shaderTexture.Sample(SampleType, input.tex.xy - SHADOW_OFFSET);
+	shadowTexel = shaderTexture.Sample(SampleType, input.tex.xy + SHADOW_OFFSET);
 	alphaShadowMaskDistance = shadow.a;
 	shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
 
-	shadow = shadowColor * smoothstep(0.1, .6, shadowTexel.a);
+	shadow = shadowColor * smoothstep(0.1, 0.6, shadowTexel.a);
 	//shadow = smoothstep(0.5, 0.6, alphaShadowMaskDistance);
 
 	//shadow.x = shadowColor.x;

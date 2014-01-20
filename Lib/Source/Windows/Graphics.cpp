@@ -194,8 +194,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 	Texture * texture;
 	QuadData<TextureVertex, 6> * quadData;
-
-	Font * museo = new Font("Assets/fonts/museo.txt");
+	Font * museo;
 	
 
 	string input = "hi there";
@@ -210,8 +209,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 		texture = new Texture(aDevice, L"Assets/fonts/museo.png");
 		quadData = new QuadData<TextureVertex, 6>();
-	
-		museo->initialize();
+		museo = new Font("Assets/fonts/museo.txt");
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
@@ -220,14 +218,16 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 		(*xPipeline)->aPipelineComps[0] = texture;
 		(*xPipeline)->aPipelineComps[1] = quadData;
+		(*xPipeline)->aPipelineComps[2] = museo;
 
-		(*xPipeline)->aLength = 2;
+		(*xPipeline)->aLength = 3;
 
 		return;
 	}
 
 	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
 	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
+	museo = static_cast<Font*>((*xPipeline)->aPipelineComps[2]);
 
 	//float charX;
 	//float charY;
@@ -276,6 +276,20 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 	//}
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
+
+	Rect * cClip = new Rect();
+
+	//cClip->aX = FLOAT(museo->aCharacters[52].aX);
+	//cClip->aY = FLOAT(museo->aCharacters[52].aY);
+	//cClip->aWidth = FLOAT(museo->aCharacters[52].aWidth);
+	//cClip->aHeight = FLOAT(museo->aCharacters[52].aHeight);
+
+	cClip->aX = 0;
+	cClip->aY = 0;
+	cClip->aWidth = 20;
+	cClip->aHeight = 20;
+
+	texture->SetClip(cClip);
 
 	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false))
 	{

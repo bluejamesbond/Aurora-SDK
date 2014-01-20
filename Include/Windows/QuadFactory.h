@@ -46,7 +46,7 @@ namespace A2D {
 	class QuadFactory
 	{
 	public:
-
+		
 		QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims);
 		~QuadFactory();
 

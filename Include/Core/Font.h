@@ -65,6 +65,7 @@ namespace A2D {
 
 		STATUS							LoadFontData();
 
+
 	private:
 
 		string							aFontDataLoc;
