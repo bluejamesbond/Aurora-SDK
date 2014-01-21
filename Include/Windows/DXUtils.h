@@ -68,7 +68,7 @@ namespace A2D {
 		static STATUS					createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties);
 		
 		// Create border matrix
-		static STATUS					updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize);
+		static STATUS SYSFASTCALL		updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize);
 
 		// Create matrix for specific class
 		template<class VertexClass>	

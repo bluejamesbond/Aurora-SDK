@@ -48,9 +48,8 @@ namespace A2D {
 
 	public:
 
-		static ID3D10EffectMatrixVariable*	m_borderCalculationMatrixPtr;
-		static QuadExpansionShader*			getSingleton();
-		static void							updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix);
+		ID3D10EffectMatrixVariable*		m_borderCalculationMatrixPtr;
+		void							updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix);
 		
 		///////////////////////////////////////////////////////////
 		// INLINE FUNCTION

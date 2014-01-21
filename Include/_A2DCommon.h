@@ -61,6 +61,7 @@ typedef unsigned int STATUS;
 //------------------------------------------------------------------------------
 #define SYSINLINE                                       __forceinline
 #define SYSCDECL                                        __cdecl
+#define SYSFASTCALL										__fastcall
 
 // Functions for calculating relative point
 //------------------------------------------------------------------------------

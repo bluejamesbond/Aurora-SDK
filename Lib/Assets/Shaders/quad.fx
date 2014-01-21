@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 
 Texture2D shaderTexture;
-static matrix borderCalculationMatrix : register(gs_4_0, b0);
+matrix borderCalculationMatrix : register( b0);
 
 
 // -------------------------- borderCalculationMatrix --------------------------
@@ -132,7 +132,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float right = left + width;
 	float bottom = top - height;
 
-	// input[0].borderWidths = mul(borderCalculationMatrix, input[0].borderWidths);
+	input[0].borderWidths = mul(input[0].borderWidths, borderCalculationMatrix);
 
 	float borderLeftWidth = input[0].borderWidths[0];
 	float borderTopWidth = input[0].borderWidths[1];
@@ -144,12 +144,12 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 borderRightColor = ARGBtoFloat4(input[0].borderColors[2]);
 	float4 borderBottomColor = ARGBtoFloat4(input[0].borderColors[3]);
 
-	bool hasLeftBorder = borderLeftWidth > 0;
-	bool hasTopBorder = borderTopWidth > 0;
-	bool hasRightBorder = borderRightWidth > 0;
-	bool hasBottomBorder = borderBottomWidth > 0;
+	bool hasLeftBorder = borderLeftWidth > 0.0f;
+	bool hasTopBorder = borderTopWidth > 0.0f;
+	bool hasRightBorder = borderRightWidth > 0.0f;
+	bool hasBottomBorder = borderBottomWidth > 0.0f;
 
-	float z = (10000000 - input[0].options[2]) / 10000000;
+	float z = (10000000.0f - input[0].options[2]) / 10000000.0f;
 	float opacity = input[0].options[3];
 
 	//**********************************************************************
@@ -183,7 +183,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//**********************************************************************
 	// Borders
 	//**********************************************************************
-	z = (10000000 - (input[0].options[2] + 0.5)) / 10000000;
+	z = (10000000.0f - (input[0].options[2] + 0.5f)) / 10000000.0f;
 	// 0.0 indicates color coordinates
 	// 1.0 indicates texture coordinates
 	// 2.0 indicates texture on backgroundColor

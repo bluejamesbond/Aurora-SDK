@@ -5,24 +5,18 @@
 using namespace A2D;
 
 QuadExpansionShader* QuadExpansionShader::m_singelton = NULL;
-ID3D10EffectMatrixVariable* QuadExpansionShader::m_borderCalculationMatrixPtr = NULL;
 
 QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) : 
 	AbstractShader(xDevice),
 	aQuadEffect(NULL),
-	aTexturePtr(NULL)
+	aTexturePtr(NULL),
+	m_borderCalculationMatrixPtr(NULL)
 {
 	if (!m_singelton)
 	{
 		m_singelton = this;
 	}
 }
-
-QuadExpansionShader* QuadExpansionShader::getSingleton()
-{
-	return m_singelton;
-}
-
 QuadExpansionShader::~QuadExpansionShader()
 {
 	AbstractShader::~AbstractShader();
