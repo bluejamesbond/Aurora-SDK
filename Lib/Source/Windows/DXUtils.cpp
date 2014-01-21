@@ -72,6 +72,19 @@ STATUS DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 	return STATUS_OK;
 }
 
+STATUS DXUtils::updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize)
+{
+	// Set
+	D3DXMATRIX borderMatrix(x_windowSize->aWidth / 2, 0.0f, 0.0f, 0.0f,
+							0.0f, x_windowSize->aHeight/2, 0.0f, 0.0f,
+							0.0f, 0.0f, x_windowSize->aWidth / 2, 0.0f,
+							0.0f, 0.0f, 0.0f, x_windowSize->aHeight / 2);
+
+	memcpy(x_borderMatrix, &borderMatrix, sizeof(D3DXMATRIX));
+
+	return STATUS_OK;
+}
+
 STATUS DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create

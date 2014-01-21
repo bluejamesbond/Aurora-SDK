@@ -32,13 +32,18 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 
 	QuadExpansionVertex * vertices = x_quadData->aVertices;
 
+
 	//------------------------------------------------------------------------------
 	// WARNING: No repeat with textureClip
 	//------------------------------------------------------------------------------
 	if (x_renderSet.m_dirtyRequestRegion || x_renderSet.m_dirtyVisbleRegion)
 	{
+		#ifdef A2D_DE__			
+		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating region.", *x_renderSet.m_id);
+		#endif // A2D_DE__
+
 		const Rect& constraints = *x_renderSet.m_visibleRegion;
-		
+
 		float rectX = 0.0f;
 		float rectY = 0.0f;
 		float rectWidth = x_renderSet.m_region->aWidth;
@@ -46,10 +51,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 
 		float calcLeft = max__(rectX, 0.0);
 		float calcTop = max__(rectY, 0.0);
-		float calcRight = min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-		float calcBottom = min__(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
-		float calcHeight = calcBottom - calcTop;
-		float calcWidth = calcRight - calcLeft;
+		float calcRight = x_quadData->m_previousCalcRight = min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
+		float calcBottom = x_quadData->m_previousCalcBottom = min__(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
+		float calcHeight = x_quadData->m_previousCalcHeight = calcBottom - calcTop;
+		float calcWidth = x_quadData->m_previousCalcWidth = calcRight - calcLeft;
 		
 		vertices[0].aPosition = D3DXVECTOR4(cvtpx2rp__(winWidth, constraints.aX + calcLeft),
 											-cvtpx2rp__(winHeight, constraints.aY + calcTop), 
@@ -57,15 +62,40 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 											cvtpx2rd__(winHeight, calcHeight));
 
 		x_renderSet.m_dirtyVisbleRegion = false;
-		x_renderSet.m_dirtyRequestRegion = false;
+		x_renderSet.m_dirtyRequestRegion = false;				
+	}
+	
+	if (x_renderSet.m_dirtyBackground)
+	{
+		#ifdef A2D_DE__			
+		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating texel.", *x_renderSet.m_id);
+		#endif // A2D_DE__
 
-	lbl_validateBackgroundOnly:
+		const Rect& constraints = *x_renderSet.m_visibleRegion;
 
-		float texLeft, texTop, texRight, texBottom, texelLeft, texelTop, texelRight, texelBottom;
+		float rectX = 0.0f;
+		float rectY = 0.0f;
+		float rectWidth = x_renderSet.m_region->aWidth;
+		float rectHeight = x_renderSet.m_region->aHeight;
+
+		float calcRight = x_quadData->m_previousCalcRight;
+		float calcBottom = x_quadData->m_previousCalcBottom;
+		float calcHeight = x_quadData->m_previousCalcHeight;
+		float calcWidth = x_quadData->m_previousCalcWidth;
 
 		float textureWidth = x_texture->GetClip()->aWidth;
 		float textureHeight = x_texture->GetClip()->aHeight;
-				
+
+		float 
+			texLeft, 
+			texTop, 
+			texRight, 
+			texBottom,
+			texelLeft, 
+			texelTop, 
+			texelRight, 
+			texelBottom;
+
 		if (x_renderSet.m_backgroundStyle.m_layout == Style::Background::Layout::COVER)
 		{
 			float resizeVFactor = 1.0,
@@ -150,18 +180,18 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		}
 
 		vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
-		
-		x_renderSet.m_dirtyBackground = true;
-	}
-	else if (x_renderSet.m_dirtyBackground)
-	{
-		goto lbl_validateBackgroundOnly;
+
+		x_renderSet.m_dirtyBackground = false;
 	}
 
 	// Set up vertices
 	//------------------------------------------------------------------------------
 	if (x_renderSet.m_dirtyOpacityDepth)
 	{
+		#ifdef A2D_DE__			
+		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating opacity/depth.", *x_renderSet.m_id);
+		#endif // A2D_DE__
+
 		vertices[0].aOptions = D3DXVECTOR4(x_renderSet.m_opacity, 0.0f, aDepth, 1.0f);
 
 		x_renderSet.m_dirtyOpacityDepth = false;
@@ -169,6 +199,10 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 
 	if (x_renderSet.m_dirtyBorderColors)
 	{
+		#ifdef A2D_DE__			
+		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating border colors.", *x_renderSet.m_id);
+		#endif // A2D_DE__
+
 		vertices[0].aBorderColors = A2DUINT4(x_renderSet.m_borders.m_leftColor.m_raw,
 											 x_renderSet.m_borders.m_topColor.m_raw,
 											 x_renderSet.m_borders.m_rightColor.m_raw,
@@ -179,10 +213,20 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 	
 	if (x_renderSet.m_dirtyBorderWidths)
 	{
-		vertices[0].aBorderWidths = D3DXVECTOR4(cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_left),
-												cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_top),
-												cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_right),
-												cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom));
+		#ifdef A2D_DE__			
+		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating border widths.", *x_renderSet.m_id);
+		#endif // A2D_DE__
+
+		  vertices[0].aBorderWidths = D3DXVECTOR4(cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_left),
+                                                  cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_top),
+                                                  cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_right),
+                                                  cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom));
+          
+
+		//vertices[0].aBorderWidths = D3DXVECTOR4(x_renderSet.m_borders.m_precalculatedBorderWidths.m_left,
+		//										x_renderSet.m_borders.m_precalculatedBorderWidths.m_top,
+		//										x_renderSet.m_borders.m_precalculatedBorderWidths.m_right,
+		//										x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom);
 		x_renderSet.m_dirtyBorderWidths = false;
 	}
 

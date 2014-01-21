@@ -76,6 +76,8 @@ namespace A2D {
 		
     protected:
 
+		int							m_id;
+
 		bool                        m_validatedContents;
 		bool						m_componentTreeValidationRequest;
 		
@@ -88,12 +90,16 @@ namespace A2D {
 		Rect                        m_backgroundRegion;
         Rect                        m_calculatedRegion;
         Rect                        m_visibleRegion;
+		Dims						m_previousVisibleDimensions;
+		Dims						m_previousDimensions;
+
 
 		Pipeline*                   m_pipeline;
 		Graphics*                   m_graphics;    
 
     public:
         
+		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
 		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
 		void                        setBackgroundPaint(Paint& xOptPaint);
@@ -164,6 +170,16 @@ namespace A2D {
 
             m_backgroundRegion.aWidth = xWidth;
             m_backgroundRegion.aHeight = xHeight;
+
+			if (m_region.aHeight != m_previousDimensions.aHeight ||
+				m_region.aWidth != m_previousDimensions.aWidth)
+			{
+				// FIXME Use SSE2 Acceleration
+				m_previousDimensions.aWidth = m_region.aWidth;
+				m_previousDimensions.aHeight = m_region.aHeight;
+
+				m_styleSet.markBackgroundAsDirty();
+			}
 
 			m_validatedContents = false;
 			m_styleSet.markRequestRegionAsDirty();

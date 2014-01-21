@@ -76,6 +76,8 @@ namespace A2D {
 		A2DPIXELDISTANCESETINT4     m_precalculatedPositioning;
 		A2DPIXELDISTANCESETINT4     m_precalculatedPadding;
 
+		int*						m_id;
+
 		wchar_t*                    m_backgroundSrc;
 		Paint                       m_backgroundPaint;
 

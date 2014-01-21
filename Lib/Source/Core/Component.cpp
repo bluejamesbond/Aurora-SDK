@@ -9,6 +9,7 @@ Component::Component() :
     m_forcedBounds(false),
     m_parent(NULL),
     m_pipeline(NULL),
+	m_id(rand()),
     m_componentManager(NULL),
     m_calculatedNegativeDeltaX(0.0f),
     m_calculatedNegativeDeltaY(0.0f),
@@ -20,6 +21,7 @@ Component::Component() :
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
+	m_styleSet.m_id = &m_id;
 
 	m_styleSet.markBorderColorsAsDirty();
 	m_styleSet.markBackgroundAsDirty();
@@ -32,6 +34,11 @@ void Component::paintComponentBorder(){}
 Component& Component::getParent()
 {
     return *m_parent;
+}
+
+void Component::setId(int x_id)
+{
+	m_id = x_id;
 }
 
 int Component::getDepth()
@@ -182,6 +189,20 @@ void Component::validate()
 		//------------------------------------------------------------------------------
         m_visibleRegion.aWidth = SFLOAT((m_calculatedRegion.aX + compRect.aWidth) >= 0.0f ? m_calculatedRegion.aWidth : 0.0f);
         m_visibleRegion.aHeight = SFLOAT((m_calculatedRegion.aY + compRect.aHeight) >= 0.0f ? m_calculatedRegion.aHeight : 0.0f); 	
+
+		if (m_visibleRegion.aHeight != m_previousVisibleDimensions.aHeight ||
+			m_visibleRegion.aWidth != m_previousVisibleDimensions.aWidth)
+		{
+			// FIXME Use SSE2 Acceleration
+			m_previousVisibleDimensions.aWidth = m_visibleRegion.aWidth;
+			m_previousVisibleDimensions.aHeight = m_visibleRegion.aHeight;
+
+			m_styleSet.markBackgroundAsDirty();
+
+			#ifdef A2D_DE__			
+			SYSOUT_F("[Component] [ComponentId: 0x%X] Requesting background update.", m_id);
+			#endif // A2D_DE__
+		}
     }
 
     CascadingLayout::doLayout(*this);
@@ -280,12 +301,7 @@ STATUS Component::initialize()
 }
 
 void Component::paintComponent()
-{
-	if (!m_styleSet.m_visible)
-    {
-        return;
-    }
-
+{	
     Graphics& graphics = *m_graphics;
 
 	if (m_styleSet.m_backgroundSrc != NULL)
@@ -306,6 +322,12 @@ void Component::update()
     {
         validate();
     }
+
+	// If Component is not visible return
+	if (!m_styleSet.m_visible)
+	{
+		return;
+	}
 
 	graphics.setClip(&m_visibleRegion, m_styleSet.m_depth);
 

@@ -49,19 +49,10 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		if (component->m_forcedBounds)
 		{
 			#ifdef A2D_DE__			
-			SYSOUT_STR("[CascadingLayout] Skipping calculations. Using forced bounds.");
+			SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Using forced bounds.", component->m_id);
 			#endif // A2D_DE__
 
 			start = start->right;
-			continue;
-		}
-		else if (mY >= compHeight)
-		{
-			#ifdef A2D_DE__			
-			SYSOUT_STR("[CascadingLayout] Skipping calculations. Component out of window.");
-			#endif // A2D_DE__
-
-			component->m_styleSet.m_visible = false;
 			continue;
 		}
 
@@ -73,7 +64,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		if (x_component.m_componentTreeValidationRequest)
 		{
 			#ifdef A2D_DE__			
-			SYSOUT_STR("[CascadingLayout] Requesting recalculations due to parent resize.");
+			SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Requesting recalculations due to parent resize.", component->m_id);
 			#endif // A2D_DE__
 
 			A2DDISTANCESET2& size = component->m_styleSet.m_size;
@@ -174,6 +165,16 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 				// try to move this elswhere
 				firstElement = false;
 			}
+
+			if (mY >= compHeight || mX >= compWidth)
+			{
+				#ifdef A2D_DE__			
+				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
+				#endif // A2D_DE__
+
+				component->m_styleSet.m_visible = false;
+				continue;
+			}
 		}
 		else/*if (position == Style::ABSOLUTE_)*/
 		{
@@ -216,6 +217,16 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			{
 				aY += positionTop;
 				height = compHeight - (positionTop + positionBottom);
+			}
+
+			if (aY >= compHeight || aX >= compWidth)
+			{
+				#ifdef A2D_DE__			
+				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
+				#endif // A2D_DE__
+
+				component->m_styleSet.m_visible = false;
+				continue;
 			}
 		}
 

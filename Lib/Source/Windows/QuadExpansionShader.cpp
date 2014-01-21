@@ -4,11 +4,23 @@
 
 using namespace A2D;
 
+QuadExpansionShader* QuadExpansionShader::m_singelton = NULL;
+ID3D10EffectMatrixVariable* QuadExpansionShader::m_borderCalculationMatrixPtr = NULL;
+
 QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) : 
 	AbstractShader(xDevice),
 	aQuadEffect(NULL),
 	aTexturePtr(NULL)
 {
+	if (!m_singelton)
+	{
+		m_singelton = this;
+	}
+}
+
+QuadExpansionShader* QuadExpansionShader::getSingleton()
+{
+	return m_singelton;
 }
 
 QuadExpansionShader::~QuadExpansionShader()
@@ -16,6 +28,11 @@ QuadExpansionShader::~QuadExpansionShader()
 	AbstractShader::~AbstractShader();
 
 	DESTROY(aTexturePtr);
+}
+
+void QuadExpansionShader::updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix)
+{
+	m_borderCalculationMatrixPtr->SetMatrix((float*)(x_borderCalculationMatrix));
 }
 
 ID3D10Effect ** QuadExpansionShader::getEffect()
@@ -36,6 +53,11 @@ STATUS QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 	if (!aTexturePtr)
 	{
 		aTexturePtr = xEffect->GetVariableByName("shaderTexture")->AsShaderResource();
+	}
+
+	if (!m_borderCalculationMatrixPtr)
+	{
+		m_borderCalculationMatrixPtr = xEffect->GetVariableByName("borderCalculationMatrix")->AsMatrix();
 	}
 
 	return STATUS_OK;

@@ -40,12 +40,18 @@ namespace A2D {
 		
 	private:
 
-		ID3D10Effect			*	aQuadEffect;
+		ID3D10Effect*				aQuadEffect;
 		ID3D10EffectShaderResourceVariable*   aTexturePtr;
-		Texture					*	aTexture;
+		Texture*						aTexture;
+
+		static QuadExpansionShader*	m_singelton;
 
 	public:
 
+		static ID3D10EffectMatrixVariable*	m_borderCalculationMatrixPtr;
+		static QuadExpansionShader*			getSingleton();
+		static void							updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix);
+		
 		///////////////////////////////////////////////////////////
 		// INLINE FUNCTION
 		///////////////////////////////////////////////////////////

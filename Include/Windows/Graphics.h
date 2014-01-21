@@ -92,6 +92,7 @@ namespace A2D {
 		QuadExpansionShader  *			aQuadExpansionShader;
 
 		ID3D10Device		**			aDevice;
+		D3DXMATRIX						m_borderCalculationMatrix;
 
 	public:
 
@@ -117,6 +118,11 @@ namespace A2D {
 		inline void Graphics::setClip(Rect * xClip, float xDepth)
 		{
 			aQuadFactory->setConstraints(aClip = xClip, xDepth);
+		}
+
+		void inline	validate()
+		{
+			DXUtils::updateBorderMatrix(&m_borderCalculationMatrix, aBackBufferDims);
 		}
 	};
 }

@@ -305,6 +305,12 @@ STATUS Graphics::initialize()
 	aQuadExpansionShader = new QuadExpansionShader(device);
 	SAFELY(aQuadExpansionShader->initialize());
 
+	// Call validate to ensure all the contents
+	// are updated
+	validate();
+
+	QuadExpansionShader::updateBorderCalculationMatrix(&m_borderCalculationMatrix);
+
 	//TextureShader::setViewMatrix(&aViewMatrix);
 	//ColorShader::setViewMatrix(&aViewMatrix);
 

@@ -54,7 +54,7 @@ namespace A2D {
 		AbstractBackBuffer						   *   aBackBuffer;
 		Component								   *   aRoot;
 		AbstractWindow	  						   *   aWindow;
-		void									   *   aGraphics;
+		Graphics								   *   aGraphics;
 
 	public:
 
@@ -81,9 +81,11 @@ namespace A2D {
 		{
 			// FIX ME ... use scrollLeft and variables like that to find offset
 
+			aBackBuffer->validate();
+			aGraphics->validate();
+
 			A2DPIXELDISTANCESETUINT4& borderWidths = aRoot->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
-			aBackBuffer->validate();
 			aRoot->setBounds(SFLOAT(borderWidths.m_left),
 							 SFLOAT(borderWidths.m_top),
 							 aBackBufferDims->aWidth - SFLOAT(borderWidths.m_left + borderWidths.m_right),

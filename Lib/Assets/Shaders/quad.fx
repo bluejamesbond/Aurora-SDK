@@ -12,7 +12,29 @@
 // GLOBAL
 //------------------------------------------------------------------------------
 
-Texture2D shaderTexture : register(ps_4_0, t[0]) ;
+Texture2D shaderTexture;
+static matrix borderCalculationMatrix : register(gs_4_0, b0);
+
+
+// -------------------------- borderCalculationMatrix --------------------------
+//
+//  Matrix:
+//
+//  [  {  width / 2  }   {      0      }   {      0      }   {      0      }  ]
+//  [  {      0      }   {  height / 2 }   {      0      }   {      0      }  ]
+//  [  {      0      }   {      0      }   {  width / 2  }   {      0      }  ]
+//  [  {      0      }   {      0      }   {      0      }   {  height / 2 }  ]
+//
+//  Input:
+//  
+//  [  {  leftWidth  }  ] 
+//  [  {  topWidth   }  ] 
+//  [  { rightWIdth  }  ] 
+//  [  { bottomWidth }  ]
+//
+//
+//  Output: mul(input, matrix)
+//
 
 //------------------------------------------------------------------------------
 // SAMPLER
@@ -109,6 +131,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float top = input[0].position[1];
 	float right = left + width;
 	float bottom = top - height;
+
+	// input[0].borderWidths = mul(borderCalculationMatrix, input[0].borderWidths);
 
 	float borderLeftWidth = input[0].borderWidths[0];
 	float borderTopWidth = input[0].borderWidths[1];

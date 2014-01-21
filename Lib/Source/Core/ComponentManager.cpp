@@ -9,7 +9,7 @@ using namespace A2D;
 
 ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow)
 {
-	aGraphics = xGraphics;
+	aGraphics = static_cast<Graphics*>(xGraphics);
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
@@ -24,7 +24,7 @@ STATUS ComponentManager::initialize()
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
 	//------------------------------------------------------------------------------
-	root.setGraphics(*static_cast<Graphics*>(aGraphics));
+	root.setGraphics(*aGraphics);
 	root.setComponentManager(*this);
 	root.setDepth(0);
 
