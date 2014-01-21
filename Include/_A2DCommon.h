@@ -57,11 +57,6 @@ typedef unsigned int STATUS;
 #define SUINT(x)                                        static_cast<unsigned int>(x)
 #define IMPLEMENT                                       = 0
 
-// Deconst is very dangerous
-// Use with caution.
-//------------------------------------------------------------------------------
-#define	unconst__(x)									(const_cast<x>(this))
-
 // System independent definitions
 //------------------------------------------------------------------------------
 #define SYSINLINE                                       __forceinline
@@ -133,5 +128,10 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
 // Convert from units to distance
 //------------------------------------------------------------------------------
 #define cvtsu2px__(x_units, x_value, x_range)           ((x_units == Style::PERCENTAGE) ? SINT(x_range * (x_value / 100.0f)) : SINT(x_value))
+
+// unconst is very dangerous
+// Use with caution.
+//------------------------------------------------------------------------------
+#define	unconst__(x)									(const_cast<x>(this))
 
 #endif
