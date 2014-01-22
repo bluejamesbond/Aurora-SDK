@@ -174,7 +174,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 	quadData = static_cast<QuadData<QuadExpansionVertex, 1>*>(pipelineables[2]);
 
 	// Update the shader matrix
-	quadExpansionShader->updateBorderCalculationMatrix(&m_borderCalculationMatrix);
+	// quadExpansionShader->updateBorderCalculationMatrix(&m_borderCalculationMatrix);
 
 	// Check if the texture needs updating
 	if (texture->update(x_renderSet.m_backgroundSrc))

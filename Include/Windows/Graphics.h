@@ -123,6 +123,9 @@ namespace A2D {
 		void inline	validate()
 		{
 			DXUtils::updateBorderMatrix(&m_borderCalculationMatrix, aBackBufferDims);
+
+			// Update the shader matrix
+			aQuadExpansionShader->updateBorderCalculationMatrix(&m_borderCalculationMatrix);
 		}
 	};
 }

@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 
 Texture2D shaderTexture;
-matrix borderCalculationMatrix : register( b0);
+matrix borderCalculationMatrix : register( b[0]);
 
 
 // -------------------------- borderCalculationMatrix --------------------------
