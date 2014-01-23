@@ -1,29 +1,7 @@
-//------------------------------------------------------------------------------
-// CBUFFER
-//------------------------------------------------------------------------------
-cbuffer GS_CONSTANT_BUFFER : register(b0)
-{
-	//------------------------------------------------------------------------------
-	matrix borderCalculationMatrix;
-	//
-	//  Matrix:
-	//
-	//  [  {  width / 2  }   {      0      }   {      0      }   {      0      }  ]
-	//  [  {      0      }   {  height / 2 }   {      0      }   {      0      }  ]
-	//  [  {      0      }   {      0      }   {  width / 2  }   {      0      }  ]
-	//  [  {      0      }   {      0      }   {      0      }   {  height / 2 }  ]
-	//
-	//  Input:
-	//  
-	//  [  {  leftWidth  }  ] 
-	//  [  {  topWidth   }  ] 
-	//  [  { rightWIdth  }  ] 
-	//  [  { bottomWidth }  ]
-	//
-	//
-	//  Output: mul(input, matrix)
-	//		
-};
+
+// Aurora-SDK
+
+#include "hd.hlsli"
 
 //------------------------------------------------------------------------------
 // PER-FRAME RESOURCES
@@ -32,21 +10,9 @@ Texture2D shaderTexture;
 SamplerState sampleType;
 
 //------------------------------------------------------------------------------
-// INPUT STRUCTURE
-//------------------------------------------------------------------------------
-struct QuadPixel
-{
-	float4 position : SV_POSITION;
-	float4 colorTex : COLOR;
-
-	// [texture/color/both, opacity, reserved, reserved]
-	nointerpolation float4 options : FLOAT4; 
-};
-
-//------------------------------------------------------------------------------
 // ENTRY POINT
 //------------------------------------------------------------------------------
-float4 main(QuadPixel input) : SV_Target
+float4 main(PX_QUADEXPANSION input) : SV_Target
 {
 	float isColorTex = input.options[0];
 	float opacity = input.options[1];
@@ -65,13 +31,4 @@ float4 main(QuadPixel input) : SV_Target
 	{
 		return input.colorTex;
 	}
-}
-
-//------------------------------------------------------------------------------
-// ADDITIONAL FUNCTIONS
-//------------------------------------------------------------------------------
-float4 ARGBtoFloat4(uint color)
-{
-	//#ARGB to (Rf, Gf, Bf, Af)
-	return float4(((color >> 24) & 0xFF) / 255.0, ((color >> 16) & 0xFF) / 255.0, ((color >> 8) & 0xFF) / 255.0, (color & 0xFF) / 255.0);
 }

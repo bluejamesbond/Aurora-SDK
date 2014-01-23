@@ -1,15 +1,15 @@
-struct QuadVertex
-{
-	float4 position : POSITION0;
-	float4 options : POSITION1;      // [text/color/both, opacity, reserved, reserved]      NOTE: contents must be in float. 
-	float4 borderWidths : POSITION2; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
-	float4 borderRadius : POSITION3; // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
-	float4 colorTex : COLOR0;
-	uint4 borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
-};
- 
 
-float4 main( float4 pos : POSITION ) : SV_POSITION
+// Aurora-SDK
+
+#include "hd.hlsli"
+ 
+PX_QUADEXPANSION main(VX_QUADEXPANSION quadVertex)
 {
-	return pos;
+	PX_QUADEXPANSION quadPixel;
+
+	quadPixel.position = quadVertex.position;
+	quadPixel.colorTex = quadVertex.colorTex;
+	quadPixel.options = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	return quadPixel;
 }
