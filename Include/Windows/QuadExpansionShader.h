@@ -49,6 +49,7 @@ namespace A2D {
 
 	public:
 
+		ID3D10VertexShader* m_geoShader;
 		ID3D10EffectMatrixVariable*		m_borderCalculationMatrixPtr;
 		void							updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix);
 		void							setConstantBuffer(ID3D10Buffer * x_buffer);

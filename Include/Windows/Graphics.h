@@ -132,15 +132,15 @@ namespace A2D {
 		{
 			DXUtils::updateBorderMatrix(&m_constantBuffer.m_borderCalculationMatrix, aBackBufferDims);
 
-			void * mappedVertices = 0;
+			//void * mappedVertices = 0;
 
-			m_constantBuffer10->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
-			memcpy(static_cast<VS_CONSTANT_BUFFER*>(mappedVertices), &m_constantBuffer, sizeof(VS_CONSTANT_BUFFER));
-			m_constantBuffer10->Unmap();
-			
-			// aQuadExpansionShader->setConstantBuffer(m_constantBuffer10);
+			//m_constantBuffer10->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+			//memcpy(static_cast<VS_CONSTANT_BUFFER*>(mappedVertices), &m_constantBuffer, sizeof(VS_CONSTANT_BUFFER));
+			//m_constantBuffer10->Unmap();
+			//
+			//// aQuadExpansionShader->setConstantBuffer(m_constantBuffer10);
 
-			(*aDevice)->GSSetConstantBuffers(0, 1, &m_constantBuffer10);
+			//(*aDevice)->GSSetConstantBuffers(0, 1, &m_constantBuffer10);
 
 		}
 	};
