@@ -42,6 +42,7 @@ namespace A2D {
 
 		ID3D10Effect*				aQuadEffect;
 		ID3D10EffectShaderResourceVariable*   aTexturePtr;
+		ID3D10EffectConstantBuffer*			  aConstantBufferPtr;
 		Texture*						aTexture;
 
 		static QuadExpansionShader*	m_singelton;
@@ -50,7 +51,8 @@ namespace A2D {
 
 		ID3D10EffectMatrixVariable*		m_borderCalculationMatrixPtr;
 		void							updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix);
-		
+		void							setConstantBuffer(ID3D10Buffer * x_buffer);
+
 		///////////////////////////////////////////////////////////
 		// INLINE FUNCTION
 		///////////////////////////////////////////////////////////

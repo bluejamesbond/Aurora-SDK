@@ -47,7 +47,7 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 		texture = new Texture(aDevice, xSrc);
 		quadData = new QuadData<TextureVertex, 6>();
 
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6, D3D10_BIND_VERTEX_BUFFER);
 
 		texture->initialize();
 
@@ -87,7 +87,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 
 		quadData = new QuadData<ColorVertex, 6>();
 
-		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6, D3D10_BIND_VERTEX_BUFFER);
 
 		(*xPipeline)->aPipelineComps[0] = quadData;
 
@@ -142,7 +142,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 		quadData = new QuadData<QuadExpansionVertex, 1>();
 		
 		// Create the default vertex buffer
-		DXUtils::CreateDefaultDynamicVertexBuffer<QuadExpansionVertex>(*aDevice, &quadData->aVertexBuffer, 1);
+		DXUtils::CreateDefaultDynamicVertexBuffer<QuadExpansionVertex>(*aDevice, &quadData->aVertexBuffer, 1, D3D10_BIND_VERTEX_BUFFER);
 
 		// Every expansion shader has its own shader
 		// This will prevent us from having to switch
@@ -215,7 +215,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 		texture = new Texture(aDevice, L"Assets/images/letter.png");
 		quadData = new QuadData<TextureVertex, 6>();
 
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6, D3D10_BIND_VERTEX_BUFFER);
 
 		texture->initialize();
 
@@ -308,6 +308,8 @@ STATUS Graphics::initialize()
 	aQuadExpansionShader = new QuadExpansionShader(device);
 	SAFELY(aQuadExpansionShader->initialize());
 
+	DXUtils::CreateDefaultDynamicVertexBuffer<VS_CONSTANT_BUFFER>(*aDevice, &m_constantBuffer10, 1, D3D10_BIND_CONSTANT_BUFFER);
+	
 	// Call validate to ensure all the contents
 	// are updated
 	validate();

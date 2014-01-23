@@ -61,6 +61,12 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
+	struct VS_CONSTANT_BUFFER
+	{
+		D3DXMATRIX m_borderCalculationMatrix;
+	};
+
+
 	class Graphics
 	{
 	public:
@@ -91,8 +97,10 @@ namespace A2D {
 		AbstractTextureShader*			aTextureShader;
 		QuadExpansionShader  *			aQuadExpansionShader;
 
+		ID3D10Buffer*					m_constantBuffer10 = NULL;
 		ID3D10Device		**			aDevice;
 		D3DXMATRIX						m_borderCalculationMatrix;
+		VS_CONSTANT_BUFFER				m_constantBuffer;
 
 	public:
 
@@ -122,10 +130,18 @@ namespace A2D {
 
 		void inline	validate()
 		{
-			DXUtils::updateBorderMatrix(&m_borderCalculationMatrix, aBackBufferDims);
+			DXUtils::updateBorderMatrix(&m_constantBuffer.m_borderCalculationMatrix, aBackBufferDims);
 
-			// Update the shader matrix
-			aQuadExpansionShader->updateBorderCalculationMatrix(&m_borderCalculationMatrix);
+			void * mappedVertices = 0;
+
+			m_constantBuffer10->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+			memcpy(static_cast<VS_CONSTANT_BUFFER*>(mappedVertices), &m_constantBuffer, sizeof(VS_CONSTANT_BUFFER));
+			m_constantBuffer10->Unmap();
+			
+			// aQuadExpansionShader->setConstantBuffer(m_constantBuffer10);
+
+			(*aDevice)->GSSetConstantBuffers(0, 1, &m_constantBuffer10);
+
 		}
 	};
 }

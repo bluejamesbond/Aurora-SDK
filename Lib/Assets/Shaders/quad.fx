@@ -13,7 +13,12 @@
 //------------------------------------------------------------------------------
 
 Texture2D shaderTexture;
-matrix borderCalculationMatrix : register( b[0]);
+
+cbuffer GS_CONSTANT_BUFFER : register(b0)
+{
+	matrix borderCalculationMatrix;
+};
+
 
 
 // -------------------------- borderCalculationMatrix --------------------------

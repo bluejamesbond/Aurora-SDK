@@ -75,12 +75,10 @@ STATUS DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 STATUS SYSFASTCALL DXUtils::updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize)
 {
 	// Set
-	D3DXMATRIX borderMatrix(2.0f / x_windowSize->aWidth, 0.0f, 0.0f, 0.0f,
+	*x_borderMatrix = D3DXMATRIX(2.0f / x_windowSize->aWidth, 0.0f, 0.0f, 0.0f,
 							0.0f, 2.0f / x_windowSize->aHeight, 0.0f, 0.0f,
 							0.0f, 0.0f, 2.0f / x_windowSize->aWidth, 0.0f,
-							0.0f, 0.0f, 0.0f, 2.0f / x_windowSize->aHeight);
-	
-	memcpy(x_borderMatrix, &borderMatrix, sizeof(D3DXMATRIX));
+							0.0f, 0.0f, 0.0f, 2.0f / x_windowSize->aHeight);	
 
 	return STATUS_OK;
 }

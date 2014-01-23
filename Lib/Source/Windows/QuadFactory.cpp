@@ -18,7 +18,7 @@ QuadFactory::~QuadFactory()
 
 STATUS QuadFactory::initialize()
 {
-	SAFELY(DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
+	SAFELY(DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6, D3D10_BIND_VERTEX_BUFFER));
 	SAFELY(DXUtils::CreateDefaultIndexBuffer(*aDevice, &aIndexBuffer, 6));
 
 	return STATUS_OK;

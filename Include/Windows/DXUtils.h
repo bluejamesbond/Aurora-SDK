@@ -72,7 +72,7 @@ namespace A2D {
 
 		// Create matrix for specific class
 		template<class VertexClass>	
-		inline static STATUS			CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);
+		inline static STATUS			CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices, D3D10_BIND_FLAG x_bindFlags);
 
 		// Create index buffer
 		static STATUS					CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
@@ -80,7 +80,7 @@ namespace A2D {
 	};
 
 	template<class VertexClass>
-	inline STATUS DXUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices)
+	inline STATUS DXUtils::CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices, D3D10_BIND_FLAG x_bindFlags)
 	{
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;
@@ -90,13 +90,15 @@ namespace A2D {
 		memset(vertices, 0, (sizeof(VertexClass)* xVertices));
 
 		vertexBufferDesc.Usage = D3D10_USAGE_DYNAMIC;
-		vertexBufferDesc.ByteWidth = sizeof(VertexClass)* xVertices;
-		vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.ByteWidth = sizeof(VertexClass) * xVertices;
+		vertexBufferDesc.BindFlags = x_bindFlags;
 		vertexBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
 		vertexBufferDesc.MiscFlags = 0;
 
 		// Give the subresource structure a pointer to the vertex data.
 		vertexData.pSysMem = vertices;
+		vertexData.SysMemPitch = 0;
+		vertexData.SysMemSlicePitch = 0;
 
 		SAFELY(xDevice->CreateBuffer(&vertexBufferDesc, &vertexData, xVertexBuffer));
 

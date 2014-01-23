@@ -10,7 +10,8 @@ QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) :
 	AbstractShader(xDevice),
 	aQuadEffect(NULL),
 	aTexturePtr(NULL),
-	m_borderCalculationMatrixPtr(NULL)
+	m_borderCalculationMatrixPtr(NULL),
+	aConstantBufferPtr(NULL)
 {
 	if (!m_singelton)
 	{
@@ -39,6 +40,12 @@ LPCWSTR QuadExpansionShader::getEffectName()
 	return L"../../../Aurora-SDK/Lib/Assets/Shaders/quad.fx";
 }
 
+void QuadExpansionShader::setConstantBuffer(ID3D10Buffer * x_buffer)
+{
+	aConstantBufferPtr->SetConstantBuffer(x_buffer);
+}
+
+
 STATUS QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 {
 	// Get pointers to the three matrices inside the 
@@ -49,9 +56,9 @@ STATUS QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 		aTexturePtr = xEffect->GetVariableByName("shaderTexture")->AsShaderResource();
 	}
 
-	if (!m_borderCalculationMatrixPtr)
+	if (!aConstantBufferPtr)
 	{
-		m_borderCalculationMatrixPtr = xEffect->GetVariableByName("borderCalculationMatrix")->AsMatrix();
+		aConstantBufferPtr = xEffect->GetConstantBufferByName("GS_CONSTANT_BUFFER")->AsConstantBuffer();
 	}
 
 	return STATUS_OK;
