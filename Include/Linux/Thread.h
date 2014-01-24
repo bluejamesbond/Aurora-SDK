@@ -46,7 +46,7 @@ namespace A2D {
         pthread_t thread1;
         int retval;
 
-		void * aListHandle;
+		void * m_threadHandle;
 		static OrderedList<pthread_t*> aThreadHandles;
 
 	public:

@@ -15,11 +15,10 @@ Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable)
 	// Default thread id is 0 until we get
 	// an actual thread id from kernel
 	aId = 0;
-}
 
-int bugfixPThread() {
-	return pthread_getconcurrency();
-};
+	// Bug fix for Ubunto 13.10
+	pthread_getconcurrency();
+}
 
 Thread::~Thread()
 {
@@ -53,7 +52,7 @@ bool Thread::start(void * (*start_routine)(void *), void* arg)
     pthread_setschedparam(thread1, policy, &param);
 
 	// Get the handle from OrderedList and store it
-	aThreadHandles.push_back(&thread1, &aListHandle);
+	aThreadHandles.push_back(&thread1, &m_threadHandle);
 
 	// Increment parent activeCount
 	AbstractThread::aActiveCount++;
@@ -63,6 +62,8 @@ bool Thread::start(void * (*start_routine)(void *), void* arg)
 
 void Thread::interrupt()
 {
+	// FIXME Study how to interrupt thread and
+	// add the code for that
 }
 
 int Thread::id()
@@ -78,7 +79,14 @@ void Thread::resume()
 
 void Thread::stop()
 {
+	// FIXME Study how to stop thread and
+	// add the code for that
 
+	// Get the handle from OrderedList and store it
+	aThreadHandles.remove_request(&m_threadHandle);
+
+	// Decrement parent activeCount
+	AbstractThread::aActiveCount--;
 }
 
 bool Thread::isAlive()
@@ -88,12 +96,20 @@ bool Thread::isAlive()
 
 void Thread::waitAll()
 {
+	pthread_t ** allActiveThreads = aThreadHandles.to_array();
+	int size = aThreadHandles.size();
+
+	// Force all the threads to join
+	for(int i = 0; i < size; i++)
+	{
+		pthread_join(*allActiveThreads[i], NULL);
+	}
 
 }
 
 int Thread::getCurrentThreadId()
 {
-	return 0;
+	return static_cast<int>(getpid());
 }
 
 void* Thread::initThread(void * xParam)

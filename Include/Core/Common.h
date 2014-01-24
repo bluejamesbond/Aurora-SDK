@@ -68,16 +68,47 @@
 #define max(a, b)                                             ((a < b ) ? b : a)
 
 #define USE_CHOOSE_FBCONFIG
-#define SYSOUT_FLT(x)							 			  fprintf(stderr, "%f", x)
-#define SYSOUT_INT(x)										  fprintf(stderr, "%d", x)
-#define SYSOUT_HEX(x)										  fprintf(stderr, "%a", x)
-#define SYSOUT_STR(x)										  fprintf(stderr, "%s", x)
-#define SYSOUT_F(f, ...)									  fprintf(stderr, "Failiure ")
-
 #endif
 
-// Debugging
-//#include "../_A2DDebug.h"
+#ifndef SYSOUT_FLT
+#ifdef _WIN32
+#define SYSOUT_FLT(x)                                         _RPT1( 0, "[Aurora -SDK] %f\n", x )
+#elif __linux__
+#define SYSOUT_FLT(x)                                         printf("[Aurora -SDK] %f\n", x )
+#endif
+#endif
+
+#ifndef SYSOUT_INT
+#ifdef _WIN32
+#define SYSOUT_SINT(x)                                         _RPT1( 0, "[Aurora -SDK] %d\n", x )
+#elif __linux__
+#define SYSOUT_SINT(x)                                         printf("[Aurora -SDK] %d\n", x )
+#endif
+#endif
+
+#ifndef SYSOUT_HEX
+#ifdef _WIN32
+#define SYSOUT_HEX(x)                                          _RPT1( 0, "[Aurora -SDK] 0x%X\n", x )
+#elif __linux__
+#define SYSOUT_HEX(x)                                          printf("[Aurora -SDK] 0x%X\n", x )
+#endif
+#endif
+
+#ifndef SYSOUT_STR
+#ifdef _WIN32
+#define SYSOUT_STR(x)                                         _RPT1( 0, "[Aurora -SDK] %s\n", x )
+#elif __linux__
+#define SYSOUT_STR(x)                                         printf("[Aurora -SDK] %s\n", x )
+#endif
+#endif
+
+#ifndef SYSOUT_F
+#ifdef _WIN32
+#define SYSOUT_F(f, ...)                                      _RPT1( 0, "[Aurora -SDK] " f "\n", __VA_ARGS__ )
+#elif __linux__
+#define SYSOUT_F(f, ...)                                      printf("[Aurora -SDK] " f "\n", __VA_ARGS__ )
+#endif
+#endif
 
 #define G_SAFELY(hr)										  if(hr != 0)	{ SYSOUT_STR("Failure detected");	return; }
 #define SAFELY(hr)											  if(hr != 0)	{ SYSOUT_STR("Failure detected");return E_FAIL; }

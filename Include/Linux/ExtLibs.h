@@ -31,6 +31,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <sys/types.h>
+
 #include <math.h>
 #include <stdio.h>
 #include <string>
@@ -42,3 +44,5 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#include <unistd.h>
