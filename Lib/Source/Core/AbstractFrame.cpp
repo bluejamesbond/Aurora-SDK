@@ -171,7 +171,9 @@ void AbstractFrame::setVisible(bool xVisible)
 		if (!AbstractEventQueue::isDispatchingThread(this->id()) && aEventQueue)
 		{
 			aEventQueue->invokeLater(this);
-			aEventQueue->resumeDispatchingThread();
+			//aEventQueue->resumeDispatchingThread();
+			// FIXME CHANGE BACK!!!!
+			aEventQueue->startDispatchingThread();
 		}
 
 		aWindow->setVisible(xVisible);
@@ -233,10 +235,10 @@ HRESULT AbstractFrame::createResources()
 	SAFELY(createPlatformCompatibleBackBuffer(&aBackBuffer, aWindow, &aGXSettings));
 	SAFELY(aBackBuffer->initialize());
 
-	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
+	// SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-    aRepaintManager = new RepaintManager(aGraphics, NULL);
-	SAFELY(aRepaintManager->initialize());
+    // aRepaintManager = new RepaintManager(aGraphics, NULL);
+	// SAFELY(aRepaintManager->initialize());
 
 	aWindowDims = aWindow->getSizeAsPtr();
 
@@ -257,12 +259,12 @@ void AbstractFrame::update()
 {
     if (!aValidatedContents)
 	{
-		aRepaintManager->validate();
+		// aRepaintManager->validate();
 		
-		aRepaintManager->update_forward();
+		// aRepaintManager->update_forward();
 
 		return;
 	}
 
-    aRepaintManager->update();
+    // aRepaintManager->update();
 }

@@ -48,6 +48,7 @@ namespace A2D {
 	class TextureBuffer;
     class XWindow;
     class AbstractBackBuffer;
+    class QuadFactory;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION

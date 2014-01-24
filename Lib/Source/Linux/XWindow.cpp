@@ -42,50 +42,50 @@ HRESULT XWindow::isExtensionSupported(const char *extList, const char *extension
 }
 
 
-Window  XWindow::createCompatibleWindow(bool isParent)
+unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 {
-        aParent = isParent;
-        int doubleBufferVisual[] = { GLX_RGBA,GLX_DEPTH_SIZE, 24,GLX_DOUBLEBUFFER, None };
-        XTextProperty tp;
-        XSizeHints sh;
+	aParent = isParent;
+	int doubleBufferVisual[] = { GLX_RGBA,GLX_DEPTH_SIZE, 24,GLX_DOUBLEBUFFER, None };
+	XTextProperty tp;
+	XSizeHints sh;
 
-        aDis = XOpenDisplay( NULL );
+	aDis = XOpenDisplay( NULL );
 
-        if( !aDis )
-        return 0;
+	if( !aDis )
+	return 0;
 
-        // make sure OpenGL's GLX extension supported
-        int errorBase, eventBase;
-        if( !glXQueryExtension( aDis, &errorBase, &eventBase ) )
-        return 0;
+	// make sure OpenGL's GLX extension supported
+	int errorBase, eventBase;
+	if( !glXQueryExtension( aDis, &errorBase, &eventBase ) )
+	return 0;
 
-        XVisualInfo *visualInfo = glXChooseVisual( aDis, DefaultScreen(aDis), doubleBufferVisual );
-        if( visualInfo == NULL )
-        return 0;
+	XVisualInfo *visualInfo = glXChooseVisual( aDis, DefaultScreen(aDis), doubleBufferVisual );
+	if( visualInfo == NULL )
+	return 0;
 
-        GLXContext hRC = glXCreateContext( aDis, visualInfo, NULL, GL_TRUE );
-        if( hRC == NULL )
-        return 0;
+	GLXContext hRC = glXCreateContext( aDis, visualInfo, NULL, GL_TRUE );
+	if( hRC == NULL )
+	return 0;
 
-        winAttr.colormap = XCreateColormap( aDis, RootWindow(aDis, visualInfo->screen), visualInfo->visual, AllocNone );
-        winAttr.event_mask = KeyPressMask;
-        winAttr.border_pixel = BlackPixel( aDis, visualInfo->screen );
-        winAttr.background_pixel = BlackPixel( aDis, visualInfo->screen );
-        int winattr_flags = CWColormap | CWEventMask | CWBorderPixel | CWBackPixel;
+	winAttr.colormap = XCreateColormap( aDis, RootWindow(aDis, visualInfo->screen), visualInfo->visual, AllocNone );
+	winAttr.event_mask = KeyPressMask;
+	winAttr.border_pixel = BlackPixel( aDis, visualInfo->screen );
+	winAttr.background_pixel = BlackPixel( aDis, visualInfo->screen );
+	int winattr_flags = CWColormap | CWEventMask | CWBorderPixel | CWBackPixel;
 
-        aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, 0,
-        visualInfo->depth, InputOutput, visualInfo->visual, winattr_flags, &winAttr );
+	aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, 0,
+	visualInfo->depth, InputOutput, visualInfo->visual, winattr_flags, &winAttr );
 
-        //Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
+	//Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
 
-        if( !aWin )
-        return 0;
+	if( !aWin )
+	return 0;
 
-        XStringListToTextProperty(&aName, 1, &tp);
-        sh.flags = USPosition | USSize;
-        XSetWMProperties(aDis, aWin, &tp, &tp, 0, 0, &sh, 0, 0);
+	XStringListToTextProperty(&aName, 1, &tp);
+	sh.flags = USPosition | USSize;
+	XSetWMProperties(aDis, aWin, &tp, &tp, 0, 0, &sh, 0, 0);
 
-        XMapWindow( aDis, aWin );
+	XMapWindow( aDis, aWin );
 
 
     #define GLX_CONTEXT_MAJOR_VERSION_ARB       0x2091
@@ -151,7 +151,8 @@ void XWindow::render()
 
             switch(event.type) {
                 case ClientMessage:
-                    if (event.xclient.message_type == XInternAtom(aDis, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(aDis, "WM_DELETE_WINDOW", 1))
+                    if (event.xclient.message_type == XInternAtom(aDis, "WM_PROTOCOLS", 1) &&
+                    		(Atom)event.xclient.data.l[0] == XInternAtom(aDis, "WM_DELETE_WINDOW", 1))
                         keep_running = 0;
 
                     break;
@@ -169,7 +170,7 @@ void XWindow::render()
 
 void * XWindow::getPlatformCompatibleWindowHandle()
 {
-    return &aWin;
+    return &aDis;
 }
 
 void XWindow::destroyBackgroundResources()

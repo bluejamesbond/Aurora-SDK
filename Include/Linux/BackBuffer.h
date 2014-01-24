@@ -25,7 +25,7 @@
 #include "ExtLibs.h"
 #include "../Core/AbstractBackBuffer.h"
 #include "Texture.h"
-//#include "Graphics.h"
+#include "XWindow.h"
 
 namespace A2D {
 
@@ -36,6 +36,8 @@ namespace A2D {
 	struct CameraProperties;
     class Texture;
     class Graphics;
+    class XWindow;
+
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +56,7 @@ namespace A2D {
     public:
 
 		Dims					 	   aDims;
-		AbstractWindow			  *    aWindow;
+		XWindow					  *    aWindow;
         GLuint                         vao;
         Graphics                  *    aGraphics;
 

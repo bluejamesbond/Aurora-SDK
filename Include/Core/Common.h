@@ -57,8 +57,8 @@
 #include <cstdio>
 #define LPCWSTR char*
 #define HRESULT int
-#define S_OK 1
-#define E_FAIL 0
+#define S_OK 0
+#define E_FAIL 1
 #define FAILED(x) !x
 
 #define LPCTSTR char*

@@ -48,6 +48,7 @@ namespace A2D {
 	public:
 
 		AbstractWindow(AbstractFrame * xFrame);
+		virtual ~AbstractWindow() {};
 
 	protected:
 
@@ -115,7 +116,7 @@ namespace A2D {
         virtual void                    render() = 0;
         virtual void					validate() {}
         virtual void              *     getPlatformCompatibleWindowHandle() = 0;
-        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) {}
+        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) = 0;
 
 	public:
 

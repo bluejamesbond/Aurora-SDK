@@ -58,7 +58,7 @@ namespace A2D {
         GLXContext                      hRC;
         GLXContext                      render_context;
         Display      *                  aDis;
-        Window                          aWin;
+        unsigned long int               aWin;
 
     public:
 
@@ -66,9 +66,16 @@ namespace A2D {
 
         virtual void                    render();
         virtual void              *     getPlatformCompatibleWindowHandle();
+        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
+        {
+        	while(true)
+        	{
+        		SYSOUT_STR("Running Thread EDT");
+        	}
+        }
 
 
-        virtual Window                  createCompatibleWindow(bool isParent);
+        unsigned long int      			createCompatibleWindow(bool isParent);
         void                            destroyResources();
         virtual HRESULT                 createBackgroundResources();
         void                            destroyBackgroundResources();

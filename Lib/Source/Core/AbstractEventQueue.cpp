@@ -99,7 +99,7 @@ void AbstractEventQueue::startDispatchingThread()
 	
     G_SAFELY(aThread->initialize());
 
-	// If it fails...screwed! -FIX IT. Catch the HRESULT!
+	// FIXME If it fails...screwed! -FIX IT. Catch the HRESULT!
 
 	aThread->start();
 }

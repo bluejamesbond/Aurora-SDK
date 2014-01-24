@@ -34,12 +34,6 @@ Thread::~Thread()
 
 bool Thread::start()
 {
-    //
-    return true;
-}
-
-bool Thread::start(void * (*start_routine)(void *), void* arg)
-{ 
 	int policy;
 	struct sched_param param;
 
@@ -56,6 +50,12 @@ bool Thread::start(void * (*start_routine)(void *), void* arg)
 
 	// Increment parent activeCount
 	AbstractThread::aActiveCount++;
+
+    return true;
+}
+
+bool Thread::start(void * (*start_routine)(void *), void* arg)
+{
 
     return true;
 }

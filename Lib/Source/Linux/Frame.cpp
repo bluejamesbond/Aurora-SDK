@@ -8,7 +8,7 @@ using namespace A2D;
 // PLATFORM COMPATIBLE IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
-Frame::Frame() {}
+Frame::Frame() : AbstractFrame() {}
 
 Frame::~Frame(){}
 

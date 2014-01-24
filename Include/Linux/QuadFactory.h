@@ -48,6 +48,7 @@ namespace A2D {
 	{
 	public:
 
+		QuadFactory(){}
         QuadFactory(Dims * xWindowDims);
 		~QuadFactory();
 

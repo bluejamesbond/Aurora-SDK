@@ -1,11 +1,11 @@
 #include "../../../Include/Linux/ExtLibs.h"
 #include "../../../Include/Linux/BackBuffer.h"
-#include "../../../Include/Linux/Graphics.h"
+
 
 using namespace A2D;
 BackBuffer::BackBuffer(AbstractWindow * xWindow, GXSettings * xGXSettings): AbstractBackBuffer(xWindow, xGXSettings)
 {
-    aWindow = xWindow;
+    aWindow = static_cast<XWindow*>(xWindow);
 }
 
 BackBuffer::~BackBuffer()
@@ -93,9 +93,7 @@ void BackBuffer::clear()
 
 void BackBuffer::swap()
 {
-    XWindow * xWindow = dynamic_cast<XWindow * >(aWindow);
-
-    glXSwapBuffers( xWindow->aDis, xWindow->aWin);
+    glXSwapBuffers( aWindow->aDis, aWindow->aWin);
 
 }
 
