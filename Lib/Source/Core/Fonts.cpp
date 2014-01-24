@@ -4,8 +4,21 @@
 
 using namespace A2D;
 
-Fonts Fonts::MUSEO(FONTS_DEFAULT_LOCATION "museo");
+Fonts Fonts::MUSEO("museo");
 
 Fonts::Fonts(string xFontName) : 
-aFontLocation(xFontName)
+aFontName(xFontName)
 {}
+
+bool Fonts::operator==(Fonts& xOther)
+{
+	if (xOther.aFontName == this->aFontName)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+}

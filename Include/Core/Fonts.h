@@ -31,14 +31,26 @@ namespace A2D{
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	struct Fonts
+	class Fonts
 	{
 
-		string								aFontLocation;
+		friend class TextFactory;
+
+	public:
+
+		string								aFontName;
+
+	private:
+
+		bool								isUsed = false;
+
+	public:
 
 		static Fonts                        MUSEO;
 
 		Fonts(string xFontName);
+
+		bool operator==(Fonts& xOther);
 
 	};
 }

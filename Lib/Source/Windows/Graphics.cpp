@@ -185,48 +185,59 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 //	}
 //}
 
-void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
+void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component has a pipeline
 {
 	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
 	Rect * clip = aClip;
 
-	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
-
-	Texture * texture;
-	QuadData<TextureVertex, 6> * quadData;
-	Font * museo;	
+	// ~~~~~~~ Supposed inputs ~~~~~~~~~
 
 	string input = "hi there";
+	Fonts * fontInput = &Fonts::MUSEO;
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+
+	Text * text;
+
+	// Process inputs.
 	const char * input_c = input.c_str();
 	int inputLength = input.length();
+
 	if (*xPipeline == NULL)
 	{
 		// Intialize the pipeline
 
 		*xPipeline = new Pipeline();
+		
+		text = new Text(input);
 
-		texture = new Texture(aDevice, L"Assets/fonts/museo.png");
-		quadData = new QuadData<TextureVertex, 6>();
-		museo = new Font("Assets/fonts/museo.txt");
+		text->initialize(); // NEED TO CHECK IF IT FAILS HERE
 
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &text->aVertexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
+		DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
 
-		texture->initialize();
-		museo->initialize();
+		aTextFactory->setFont(fontInput);
 
-		(*xPipeline)->aPipelineComps[0] = texture;
-		(*xPipeline)->aPipelineComps[1] = quadData;
-		(*xPipeline)->aPipelineComps[2] = museo;
+		(*xPipeline)->aPipelineComps[0] = text;
 
-		(*xPipeline)->aLength = 3;
+		(*xPipeline)->aLength = 1;
 
 		return;
 	}
 
-	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
-	museo = static_cast<Font*>((*xPipeline)->aPipelineComps[2]);
+	text = static_cast<Text*>((*xPipeline)->aPipelineComps[0]);
+	
+	if (aTextFactory->getCurrentFont() != fontInput)
+	{
+		aTextFactory->setFont(fontInput);
+	}
+
+	if (text->aText != input)
+	{
+		text->setText(&input);
+	}
 
 	//float charX;
 	//float charY;
@@ -276,21 +287,21 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
 
-	Rect * cClip = new Rect();
+	//Rect * cClip = new Rect();
 
 	//cClip->aX = FLOAT(museo->aCharacters[52].aX);
 	//cClip->aY = FLOAT(museo->aCharacters[52].aY);
 	//cClip->aWidth = FLOAT(museo->aCharacters[52].aWidth);
 	//cClip->aHeight = FLOAT(museo->aCharacters[52].aHeight);
 
-	cClip->aX = 0;
-	cClip->aY = 0;
-	cClip->aWidth = 20;
-	cClip->aHeight = 20;
+	//cClip->aX = 0;
+	//cClip->aY = 0;
+	//cClip->aWidth = 20;
+	//cClip->aHeight = 20;
 
-	texture->SetClip(cClip);
+	//texture->SetClip(cClip);
 
-	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false))
+	if (aTextFactory->updateVertexBuffer(text, &xRect))
 	{
 		aTextureShader->setTexture(texture);
 		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
@@ -315,7 +326,10 @@ STATUS Graphics::initialize()
 	//SAFELY(DXUtils::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
 	//SAFELY(DXUtils::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
 
-	aQuadFactory = new QuadFactory(device, aBackBufferDims);
+	aQuadFactory = new QuadFactory(device, size);
+	SAFELY(aQuadFactory->initialize());
+
+	aTextFactory = new TextFactory(device, size);
 	SAFELY(aQuadFactory->initialize());
 
 	aColoredTextureShader = new ColoredTextureShader(device);

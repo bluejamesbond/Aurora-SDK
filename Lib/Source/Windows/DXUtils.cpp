@@ -145,6 +145,22 @@ STATUS DXUtils::createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xC
 	return STATUS_OK;
 }
 
+STATUS DXUtils::CreateEmptyDynamicIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
+{
+	D3D10_BUFFER_DESC indexBufferDesc;
+
+	indexBufferDesc.Usage = D3D10_USAGE_DYNAMIC;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long)* xIndices;
+	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	indexBufferDesc.MiscFlags = 0;
+
+	// Create the empty index buffer.
+	SAFELY(xDevice->CreateBuffer(&indexBufferDesc, NULL, xIndexBuffer));
+
+	return STATUS_OK;
+}
+
 STATUS DXUtils::CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
 {
 	D3D10_BUFFER_DESC indexBufferDesc;

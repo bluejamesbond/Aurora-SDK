@@ -33,6 +33,7 @@ namespace A2D {
 
 	#define	FONT_VERTEX_MULTIPLIER			4
 	#define FONT_INDEX_MULTIPLIER			6
+	#define	TEXT_MAX_DEFAULT_CHARS			50
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -41,13 +42,16 @@ namespace A2D {
 	class Text
 	{
 		friend class TextFactory;
+		friend class Graphics;
 
 	public:
 
-		Text(string  xText);
+		Text(string xText);
 		~Text();
 
 		STATUS							initialize();
+
+		void							setText(string * xText);
 
 	private:
 

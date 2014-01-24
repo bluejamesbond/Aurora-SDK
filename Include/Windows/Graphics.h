@@ -38,6 +38,7 @@
 #include "DXUtils.h"
 #include "TextureShader.h"
 #include "ColorShader.h"
+#include "Text.h"
 
 namespace A2D {
 
@@ -82,6 +83,8 @@ namespace A2D {
 		QuadFactory			 *			aQuadFactory;
 		TextureBuffer        *			aTextureBuffer;
 		TextureBuffer        *			aBlurBuffer;
+
+		TextFactory			 *			aTextFactory;
 
 		// Shaders
 		AbstractShader		 *			aColorShader;
