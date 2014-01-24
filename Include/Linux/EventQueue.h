@@ -25,7 +25,7 @@
 
 #include "ExtLibs.h"
 #include "Thread.h"
-#include "Window.h"
+#include "XWindow.h"
 
 namespace A2D {
 
@@ -44,14 +44,14 @@ namespace A2D {
 	{
 	public:
 
-		EventQueue::EventQueue(AbstractFrame * xFrame);
+		EventQueue(AbstractFrame * xFrame);
 
-		EventQueue::~EventQueue();
+		~EventQueue();
 
 	private:
 
-		HANDLE aEventQueueLock;
-		HINSTANCE aHIsntance;
+		// HANDLE aEventQueueLock;
+		// HINSTANCE aHIsntance;
 
 	public:
 

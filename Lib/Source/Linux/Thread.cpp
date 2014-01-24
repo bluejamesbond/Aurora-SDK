@@ -8,7 +8,7 @@ using namespace A2D;
 AbstractThread* Thread::aClassInstance = new Thread(NULL); 
 
 // Intiialize the OrderedList
-OrderedList<HANDLE> Thread::aThreadHandles;
+OrderedList<pthread_t*> Thread::aThreadHandles;
 
 Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable)
 {
@@ -16,6 +16,10 @@ Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable)
 	// an actual thread id from kernel
 	aId = 0;
 }
+
+int bugfixPThread() {
+	return pthread_getconcurrency();
+};
 
 Thread::~Thread()
 {
@@ -27,12 +31,9 @@ Thread::~Thread()
 	{
 		stop();
 	}
-
-	// Call super deconstructor
-	AbstractThread::~AbstractThread();
 }
 
-bool start()
+bool Thread::start()
 {
     //
     return true;
@@ -40,30 +41,28 @@ bool start()
 
 bool Thread::start(void * (*start_routine)(void *), void* arg)
 { 
+	int policy;
+	struct sched_param param;
+
 	// Get thread via kernel level request
-    retval = pthread_create( &thread1, NULL, start_routine, (void*) arg);
+    int result = pthread_create( &thread1, NULL, Thread::initThread, static_cast<void*>(this));
 
 	// Set priority just because we can
+    pthread_getschedparam(thread1, &policy, &param);
+    param.sched_priority = sched_get_priority_max(policy);
+    pthread_setschedparam(thread1, policy, &param);
 
 	// Get the handle from OrderedList and store it
-//	aThreadHandles.push_back(aHThread, &aListHandle);
+	aThreadHandles.push_back(&thread1, &aListHandle);
 
 	// Increment parent activeCount
 	AbstractThread::aActiveCount++;
 
-    return (retval != NULL);
+    return true;
 }
 
 void Thread::interrupt()
 {
-	// Check if thread exists
-	if (aHThread)
-	{
-		SuspendThread(aHThread);
-
-		// Decrement parent activeCount
-		AbstractThread::aActiveCount--; 
-	}
 }
 
 int Thread::id()
@@ -74,62 +73,30 @@ int Thread::id()
 
 void Thread::resume()
 {
-	if (aHThread)
-	{
-		int resumeCount = ResumeThread(aHThread);
-		
-		while (resumeCount > 1)
-		{
-			resumeCount = ResumeThread(aHThread);
-		}
 
-		// Increment parent activeCount
-		AbstractThread::aActiveCount++; 
-	}
 }
 
 void Thread::stop()
 {
-    if (aHThread)
-    {
-        pthread_exit(retval);
 
-		// Request remove of the list handle
-
-		// Decrement parent activeCount
-		AbstractThread::aActiveCount--;
-    }
 }
 
 bool Thread::isAlive()
 {
-	// Kernel level waiting to see if thread is still alive.
-	// If it is alive, and the wait time is 0, then we know
-	// that the WAIT has not been signaled (WAIT_OBJECT_0)
-	// Another way to setting the wait time to something really
-	// small like 1ms and then see if the signal has not been fired
-	// i.e. WaitForSingleObject(aHThread, 0) == WAIT_TIMEOUT
-    return ((aHThread != NULL) && (WaitForSingleObject(aHThread, 0) != WAIT_OBJECT_0));
+	return false;
 }
 
 void Thread::waitAll()
 {
-	// Use the kernel wait for every thread that has been created.
-	WaitForMultipleObjects(aThreadHandles.size(), aThreadHandles.to_array(), true, INFINITE);
+
 }
 
 int Thread::getCurrentThreadId()
 {
-	// returns the current thread from the kernel level
-	return INT(GetCurrentThreadId());
+	return 0;
 }
 
-// This static method is used as the logic loop behind
-// thread creation and starting every thread. Different
-// platforms have different techniques, Windows just happens
-// to do it this way.
-/*
-DWORD WINAPI Thread::initThread(void * xParam)
+void* Thread::initThread(void * xParam)
 {
 	Thread * thread = reinterpret_cast<Thread*>(xParam);
 
@@ -140,9 +107,9 @@ DWORD WINAPI Thread::initThread(void * xParam)
 		// super class : AbstracThread
 		thread->fire();
 
-        return 0;
+        return NULL;
     }
 
-    return -1;
+    return NULL;
 }
-*/
+

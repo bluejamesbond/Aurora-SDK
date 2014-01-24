@@ -1,6 +1,6 @@
 
-#include "../../../Include/Windows/ExtLibs.h"
-#include "../../../Include/Windows/EventQueue.h"
+#include "../../../Include/Linux/ExtLibs.h"
+#include "../../../Include/Linux/EventQueue.h"
 
 using namespace A2D;
 
@@ -8,19 +8,17 @@ EventQueue::EventQueue(AbstractFrame * xFrame) : AbstractEventQueue(xFrame){}
 
 EventQueue::~EventQueue()
 {
-	AbstractEventQueue::~AbstractEventQueue();
 
-	CloseHandle(aEventQueueLock);
 }
 
 bool EventQueue::getQueueLock()
 {
-	return WaitForSingleObject(aEventQueueLock, INFINITE) != WAIT_ABANDONED;
+	return true;
 }
 
 void EventQueue::releaseQueueLock()
 {
-    ReleaseMutex(aEventQueueLock);
+
 }
 
 AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)

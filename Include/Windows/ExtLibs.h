@@ -23,4 +23,4 @@
 #include <windowsx.h>
 
 #include <sstream>
-#include <assert.h> 
+#include <assert.h>

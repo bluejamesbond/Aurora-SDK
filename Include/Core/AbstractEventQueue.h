@@ -44,7 +44,7 @@ namespace A2D{
 	public:
 
 		AbstractEventQueue(AbstractFrame * xFrame);
-		~AbstractEventQueue();
+		virtual ~AbstractEventQueue();
 
 	private:
 

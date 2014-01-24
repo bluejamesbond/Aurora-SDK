@@ -17,7 +17,7 @@ Frame::~Frame(){}
 ////////////////////////////////////////////////////////////////////////////////
 HRESULT	Frame::createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue)
 {
-//    *xEventQueue = new EventQueue(this);
+    *xEventQueue = new EventQueue(this);
 
     return S_OK;
 }

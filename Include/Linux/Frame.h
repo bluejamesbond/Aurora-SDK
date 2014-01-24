@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../Core/AbstractFrame.h"
-//#include "Thread.h"
+#include "EventQueue.h"
 #include "Graphics.h"
 
 namespace A2D {

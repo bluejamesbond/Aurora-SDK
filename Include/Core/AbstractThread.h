@@ -41,14 +41,13 @@ namespace A2D {
 
 		Runnable * aRunnable;
 
-		int aId;
-
-
 	protected:
 
 		static AbstractThread * aSingleton;
 		static int aInstanceCount;
 		static int aActiveCount;
+
+		int aId;
 
 	public:
 

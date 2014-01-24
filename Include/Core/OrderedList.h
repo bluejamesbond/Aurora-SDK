@@ -75,7 +75,9 @@
 #define abs(a)     (((a) < 0) ? -(a) : (a))
 #define max(a, b)  (((a) > (b)) ? (a) : (b))
 #define min(a, b)  (((a) < (b)) ? (a) : (b))
-
+#ifndef NULL
+#define NULL   ((void *) 0)
+#endif
 
 namespace A2D{
 
@@ -394,11 +396,13 @@ namespace A2D{
 
             if (index == 0)
             {
-                return push_front(t, ptr);
+                push_front(t, ptr);
+                return;
             }
             else if (index >= m_size)
             {
-                return push_back(t, ptr);
+                push_back(t, ptr);
+                return;
             }
             else
             {

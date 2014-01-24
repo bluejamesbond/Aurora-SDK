@@ -56,7 +56,7 @@ namespace A2D {
 		// Variables
 
 		// Accessors
-//		virtual	bool					hasAlpha();
+		virtual	bool					hasAlpha() { return false; };
 
 		// Mutators
 //		void							SetActive();
@@ -64,7 +64,7 @@ namespace A2D {
 
 		// Additional
 //		void							Clear();
-//		virtual void			   *	getPlatformCompatibleResource();
+		virtual void			   *	getPlatformCompatibleResource(){ return NULL; };
 
 	public:
 

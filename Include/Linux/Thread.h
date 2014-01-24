@@ -47,7 +47,7 @@ namespace A2D {
         int retval;
 
 		void * aListHandle;
-		static OrderedList<HANDLE> aThreadHandles;
+		static OrderedList<pthread_t*> aThreadHandles;
 
 	public:
 
@@ -67,7 +67,7 @@ namespace A2D {
 
 	private:
 
-//		static DWORD WINAPI initThread(void * xParam);
+		static void* initThread(void * xParam);
 
 	};
 }

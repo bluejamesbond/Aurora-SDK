@@ -23,7 +23,7 @@ bool Texture::hasAlpha()
 
 void * Texture::getPlatformCompatibleResource()
 {
-//	return aResource;
+	return NULL;
 }
 
 HRESULT Texture::changeTexture(LPCWSTR  xSrc)
@@ -143,5 +143,4 @@ void Texture::renderTexture()
 {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
-
 }
