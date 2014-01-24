@@ -58,7 +58,7 @@ namespace A2D {
         GLXContext                      hRC;
         GLXContext                      render_context;
         Display      *                  aDis;
-        unsigned long int               aWin;
+        unsigned long int               aWin = NULL;
 
     public:
 
@@ -66,13 +66,7 @@ namespace A2D {
 
         virtual void                    render();
         virtual void              *     getPlatformCompatibleWindowHandle();
-        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
-        {
-        	while(true)
-        	{
-        		SYSOUT_STR("Running Thread EDT");
-        	}
-        }
+        virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue);
 
 
         unsigned long int      			createCompatibleWindow(bool isParent);
@@ -80,6 +74,7 @@ namespace A2D {
         virtual HRESULT                 createBackgroundResources();
         void                            destroyBackgroundResources();
         HRESULT                         isExtensionSupported(const char *extList, const char *extension);
+        virtual	HRESULT					initialize();
 
 	};
 }

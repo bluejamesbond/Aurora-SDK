@@ -59,6 +59,7 @@ namespace A2D {
 		XWindow					  *    aWindow;
         GLuint                         vao;
         Graphics                  *    aGraphics;
+        GLXContext*					   m_context;
 
         //functions
 		void							validate();

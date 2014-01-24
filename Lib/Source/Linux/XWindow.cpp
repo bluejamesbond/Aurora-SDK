@@ -44,6 +44,7 @@ HRESULT XWindow::isExtensionSupported(const char *extList, const char *extension
 
 unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 {
+
 	aParent = isParent;
 	int doubleBufferVisual[] = { GLX_RGBA,GLX_DEPTH_SIZE, 24,GLX_DOUBLEBUFFER, None };
 	XTextProperty tp;
@@ -57,15 +58,15 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 	// make sure OpenGL's GLX extension supported
 	int errorBase, eventBase;
 	if( !glXQueryExtension( aDis, &errorBase, &eventBase ) )
-	return 0;
+	return E_FAIL;
 
 	XVisualInfo *visualInfo = glXChooseVisual( aDis, DefaultScreen(aDis), doubleBufferVisual );
 	if( visualInfo == NULL )
-	return 0;
+	return E_FAIL;
 
 	GLXContext hRC = glXCreateContext( aDis, visualInfo, NULL, GL_TRUE );
 	if( hRC == NULL )
-	return 0;
+	return E_FAIL;
 
 	winAttr.colormap = XCreateColormap( aDis, RootWindow(aDis, visualInfo->screen), visualInfo->visual, AllocNone );
 	winAttr.event_mask = KeyPressMask;
@@ -73,20 +74,23 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 	winAttr.background_pixel = BlackPixel( aDis, visualInfo->screen );
 	int winattr_flags = CWColormap | CWEventMask | CWBorderPixel | CWBackPixel;
 
-	aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen), aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, 0,
+	aWin = XCreateWindow( aDis, RootWindow(aDis, visualInfo->screen),
+			aRect.aX, aRect.aY, aRect.aWidth, aRect.aHeight, 0,
 	visualInfo->depth, InputOutput, visualInfo->visual, winattr_flags, &winAttr );
+
 
 	//Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
 
 	if( !aWin )
-	return 0;
+	return E_FAIL;
+
+	 char *            aName = "Yalo";
 
 	XStringListToTextProperty(&aName, 1, &tp);
 	sh.flags = USPosition | USSize;
 	XSetWMProperties(aDis, aWin, &tp, &tp, 0, 0, &sh, 0, 0);
 
 	XMapWindow( aDis, aWin );
-
 
     #define GLX_CONTEXT_MAJOR_VERSION_ARB       0x2091
     #define GLX_CONTEXT_MINOR_VERSION_ARB       0x2092
@@ -112,10 +116,13 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 
         glXMakeCurrent( aDis, aWin, hRC );
 
+        return S_OK;
+
 }
 
 HRESULT XWindow::createBackgroundResources()
 {
+	glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) {
         fprintf(stderr, "Failed to initialize GLEW\n");
@@ -126,8 +133,8 @@ HRESULT XWindow::createBackgroundResources()
 
     const GLubyte* renderer = glGetString (GL_RENDERER); // get renderer string
     const GLubyte* version = glGetString (GL_VERSION); // version as a string
-    printf ("Renderer: %s\n", renderer);
-    printf ("OpenGL version supported %s\n", version);
+    SYSOUT_F("[XWindow] Renderer: %s", renderer);
+    SYSOUT_F("[XWindow] OpenGL version supported %s", version);
 
     // tell GL to only draw onto a pixel if the shape is closer to the viewer
 //    glEnable (GL_DEPTH_TEST); // enable depth-testing
@@ -139,6 +146,46 @@ HRESULT XWindow::createBackgroundResources()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return S_OK;
+}
+
+HRESULT XWindow::initialize()
+{
+	SAFELY(AbstractWindow::initialize());
+
+	SYSOUT_STR("[XWindow] Create createCompatibleWindow");
+
+    SAFELY(createCompatibleWindow(true));
+
+	SYSOUT_STR("[XWindow] Create createBackgroundResources");
+
+    SAFELY(createBackgroundResources());
+
+    return S_OK;
+}
+
+void XWindow::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
+{
+	int keep_running = 1;
+	        XEvent event;
+
+	        while (keep_running) {
+	            XNextEvent(aDis, &event);
+
+	            switch(event.type) {
+	                case ClientMessage:
+	                    if (event.xclient.message_type == XInternAtom(aDis, "WM_PROTOCOLS", 1) &&
+	                    		(Atom)event.xclient.data.l[0] == XInternAtom(aDis, "WM_DELETE_WINDOW", 1))
+	                        keep_running = 0;
+
+	                    break;
+
+	                default:
+	                    break;
+	            }
+
+	            // glXSwapBuffers( aDis, aWin);
+
+	        }
 }
 
 void XWindow::render()

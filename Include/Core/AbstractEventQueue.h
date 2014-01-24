@@ -95,7 +95,9 @@ namespace A2D{
 
 		void							pushEvent(Runnable * xRunnable);
 		void							removeAllEvents();
-		void							run(int xThreadId);
+
+		// FIXME Make virtual!!!
+		virtual void					run(int xThreadId);
 
 		virtual AbstractThread*			createPlatformCompatibleThread(Runnable * xRunnable) = 0;
 

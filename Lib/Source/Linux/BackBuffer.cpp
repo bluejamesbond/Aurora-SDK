@@ -33,16 +33,22 @@ void BackBuffer::setGraphics(Graphics* xGraphics)
 
 HRESULT BackBuffer::initialize()
 {
-
+	SYSOUT_STR("[BackBuffer] Initialize");
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+	SYSOUT_STR("[BackBuffer] Initialize  cleared");
+
     //vao stuff
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    // glGenVertexArrays(1, &vao);
+	// glBindVertexArray(vao);
+
+	SYSOUT_STR("[BackBuffer] Initialize  vao bind");
 
     Rect viewsize = aWindow->getBounds();
     glViewport(0,0,viewsize.aWidth,viewsize.aHeight);
+
+	SYSOUT_STR("[BackBuffer] Initialize - done");
 
     // initialize the swap chain description.
 
@@ -67,6 +73,8 @@ HRESULT BackBuffer::initialize()
     // Setup the viewport for rendering.
 
 	// Create the viewport.
+
+    return S_OK;
 
 }
 

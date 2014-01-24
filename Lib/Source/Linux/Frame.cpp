@@ -25,10 +25,8 @@ HRESULT	Frame::createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQu
 HRESULT Frame::createPlatformCompatibleWindow(AbstractWindow ** xWindow)
 {
     *xWindow = new XWindow(this);
-    ((XWindow*)xWindow)->initialize();
-//    ((XWindow*)xWindow)->createCompatibleWindow(true);
-//    ((XWindow*)xWindow)->createBackgroundResources();
-    return 1;
+
+    return S_OK;
 }
 
 HRESULT	Frame::createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings)

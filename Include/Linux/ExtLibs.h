@@ -21,8 +21,6 @@
 #include <X11/Xatom.h>
 // #include <X11/extensions/Xrender.h>
 
-#define GLEW_STATIC
-
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glx.h>

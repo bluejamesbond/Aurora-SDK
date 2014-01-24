@@ -102,6 +102,8 @@ void AbstractEventQueue::startDispatchingThread()
 	// FIXME If it fails...screwed! -FIX IT. Catch the HRESULT!
 
 	aThread->start();
+
+    // run(0);
 }
 
 void AbstractEventQueue::interruptDispatchingThread()
@@ -127,6 +129,8 @@ void AbstractEventQueue::stopDispatchingThread()
 
 void AbstractEventQueue::run(int xThreadId)
 {
+	SYSOUT_STR("[AbstractEventQueue] EDT started.");
+
 	// Create frame resources inside EDT
 	aFrame->createResources();
 

@@ -37,15 +37,12 @@ bool Thread::start()
 	int policy;
 	struct sched_param param;
 
+    SYSOUT_STR("[Thread] equesting Thread start");
+
 	// Get thread via kernel level request
     int result = pthread_create( &thread1, NULL, Thread::initThread, static_cast<void*>(this));
 
-	// Set priority just because we can
-    pthread_getschedparam(thread1, &policy, &param);
-    param.sched_priority = sched_get_priority_max(policy);
-    pthread_setschedparam(thread1, policy, &param);
-
-	// Get the handle from OrderedList and store it
+    // Get the handle from OrderedList and store it
 	aThreadHandles.push_back(&thread1, &m_threadHandle);
 
 	// Increment parent activeCount
@@ -56,7 +53,6 @@ bool Thread::start()
 
 bool Thread::start(void * (*start_routine)(void *), void* arg)
 {
-
     return true;
 }
 
@@ -116,6 +112,8 @@ void* Thread::initThread(void * xParam)
 {
 	Thread * thread = reinterpret_cast<Thread*>(xParam);
 
+	SYSOUT_STR("[Thread] Initialized successfully");
+
 	// If thread exists
 	if (thread)
     {   
@@ -125,6 +123,8 @@ void* Thread::initThread(void * xParam)
 
         return NULL;
     }
+
+	SYSOUT_STR("[Thread] Finished. Stopping momentarily.");
 
     return NULL;
 }
