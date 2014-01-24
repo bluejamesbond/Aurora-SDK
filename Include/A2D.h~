@@ -9,6 +9,6 @@
 
 // Required for Linux
 #ifdef __linux__
-#include "Linux/ExtLibs.h"
+#include "Linux/GLXExtLibs.h"
 #include "Linux/Frame.h"
 #endif
