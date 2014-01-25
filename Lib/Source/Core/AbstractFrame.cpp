@@ -265,8 +265,6 @@ void AbstractFrame::update()
 {
     SYSOUT_STR("[AbstractFrame] Updating per-frame content.");
 
-    if(!aRepaintManager) return;
-
     if (!aValidatedContents)
 	{
     	aRepaintManager->validate();

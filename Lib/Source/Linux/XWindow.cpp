@@ -169,7 +169,7 @@ void XWindow::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQ
 	{
 		frame.update();
 
-		XNextEvent(aDis, &event);
+		// XNextEvent(aDis, &event);
 
 		switch(event.type)
 		{

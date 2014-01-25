@@ -58,7 +58,7 @@ namespace A2D {
         GLXContext                      hRC;
         GLXContext                      render_context;
         Display      *                  aDis;
-        unsigned long int               aWin = NULL;
+        unsigned long int               aWin = 0;
 
     public:
 

@@ -8,6 +8,7 @@ using namespace A2D;
 RepaintManager::RepaintManager(void * xGraphics, Component * xRoot)
 {
     aGraphics = xGraphics;
+    aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
 }
@@ -84,8 +85,6 @@ void RepaintManager::update()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
-	return;
-
 	backBuffer->setActive();
 	backBuffer->clear();
 	backBuffer->setZBuffer(false);
@@ -120,8 +119,6 @@ void RepaintManager::update()
 void RepaintManager::update_forward()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
-
-	return;
 
 	backBuffer->setActive();
 	backBuffer->clear();

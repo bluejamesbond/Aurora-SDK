@@ -35,7 +35,8 @@ HRESULT BackBuffer::initialize()
 {
 	SYSOUT_STR("[BackBuffer] Initialize");
     // Dark blue background
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	SYSOUT_STR("[BackBuffer] Initialize  cleared");
 
@@ -94,7 +95,14 @@ void BackBuffer::clear()
 
 	// Clear the depth buffer.
     */
-    glClearDepth(1.0f);
+
+	static float color = 0.01f;
+
+	color = color >= 1.0f ? 0.0f : color;
+
+   // glClearDepth(1.0f);
+
+    glClearColor(1.0f, color+= 0.01f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 }
