@@ -141,7 +141,7 @@ void RepaintManager::update_forward()
 			{
 				if ((component = containers->get(i)) != NULL)
 				{
-                    //component->update();
+                    component->update();
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 #include "../../../Include/Core/ExtLibs.h"
 #include "../../../Include/Core/AbstractFrame.h"
+#include "../../../Include/Core/Component.h"
 
 using namespace A2D;
 
@@ -41,6 +42,11 @@ void AbstractFrame::setBounds(float xLeft, float xTop, float xWidth, float xHeig
 	{
 		aWindow->update();
 	}
+}
+
+Component*	AbstractFrame::createComponent()
+{
+	return new Component();
 }
 
 void AbstractFrame::setSize(float xWidth, float xHeight)
@@ -224,6 +230,10 @@ HRESULT AbstractFrame::initialize()
 	return S_OK;
 }
 
+Component& AbstractFrame::getRootPane()
+{
+	return *aRoot;
+}
 
 HRESULT AbstractFrame::createResources()
 {	
@@ -241,7 +251,10 @@ HRESULT AbstractFrame::createResources()
 
 	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-    aRepaintManager = new RepaintManager(aGraphics, NULL);
+	aRoot = new Component();
+	aRoot->initialize();
+
+    aRepaintManager = new RepaintManager(aGraphics, aRoot);
 	SAFELY(aRepaintManager->initialize());
 
 	aWindowDims = aWindow->getSizeAsPtr();

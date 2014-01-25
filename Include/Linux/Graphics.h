@@ -27,6 +27,8 @@
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
+#include "../Core/Pipeline.h"
+#include "../Core/Paint.h"
 // FIXME Fix the type and make subclasses
 #include "GenericShader.h"
 //#include "ImageProperties.h"

@@ -120,6 +120,6 @@ HRESULT Graphics::initialize()
 	aTextureShader = new GenericShader();
 
 	// FIXME Set shaders here
-	// aTextureShader->setFShader(NULL);
-	// aTextureShader->setVShader(NULL);
+	aTextureShader->setFShader("/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/tex.fs");
+	aTextureShader->setVShader("/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/tex.vs");
 }

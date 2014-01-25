@@ -250,6 +250,8 @@ void Component::paintComponent()
 	if (aOptBackgroundSrc != NULL)
 	{
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
+
+		aOptBackgroundSrc = "/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/test.png";
 		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, false);
 	}
 	else

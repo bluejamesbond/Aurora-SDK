@@ -20,7 +20,6 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "Component.h"
 #include "CameraProperties.h"
 #include "AbstractBackBuffer.h"
 #include "AbstractWindow.h"
@@ -57,6 +56,7 @@ namespace A2D {
 		AbstractEventQueue	   *		aEventQueue = NULL;
 		void				   * 		aGraphics;
 
+		Component			   *		aRoot;
 		Dims				   *		aWindowDims;
         RepaintManager		   *		aRepaintManager;
 		GXSettings			  			aGXSettings;
@@ -96,7 +96,8 @@ namespace A2D {
 		AbstractWindow			*		getWindow();
 		void							run(int xThreadId);
 		RepaintManager*					getRepaintManager();
-
+		Component&						getRootPane();
+		Component*						createComponent();
 
 	protected:
 
