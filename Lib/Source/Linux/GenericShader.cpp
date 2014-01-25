@@ -24,6 +24,8 @@ void GenericShader::setFShader(char * xshader)
 
 void GenericShader::associateTexture(Texture * xTexture)
 {
+	SYSOUT_STR("[GenericShader] Called associateTexture");
+
     aTexture = xTexture;
 
     //load all necessary textures with corresponding ID's, need to allow multiple(?)

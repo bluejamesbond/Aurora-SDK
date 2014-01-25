@@ -50,6 +50,21 @@ namespace A2D {
 		AbstractWindow	  						   *   aWindow;
 		void									   *   aGraphics;
 
+
+		// FIXME Just for fun code
+		float translationX = 0;
+		float translationY = 0;
+		float translationXG1 = 10;
+		float translationYG1 = 10;
+		float translationXDirection = 1;
+		float translationYDirection = 1;
+		float translationXDirectionG1 = 1;
+		float translationYDirectionG1 = 1;
+		float width = 300;
+		float height = 300;
+		float max_width = 800;
+		float max_height = 600;
+
 	public:
 
 		RepaintManager(void * xGraphics, Component * xRoot);

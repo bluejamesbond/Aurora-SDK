@@ -243,8 +243,9 @@ HRESULT AbstractWindow::initialize()
 	aMinDims.aHeight = FLT_ZERO;
 
 	// Default maximum is full screen
-	aMaxDims.aWidth = FLT_MAX;
-	aMaxDims.aHeight = FLT_MAX;
+	// FIXME FLT_MAX not defined
+	aMaxDims.aWidth = 999999999999999.9f;
+	aMaxDims.aHeight = 999999999999999.9f;
 
 	// Default shadow radius
 	aOptShadowRadius = 30.0f;

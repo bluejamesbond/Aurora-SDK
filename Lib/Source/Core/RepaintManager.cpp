@@ -2,6 +2,7 @@
 #include "../../../Include/Core/ExtLibs.h"
 #include "../../../Include/Core/RepaintManager.h"
 #include "../../../Include/Core/Component.h"
+#include "../../../Include/Linux/GLShaderUtils.h"
 
 using namespace A2D;
 
@@ -21,35 +22,47 @@ HRESULT RepaintManager::initialize()
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
 
-	addToDepthTracker(root, 0.0f);
+	 root.setGraphics(*static_cast<Graphics*>(aGraphics));
+	 //root.setRepaintManager(*this);
+	 root.setDepth(0);
+
+	 addToDepthTracker(root, 0.0f);
 
 	return S_OK;
 }
 
 void RepaintManager::validate()
 {
-	return;
-
     aBackBuffer->validate();
+
+    translationX += (translationX + width) >= max_width || translationX < 0.0f ? ((translationXDirection*=-1) * translationXG1) : (translationXDirection * translationXG1);
+    translationY += (translationY + height) >= max_height || translationY < 0.0f? ((translationYDirection*=-1) * translationYG1) : (translationYDirection * translationYG1);
+
+    // FIXME Forced in root size
+    aRoot->forceBounds(true);
+    aRoot->setBounds(translationX,translationY,width,height);
 }
 
 RepaintManager::~RepaintManager(){}
 
 HRESULT RepaintManager::add(Component& xParent, Component& xChild)
 {
-    float depth = 0.0f;
+    float depth = xParent.getDepth();
 
-    if (depth == 0.0)
+    if (depth == FLT_MIN)
 	{
 		return E_FAIL;
 	}
 
-	static float val = -0.01f;
+	xChild.setParent(xParent);
+	xChild.setDepth(++depth);
+	xChild.setGraphics(xParent.getGraphics());
 
-	
 	if (addToDepthTracker(xChild, abs(depth)))
     {
+		SYSOUT_STR("[RepaintManager] Component added");
 
+        xParent.add(xChild);
 		return S_OK;
 	}
 
@@ -77,12 +90,12 @@ bool RepaintManager::addToDepthTracker(Component& xComponent, float xZ)
 		aOpaqueDepthTracker.get(neededZ)->push(&xComponent);
 	}
 
-
-	return 1;
+	return true;
 }
 
 void RepaintManager::update()
 {
+	GLShaderUtils * check;
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
 	backBuffer->setActive();
@@ -95,6 +108,7 @@ void RepaintManager::update()
 
 	while (iterator.has_previous())
 	{
+
 		UnorderedList<Component*> * containers = iterator.previous();
 
 		if (containers->size() > 0)
@@ -106,7 +120,9 @@ void RepaintManager::update()
 			{
 				if ((component = containers->get(i)) != NULL)
 				{
-                    //component->update();
+                    component->update();
+                	check->check_gl_error();
+
 				}
 			}
 		}
@@ -119,8 +135,8 @@ void RepaintManager::update()
 void RepaintManager::update_forward()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
+	GLShaderUtils * check;
 
-	backBuffer->setActive();
 	backBuffer->clear();
 	backBuffer->setZBuffer(false);
 
@@ -141,7 +157,11 @@ void RepaintManager::update_forward()
 			{
 				if ((component = containers->get(i)) != NULL)
 				{
+					check->check_gl_error();
+
                     component->update();
+                	check->check_gl_error();
+
 				}
 			}
 		}

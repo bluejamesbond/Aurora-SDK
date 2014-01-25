@@ -2,6 +2,7 @@
 #include "../../../Include/Core/ExtLibs.h"
 #include "../../../Include/Core/Component.h"
 #include "../../../Include/Core/Common.h"
+#include "../../../Include/Linux/GLShaderUtils.h"
 
 using namespace A2D;
 
@@ -121,10 +122,10 @@ void Component::validate()
 
 	if (!hasParent)
 	{
-		aCalculatedRegion.aX = max(0, compRect.aX);
-		aCalculatedRegion.aY = max(0, compRect.aY);
-		aCalculatedRegion.aWidth = max(0, compRect.aWidth);
-		aCalculatedRegion.aHeight = max(0, compRect.aHeight);
+		aVisibleRegion.aX = aCalculatedRegion.aX = max(0, compRect.aX);
+		aVisibleRegion.aY = aCalculatedRegion.aY = max(0, compRect.aY);
+		aVisibleRegion.aWidth = aCalculatedRegion.aWidth = max(0, compRect.aWidth);
+		aVisibleRegion.aHeight = aCalculatedRegion.aHeight = max(0, compRect.aHeight);
 
 		aCalculatedNegativeDeltaX = 0.0;
 		aCalculatedNegativeDeltaY = 0.0;
@@ -245,13 +246,17 @@ HRESULT Component::initialize()
 
 void Component::paintComponent()
 {
+	GLShaderUtils * check;
+	check->check_gl_error();
+
 	Graphics& graphics = *aGraphics;
+
+	aOptBackgroundSrc = "/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/test.png";
 
 	if (aOptBackgroundSrc != NULL)
 	{
 		bool repeat = aOptBackgroundProps.aOptRepeat == (_OPT_BACKGROUND_REPEAT_REPEAT_X | _OPT_BACKGROUND_REPEAT_REPEAT_Y);
 
-		aOptBackgroundSrc = "/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/test.png";
 		graphics.drawImage(&aPipeline, aOptBackgroundRegion, aOptBackgroundSrc, false);
 	}
 	else
@@ -262,6 +267,8 @@ void Component::paintComponent()
 
 void Component::update()
 {
+	GLShaderUtils * check;
+
 	Graphics& graphics = *aGraphics;
 
 	if (!aValidatedContents)
@@ -269,13 +276,13 @@ void Component::update()
 		validate();
 	}
 
-//	graphics.setClip(&aVisibleRegion, aDepth);
+	graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the current component
 	paintComponent();
 
 	// Force region
-    //graphics.setClip(&aVisibleRegion, aDepth);
+    graphics.setClip(&aVisibleRegion, aDepth);
 
 	// Render the currect component border
 	paintComponentBorder();

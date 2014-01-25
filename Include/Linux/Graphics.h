@@ -73,6 +73,9 @@ namespace A2D {
         TextureBuffer        *			aTextureBuffer;
         Rect                 *          aClip;
         GenericShader		 *			aTextureShader;
+        GLuint                          programID;
+        GLuint                          TextureID;
+        float 							aDepth;
 
 /*        // Shaders
         AbstractShader		 *			aColorShader;
@@ -93,9 +96,15 @@ namespace A2D {
 //        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
         void                            drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat);
         void                            swap();
+
+        void renderQuad(GLuint& x_id, unsigned int xStride);
+        HRESULT updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
+
     public:
 
         virtual HRESULT                 initialize();
+        void 							associateTexture(Texture * xTexture);
+        HRESULT 						Shaderinitialize();
 
     };
 }

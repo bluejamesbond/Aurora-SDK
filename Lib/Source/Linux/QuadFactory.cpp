@@ -2,12 +2,15 @@
 #include "../../../Include/Linux/ExtLibs.h"
 #include "../../../Include/Linux/QuadFactory.h"
 #include "../../../Include/Linux/GLShaderUtils.h"
+#include "../../../Include/Linux/Common.h"
 
 using namespace A2D;
 
 QuadFactory::QuadFactory(Dims * xWindowDims)
 {
+	SYSOUT_STR("[QuadFactory] Created QuadFactory");
     aWindowDims = xWindowDims;
+
 }
 
 QuadFactory::~QuadFactory()
@@ -48,6 +51,7 @@ HRESULT QuadFactory::updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rec
 
     if (rectX >= constraints.aWidth || rectY >= constraints.aHeight){return S_OK;}
     if ((XOffset >= aWindowDims->aWidth) || (YOffset >= aWindowDims->aHeight)){return S_OK;}
+
 
     //vertex values.
     GLfloat ConstbottomleftX = -1.0 + RelativeXOffset;
@@ -244,6 +248,8 @@ HRESULT QuadFactory::initialize()
             0.0f, 0.0f, aDepth,
            };
     g_vertex_buffer_data = temp_vertices;
+
+    SYSOUT_STR("[QuadFactory] Testing initialization.");
 
 	return S_OK;
 }

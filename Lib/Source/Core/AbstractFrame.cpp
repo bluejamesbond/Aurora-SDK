@@ -46,7 +46,14 @@ void AbstractFrame::setBounds(float xLeft, float xTop, float xWidth, float xHeig
 
 Component*	AbstractFrame::createComponent()
 {
-	return new Component();
+	Component& sidebar_right = *new Component;
+	sidebar_right.initialize();
+	sidebar_right.setPosition(Styles::ABSOLUTE_);
+	sidebar_right.setSize(Styles::PIXEL, 100, Styles::PERCENTAGE, 100);
+	sidebar_right.setPositioning(Styles::PIXEL, Styles::AUTO, Styles::PIXEL, 0, Styles::PIXEL, 0, Styles::PIXEL, 0);
+	sidebar_right.setDisplay(Styles::INLINE_BLOCK);
+
+	return &sidebar_right;
 }
 
 void AbstractFrame::setSize(float xWidth, float xHeight)
@@ -276,8 +283,6 @@ void AbstractFrame::validated()
 
 void AbstractFrame::update()
 {
-    SYSOUT_STR("[AbstractFrame] Updating per-frame content.");
-
     if (!aValidatedContents)
 	{
     	aRepaintManager->validate();
@@ -289,5 +294,8 @@ void AbstractFrame::update()
 		return;
 	}
 
-    aRepaintManager->update();
+    // FIXME Add validation
+	aRepaintManager->validate();
+
+    aRepaintManager->update_forward();
 }
