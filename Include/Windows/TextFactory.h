@@ -160,8 +160,11 @@ namespace A2D {
 			Font * font = aCurrentFont;
 			const char * input = xText->aText.c_str();
 
-			float currentWidth = 0;
+
 			float boxWidth = inputR->aWidth;
+			float boxHeight = inputR->aHeight;
+			float currentWidth = 0;
+			float currentHeight = boxHeight;
 			int inputLength = xText->aText.length();
 			int indexV = 0;
 			int indexI = 0;
@@ -196,11 +199,8 @@ namespace A2D {
 				baseWidth = FLOAT(font->aWidth);
 				baseHeight = FLOAT(font->aHeight);
 
-				if (currentWidth + width + offsetX > boxWidth)
-				{
-					// Clip current quad/letter.
-					width = boxWidth - currentWidth - offsetX;
-				}
+				width = currentWidth + width + offsetX > boxWidth ? boxWidth - currentWidth - offsetX :	width;				
+				height = currentHeight + height + offsetY > boxHeight ? boxHeight - currentHeight - offsetY : height;
 
 				// Calculations.
 				left = rectX + offsetX;
@@ -226,7 +226,7 @@ namespace A2D {
 				vertices[indexV].position = D3DXVECTOR3(right, bottom, depth);
 				vertices[indexV++].texture = D3DXVECTOR2(rightTx, bottomTx);
 				
-				// Load index data.
+				// Load index data. Counter-clockwise triangles.
 				indices[indexI++] = indexV - 1;
 				indices[indexI++] = indexV - 2;
 				indices[indexI++] = indexV - 3;

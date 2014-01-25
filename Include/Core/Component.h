@@ -127,21 +127,22 @@ namespace A2D {
 		
         public:
 
-                STATUS                                                        requestFocus();
-                void                                                        setFocusable(bool xFocusable);
-				virtual        Rect                                        *                getEventRegion();
+        STATUS						     requestFocus();
+        void                             setFocusable(bool xFocusable);
+		virtual	Rect           *         getEventRegion();
 
-                STATUS                                                        addMouseListener(MouseListener * xListener);
-                STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
-                STATUS                                                        addFocusListener(FocusListener * xListener);
-                STATUS                                                        addActionListener(ActionListener * xListener);
+        STATUS                           addMouseListener(MouseListener * xListener);
+        STATUS                           addMouseMotionListener(MouseMotionListener * xListener);
+        STATUS                           addFocusListener(FocusListener * xListener);
+        STATUS                           addActionListener(ActionListener * xListener);
 
-        private:
+	private:
 
-                bool                                                        isFocused = false;
-                bool                                                        isFocusable = true;
-                Component                                        *        aNextCompListener = 0;
-                Component                                        *        aPrevCompListener = 0;
+        bool                             isFocused = false;
+        bool                             isFocusable = true;
+        Component               *        aNextCompListener = 0;
+        Component               *        aPrevCompListener = 0;
+				
                 
     protected:
 
@@ -165,7 +166,7 @@ namespace A2D {
 
 	protected:
 		
-		void                    validate();
+		void							validate();
 
     public:
 
@@ -203,11 +204,11 @@ namespace A2D {
         void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
         void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
         void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
-												      int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
+										int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
 
     public:
 
-        virtual STATUS                 initialize();
+        virtual STATUS					initialize();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// INLINE
