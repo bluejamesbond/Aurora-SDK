@@ -65,11 +65,11 @@ namespace A2D {
 		///////////////////////////////////////////////////////////
 
 //		HRESULT							updateVertexBuffer(QuadData<ColoredTextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat);
-        HRESULT							updateVertexBuffer(QuadData<float> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
+        HRESULT							updateVertexBuffer(QuadData<TextureVertex> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat);
 //		HRESULT							updateVertexBuffer(QuadData<ColorVertex> * xQuadData, Rect * xRect, Paint * xPaint);
 
 		void							setDepth(float xZ);
-        void							renderQuad();
+        void							renderQuad(GLuint& x_id, unsigned int xStride);
         bool							setConstraints(Rect * xConstraints, float xZ);
 
 	public:

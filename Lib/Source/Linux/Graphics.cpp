@@ -43,24 +43,50 @@ void Graphics::setClip(Rect * xClip, float xDepth)
     aQuadFactory->setConstraints(aClip, xDepth);
 }
 
-/*
 void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
 {
+	// Initialize the data
     Texture * texture;
-	QuadData<TextureVertex> * quadData;
+    QuadData<TextureVertex> * quadData;
+    unsigned int * indices;
 
-	// Pipeline not initalized
+	// Pipeline not initialized
 	if (*xPipeline == NULL)
 	{
+		// Create pipeline
 		*xPipeline = new Pipeline();
 
-		texture = new Texture(aDevice, xSrc);
-		quadData = new QuadData<TextureVertex>();
-
-		DXShapeUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
+		// Create texture and initialize it
+		texture = new Texture(xSrc);
 		texture->initialize();
 
+		// Create vertices
+		quadData = new QuadData<TextureVertex>();
+		quadData->aVertices = new TextureVertex[6];
+
+		// Force vertices to be all 0
+		memset(quadData->aVertices, 0, sizeof(TextureVertex) * 6);
+
+		// Create indices
+		indices = (quadData->m_indices = new unsigned int[6]);
+
+		// Set indices
+		indices[0] = 0;  // top left.
+		indices[1] = 1;  // bottom right.
+		indices[2] = 2;  // Bottom left.
+		indices[3] = 3;  // top left.
+		indices[4] = 4;  // top right.
+		indices[5] = 5;  // Bottom right.
+
+		// Generate an ID for the index buffer.
+		glGenBuffers(1, &quadData->m_indexBufferId);
+
+		// Bind the index buffer and load the index data into it.
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadData->m_indexBufferId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), quadData->m_indices, GL_STATIC_DRAW);
+
+		// Assign parts of the pipeline.
+		// No particular order
 		(*xPipeline)->aPipelineComps[0] = texture;
 		(*xPipeline)->aPipelineComps[1] = quadData;
 
@@ -72,57 +98,15 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
 	quadData = static_cast<QuadData<TextureVertex>*>((*xPipeline)->aPipelineComps[1]);
 
+	// FIXME Update texture here
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat);
-	aTextureShader->setTexture(texture);
 
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-    aTextureShader->renderShader();
-}
-*/
-
-void Graphics::drawImage()
-{
-        BackBuffer * xBackBuffer = dynamic_cast<BackBuffer * >(aBackBuffer);
-        XWindow * xwin = dynamic_cast<XWindow * >(aWindow);
-
-    do{
-
-            // Clear the screen
-            glClearDepth(1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // Use our shader
-//            glUseProgram(programID);
-            glActiveTexture(GL_TEXTURE0);
-            //glBindTexture(GL_TEXTURE_2D, aBackBuffer->tex);
-
-            // Set our "myTextureSampler" sampler to user Texture Unit 0
-            //glUniform1i(aBackBuffer->TextureID, 0);
-
-            //bind vertext array before drawing
-            glBindVertexArray (xBackBuffer->vao);
-
-            // Draw the triangle !
-            glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
-
-            // Swap buffers
-         //   glfwSwapBuffers(window);
-            glXSwapBuffers( xwin->aDis, xwin->aWin);
-
-        } // Check if the ESC key was pressed or the window was closed
-        while( true );
-
-}
-
-LPCWSTR Graphics::getClass()
-{
-    return "Graphics";
-}
-
-LPCWSTR Graphics::toString()
-{
-    return "Graphics";
+	if (aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat))
+	{
+		aTextureShader->associateTexture(texture);
+		aQuadFactory->renderQuad(quadData->m_vertexArrayId, sizeof(VertexType));
+		aTextureShader->renderShader();
+	}
 }
 
 void Graphics::swap()
@@ -133,42 +117,9 @@ void Graphics::swap()
 
 HRESULT Graphics::initialize()
 {
+	aTextureShader = new GenericShader();
 
-    /*CameraProperties& cameraProperties = aCameraProperties;
-	GXSettings* settings = aBackBufferSettings;
-	Dims* size = aBackBufferDims;
-	ID3D10Device ** device = aDevice;
-		
-	cameraProperties.aPositionX = 0.0f;
-	cameraProperties.aPositionY = 0.0f;
-	cameraProperties.aPositionZ = -800.0f;
-
-	SAFELY(MatrixFactory::createDefaultWorldMatrix(reinterpret_cast<D3DXMATRIX**>(&aWorldMatrix)));
-	SAFELY(MatrixFactory::createViewMatrix(reinterpret_cast<D3DXMATRIX**>(&aViewMatrix), cameraProperties));
-	SAFELY(MatrixFactory::createDefaultProjectionMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection3DMatrix), size, settings));
-	SAFELY(MatrixFactory::createDefaultOrthogonalMatrix(reinterpret_cast<D3DXMATRIX**>(&aProjection2DMatrix), size, settings));
-
-	aQuadFactory = new QuadFactory(device, aBackBufferDims);
-	SAFELY(aQuadFactory->initialize());
-
-	aColoredTextureShader = new ColoredTextureShader(device);
-	SAFELY(aColoredTextureShader->initialize());
-
-	aTextureShader = new TextureShader(device);
-	SAFELY(aTextureShader->initialize());
-
-	aColorShader = new ColorShader(device);
-	SAFELY(aColorShader->initialize());
-
-	TextureShader::setViewMatrix(&aViewMatrix);
-	ColorShader::setViewMatrix(&aViewMatrix);
-
-	TextureShader::setProjectionMatrix(&aProjection2DMatrix);
-	ColorShader::setProjectionMatrix(&aProjection2DMatrix);
-
-	TextureShader::setWorldMatrix(&aWorldMatrix);
-	ColorShader::setWorldMatrix(&aWorldMatrix);
-
-	return S_OK;
-    */
+	// FIXME Set shaders here
+	// aTextureShader->setFShader(NULL);
+	// aTextureShader->setVShader(NULL);
 }

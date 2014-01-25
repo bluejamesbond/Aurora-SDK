@@ -28,6 +28,57 @@
 
 namespace A2D {
 
+
+	struct VertexType
+	{
+		float x, y, z;
+		float r, g, b;
+	};
+
+
+	struct GL3DTEXCOORD
+	{
+		float m_x, m_y;
+
+		GL3DTEXCOORD() :
+			m_x(0.0f),
+			m_y(0.0f)
+		{
+		}
+
+		GL3DTEXCOORD(float x_x, float x_y) :
+			m_x(x_x),
+			m_y(x_y)
+		{
+		}
+	};
+
+	struct GL3DPOSITION
+	{
+		float m_x, m_y, m_z;
+
+		GL3DPOSITION() :
+			m_x(0.0f),
+			m_y(0.0f),
+			m_z(0.0f)
+		{
+		}
+
+		GL3DPOSITION(float x_x, float x_y, float x_z) :
+			m_x(x_x),
+			m_y(x_y),
+			m_z(x_z)
+		{
+		}
+	};
+
+	struct TextureVertex
+	{
+		GL3DPOSITION m_position;
+		GL3DTEXCOORD m_textCoord;
+	};
+
+
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +99,12 @@ namespace A2D {
 //        T				aVertices[18];       //should be six but I'm going to make it a float array of 6*3 (x,y,z)
         T            *   aVertices;
 		// Vertex buffer can change (but change only as needed)
-		GLuint			aVertexBuffer;
+		GLuint		*	aVertexBuffer;
+
+		unsigned int * m_indices;
+		unsigned int m_vertexArrayId;
+		unsigned int m_vertexBufferId;
+		unsigned int m_indexBufferId;
 
 		// This pretty much stays constant
 		// so it will be stored inside Quads instance.

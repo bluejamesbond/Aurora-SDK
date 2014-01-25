@@ -64,8 +64,13 @@
 #define LPCTSTR char*
 
 #define byte char
-#define min(a, b)                                             ((a > b ) ? b : a)
-#define max(a, b)                                             ((a < b ) ? b : a)
+#ifndef max
+#define max(a,b)                                                                                (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)                                                                                (((a) < (b)) ? (a) : (b))
+#endif
 
 #define USE_CHOOSE_FBCONFIG
 #endif

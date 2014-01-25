@@ -27,6 +27,8 @@
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
+// FIXME Fix the type and make subclasses
+#include "GenericShader.h"
 //#include "ImageProperties.h"
 //#include "Pipeline.h"
 //#include "Paint.h"
@@ -49,6 +51,7 @@ namespace A2D {
     class XWindow;
     class AbstractBackBuffer;
     class QuadFactory;
+    class GenericShader;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -67,6 +70,7 @@ namespace A2D {
         QuadFactory			 *			aQuadFactory;
         TextureBuffer        *			aTextureBuffer;
         Rect                 *          aClip;
+        GenericShader		 *			aTextureShader;
 
 /*        // Shaders
         AbstractShader		 *			aColorShader;
@@ -85,13 +89,11 @@ namespace A2D {
         void                            setWindow(AbstractWindow* xWindow);
         void                            setBackBuffer(BackBuffer* xBackBuffer);
 //        void							drawImage(Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
-        void                            drawImage();
+        void                            drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat);
         void                            swap();
     public:
 
         virtual HRESULT                 initialize();
-        virtual LPCWSTR                 getClass();
-        virtual LPCWSTR                 toString();
 
     };
 }
