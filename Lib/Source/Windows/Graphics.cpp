@@ -303,8 +303,8 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	if (aTextFactory->updateVertexBuffer(text, &xRect))
 	{
-		aTextureShader->setTexture(texture);
-		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+		aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
+		aTextFactory->renderText(text, sizeof(TextureVertex));
 		aTextureShader->renderShader();
 	}
 }

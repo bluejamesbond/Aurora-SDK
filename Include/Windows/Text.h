@@ -19,9 +19,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#include "../_A2DCommon.h"
 #include "ExtLibs.h"
-#include "TextFactory.h"
 
 using namespace std;
 

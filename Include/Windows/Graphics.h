@@ -39,6 +39,7 @@
 #include "TextureShader.h"
 #include "ColorShader.h"
 #include "Text.h"
+#include "TextFactory.h"
 
 namespace A2D {
 
