@@ -5,7 +5,7 @@ using namespace A2D;
 
 int AbstractFrame::aClassInstances = -1;
 
-AbstractFrame::AbstractFrame(){}
+AbstractFrame::AbstractFrame() : aRepaintManager(NULL) {}
 
 AbstractFrame::~AbstractFrame()
 {
@@ -234,16 +234,15 @@ HRESULT AbstractFrame::createResources()
 
 	SYSOUT_STR("[AbstractFrame] CreatePlatformCompatibleWindow - Window.");
 
-
 	SAFELY(createPlatformCompatibleBackBuffer(&aBackBuffer, aWindow, &aGXSettings));
 	SAFELY(aBackBuffer->initialize());
 
 	SYSOUT_STR("[AbstractFrame] CreatePlatformCompatibleBackBuffer - Backbuffer.");
 
-	// SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
+	SAFELY(createAndInitPlatformCompatibleGraphics(&aGraphics, aBackBuffer));
 	
-    // aRepaintManager = new RepaintManager(aGraphics, NULL);
-	// SAFELY(aRepaintManager->initialize());
+    aRepaintManager = new RepaintManager(aGraphics, NULL);
+	SAFELY(aRepaintManager->initialize());
 
 	aWindowDims = aWindow->getSizeAsPtr();
 
@@ -264,14 +263,20 @@ void AbstractFrame::validated()
 
 void AbstractFrame::update()
 {
+    SYSOUT_STR("[AbstractFrame] Updating per-frame content.");
+
+    if(!aRepaintManager) return;
+
     if (!aValidatedContents)
 	{
-		// aRepaintManager->validate();
-		
-		// aRepaintManager->update_forward();
+    	aRepaintManager->validate();
+
+		aRepaintManager->update_forward();
+
+    	aValidatedContents = true;
 
 		return;
 	}
 
-    // aRepaintManager->update();
+    aRepaintManager->update();
 }

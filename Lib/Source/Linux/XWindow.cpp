@@ -52,21 +52,17 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 
 	aDis = XOpenDisplay( NULL );
 
-	if( !aDis )
-	return 0;
+	NULLCHECK(aDis);
 
 	// make sure OpenGL's GLX extension supported
 	int errorBase, eventBase;
-	if( !glXQueryExtension( aDis, &errorBase, &eventBase ) )
-	return E_FAIL;
+	NULLCHECK(glXQueryExtension( aDis, &errorBase, &eventBase ))
 
 	XVisualInfo *visualInfo = glXChooseVisual( aDis, DefaultScreen(aDis), doubleBufferVisual );
-	if( visualInfo == NULL )
-	return E_FAIL;
+	NULLCHECK(visualInfo);
 
 	GLXContext hRC = glXCreateContext( aDis, visualInfo, NULL, GL_TRUE );
-	if( hRC == NULL )
-	return E_FAIL;
+	NULLCHECK(hRC);
 
 	winAttr.colormap = XCreateColormap( aDis, RootWindow(aDis, visualInfo->screen), visualInfo->visual, AllocNone );
 	winAttr.event_mask = KeyPressMask;
@@ -81,10 +77,9 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 
 	//Window hWnd = XCreateSimpleWindow( aDis, RootWindow(aDis, visualInfo->screen), 0, 0, XRES, YRES, 0, 0, 0 );
 
-	if( !aWin )
-	return E_FAIL;
+	NULLCHECK(aWin);
 
-	 char *            aName = "Yalo";
+	 char * aName = "Yalo";
 
 	XStringListToTextProperty(&aName, 1, &tp);
 	sh.flags = USPosition | USSize;
@@ -92,9 +87,8 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 
 	XMapWindow( aDis, aWin );
 
-    #define GLX_CONTEXT_MAJOR_VERSION_ARB       0x2091
-    #define GLX_CONTEXT_MINOR_VERSION_ARB       0x2092
     render_context = NULL;
+
     if( isExtensionSupported( glXQueryExtensionsString(aDis, DefaultScreen(aDis)), "GLX_ARB_create_context" ) ) {
         typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
         glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
@@ -120,7 +114,7 @@ unsigned long int  XWindow::createCompatibleWindow(bool isParent)
 
 }
 
-HRESULT XWindow::createBackgroundResources()
+HRESULT XWindow::createGLXContext()
 {
 	glewExperimental = GL_TRUE;
     GLenum err = glewInit();
@@ -156,36 +150,40 @@ HRESULT XWindow::initialize()
 
     SAFELY(createCompatibleWindow(true));
 
-	SYSOUT_STR("[XWindow] Create createBackgroundResources");
+	SYSOUT_STR("[XWindow] Create createGLXContext");
 
-    SAFELY(createBackgroundResources());
+    SAFELY(createGLXContext());
 
     return S_OK;
 }
 
 void XWindow::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
 {
+	AbstractFrame& frame = *aFrame;
 	int keep_running = 1;
-	        XEvent event;
+	XEvent event;
 
-	        while (keep_running) {
-	            XNextEvent(aDis, &event);
+	SYSOUT_STR("[XWindow] Started initPlatformCompatibleEventDispatcher");
 
-	            switch(event.type) {
-	                case ClientMessage:
-	                    if (event.xclient.message_type == XInternAtom(aDis, "WM_PROTOCOLS", 1) &&
-	                    		(Atom)event.xclient.data.l[0] == XInternAtom(aDis, "WM_DELETE_WINDOW", 1))
-	                        keep_running = 0;
+	while (keep_running)
+	{
+		frame.update();
 
-	                    break;
+		XNextEvent(aDis, &event);
 
-	                default:
-	                    break;
-	            }
+		switch(event.type)
+		{
+			case ClientMessage:
+				if (event.xclient.message_type == XInternAtom(aDis, "WM_PROTOCOLS", 1) &&
+						(Atom)event.xclient.data.l[0] == XInternAtom(aDis, "WM_DELETE_WINDOW", 1))
+					keep_running = 0;
 
-	            // glXSwapBuffers( aDis, aWin);
+				break;
 
-	        }
+			default:
+				break;
+		}
+	}
 }
 
 void XWindow::render()

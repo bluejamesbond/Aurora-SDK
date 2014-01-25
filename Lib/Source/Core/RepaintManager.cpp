@@ -27,6 +27,8 @@ HRESULT RepaintManager::initialize()
 
 void RepaintManager::validate()
 {
+	return;
+
     aBackBuffer->validate();
 }
 
@@ -82,9 +84,11 @@ void RepaintManager::update()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
+	return;
+
 	backBuffer->setActive();
 	backBuffer->clear();
-//	backBuffer->setZBuffer(false);
+	backBuffer->setZBuffer(false);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.reverse_iterator();
@@ -109,7 +113,7 @@ void RepaintManager::update()
 		}
 	}
 
-//	backBuffer->setZBuffer(true);
+	backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }
 
@@ -117,9 +121,11 @@ void RepaintManager::update_forward()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
+	return;
+
 	backBuffer->setActive();
 	backBuffer->clear();
-	//backBuffer->setZBuffer(false);
+	backBuffer->setZBuffer(false);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.iterator();
@@ -144,6 +150,7 @@ void RepaintManager::update_forward()
 		}
 	}
 
-	//backBuffer->setZBuffer(true);
+
+	backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }

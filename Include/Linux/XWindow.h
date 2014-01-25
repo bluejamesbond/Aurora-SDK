@@ -71,7 +71,7 @@ namespace A2D {
 
         unsigned long int      			createCompatibleWindow(bool isParent);
         void                            destroyResources();
-        virtual HRESULT                 createBackgroundResources();
+        HRESULT                 		createGLXContext();
         void                            destroyBackgroundResources();
         HRESULT                         isExtensionSupported(const char *extList, const char *extension);
         virtual	HRESULT					initialize();
