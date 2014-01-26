@@ -1,4 +1,5 @@
 
+
 #ifdef _WIN32
 #include <fstream>  // For visual studio output to console
 #endif
@@ -41,4 +42,23 @@
 #elif __linux__
 #define SYSOUT_F(f, ...)									  _RPT1( 0, "[Aurora -SDK] " f "\n", __VA_ARGS__ )
 #endif
+#endif
+
+// Used for timing calculations for debugging
+#include <time.h>
+
+#ifndef __DEBUG_INIT_CLOCK__
+#define __DEBUG_INIT_CLOCK__								  clock_t timeStart;
+#endif
+
+#ifndef __DEBUG_START_CLOCK__										
+#define __DEBUG_START_CLOCK__							      timeStart = clock();
+#endif
+
+#ifndef __DEBUG_END_CLOCK__										
+#define __DEBUG_END_CLOCK__									  SYSOUT_F("Time taken: %.9fs", (double)(clock() - timeStart) / CLOCKS_PER_SEC);
+#endif
+
+#ifndef speedtest__				
+#define speedtest__(data)									  for (long blockTime = NULL; (blockTime == NULL ? (blockTime = clock()) != NULL : false); SYSOUT_F(data "Time taken: %.9fs", (double) (clock() - blockTime) / CLOCKS_PER_SEC))
 #endif

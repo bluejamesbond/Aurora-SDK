@@ -1,7 +1,7 @@
 
 // Aurora-SDK
 
-#include "hd.hlsli"
+#include "qe_hd.hlsli"
  
 PX_QUADEXPANSION main(VX_QUADEXPANSION quadVertex)
 {
