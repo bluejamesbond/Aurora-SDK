@@ -77,6 +77,119 @@ namespace A2D {
 		// Create index buffer
 		static STATUS					CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
 		
+		enum ShaderType
+		{
+			VERTEX_SHADER,
+			HULL_SHADER,
+			GEOMETRY_SHADER,
+			COMPUTE_SHADER,
+			PIXEL_SHADER
+		};
+
+		enum ShaderVersion
+		{
+			VERSION_5,
+			VERSION_4
+		};
+
+		static STATUS					createShaderFromFile(ID3D10Device * x_device, void ** x_shader, LPCWSTR x_fileName, LPCSTR x_methodName, ShaderType x_shaderType, ShaderVersion x_shaderVersion)
+		{
+			// Set std namespace
+			using std::string;
+
+			ID3D10Blob * errorData;
+			ID3D10Blob * shaderBuffer;
+			STATUS status;
+			string shaderProfile;
+
+			// Set pointers to null
+			errorData = shaderBuffer = NULL;
+
+			switch (x_shaderType)
+			{
+				case VERTEX_SHADER:
+				{
+					shaderProfile = "vs_";
+					break;
+				}
+				case HULL_SHADER:
+				{
+					shaderProfile = "hs_";
+					break;
+				}
+				case GEOMETRY_SHADER:
+				{
+					shaderProfile = "gs_";
+					break;
+				}
+				case COMPUTE_SHADER:
+				{
+					shaderProfile = "cs_";
+					break;
+				}
+				case PIXEL_SHADER:
+				{
+					 shaderProfile = "ps_";
+					 break;
+				}
+			}
+
+			switch (x_shaderVersion)
+			{
+				case VERSION_5:
+				{
+					shaderProfile += "5_0";
+					break;
+				}
+				case VERSION_4:
+				{
+					shaderProfile += "4_0";
+					break;
+				}
+			}
+			
+			status = D3DX10CompileFromFile(x_fileName, 
+										  NULL, NULL, 
+										  x_methodName, 
+										  shaderProfile.c_str(), 
+										  D3D10_SHADER_ENABLE_STRICTNESS, 
+										  0, 
+										  NULL,
+										  &shaderBuffer, 
+										  &errorData, 
+										  NULL);
+
+			if (FAILED(status))
+			{
+				// If the shader failed to compile it should 
+				// have writen something to the error message.
+				if (errorData)
+				{
+					// Check if the data is even inside the buffer.
+					if (errorData->GetBufferPointer())
+					{
+						SYSOUT_F("[DXUtils] %s", static_cast<char*>(errorData->GetBufferPointer()));
+					}
+				}
+
+				return STATUS_FAIL;
+			}
+
+			switch (x_shaderType)
+			{
+				case PIXEL_SHADER: SAFELY(x_device->CreatePixelShader(shaderBuffer->GetBufferPointer(), shaderBuffer->GetBufferSize(), reinterpret_cast<ID3D10PixelShader**>(x_shader)));
+				case VERTEX_SHADER: SAFELY(x_device->CreateVertexShader(shaderBuffer->GetBufferPointer(), shaderBuffer->GetBufferSize(), reinterpret_cast<ID3D10VertexShader**>(x_shader)));
+				case GEOMETRY_SHADER: SAFELY(x_device->CreateGeometryShader(shaderBuffer->GetBufferPointer(), shaderBuffer->GetBufferSize(), reinterpret_cast<ID3D10GeometryShader**>(x_shader)));
+
+				// Currently not supporting due to DX10
+				// limitations
+				case COMPUTE_SHADER: return STATUS_FAIL;
+				case HULL_SHADER: return STATUS_FAIL;
+				default: return STATUS_FAIL;
+			}
+
+			return STATUS_OK;
+		}
 	};
 
 	template<class VertexClass>
