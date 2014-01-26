@@ -58,8 +58,8 @@ namespace A2D {
 		friend class TextFactory;
 
 	public:
-		Font(string xFontName);
-		Font(Fonts xFontName, ID3D10Device ** xDevice);
+		Font(string xFontName, ID3D10Device ** xDevice);
+		Font(Fonts * xFontName, ID3D10Device ** xDevice);
 		~Font();
 
 	public:
@@ -81,7 +81,7 @@ namespace A2D {
 	private:
 
 		string							aFontName = 0;
-		Fonts							aFont = 0;
+		Fonts				    *		aFont = 0;
 		unsigned short					aLineHeight;
 		unsigned short					aBase;
 		unsigned short					aWidth;

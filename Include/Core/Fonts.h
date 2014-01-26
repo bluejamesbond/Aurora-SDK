@@ -46,7 +46,7 @@ namespace A2D{
 
 	public:
 
-		static Fonts                        MUSEO;
+		static Fonts					    MUSEO;
 
 		Fonts(string xFontName);
 

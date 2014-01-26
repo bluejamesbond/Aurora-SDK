@@ -86,7 +86,7 @@ namespace A2D {
 			else
 			{
 				// If font is not used, we need to make a new Font object and add to list.
-				font = new Font(*xFont, aDevice);
+				font = new Font(xFont, aDevice);
 				font->initialize();
 				aFontList.push_back(font, NULL); // NULL, because we will never remove it.
 			}
@@ -98,18 +98,18 @@ namespace A2D {
 			OrderedList<Font*>::Node<Font*> * node = aFontList._end();
 			while (node)
 			{
-				if (node->value->aFont == *xFont)
+				if (node->value->aFont == xFont)
 				{
 					return node->value;
 				}
 				node = node->left;
 			}
-			return NULL;
+			return 0;
 		}
 
 		inline Fonts * TextFactory::getCurrentFont()
 		{
-			return &aCurrentFont->aFont;
+			return aCurrentFont->aFont;
 		}
 
 		inline void TextFactory::setDepth(float xZ)

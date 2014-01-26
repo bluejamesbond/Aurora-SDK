@@ -194,6 +194,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	string input = "hi there";
 	Fonts * fontInput = &Fonts::MUSEO;
+	Font * font = new Font(&Fonts::MUSEO ,aDevice);
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -238,68 +239,6 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	{
 		text->setText(&input);
 	}
-
-	//float charX;
-	//float charY;
-	//float width;
-	//float height;
-	//float offsetX;
-	//float offsetY;
-	//float advanceX;
-	//Rect * clipR = new Rect;
-	//Rect * inputR = &xRect;
-
-	//for (int i = 0; i < inputLength; i += 1)
-	//{
-
-	//	charX = FLOAT(museo->aCharacters[input_c[i]].aX);
-	//	charY = FLOAT(museo->aCharacters[input_c[i]].aY);
-	//	width = FLOAT(museo->aCharacters[input_c[i]].aWidth);
-	//	height = FLOAT(museo->aCharacters[input_c[i]].aHeight);
-	//	offsetX = FLOAT(museo->aCharacters[input_c[i]].aXOffset);
-	//	offsetY = FLOAT(museo->aCharacters[input_c[i]].aYOffset);
-	//	advanceX = FLOAT(museo->aCharacters[input_c[i]].aXAdvance);
-
-	//	// Get new clip.
-	//	clipR->aX = charX;
-	//	clipR->aY = charX;
-	//	clipR->aWidth = width;
-	//	clipR->aHeight = height;
-
-	//	texture->SetClip(clipR);
-
-	//	// Adjust input rect for each letter.
-	//	//inputR->aX += offsetX;
-	//	//inputR->aY - offsetY;
-
-	//	// Calculate vertex and render letter.
-	//	if (aQuadFactory->updateVertexBuffer(quadData, inputR, texture, false))
-	//	{
-	//		aTextureShader->setTexture(texture);
-	//		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-	//		aTextureShader->renderShader();
-	//	}
-
-	//	// Prepare for next letter.
-	//	inputR->aX += advanceX;
-
-	//}
-
-	// texture->Update(textureArgs); <<<<+++ ADD LATER
-
-	//Rect * cClip = new Rect();
-
-	//cClip->aX = FLOAT(museo->aCharacters[52].aX);
-	//cClip->aY = FLOAT(museo->aCharacters[52].aY);
-	//cClip->aWidth = FLOAT(museo->aCharacters[52].aWidth);
-	//cClip->aHeight = FLOAT(museo->aCharacters[52].aHeight);
-
-	//cClip->aX = 0;
-	//cClip->aY = 0;
-	//cClip->aWidth = 20;
-	//cClip->aHeight = 20;
-
-	//texture->SetClip(cClip);
 
 	if (aTextFactory->updateVertexBuffer(text, &xRect))
 	{

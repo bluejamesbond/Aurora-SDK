@@ -72,6 +72,8 @@
 // - Cached m_t_array is changed
 // - Check for m_arrayed - requires testing
 
+
+
 namespace A2D{
 
 	template <class T>
@@ -85,8 +87,8 @@ namespace A2D{
 		struct Node
 		{
 			U value; // Let the compiler set this
-			Node<U> * left = NULL; // Let the compiler set this
-			Node<U> * right = NULL; // Let the compiler set this
+			Node<U> * left = 0; // Let the compiler set this
+			Node<U> * right = 0; // Let the compiler set this
 
 			// Note: Putting them to NULL has a overhead of around 0.30s for
 			// for 10,000,000 elements.
@@ -475,7 +477,7 @@ namespace A2D{
 			m_arrayed = false;
 
 			// The next node from the current is null
-			Node<T> * next_node = NULL;
+			Node<T> * next_node = 0;
 
 			// L1 cache the m_end
 			Node<T> * node = m_end;
@@ -485,7 +487,7 @@ namespace A2D{
 			if (m_fragments_available_index < m_fragments_cache_total)
 			{
 				next_node = static_cast<Node<T>*>(m_fragments[m_fragments_available_index]);
-				m_fragments[m_fragments_available_index++] = NULL;
+				m_fragments[m_fragments_available_index++] = 0;
 			}
 			// Allocate heap space if there are no fragments
 			// and use these.
