@@ -78,3 +78,13 @@ void AbstractShader::renderShader()
 		device->DrawIndexed(indexCount, 0, 0);
 	}
 }
+
+void AbstractShader::renderShader(int xIndexCount)
+{
+	int temp = aIndexCount;
+	aIndexCount = xIndexCount;
+
+	renderShader();
+
+	aIndexCount = temp;
+}

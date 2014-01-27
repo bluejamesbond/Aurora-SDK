@@ -239,7 +239,7 @@ namespace A2D {
 
 				// Add measurements.
 				currentWidth += width + advanceX;
-
+				i = 20;
 			}
 
 			// Map vertex and index buffers.
@@ -247,11 +247,11 @@ namespace A2D {
 			memcpy(mappedVertices, (void*)vertices, sizeof(TextureVertex)* xText->aNumVertices);
 			xText->aVertexBuffer->Unmap();
 
-			xText->aIndexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+			xText->aIndexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedIndices));
 			memcpy(mappedIndices, (void*)indices, sizeof(unsigned long)* xText->aNumIndices);
 			xText->aIndexBuffer->Unmap();
 
-			return STATUS_OK;
+			return true;
 		}
 
 	public:

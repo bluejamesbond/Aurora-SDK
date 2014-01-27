@@ -192,9 +192,8 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	// ~~~~~~~ Supposed inputs ~~~~~~~~~
 
-	string input = "hi there";
+	string input = "hi";
 	Fonts * fontInput = &Fonts::MUSEO;
-	Font * font = new Font(&Fonts::MUSEO ,aDevice);
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -217,7 +216,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 		text->initialize(); // NEED TO CHECK IF IT FAILS HERE
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &text->aVertexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
-		DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
+		DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_INDEX_MULTIPLIER);
 
 		aTextFactory->setFont(fontInput);
 
@@ -244,7 +243,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	{
 		aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 		aTextFactory->renderText(text, sizeof(TextureVertex));
-		aTextureShader->renderShader();
+		aTextureShader->renderShader(text->aNumIndices);
 	}
 }
 

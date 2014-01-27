@@ -56,6 +56,7 @@ namespace A2D {
 	public:
 
 		void							renderShader();
+		void							renderShader(int xIndexCount);
 
 	protected:
 
