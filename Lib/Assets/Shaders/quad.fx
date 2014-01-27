@@ -139,7 +139,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float right = left + width;
 	float bottom = top - height;
 
-	input[0].borderWidths[1] = 10;
+	input[0].borderWidths[1] = 20;
 
 	float4 relativeBorderWidths = mul(input[0].borderWidths, borderCalculationMatrix);
 
@@ -160,7 +160,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 
 	float opacity = input[0].options[3];
 
-	float radius = 50;
+	float radius = 20;
 	float4 radius4 = float4(radius, radius, radius + 1, radius + 1);
 	radius4 = mul(radius4, borderCalculationMatrix);
 		
@@ -204,7 +204,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		{
 			//bottom left
 			border.position = float4(left - borderLeftWidth, (hasBottomBorder ? bottom - borderBottomWidth : bottom), z, 1);
-			border.rawPixel = float2(0, heightPixel + input[0].borderWidths[0] * 2);
+			border.rawPixel = float2(0, heightPixel + input[0].borderWidths[1] + input[0].borderWidths[3]);
 			quadStream.Append(border);
 			//top left
 			border.position = float4(left - borderLeftWidth, (hasTopBorder ? top + borderTopWidth : top), z, 1);
@@ -216,7 +216,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 			quadStream.Append(border);
 			//top right
 			border.position = float4(left + borderLeftWidth + radius4[0], (hasTopBorder ? top - borderTopWidth : top) - radius4[1], z, 1);
-			border.rawPixel = float2(input[0].borderWidths[0] * 2 + radius, input[0].borderWidths[0] * 2 + radius);
+			border.rawPixel = float2(input[0].borderWidths[0]*2 + radius, input[0].borderWidths[1]*2 + radius);
 			quadStream.Append(border);
 		}
 
@@ -260,15 +260,15 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 			quadStream.Append(border);
 			//top left
 			border.position = float4((hasLeftBorder ? left - borderLeftWidth : left), top + borderTopWidth, z, 1);
-			border.rawPixel = float2(0, 0);
+			border.rawPixel = float2(-1, 0); // Minor fix here
 			quadStream.Append(border);
 			//bottom right
 			border.position = float4(right, top, z, 1);
-			border.rawPixel = float2(widthPixel + input[0].borderWidths[1], input[0].borderWidths[1]);
+			border.rawPixel = float2(widthPixel + input[0].borderWidths[0], input[0].borderWidths[1]);
 			quadStream.Append(border);
 			//top right
 			border.position = float4((hasRightBorder ? right + borderRightWidth : right), top + borderTopWidth, z, 1);
-			border.rawPixel = float2(widthPixel + input[0].borderWidths[1] * 2, 0);
+			border.rawPixel = float2(widthPixel + input[0].borderWidths[0] + input[0].borderWidths[2], 0);
 			quadStream.Append(border);
 
 			// Reset
@@ -371,7 +371,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 mainTexels = input[0].colorTex;
 	z = (1000000.0f - input[0].options[2]) / 1000000.0f;
 	main.options = float4(1.0f, opacity, input[0].options[3], radius);
-	main.borderRadii = float4(50.0, 35.0, 20.0, 25.0);
+	main.borderRadii = float4(radius, 35.0, 20.0, 25.0);
 	main.rawDimensions = float2(widthPixel, heightPixel);
 	// main.colorTex = float4(input[0].colorTex.rgb, input[0].colorTex.a * opacity);
 
@@ -414,39 +414,29 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 		float rawPixelX = input.rawPixel[0];
 		float rawPixelY = input.rawPixel[1];
-		float radius = 50;
+		float radius = input.options[3];
 		float borderWidth = input.options[2];
 		float radiusPow = pow(radius, 2);
 		float radiusPowLowerLimit = pow(radius - borderWidth, 2); // 5 is border width
-
+		
 		if (isColorTex == 0.0f)
 		{
 			if ((rawPixelX < radius) && (rawPixelY < radius))
 			{
-				if ((pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow) ||
-					(pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) < radiusPowLowerLimit))
+				if ((pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow))
 				{
 					color.a = 0.0f;
 				}
-			}
-			else if (rawPixelX > borderWidth)
-			{
-				color.a = 0.0f;
 			}
 		}
 		else if (isColorTex == -1.0f)
 		{
 			if ((rawPixelX < radius) && (rawPixelY < radius))
 			{
-				if ((pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow) ||
-					(pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) < radiusPowLowerLimit))
+				if ((pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow))
 				{
 					color.a = 0.0f;
 				}
-			}
-			else if (rawPixelY > borderWidth)
-			{
-				color.a = 0.0f;
 			}
 		}
 
