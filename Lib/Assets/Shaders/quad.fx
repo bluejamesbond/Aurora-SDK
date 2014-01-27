@@ -159,10 +159,10 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	bool hasBottomBorder = borderBottomWidth > 0.0f;
 
 	float opacity = input[0].options[3];
+	
+	float4 borderRadii = float4(80.0, 35.0, 20.0, 25.0);
 
-	float radius = 20;
-	float4 radius4 = float4(radius, radius, radius + 1, radius + 1);
-	radius4 = mul(radius4, borderCalculationMatrix);
+	float4 relativeBorderRadii_S1 = mul(float4(borderRadii[0], borderRadii[0], borderRadii[1], borderRadii[1]), borderCalculationMatrix);
 		
 	//**********************************************************************
 	// Borders
@@ -171,7 +171,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	// 0.0 indicates color coordinates
 	// 1.0 indicates texture coordinates
 	// 2.0 indicates texture on backgroundColor
-	border.options = float4(0.0, opacity, 0, radius);
+	border.options = float4(0.0, opacity, 0, borderRadii[0]);
 	border.rawPixel = float2(0, 0);
 	border.borderRadii = float4(0,0,0,0);
 	border.rawDimensions = float2(widthPixel, heightPixel);
@@ -184,6 +184,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		border.colorTex = borderLeftColor;
 		border.options[0] = 0.0f;
 		border.options[2] = input[0].borderWidths[0];
+		border.options[3] = borderRadii[0];
 
 		if (insetBorder)
 		{
@@ -215,8 +216,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 			border.rawPixel = float2(input[0].borderWidths[0], heightPixel + input[0].borderWidths[1]);
 			quadStream.Append(border);
 			//top right
-			border.position = float4(left + borderLeftWidth + radius4[0], (hasTopBorder ? top - borderTopWidth : top) - radius4[1], z, 1);
-			border.rawPixel = float2(input[0].borderWidths[0]*2 + radius, input[0].borderWidths[1]*2 + radius);
+			border.position = float4(left + borderLeftWidth + relativeBorderRadii_S1[0], (hasTopBorder ? top - borderTopWidth : top) - relativeBorderRadii_S1[1], z, 1);
+			border.rawPixel = float2(input[0].borderWidths[0] * 2 + borderRadii[0], input[0].borderWidths[1] * 2 + borderRadii[0]);
 			quadStream.Append(border);
 		}
 
@@ -233,6 +234,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		border.colorTex = borderTopColor;
 		border.options[0] = -1.0f;
 		border.options[2] = input[0].borderWidths[1];
+		border.options[3] = borderRadii[0];
 
 		if (insetBorder)
 		{
@@ -255,8 +257,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		else
 		{
 			//bottom left
-			border.position = float4((hasLeftBorder ? left + borderLeftWidth : left) + radius4[0], top - borderTopWidth - radius4[1], z, 1);
-			border.rawPixel = float2(input[0].borderWidths[0] * 2 + radius, input[0].borderWidths[1] * 2 + radius);
+			border.position = float4((hasLeftBorder ? left + borderLeftWidth : left) + relativeBorderRadii_S1[0], top - borderTopWidth - relativeBorderRadii_S1[1], z, 1);
+			border.rawPixel = float2(input[0].borderWidths[0] * 2 + borderRadii[0], input[0].borderWidths[1] * 2 + borderRadii[0]);
 			quadStream.Append(border);
 			//top left
 			border.position = float4((hasLeftBorder ? left - borderLeftWidth : left), top + borderTopWidth, z, 1);
@@ -370,8 +372,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//**********************************************************************
 	float4 mainTexels = input[0].colorTex;
 	z = (1000000.0f - input[0].options[2]) / 1000000.0f;
-	main.options = float4(1.0f, opacity, input[0].options[3], radius);
-	main.borderRadii = float4(radius, 35.0, 20.0, 25.0);
+	main.options = float4(1.0f, opacity, input[0].options[3], 0.0);
+	main.borderRadii = borderRadii;
 	main.rawDimensions = float2(widthPixel, heightPixel);
 	// main.colorTex = float4(input[0].colorTex.rgb, input[0].colorTex.a * opacity);
 
@@ -417,15 +419,26 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		float radius = input.options[3];
 		float borderWidth = input.options[2];
 		float radiusPow = pow(radius, 2);
-		float radiusPowLowerLimit = pow(radius - borderWidth, 2); // 5 is border width
-		
+		float calculated = 0;
+		float antialiasDist = 2;
+
 		if (isColorTex == 0.0f)
 		{
 			if ((rawPixelX < radius) && (rawPixelY < radius))
 			{
-				if ((pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow))
+				float2 coordinates = float2(radius - rawPixelX, radius - rawPixelY);
+				float euclideanDistance = sqrt(dot(coordinates, coordinates));
+
+				if (euclideanDistance > radius)
 				{
 					color.a = 0.0f;
+
+					if (euclideanDistance < (radius + antialiasDist))
+					{
+						color.a = 1 - smoothstep(radius - antialiasDist, radius + antialiasDist, euclideanDistance);
+					}
+
+					return color;
 				}
 			}
 		}
@@ -433,9 +446,19 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		{
 			if ((rawPixelX < radius) && (rawPixelY < radius))
 			{
-				if ((pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow))
+				float2 coordinates = float2(radius - rawPixelX, radius - rawPixelY);
+					float euclideanDistance = sqrt(dot(coordinates, coordinates));
+
+				if (euclideanDistance > radius)
 				{
 					color.a = 0.0f;
+
+					if (euclideanDistance < (radius + antialiasDist))
+					{
+						color.a = 1 - smoothstep(radius - antialiasDist, radius + antialiasDist, euclideanDistance);
+					}
+
+					return color;
 				}
 			}
 		}
@@ -450,8 +473,8 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		float rawPixelY = input.rawPixel[1];
 		float width = input.rawDimensions[0];
 		float height = input.rawDimensions[1];
-
-		float radius, radiusPow;
+		float antialiasDist = 2;
+		float radius, radiusPow, euclideanDistance;
 
 		//-------------------------------------------------------------------------------------------
 		// Top left
@@ -461,9 +484,9 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 		if ((rawPixelX < radius) && (rawPixelY < radius))
 		{
-			if (pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2) > radiusPow)
+			if ((euclideanDistance = sqrt(pow(radius - rawPixelX, 2) + pow(radius - rawPixelY, 2))) > radius)
 			{
-				color.a = 0.0f;
+				color.a = 1 - smoothstep(radius - antialiasDist, radius + antialiasDist, euclideanDistance);
 
 				return color;
 			}
@@ -477,7 +500,7 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 		if ((rawPixelX > (width - radius)) && (rawPixelY < radius))
 		{
-			if (pow(rawPixelX - (width - radius), 2) + pow(radius - rawPixelY, 2) > radiusPow)
+			if ((pow(rawPixelX - (width - radius), 2) + pow(radius - rawPixelY, 2)) > radiusPow)
 			{
 				color.a = 0.0f;
 
