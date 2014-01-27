@@ -103,13 +103,18 @@ struct QuadPixel
 //------------------------------------------------------------------------------
 
 //#ARGB to (Rf, Gf, Bf, Af)
-inline float4 ARGBtoFloat4(uint color)
+inline float4 argb_to_float4(uint color)
 {
 	return float4(((color >> 24) & 0xFF) / 255.0, ((color >> 16) & 0xFF) / 255.0, ((color >> 8) & 0xFF) / 255.0, (color & 0xFF) / 255.0);
 }
 
-inline float4 getEuclideanColor(float4 color, float radius, float2 coordinates, float antialiasDist)
+inline float4 get_euclidean_dist_color(float4 color, float radius, float2 coordinates, float antialiasDist, float minRadius)
 {
+	if (radius == minRadius)
+	{
+		return color;
+	}
+
 	float euclideanDist = sqrt(dot(coordinates, coordinates));
 
 	if (euclideanDist > radius)
@@ -165,10 +170,10 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float borderRightWidth = relativeBorderWidths[2];
 	float borderBottomWidth = relativeBorderWidths[3];
 
-	float4 borderLeftColor = ARGBtoFloat4(input[0].borderColors[0]);
-	float4 borderTopColor = ARGBtoFloat4(input[0].borderColors[1]);
-	float4 borderRightColor = ARGBtoFloat4(input[0].borderColors[2]);
-	float4 borderBottomColor = ARGBtoFloat4(input[0].borderColors[3]);
+	float4 borderLeftColor = argb_to_float4(input[0].borderColors[0]);
+	float4 borderTopColor = argb_to_float4(input[0].borderColors[1]);
+	float4 borderRightColor = argb_to_float4(input[0].borderColors[2]);
+	float4 borderBottomColor = argb_to_float4(input[0].borderColors[3]);
 
 	bool hasLeftBorder = borderLeftWidth > 0.0f;
 	bool hasTopBorder = borderTopWidth > 0.0f;
@@ -177,7 +182,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 
 	float opacity = input[0].options[3];
 	
-	float4 borderRadii = float4(10, 90, 10, 10);
+	float4 borderRadii = float4(0, 50, 50, 0);
 
 	float4 borderRadiiSet1 = float4(borderRadii[0], borderRadii[0], borderRadii[1], borderRadii[1]); //TopLeft TopRight
 	float4 borderRadiiSet2 = float4(borderRadii[2], borderRadii[2], borderRadii[3], borderRadii[3]); //BottomLeft BottomRight
@@ -456,62 +461,62 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 		if (isColorTex == 0.0f)
 		{
-			float radius_1, radius_2;
-			radius_1 = input.borderRadii[0];
-			radius_2 = input.borderRadii[2];
+			float radius_1, radius_2;			
+			radius_1 = input.borderRadii[0] + borderWidth;
+			radius_2 = input.borderRadii[2] + borderWidth;
 
 			if ((rawPixelX < radius_1) && (rawPixelY < radius_1))
 			{
-				return getEuclideanColor(color, radius_1, float2(radius_1 - rawPixelX, radius_1 - rawPixelY), antialiasDist);
+				return get_euclidean_dist_color(color, radius_1, float2(radius_1 - rawPixelX, radius_1 - rawPixelY), antialiasDist, borderWidth);
 			}
 			else if ((rawPixelX < radius_2) && (rawPixelY >(height + borderWidth * 2 - radius_2)))
 			{		
-				return getEuclideanColor(color, radius_2, float2(radius_2 - rawPixelX, rawPixelY - (height + borderWidth * 2 - radius_2)), antialiasDist);
+				return get_euclidean_dist_color(color, radius_2, float2(radius_2 - rawPixelX, rawPixelY - (height + borderWidth * 2 - radius_2)), antialiasDist, borderWidth);
 			}
 		}
 		else if (isColorTex == -1.0f)
 		{
 			float radius_1, radius_2;
-			radius_1 = input.borderRadii[0];
-			radius_2 = input.borderRadii[1];
+			radius_1 = input.borderRadii[0] + borderWidth;
+			radius_2 = input.borderRadii[1] + borderWidth;
 
 			if ((rawPixelX < radius_1) && (rawPixelY < radius_1))
 			{
-				return getEuclideanColor(color, radius_1, float2(radius_1 - rawPixelX, radius_1 - rawPixelY), antialiasDist);
+				return get_euclidean_dist_color(color, radius_1, float2(radius_1 - rawPixelX, radius_1 - rawPixelY), antialiasDist, borderWidth);
 			}
 			else if ((rawPixelX >(width + borderWidth * 2 - radius_2)) && (rawPixelY < radius_2))
 			{
-				return getEuclideanColor(color, radius_2, float2((width + borderWidth * 2 - radius_2) - rawPixelX, radius_2 - rawPixelY), antialiasDist);
+				return get_euclidean_dist_color(color, radius_2, float2((width + borderWidth * 2 - radius_2) - rawPixelX, radius_2 - rawPixelY), antialiasDist, borderWidth);
 			}
 		}
 		else if (isColorTex == -3.0f)
 		{
 			float radius_1, radius_2;
-			radius_1 = input.borderRadii[2];
-			radius_2 = input.borderRadii[3];
+			radius_1 = input.borderRadii[2] + borderWidth;
+			radius_2 = input.borderRadii[3] + borderWidth;
 
-			if ((rawPixelX < radius_1) && (rawPixelY >(height + borderWidth * 2 - radius_1))) // top + bottom
+			if ((rawPixelX < radius_1) && (rawPixelY > (height + borderWidth * 2 - radius_1))) // top + bottom
 			{
-				return getEuclideanColor(color, radius_1, float2(radius_1 - rawPixelX, rawPixelY - (height + borderWidth * 2 - radius_1)), antialiasDist);
+				return get_euclidean_dist_color(color, radius_1, float2(radius_1 - rawPixelX, rawPixelY - (height + borderWidth * 2 - radius_1)), antialiasDist, borderWidth);
 			}
 			else if ((rawPixelX > (width + borderWidth * 2 - radius_2)) && (rawPixelY > (height + borderWidth * 2 - radius_2)))
 			{
-				return getEuclideanColor(color, radius_2, float2(rawPixelX - (width + borderWidth * 2 - radius_2), rawPixelY - (height + borderWidth * 2 - radius_2)), antialiasDist);
+				return get_euclidean_dist_color(color, radius_2, float2(rawPixelX - (width + borderWidth * 2 - radius_2), rawPixelY - (height + borderWidth * 2 - radius_2)), antialiasDist, borderWidth);
 			}
 		}
 		else if (isColorTex == -2.0f)
 		{
 			float radius_1, radius_2;
-			radius_1 = input.borderRadii[1];
-			radius_2 = input.borderRadii[3];
+			radius_1 = input.borderRadii[1] + borderWidth;
+			radius_2 = input.borderRadii[3] + borderWidth;
 
 			if ((rawPixelX > (width + borderWidth * 2 - radius_1)) && (rawPixelY < radius_1))
 			{
-				return getEuclideanColor(color, radius_1, float2(rawPixelX - (width + borderWidth * 2 - radius_1), radius_1 - rawPixelY), antialiasDist);
+				return get_euclidean_dist_color(color, radius_1, float2(rawPixelX - (width + borderWidth * 2 - radius_1), radius_1 - rawPixelY), antialiasDist, borderWidth);
 			}
 			else if ((rawPixelX >(width + borderWidth * 2 - radius_2)) && (rawPixelY > (height + borderWidth * 2 - radius_2)))
 			{
-				return getEuclideanColor(color, radius_2, float2(rawPixelX - (width + borderWidth * 2 - radius_2), rawPixelY - (height + borderWidth * 2 - radius_2)), antialiasDist);
+				return get_euclidean_dist_color(color, radius_2, float2(rawPixelX - (width + borderWidth * 2 - radius_2), rawPixelY - (height + borderWidth * 2 - radius_2)), antialiasDist, borderWidth);
 			}
 		}
 
@@ -533,10 +538,10 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		// Top left
 
 		radius = input.borderRadii[0];
-
+		
 		if ((rawPixelX < radius) && (rawPixelY < radius))
 		{
-			return getEuclideanColor(color, radius, float2(radius - rawPixelX, radius - rawPixelY), antialiasDist);
+			return get_euclidean_dist_color(color, radius, float2(radius - rawPixelX, radius - rawPixelY), antialiasDist, 0);
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -546,7 +551,7 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 		if ((rawPixelX > (width - radius)) && (rawPixelY < radius))
 		{
-			return getEuclideanColor(color, radius, float2(rawPixelX - (width - radius), radius - rawPixelY), antialiasDist);
+			return get_euclidean_dist_color(color, radius, float2(rawPixelX - (width - radius), radius - rawPixelY), antialiasDist, 0);
 		}
 		
 		//-------------------------------------------------------------------------------------------
@@ -556,7 +561,7 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		
 		if ((rawPixelX < radius) && (rawPixelY > (height - radius)))
 		{
-			return getEuclideanColor(color, radius, float2(radius - rawPixelX, (height - radius) - rawPixelY), antialiasDist);
+			return get_euclidean_dist_color(color, radius, float2(radius - rawPixelX, (height - radius) - rawPixelY), antialiasDist, 0);
 		}
 
 		//-------------------------------------------------------------------------------------------
@@ -566,7 +571,7 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 		if ((rawPixelX > (width - radius)) && (rawPixelY > (height - radius)))
 		{
-			return getEuclideanColor(color, radius, float2(rawPixelX - (width - radius), rawPixelY - (height - radius)), antialiasDist);
+			return get_euclidean_dist_color(color, radius, float2(rawPixelX - (width - radius), rawPixelY - (height - radius)), antialiasDist, 0);
 		}
 
 		return float4(color.rgb, color.a * opacity);
