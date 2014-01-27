@@ -39,7 +39,7 @@ namespace A2D{
 			Color3D::from(m_leftColor, Color3D::RED);
 			Color3D::from(m_topColor, Color3D::BLUE);
 			Color3D::from(m_rightColor, Color3D::YELLOW);
-			Color3D::from(m_bottomColor, Color3D::RED);
+			Color3D::from(m_bottomColor, Color3D::GREEN_SEA);
 		}
 	};
 }

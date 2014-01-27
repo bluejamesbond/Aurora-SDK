@@ -66,7 +66,7 @@ STATUS	QuadExpansionShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPol
 
 unsigned int QuadExpansionShader::getPolygonLayoutElementCount()
 {
-	return 6;
+	return 7;
 }
 
 LPCSTR QuadExpansionShader::getTechniqueName()

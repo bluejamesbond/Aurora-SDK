@@ -61,6 +61,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 											cvtpx2rd__(winWidth, calcWidth),
 											cvtpx2rd__(winHeight, calcHeight));
 
+		vertices[0].aOptionsSet2 = D3DXVECTOR4(rectWidth, rectHeight, 0.0f, 0.0f);
+
 		x_renderSet.m_dirtyVisbleRegion = false;
 		x_renderSet.m_dirtyRequestRegion = false;				
 	}

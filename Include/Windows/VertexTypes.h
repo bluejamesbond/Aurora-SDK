@@ -49,6 +49,7 @@ namespace A2D {
 	{
 		D3DXVECTOR4 aPosition;
 		D3DXVECTOR4 aOptions;
+		D3DXVECTOR4 aOptionsSet2;
 		D3DXVECTOR4 aBorderWidths;
 		D3DXVECTOR4 aBorderRadius;
 		D3DXVECTOR4 aColorTex;
