@@ -194,6 +194,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	string input = "hi";
 	Fonts * fontInput = &Fonts::MUSEO;
+	QuadData<TextureVertex, 6> * quadData;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -212,6 +213,9 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 		*xPipeline = new Pipeline();
 		
 		text = new Text(input);
+		quadData = new QuadData<TextureVertex, 6>();
+		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+
 
 		text->initialize(); // NEED TO CHECK IF IT FAILS HERE
 
@@ -221,14 +225,15 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 		aTextFactory->setFont(fontInput);
 
 		(*xPipeline)->aPipelineComps[0] = text;
-
+		(*xPipeline)->aPipelineComps[1] = quadData;
 		(*xPipeline)->aLength = 1;
 
 		return;
 	}
 
 	text = static_cast<Text*>((*xPipeline)->aPipelineComps[0]);
-	
+	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
+
 	if (aTextFactory->getCurrentFont() != fontInput)
 	{
 		aTextFactory->setFont(fontInput);
@@ -245,6 +250,13 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 		aTextFactory->renderText(text, sizeof(TextureVertex));
 		aTextureShader->renderShader(text->aNumIndices);
 	}
+
+	//if (aQuadFactory->updateVertexBuffer(quadData, &xRect, aTextFactory->aCurrentFont->aFontTexture, false))
+	//{
+	//	aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
+	//	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+	//	aTextureShader->renderShader();
+	//}
 }
 
 

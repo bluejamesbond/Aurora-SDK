@@ -201,6 +201,7 @@ namespace A2D {
 
 				width = currentWidth + width + offsetX > boxWidth ? boxWidth - currentWidth - offsetX :	width;				
 				height = currentHeight + height + offsetY > boxHeight ? boxHeight - currentHeight - offsetY : height;
+				//height = 20;
 
 				// Calculations.
 				left = rectX + offsetX;

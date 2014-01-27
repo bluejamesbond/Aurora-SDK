@@ -82,6 +82,7 @@ namespace A2D {
 
 		string							aFontName = ""; // Set to empty string
 		Fonts				    *		aFont = 0;
+		wstring							aTextLocation;
 		unsigned short					aLineHeight;
 		unsigned short					aBase;
 		unsigned short					aWidth;

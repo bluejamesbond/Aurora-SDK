@@ -39,8 +39,8 @@ STATUS Font::LoadTexture()
 {
 	string location(FONTS_DEFAULT_LOCATION);
 	location.append(aFont->aFontName.append(FONT_APPEND_TEX_LOC));
-	wstring stemp = wstring(location.begin(), location.end());
-	LPCWSTR lpLocation = stemp.c_str();
+	aTextLocation = wstring(location.begin(), location.end());
+	LPCWSTR lpLocation = aTextLocation.c_str();
 
 	aFontTexture = new Texture(aDevice, lpLocation);
 	SAFELY(aFontTexture->initialize());
