@@ -80,7 +80,7 @@ namespace A2D {
 
 	private:
 
-		string							aFontName = 0;
+		string							aFontName = ""; // Set to empty string
 		Fonts				    *		aFont = 0;
 		unsigned short					aLineHeight;
 		unsigned short					aBase;
