@@ -103,9 +103,28 @@ struct QuadPixel
 //------------------------------------------------------------------------------
 
 //#ARGB to (Rf, Gf, Bf, Af)
-float4 ARGBtoFloat4(uint color)
+inline float4 ARGBtoFloat4(uint color)
 {
 	return float4(((color >> 24) & 0xFF) / 255.0, ((color >> 16) & 0xFF) / 255.0, ((color >> 8) & 0xFF) / 255.0, (color & 0xFF) / 255.0);
+}
+
+inline float4 getEuclideanColor(float4 color, float radius, float2 coordinates, float antialiasDist)
+{
+	float euclideanDist = sqrt(dot(coordinates, coordinates));
+
+	if (euclideanDist > radius)
+	{
+		color.a = 0.0f;
+
+		if (euclideanDist < (radius + antialiasDist))
+		{
+			color.a = 1 - smoothstep(radius - antialiasDist, radius + antialiasDist, euclideanDist);
+		}
+
+		return color;
+	}
+
+	return color;
 }
 
 //------------------------------------------------------------------------------
@@ -416,25 +435,6 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	quadStream.RestartStrip();
 }
 
-inline float4 getEuclideanColor(float4 color, float radius, float2 coordinates, float antialiasDist)
-{
-	float euclideanDist = sqrt(dot(coordinates, coordinates));
-
-	if (euclideanDist > radius)
-	{
-		color.a = 0.0f;
-
-		if (euclideanDist < (radius + antialiasDist))
-		{
-			color.a = 1 - smoothstep(radius - antialiasDist, radius + antialiasDist, euclideanDist);
-		}
-
-		return color;
-	}
-
-	return color;
-}
-
 //------------------------------------------------------------------------------
 // PS
 //------------------------------------------------------------------------------
@@ -527,13 +527,12 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		float width = input.rawDimensions[0];
 		float height = input.rawDimensions[1];
 		float antialiasDist = 2;
-		float radius, radiusPow, euclideanDistance;
+		float radius;
 
 		//-------------------------------------------------------------------------------------------
 		// Top left
 
 		radius = input.borderRadii[0];
-		radiusPow = radiusPow = pow(radius, 2);
 
 		if ((rawPixelX < radius) && (rawPixelY < radius))
 		{
@@ -544,7 +543,6 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		// Top right
 
 		radius = input.borderRadii[1];
-		radiusPow = radiusPow = pow(radius, 2);
 
 		if ((rawPixelX > (width - radius)) && (rawPixelY < radius))
 		{
@@ -555,7 +553,6 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		// Bottom left
 		
 		radius = input.borderRadii[2];
-		radiusPow = radiusPow = pow(radius, 2);
 		
 		if ((rawPixelX < radius) && (rawPixelY > (height - radius)))
 		{
@@ -566,7 +563,6 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		// Bottom right
 		
 		radius = input.borderRadii[3];
-		radiusPow = radiusPow = pow(radius, 2);
 
 		if ((rawPixelX > (width - radius)) && (rawPixelY > (height - radius)))
 		{
