@@ -37,7 +37,7 @@
 *
 * -------------------------------------
 * A2D::List push_back - Integer[10000000 iterations]
-* Time taken : 0.736000000s
+* Time taken : 0.436000000s
 * -------------------------------------
 * A2D::List remove - Integer[1 iterations]
 * Time taken : 0.426000000s

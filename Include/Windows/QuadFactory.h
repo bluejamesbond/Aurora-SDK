@@ -354,7 +354,6 @@ namespace A2D {
 			xQuadData->aVertexBuffer->Unmap();
 
 			return true;
-
 		}
 
 	private:
