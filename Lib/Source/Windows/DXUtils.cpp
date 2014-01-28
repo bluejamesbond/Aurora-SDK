@@ -12,7 +12,7 @@ STATUS DXUtils::LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * aDevice, ID
 	errorMessage = 0;
 
 	// Load the shader in from the file.
-	SAFELY(D3DX10CreateEffectFromFile(xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	SAFELY(D3DX10CreateEffectFromFile(xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0,
 		aDevice, NULL, NULL, xEffect, &errorMessage, NULL));
 
 	return STATUS_OK;
