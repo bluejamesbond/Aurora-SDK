@@ -316,5 +316,6 @@ void AbstractFrame::update()
 		return;
 	}
 
-	aComponentManager->updateTopToBottom();
+	// FIXME
+	aComponentManager->updateBottomToTop();
 }

@@ -486,6 +486,24 @@ void Component::setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Uni
 	m_styleSet.markBorderWidthsAsDirty();
 }
 
+void Component::setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
+{
+	A2DDISTANCESET4& borderRadii = m_styleSet.m_borderRadii;
+
+	borderRadii.m_leftUnits = xLeftUnits;
+	borderRadii.m_topUnits = xTopUnits;
+	borderRadii.m_rightUnits = xRightUnits;
+	borderRadii.m_bottomUnits = xBottomUnits;
+
+	borderRadii.m_left = xLeft;
+	borderRadii.m_top = xTop;
+	borderRadii.m_bottom = xBottom;
+	borderRadii.m_right = xRight;
+
+	m_validatedContents = false;
+	m_styleSet.markBorderRadiiAsDirty();
+}
+
 void Component::setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom)
 {
 	A2DBORDERSET4& borders = m_styleSet.m_borders;

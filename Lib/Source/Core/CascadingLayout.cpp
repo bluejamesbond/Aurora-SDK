@@ -97,6 +97,14 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			borderRight = precalculatedBorderWidths.m_right = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_bottom, compHeight));
 			borderBottom = precalculatedBorderWidths.m_bottom = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_right, compWidth));
 
+			A2DDISTANCESET4& borderRadii = component->m_styleSet.m_borderRadii;
+			A2DPIXELDISTANCESETUINT4& precalculatedBorderRadii = component->m_styleSet.m_precalculatedBorderRadii;
+
+			precalculatedBorderRadii.m_left = SUINT(cvtsu2px__(borderRadii.m_leftUnits, borderRadii.m_left, compWidth));
+			precalculatedBorderRadii.m_top = SUINT(cvtsu2px__(borderRadii.m_topUnits, borderRadii.m_top, compHeight));
+			precalculatedBorderRadii.m_right = SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_bottom, compHeight));
+			precalculatedBorderRadii.m_bottom = SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_right, compWidth));
+
 			// Mark the border widths as dirty since
 			// borderWidths are affected by validation
 			// windowResize

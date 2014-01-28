@@ -70,11 +70,13 @@ namespace A2D {
 		A2DDISTANCESET4				m_margins;
 		A2DDISTANCESET4				m_positioning;
 		A2DDISTANCESET4				m_padding;
+		A2DDISTANCESET4				m_borderRadii;
 
 		A2DPIXELDISTANCESETUINT2	m_precalculatedSize;
 		A2DPIXELDISTANCESETINT4     m_precalculatedMargins;
 		A2DPIXELDISTANCESETINT4     m_precalculatedPositioning;
 		A2DPIXELDISTANCESETINT4     m_precalculatedPadding;
+		A2DPIXELDISTANCESETUINT4	m_precalculatedBorderRadii;
 
 		int*						m_id;
 
@@ -88,6 +90,7 @@ namespace A2D {
 		bool						m_dirtyBorderColors;
 		bool						m_dirtyBorderWidths;
 		bool						m_dirtyOpacityDepth;
+		bool						m_dirtyBorderRadii;
 		
 		A2DCOMPONENTRENDERSTYLESET() :
 			m_depth(INT_MIN),
@@ -101,7 +104,8 @@ namespace A2D {
 			m_dirtyVisbleRegion(false),
 			m_dirtyBackground(false),
 			m_dirtyBorderColors(false),
-			m_dirtyOpacityDepth(false)
+			m_dirtyOpacityDepth(false),
+			m_dirtyBorderRadii(false)
 		{
 		}
 
@@ -112,6 +116,7 @@ namespace A2D {
 		inline void					markBorderColorsAsDirty()		{ m_dirty = m_dirtyBorderColors = true; }
 		inline void					markOpacityAsDirty()			{ m_dirty = m_dirtyOpacityDepth = true; }
 		inline void					markDepthAsDirty()				{ m_dirty = m_dirtyOpacityDepth = true; }
+		inline void					markBorderRadiiAsDirty()		{ m_dirty = m_dirtyBorderRadii = true; }
 
 		inline bool					isDirty()						{ return m_dirty; };
 	};

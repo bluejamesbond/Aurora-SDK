@@ -217,18 +217,19 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 	{
 		#ifdef A2D_DE__			
 		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating border widths.", *x_renderSet.m_id);
-		#endif // A2D_DE__
+		#endif // A2D_DE__          
 
-		/*  vertices[0].aBorderWidths = D3DXVECTOR4(cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_left),
-                                                  cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_top),
-                                                  cvtpx2rd__(winWidth, x_renderSet.m_borders.m_precalculatedBorderWidths.m_right),
-                                                  cvtpx2rd__(winHeight, x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom));*/
-          
+		vertices[0].aBorderWidths = D3DXVECTOR4(SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_left),
+												SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_top),
+												SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_right),
+												SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom));
 
-		vertices[0].aBorderWidths = D3DXVECTOR4(x_renderSet.m_borders.m_precalculatedBorderWidths.m_left,
-												x_renderSet.m_borders.m_precalculatedBorderWidths.m_top,
-												x_renderSet.m_borders.m_precalculatedBorderWidths.m_right,
-												x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom);
+
+		vertices[0].aBorderRadii = D3DXVECTOR4(SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_left),
+											   SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_top),
+											   SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_right),
+											   SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_bottom));
+
 		x_renderSet.m_dirtyBorderWidths = false;
 	}
 
