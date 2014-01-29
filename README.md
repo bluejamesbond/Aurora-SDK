@@ -28,17 +28,3 @@ Conventions
 4. `camelCase` for functions and variables.
 5. `A2DCamelCase` for classes.
 6. CP = Cross Platform, GLW = GL Windows, GLX = GL Linux
-
-Stages
-=======
-
-- [x] Development
-- [ ] Testing
-- [ ] Finalizing
-
-
-- [ ] a task list item
-- [ ] list syntax required
-- [ ] normal **formatting**, @mentions, #1234 refs
-- [ ] incomplete
-- [x] completed
