@@ -7,8 +7,8 @@
 //      COMMON
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Contains basic utility functions used by the core as well as the 
+//      platform dependent implementations.
 //
 //------------------------------------------------------------------------------
 

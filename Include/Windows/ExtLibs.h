@@ -5,8 +5,7 @@
 //      EXTLIBS
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      System required dependencies.
 //
 //------------------------------------------------------------------------------
 

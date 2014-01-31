@@ -11,8 +11,8 @@
 //      WINDOW
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Platform dependent implementation of EDT based on thread lock and
+//      waiting.
 //
 //------------------------------------------------------------------------------
 

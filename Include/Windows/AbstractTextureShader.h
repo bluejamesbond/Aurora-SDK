@@ -11,7 +11,8 @@
 //      ABSTRACTTEXTURESHADER
 //
 //  Synopsis:
-//      Texture quad.
+//      Texture shader that uses the AbstractShader. This provides the base
+//      for classes that might implement texture and many other things.
 //
 //------------------------------------------------------------------------------
 

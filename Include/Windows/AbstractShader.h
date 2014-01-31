@@ -8,10 +8,11 @@
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      TEXTURESHADER
+//      ABSTRACTSHADER
 //
 //  Synopsis:
-//      Texture quad.
+//      Uses the DX Effect framework to create a basic system for creating
+//      shaders from FX files. This is different from "vanilla" DX.
 //
 //------------------------------------------------------------------------------
 
