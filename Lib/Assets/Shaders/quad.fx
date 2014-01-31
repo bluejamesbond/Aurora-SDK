@@ -55,9 +55,9 @@ struct QuadVertex
 {
 	float4 position : POSITION0;
 	float4 options : POSITION1;      // [text/color/both, opacity, zIndex, reserved]      NOTE: contents must be in float. 
-	float4 optionsSet2 : POSITION2;      // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
+	float4 optionsSet2 : POSITION2;  // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
 	float4 borderWidths : POSITION3; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
-	float4 borderRadii : POSITION4; // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
+	float4 borderRadii : POSITION4;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
 	float4 colorTex : COLOR0;
 	uint4 borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };

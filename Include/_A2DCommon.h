@@ -55,6 +55,7 @@ typedef unsigned int STATUS;
 #define SINT(x)                                         static_cast<int>(x)
 #define SLONG(x)                                        static_cast<long>(x)
 #define SUINT(x)                                        static_cast<unsigned int>(x)
+#define SULONG(x)                                       static_cast<unsigned long>(x)
 #define IMPLEMENT                                       = 0
 
 // System independent definitions
@@ -112,6 +113,32 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
     return (((a) < (0)) ? (-a) : (a));
 }
 
+// Kernel level time functions
+//------------------------------------------------------------------------------
+inline int platform_dependent_kernel_time_low_precision()
+{
+	FILETIME time;
+
+	GetSystemTimeAsFileTime(&time);
+
+	return time.dwLowDateTime;
+}
+
+inline long platform_dependent_kernel_time_high_precision()
+{
+	FILETIME time;
+	
+	GetSystemTimeAsFileTime(&time);
+	
+	return (SULONG(time.dwHighDateTime) << 32) | time.dwLowDateTime;
+}
+
+// System time used for primarily 
+// animations
+//------------------------------------------------------------------------------
+#define kerneltimelp__()								platform_dependent_kernel_time_low_precision();
+#define kerneltimehp__()								platform_dependent_kernel_time_high_precision();
+
 //High performance min/max/abs for
 //floats and int. Any extra variables that need
 //to be used should be added.
@@ -134,5 +161,23 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
 // Use with caution.
 //------------------------------------------------------------------------------
 #define	unconst__(x)									(const_cast<x>(this))
+
+// Speed functions
+//------------------------------------------------------------------------------
+#ifndef timeinit__
+#define timeinit__										clock_t blockTime;
+#endif
+
+#ifndef timestart__
+#define timestart__										blockTime = clock();
+#endif
+
+#ifndef timeend__
+#define timeend__										SYSOUT_F(data "%.9fs", (double) (clock() - blockTime) / CLOCKS_PER_SEC);
+#endif
+
+#ifndef timeblock__             
+#define timeblock__(data)								for (long blockTime = NULL; (blockTime == NULL ? (blockTime = clock()) != NULL : false); SYSOUT_F(data "%.9fs", (double) (clock() - blockTime) / CLOCKS_PER_SEC))
+#endif
 
 #endif
