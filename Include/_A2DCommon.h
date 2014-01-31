@@ -55,6 +55,7 @@ typedef unsigned int STATUS;
 #define SINT(x)                                         static_cast<int>(x)
 #define SLONG(x)                                        static_cast<long>(x)
 #define SUINT(x)                                        static_cast<unsigned int>(x)
+#define SULONGLONG(x)                                        static_cast<unsigned long long>(x)
 #define SULONG(x)                                       static_cast<unsigned long>(x)
 #define IMPLEMENT                                       = 0
 
@@ -113,9 +114,12 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
     return (((a) < (0)) ? (-a) : (a));
 }
 
+#ifdef _WIN32
+#include "Windows/ExtLibs.h"
+
 // Kernel level time functions
 //------------------------------------------------------------------------------
-inline int platform_dependent_kernel_time_low_precision()
+inline unsigned int platform_dependent_kernel_time_low_precision()
 {
 	FILETIME time;
 
@@ -124,20 +128,22 @@ inline int platform_dependent_kernel_time_low_precision()
 	return time.dwLowDateTime;
 }
 
-inline long platform_dependent_kernel_time_high_precision()
+inline unsigned long long platform_dependent_kernel_time_high_precision()
 {
 	FILETIME time;
-	
+
 	GetSystemTimeAsFileTime(&time);
 	
-	return (SULONG(time.dwHighDateTime) << 32) | time.dwLowDateTime;
+	return (SULONGLONG(time.dwHighDateTime) << 32) | time.dwLowDateTime;
 }
+
+#endif
 
 // System time used for primarily 
 // animations
 //------------------------------------------------------------------------------
-#define kerneltimelp__()								platform_dependent_kernel_time_low_precision();
-#define kerneltimehp__()								platform_dependent_kernel_time_high_precision();
+#define kerneltimelp__									platform_dependent_kernel_time_low_precision();
+#define kerneltimehp__									platform_dependent_kernel_time_high_precision();
 
 //High performance min/max/abs for
 //floats and int. Any extra variables that need
