@@ -30,7 +30,7 @@
 #define __STATUS_DEFINED__
 
 typedef unsigned int STATUS;
-#define _STATUS_TYPEDEF_(_sc)                           ((STATUS)_sc)
+#define _STATUS_TYPEDEF_(_sc)                           (static_cast<STATUS>(_sc))
 
 #define STATUS_OK                                       _STATUS_TYPEDEF_(0)
 #define STATUS_FAIL                                     _STATUS_TYPEDEF_(1)
