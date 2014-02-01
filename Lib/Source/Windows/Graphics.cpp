@@ -219,8 +219,12 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 		text->initialize(); // NEED TO CHECK IF IT FAILS HERE
 
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &text->aVertexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
-		DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_INDEX_MULTIPLIER);
+		//DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &text->aVertexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
+		//DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_INDEX_MULTIPLIER);
+
+		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &text->aVertexBuffer, 6);
+		DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, 6);
+		//DXUtils::CreateDefaultIndexBuffer(*aDevice, &text->aIndexBuffer, 6);
 
 		aTextFactory->setFont(fontInput);
 
@@ -248,7 +252,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	{
 		aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 		aTextFactory->renderText(text, sizeof(TextureVertex));
-		aTextureShader->renderShader(text->aNumIndices);
+		aTextureShader->renderShader();
 	}
 
 	//if (aQuadFactory->updateVertexBuffer(quadData, &xRect, aTextFactory->aCurrentFont->aFontTexture, false))

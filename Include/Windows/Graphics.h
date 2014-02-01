@@ -117,6 +117,7 @@ namespace A2D {
 		inline void Graphics::setClip(Rect * xClip, float xDepth)
 		{
 			aQuadFactory->setConstraints(aClip = xClip, xDepth);
+			aTextFactory->setConstraints(aClip = xClip, xDepth);
 		}
 	};
 }

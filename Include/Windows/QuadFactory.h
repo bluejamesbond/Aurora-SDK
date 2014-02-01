@@ -45,6 +45,8 @@ namespace A2D {
 
 	class QuadFactory
 	{
+
+		friend class TextFactory;
 	public:
 		
 		QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims);

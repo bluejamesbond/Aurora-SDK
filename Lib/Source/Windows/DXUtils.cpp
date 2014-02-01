@@ -161,6 +161,7 @@ STATUS DXUtils::CreateEmptyDynamicIndexBuffer(ID3D10Device * xDevice, ID3D10Buff
 	return STATUS_OK;
 }
 
+
 STATUS DXUtils::CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices)
 {
 	D3D10_BUFFER_DESC indexBufferDesc;

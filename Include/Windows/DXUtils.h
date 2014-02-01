@@ -75,6 +75,8 @@ namespace A2D {
 		static STATUS					CreateDefaultIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndices);
 
 		static STATUS					CreateEmptyDynamicIndexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xIndexBuffer, int xIndeces);
+
+
 		
 	};
 
