@@ -29,6 +29,7 @@
 #include "../Core/Font.h"
 
 #include "VertexTypes.h"
+#include "FontVertex.h"
 #include "BackBuffer.h"
 #include "ColoredTextureShader.h"
 #include "QuadExpansionShader.h"

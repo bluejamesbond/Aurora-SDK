@@ -30,6 +30,7 @@
 #include "Texture.h"
 #include "Text.h"
 #include "VertexTypes.h"
+#include "FontVertex.h"
 #include "QuadFactory.h"
 
 namespace A2D {
@@ -170,10 +171,15 @@ namespace A2D {
 			int indexV = 0;
 			int indexI = 0;
 
+			Rect& constraints = aConstraints;
 			float rectX = xRect->aX;
 			float rectY = xRect->aY;
 			float rectWidth = xRect->aWidth;
 			float rectHeight = xRect->aHeight;
+
+			float texWidth;
+			float texHeight;
+
 			float depth = aDepth;
 
 			float topTx, bottomTx, leftTx, rightTx,
@@ -184,7 +190,7 @@ namespace A2D {
 
 			//TextureVertex * vertices = new TextureVertex[xText->aNumVertices];
 			//unsigned long * indices = new unsigned long[xText->aNumIndices];
-			TextureVertex * vertices = new TextureVertex[6];
+			FontVertex * vertices = new FontVertex[4];
 			unsigned long * indices = new unsigned long[6];
 			void * mappedVertices = 0;
 			void * mappedIndices = 0;
@@ -202,9 +208,12 @@ namespace A2D {
 				baseWidth = FLOAT(font->aWidth);
 				baseHeight = FLOAT(font->aHeight);
 
-				width = currentWidth + width + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : width;
-				height = currentHeight + height + offsetY > boxHeight ? boxHeight - currentHeight - offsetY : height;
+				texWidth = width = currentWidth + width + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : width;
+				texHeight = height = currentHeight + height + offsetY > boxHeight ? boxHeight - currentHeight - offsetY : height;
 				//height = 20;
+
+				width *= 10;
+				height *= 10;
 
 				// Calculations.
 				left = rectX + offsetX;
@@ -212,65 +221,54 @@ namespace A2D {
 				right = left + width;
 				bottom = top - height;
 
-				left = -1;
-				top = 1;
-				right = 1;
-				bottom = -1;
+
+				//left = left / aConstraints.aWidth;
+				//top = top / aConstraints.aHeight;
+				//right = right / aConstraints.aWidth;
+				//bottom = bottom / aConstraints.aHeight;
+
+				left = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + left);
+				top = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + top);
+				right = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + right);
+				bottom = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + bottom);
+
+				//left = -1;
+				//top = 1;
+				//right = 1;
+				//bottom = -1;
+
+				baseWidth = baseHeight = 256;
 
 				leftTx = charX / baseWidth;
-				rightTx = (charX + width) / baseWidth;
+				rightTx = (charX + texWidth) / baseWidth;
 				topTx = charY / baseHeight;
-				bottomTx = (charY + height) / baseHeight;
+				bottomTx = (charY - texHeight) / baseHeight;
 
-				leftTx = 0.0f;
-				rightTx = 1.0f;
-				topTx = 0.0f;
-				bottomTx = 1.0f;
+				//leftTx = 0.0f;
+				//rightTx = 1.0f;
+				//topTx = 0.0f;
+				//bottomTx = 1.0f;
 
 				// Load vertex data.
-				//vertices[indexV].position = D3DXVECTOR3(left, top, depth);
-				//vertices[indexV++].texture = D3DXVECTOR2(leftTx, topTx);
+				vertices[indexV].position = D3DXVECTOR3(left, top, depth);
+				vertices[indexV++].texture = D3DXVECTOR2(leftTx, topTx);
 
-				//vertices[indexV].position = D3DXVECTOR3(left, bottom, depth);
-				//vertices[indexV++].texture = D3DXVECTOR2(leftTx, bottomTx);
+				vertices[indexV].position = D3DXVECTOR3(left, bottom, depth);
+				vertices[indexV++].texture = D3DXVECTOR2(leftTx, bottomTx);
 
-				//vertices[indexV].position = D3DXVECTOR3(right, top, depth);
-				//vertices[indexV++].texture = D3DXVECTOR2(rightTx, topTx);
+				vertices[indexV].position = D3DXVECTOR3(right, top, depth);
+				vertices[indexV++].texture = D3DXVECTOR2(rightTx, topTx);
 
-				//vertices[indexV].position = D3DXVECTOR3(right, bottom, depth);
-				//vertices[indexV++].texture = D3DXVECTOR2(rightTx, bottomTx);
+				vertices[indexV].position = D3DXVECTOR3(right, bottom, depth);
+				vertices[indexV++].texture = D3DXVECTOR2(rightTx, bottomTx);
 
 				// Load index data. Counter-clockwise triangles.
-				//indices[indexI++] = indexV - 1;
-				//indices[indexI++] = indexV - 2;
-				//indices[indexI++] = indexV - 3;
-				//indices[indexI++] = indexV - 2;
-				//indices[indexI++] = indexV - 1;
-				//indices[indexI++] = indexV;
-
-				for (int j = 0; j < 6; j += 1)
-				{
-					indices[j] = j;
-				}
-
-
-				vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
-				vertices[0].texture = D3DXVECTOR2(leftTx, topTx);
-
-				vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
-				vertices[1].texture = D3DXVECTOR2(rightTx, bottomTx);
-
-				vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
-				vertices[2].texture = D3DXVECTOR2(leftTx, bottomTx);
-
-				vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
-				vertices[3].texture = D3DXVECTOR2(leftTx, topTx);
-
-				vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
-				vertices[4].texture = D3DXVECTOR2(rightTx, topTx);
-
-				vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
-				vertices[5].texture = D3DXVECTOR2(rightTx, bottomTx);
+				indices[indexI++] = indexV - 2;
+				indices[indexI++] = indexV - 3;
+				indices[indexI++] = indexV - 4;
+				indices[indexI++] = indexV - 3;
+				indices[indexI++] = indexV - 2;
+				indices[indexI++] = indexV - 1;
 
 				break;
 
@@ -279,14 +277,14 @@ namespace A2D {
 
 				// Add measurements.
 				currentWidth += width + advanceX;
-				i = 20;
+				//i = 20;
 			}
 
 			// Map vertex and index buffers.
 			xText->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
-			//memcpy(mappedVertices, (void*)vertices, sizeof(TextureVertex)* xText->aNumVertices);
-			//memcpy(mappedVertices, (void*)vertices, sizeof(TextureVertex)* 6);
-			QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
+			//memcpy(mappedVertices, (void*)vertices, sizeof(FontVertex)* xText->aNumVertices);
+			memcpy(mappedVertices, (void*)vertices, sizeof(FontVertex)* 4);
+			//QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
 			xText->aVertexBuffer->Unmap();
 
 			xText->aIndexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedIndices));
