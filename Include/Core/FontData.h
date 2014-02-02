@@ -23,18 +23,18 @@ namespace A2D{
 
 	struct FontData
 	{
-		
-		unsigned short						aX;
-		unsigned short						aY;
-		unsigned short						aWidth;
-		unsigned short						aHeight;
-		unsigned short						aXOffset;
-		unsigned short						aYOffset;
-		unsigned short						aXAdvance;
-		unsigned short						aPage;
+
+		float                      aX;
+		float                      aY;
+		float                      aWidth;
+		float                      aHeight;
+		float                      aXOffset;
+		float                      aYOffset;
+		float                      aXAdvance;
+		float                      aPage;
 
 		FontData() : aX(0), aY(0), aWidth(0), aHeight(0), aXOffset(0), aYOffset(0),
-					 aXAdvance(0), aPage(0){}
+			aXAdvance(0), aPage(0){}
 	};
 }
 #endif

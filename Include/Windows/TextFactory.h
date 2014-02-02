@@ -166,7 +166,6 @@ namespace A2D {
 			float boxWidth = inputR->aWidth;
 			float boxHeight = inputR->aHeight;
 			float currentWidth = 0;
-			float currentHeight = boxHeight;
 			int inputLength = xText->aText.length();
 			int indexV = 0;
 			int indexI = 0;
@@ -186,12 +185,15 @@ namespace A2D {
 				top, bottom, left, right;
 
 			float charX, charY, width, height, offsetX, offsetY,
-				advanceX, baseWidth, baseHeight;
+				advanceX, baseWidth, baseHeight, scaledWidth, scaledHeight;
 
-			//TextureVertex * vertices = new TextureVertex[xText->aNumVertices];
-			//unsigned long * indices = new unsigned long[xText->aNumIndices];
-			FontVertex * vertices = new FontVertex[4];
-			unsigned long * indices = new unsigned long[6];
+			float shadowOffset = 1;
+			float pixelSize = 2;
+
+			FontVertex * vertices = new FontVertex[xText->aNumVertices];
+			unsigned long * indices = new unsigned long[xText->aNumIndices];
+			//FontVertex * vertices = new FontVertex[4];
+			//unsigned long * indices = new unsigned long[6];
 			void * mappedVertices = 0;
 			void * mappedIndices = 0;
 
@@ -208,19 +210,21 @@ namespace A2D {
 				baseWidth = FLOAT(font->aWidth);
 				baseHeight = FLOAT(font->aHeight);
 
-				texWidth = width = currentWidth + width + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : width;
-				texHeight = height = currentHeight + height + offsetY > boxHeight ? boxHeight - currentHeight - offsetY : height;
-				//height = 20;
+				scaledWidth = width * pixelSize;
+				scaledHeight = height * pixelSize;
+				advanceX *= pixelSize;
 
-				width *= 10;
-				height *= 10;
+				scaledWidth = currentWidth + scaledWidth + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : scaledWidth;
+				scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
+
+				texWidth = width;
+				texHeight = height;
 
 				// Calculations.
 				left = rectX + offsetX;
 				top = rectY - offsetY;
-				right = left + width;
-				bottom = top - height;
-
+				right = left + scaledWidth;
+				bottom = top + scaledHeight;
 
 				//left = left / aConstraints.aWidth;
 				//top = top / aConstraints.aHeight;
@@ -238,11 +242,14 @@ namespace A2D {
 				//bottom = -1;
 
 				baseWidth = baseHeight = 256;
+				
+				float modCharX = charX; // put the modified version here later
+				float modCharY = charY; // aka shadow offsets
 
-				leftTx = charX / baseWidth;
-				rightTx = (charX + texWidth) / baseWidth;
-				topTx = charY / baseHeight;
-				bottomTx = (charY - texHeight) / baseHeight;
+				leftTx = modCharX / baseWidth;
+				rightTx = (modCharX + texWidth) / baseWidth;
+				topTx = modCharY / baseHeight;
+				bottomTx = (modCharY + texHeight) / baseHeight;
 
 				//leftTx = 0.0f;
 				//rightTx = 1.0f;
@@ -275,21 +282,22 @@ namespace A2D {
 				// Prepare for next letter.
 				inputR->aX += advanceX;
 
+
 				// Add measurements.
-				currentWidth += width + advanceX;
+				//currentWidth += scaledWidth + advanceX;
 				//i = 20;
 			}
 
 			// Map vertex and index buffers.
 			xText->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
-			//memcpy(mappedVertices, (void*)vertices, sizeof(FontVertex)* xText->aNumVertices);
-			memcpy(mappedVertices, (void*)vertices, sizeof(FontVertex)* 4);
+			memcpy(mappedVertices, (void*)vertices, sizeof(FontVertex)* xText->aNumVertices);
+			//memcpy(mappedVertices, (void*)vertices, sizeof(FontVertex)* 4);
 			//QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
 			xText->aVertexBuffer->Unmap();
 
 			xText->aIndexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedIndices));
-			//memcpy(mappedIndices, (void*)indices, sizeof(unsigned long)* xText->aNumIndices);
-			memcpy(mappedIndices, (void*)indices, sizeof(unsigned long)* 6);
+			memcpy(mappedIndices, (void*)indices, sizeof(unsigned long)* xText->aNumIndices);
+			//memcpy(mappedIndices, (void*)indices, sizeof(unsigned long)* 6);
 			xText->aIndexBuffer->Unmap();
 
 			return true;

@@ -192,7 +192,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	// ~~~~~~~ Supposed inputs ~~~~~~~~~
 
-	string input = "oo";
+	string input = "W";
 	Fonts * fontInput = &Fonts::MUSEO;
 	QuadData<TextureVertex, 6> * quadData;
 

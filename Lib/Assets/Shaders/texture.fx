@@ -237,8 +237,12 @@ float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
 	float4 shadow, shadowTexel, shadowColor;
 	float SHADOW_OFFSET = 0.004;
 	float alphaShadowMaskDistance;
+	float2 s_f = input.tex.xy;
+	s_f.x -= SHADOW_OFFSET;
+	s_f.y += SHADOW_OFFSET;
 
-	shadowTexel = shaderTexture.Sample(SampleType, input.tex.xy + SHADOW_OFFSET);
+	//shadowTexel = shaderTexture.Sample(SampleType, input.tex.xy - SHADOW_OFFSET);
+	shadowTexel = shaderTexture.Sample(SampleType, s_f);
 	alphaShadowMaskDistance = shadow.a;
 	shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
 
@@ -252,7 +256,7 @@ float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
 	//shadow.a *= smoothstep(0.1, 1.0, shadow.a); // bigger gap on min and max to get blur effect.
 
 
-	shadow.a *= 0.8; // set opacity
+	shadow.a *= 0.67; // set opacity
 
 
 	base = lerp(shadow, base, base.a);
