@@ -46,7 +46,11 @@ namespace A2D {
 	class Easing;
 	
 	// Typedef interpolatables
-	typedef void (Component::*Interpolatable)(float);
+	typedef void (Component::*INTERPOLATABLEMUTATOR)(float);
+	typedef float (Component::*INTERPOLATABLEACCESSOR)(void);
+
+	// Typedef animation
+	typedef void** Animation;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
@@ -62,13 +66,11 @@ namespace A2D {
 
         Component();
         ~Component();
-
-    private:
-
+		
 		struct Interpolator
 		{
 			Tween m_tween;
-			Interpolatable m_interpolatable;
+			INTERPOLATABLEMUTATOR m_interpolatable;
 
 			int m_startTime;
 
@@ -87,7 +89,32 @@ namespace A2D {
 			{
 			}
 		};
-		
+
+		struct Floater
+		{
+			INTERPOLATABLEMUTATOR m_mutator;
+			INTERPOLATABLEACCESSOR m_accessor;
+
+			float m_max;
+			float m_min;
+
+			Floater() :
+				m_max(0.0f),
+				m_min(0.0f)
+			{
+			}
+
+			Floater(INTERPOLATABLEACCESSOR x_accessor, INTERPOLATABLEMUTATOR x_mutator, float x_min, float x_max) :
+				m_mutator(x_mutator),
+				m_accessor(x_accessor),
+				m_min(x_min),
+				m_max(x_max)
+			{
+			}
+		};
+
+	private:
+
 		bool                        m_forcedBounds;
         bool                        m_focused;
         bool                        m_focusable;
@@ -127,9 +154,10 @@ namespace A2D {
 
     public:
 
-		static Interpolatable		INTERPOLATE_OPACITY;
+		static Floater				INTERPOLATE_OPACITY;
 		
-		void						animate(Interpolatable xInterpolatable, Tween x_tween, float x_start, float x_range, int x_period);
+		Animation					animate(Floater x_floater, Tween x_tween, float x_to, int x_period);
+		void						cancelAnimation(Animation x_animation);
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
 		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
@@ -146,6 +174,8 @@ namespace A2D {
 		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
         void                        setFocusable(bool xFocusable);
 		void						setOpacity(float x_opacity);
+
+		inline float				getOpacity() { return m_styleSet.m_opacity; }
 
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);

@@ -5,7 +5,7 @@
 
 using namespace A2D;
 
-Interpolatable Component::INTERPOLATE_OPACITY = &Component::setOpacity;
+Component::Floater Component::INTERPOLATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
 
 Component::Component() :
     m_forcedBounds(false),
@@ -43,7 +43,6 @@ void Component::interpolate()
 	{
 		float duration, interpolated;
 		Interpolator * interpolator = node->value;
-		Interpolatable interpolatable = interpolator->m_interpolatable;
 
 		// Save the next node
 		node = node->right;
@@ -55,7 +54,7 @@ void Component::interpolate()
 		if (duration > interpolator->m_period)
 		{
 			// Force end 
-			(this->*interpolatable)(interpolator->m_start + interpolator->m_range);
+			(this->*interpolator->m_interpolatable)(interpolator->m_start + interpolator->m_range);
 
 			// Remove from list
 			m_interpolators.remove_request(&interpolator->m_removeTicket);
@@ -63,7 +62,7 @@ void Component::interpolate()
 		// OR Update the value
 		else
 		{
-			(this->*interpolatable)(interpolated);
+			(this->*interpolator->m_interpolatable)(interpolated);
 		}
 	}
 
@@ -78,15 +77,15 @@ void Component::interpolate()
 	}
 }
 
-void Component::animate(Interpolatable xInterpolatable, Tween x_tween, float x_start, float x_range, int x_period)
+Animation Component::animate(Floater x_floater, Tween x_tween, float x_to, int x_period)
 {
 	Interpolator * interpolator = new Interpolator();
 
-	interpolator->m_interpolatable = xInterpolatable;
+	interpolator->m_interpolatable = x_floater.m_mutator;
 	interpolator->m_tween = x_tween;
 	interpolator->m_startTime = kerneltimelp__; // current time
-	interpolator->m_start = x_start;
-	interpolator->m_range = x_range;
+	interpolator->m_start = (this->*x_floater.m_accessor)();
+	interpolator->m_range = x_to - interpolator->m_start;
 	interpolator->m_period = SFLOAT(x_period);
 
 	m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
@@ -96,6 +95,13 @@ void Component::animate(Interpolatable xInterpolatable, Tween x_tween, float x_s
 	#ifdef A2D_DE__			
 	SYSOUT_F("[Component] [ComponentId: 0x%X] Adding interpolator.", m_id);
 	#endif // A2D_DE__
+
+	return &interpolator->m_removeTicket;
+}
+
+void Component::cancelAnimation(Animation x_animation)
+{
+	m_interpolators.remove_request(x_animation);
 }
 
 Component& Component::getParent()

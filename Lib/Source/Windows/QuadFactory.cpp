@@ -32,7 +32,6 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 
 	QuadExpansionVertex * vertices = x_quadData->aVertices;
 
-
 	//------------------------------------------------------------------------------
 	// WARNING: No repeat with textureClip
 	//------------------------------------------------------------------------------
@@ -101,7 +100,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		if (x_renderSet.m_backgroundStyle.m_layout == Style::Background::Layout::COVER)
 		{
 			float resizeVFactor = 1.0,
-				resizeHFactor = 1.0;
+				  resizeHFactor = 1.0;
 
 			// Discrete Point of Interest 
 			// Proportional Strech Algorithm - @author MK
