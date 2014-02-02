@@ -30,11 +30,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 
 	unsigned int
 		width,
-		height,
-		borderLeft,
-		borderTop,
-		borderRight,
-		borderBottom;
+		height;
 
 	Style::Display display;
 	Style::Position position;
@@ -92,10 +88,10 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			A2DDISTANCESET4& borderWidths = component->m_styleSet.m_borders.m_borderWidths;
 			A2DPIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
-			borderLeft = precalculatedBorderWidths.m_left = SUINT(cvtsu2px__(borderWidths.m_leftUnits, borderWidths.m_left, compWidth));
-			borderTop = precalculatedBorderWidths.m_top = SUINT(cvtsu2px__(borderWidths.m_topUnits, borderWidths.m_top, compHeight));
-			borderRight = precalculatedBorderWidths.m_right = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_bottom, compHeight));
-			borderBottom = precalculatedBorderWidths.m_bottom = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_right, compWidth));
+			precalculatedBorderWidths.m_left = SUINT(cvtsu2px__(borderWidths.m_leftUnits, borderWidths.m_left, compWidth));
+			precalculatedBorderWidths.m_top = SUINT(cvtsu2px__(borderWidths.m_topUnits, borderWidths.m_top, compHeight));
+			precalculatedBorderWidths.m_right = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_bottom, compHeight));
+			precalculatedBorderWidths.m_bottom = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_right, compWidth));
 
 			A2DDISTANCESET4& borderRadii = component->m_styleSet.m_borderRadii;
 			A2DPIXELDISTANCESETUINT4& precalculatedBorderRadii = component->m_styleSet.m_precalculatedBorderRadii;
@@ -135,13 +131,6 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			positionTop = precalculatedPositioning.m_top;
 			positionRight = precalculatedPositioning.m_right;
 			positionBottom = precalculatedPositioning.m_bottom;
-
-			A2DPIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
-
-			borderLeft = precalculatedBorderWidths.m_left;
-			borderTop = precalculatedBorderWidths.m_top;
-			borderRight = precalculatedBorderWidths.m_right;
-			borderBottom = precalculatedBorderWidths.m_bottom;
 		}
 
 		if (position == Style::RELATIVE_)

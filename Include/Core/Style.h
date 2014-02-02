@@ -52,7 +52,7 @@ namespace A2D{
 			PIXEL,
 			PERCENTAGE
 		};
-
+		
 		static float AUTO;
 		
 		struct Background

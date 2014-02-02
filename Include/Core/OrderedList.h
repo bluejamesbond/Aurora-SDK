@@ -86,7 +86,7 @@ namespace A2D{
 		template <class U>
 		struct Node
 		{
-			U value; // Let the compiler set this
+			U value = NULL; // Let the compiler set this
 			Node<U> * left = NULL; // Let the compiler set this
 			Node<U> * right = NULL; // Let the compiler set this
 

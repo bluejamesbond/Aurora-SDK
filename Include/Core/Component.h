@@ -44,6 +44,12 @@ namespace A2D {
     struct ImageProperties;
     class ComponentManager;
 
+	// Easing function callback
+	typedef float(*Tween)(float, float, float, float);
+
+	// Typedef interpolatables
+	typedef void (Component::*Interpolatable)(float);
+
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
@@ -61,14 +67,37 @@ namespace A2D {
 
     private:
 
+		struct Interpolator
+		{
+			Tween m_tween;
+			Interpolatable m_interpolatable;
 
-        bool                        m_forcedBounds;
+			int m_startTime;
+
+			float m_period;
+			float m_range;
+			float m_start;
+
+			void * m_removeTicket;
+
+			Interpolator() :
+				m_range(0.0f),
+				m_start(0.0f),
+				m_period(0),
+				m_startTime(0),
+				m_removeTicket(NULL)
+			{
+			}
+		};
+		
+		bool                        m_forcedBounds;
         bool                        m_focused;
         bool                        m_focusable;
 
         AbstractFrame*              m_frame;
         Component*                  m_parent;
-        OrderedList<Component*>     m_children;
+		OrderedList<Component*>     m_children;
+		OrderedList<Interpolator*>  m_interpolators;
         ComponentManager*           m_componentManager;
 
         Component*                  m_nextCompListener;
@@ -79,6 +108,7 @@ namespace A2D {
 		int							m_id;
 
 		bool                        m_validatedContents;
+		bool						m_activeInterpolations;
 		bool						m_componentTreeValidationRequest;
 		
         float                       m_calculatedNegativeDeltaX;
@@ -98,7 +128,41 @@ namespace A2D {
 		Graphics*                   m_graphics;    
 
     public:
-        
+
+		static Interpolatable		INTERPOLATE_OPACITY;
+
+		static Tween                TWEEN_IN_QUAD;
+		static Tween                TWEEN_OUT_QUAD;
+		static Tween                TWEEN_IN_OUT_QUAD;
+		static Tween                TWEEN_IN_CUBIC;
+		static Tween                TWEEN_OUT_CUBIC;
+		static Tween                TWEEN_IN_OUT_CUBIC;
+		static Tween                TWEEN_IN_QUART;
+		static Tween                TWEEN_OUT_QUART;
+		static Tween                TWEEN_IN_OUT_QUART;
+		static Tween                TWEEN_INT_QUINT;
+		static Tween                TWEEN_OUT_QUINT;
+		static Tween                TWEEN_IN_OUT_QUINT;
+		static Tween                TWEEN_IN_SINE;
+		static Tween                TWEEN_OUT_SINE;
+		static Tween                TWEEN_IN_OUT_SINE;
+		static Tween                TWEEN_IN_EXPO;
+		static Tween                TWEEN_OUT_EXPO;
+		static Tween                TWEEN_IN_OUT_EXPO;
+		static Tween                TWEEN_IN_CIRC;
+		static Tween                TWEEN_OUT_CIRC;
+		static Tween                TWEEN_IN_OUT_CIRC;
+		static Tween                TWEEN_IN_ELASTIC;
+		static Tween                TWEEN_OUT_ELASTIC;
+		static Tween                TWEEN_IN_OUT_ELASTIC;
+		static Tween                TWEEN_IN_BACK;
+		static Tween                TWEEN_OUT_BACK;
+		static Tween                TWEEN_IN_OUT_BACK;
+		static Tween                TWEEN_IN_BOUNCE;
+		static Tween                TWEEN_OUT_BOUNCE;
+		static Tween                TWEEN_IN_OUT_BOUNCE;
+
+		void						animate(Interpolatable xInterpolatable, Tween x_tween, float x_start, float x_range, int x_period);
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
 		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
@@ -114,7 +178,8 @@ namespace A2D {
 		void                        setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
 		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
         void                        setFocusable(bool xFocusable);
-  
+		void						setOpacity(float x_opacity);
+
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);
         STATUS                      addMouseMotionListener(MouseMotionListener * xListener);
@@ -122,14 +187,14 @@ namespace A2D {
         STATUS                      addActionListener(ActionListener * xListener);
 
         void                        update();
-        void                        validate();
+
         void                        revalidate();
         void                        validated();
         void                        invalidate();
         void                        add(Component& xComponent);
         void                        remove(Component& xComponent);
         void                        forceBounds(bool xForce);
-        virtual STATUS              initialize();  
+        STATUS						initialize();  
 
 		int							getDepth();
         Graphics&                   getGraphics();
@@ -145,6 +210,9 @@ namespace A2D {
         bool                        isDoubleBuffered();     
 
 	private:
+
+		void						interpolate();
+		void                        validate();
 
 		void                        setDepth(int xDepth);
 		void                        setGraphics(Graphics& xGraphics);

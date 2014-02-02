@@ -41,7 +41,7 @@ typedef unsigned int STATUS;
 
 // Enable/Disable debugging
 //------------------------------------------------------------------------------
-// #define A2D_DE__                                        "Comment out this line to remove debugging."
+#define A2D_DE__                                        "Comment out this line to remove debugging."
 
 // Readability macros
 //------------------------------------------------------------------------------

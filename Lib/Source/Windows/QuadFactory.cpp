@@ -194,7 +194,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating opacity/depth.", *x_renderSet.m_id);
 		#endif // A2D_DE__
 
-		vertices[0].aOptions = D3DXVECTOR4(x_renderSet.m_opacity, 0.0f, aDepth, 1.0f);
+		vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, aDepth, x_renderSet.m_opacity);
 
 		x_renderSet.m_dirtyOpacityDepth = false;
 	}

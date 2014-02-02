@@ -132,7 +132,7 @@ void ComponentManager::updateBottomToTop()
 
 	backBuffer->setActive();
 	backBuffer->clear();
-	backBuffer->setZBuffer(false);
+//	backBuffer->setZBuffer(false);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.iterator();

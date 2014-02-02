@@ -308,6 +308,9 @@ STATUS BackBuffer::initialize()
 	// Set the type of primitive that should be 
 	// rendered from this vertex buffer, in this case triangles.
 	device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
+	// Set Z Buffer off default
+	setZBuffer(false);
 
 	return STATUS_OK;
 }

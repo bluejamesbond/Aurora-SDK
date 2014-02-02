@@ -5,6 +5,40 @@
 
 using namespace A2D;
 
+Interpolatable Component::INTERPOLATE_OPACITY = &Component::setOpacity;
+
+Tween Component::TWEEN_IN_QUAD = &Easing::inQuad;
+Tween Component::TWEEN_OUT_QUAD = &Easing::outQuad;
+Tween Component::TWEEN_IN_OUT_QUAD = &Easing::inOutQuad;
+Tween Component::TWEEN_IN_CUBIC = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_CUBIC = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_CUBIC = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_QUART = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_QUART = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_QUART = &Easing::inOutBounce;
+Tween Component::TWEEN_INT_QUINT = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_QUINT = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_QUINT = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_SINE = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_SINE = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_SINE = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_EXPO = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_EXPO = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_EXPO = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_CIRC = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_CIRC = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_CIRC = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_ELASTIC = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_ELASTIC = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_ELASTIC = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_BACK = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_BACK = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_BACK = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_BOUNCE = &Easing::inOutBounce;
+Tween Component::TWEEN_OUT_BOUNCE = &Easing::inOutBounce;
+Tween Component::TWEEN_IN_OUT_BOUNCE = &Easing::inOutBounce;
+
+
 Component::Component() :
     m_forcedBounds(false),
     m_parent(NULL),
@@ -17,6 +51,7 @@ Component::Component() :
     m_focusable(true),
     m_nextCompListener(NULL),
 	m_prevCompListener(NULL),
+	m_activeInterpolations(false),
 	m_componentTreeValidationRequest(false)
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
@@ -30,6 +65,66 @@ Component::Component() :
 Component::~Component(){}
 
 void Component::paintComponentBorder(){}
+
+void Component::interpolate()
+{
+	OrderedList<Interpolator*>::Node<Interpolator*> * node = m_interpolators._head();
+	int currentTime = kerneltimelp__;
+
+	while (node->value)
+	{
+		float duration, interpolated;
+		Interpolator * interpolator = node->value;
+		Interpolatable interpolatable = interpolator->m_interpolatable;
+
+		// Save the next node
+		node = node->right;
+
+		// Interpolate value
+		interpolated = interpolator->m_tween(duration = SFLOAT(currentTime - interpolator->m_startTime), interpolator->m_start, interpolator->m_range, interpolator->m_period);
+
+		// Remove the node
+		if (duration > interpolator->m_period)
+		{
+			// Force end 
+			(this->*interpolatable)(interpolator->m_start + interpolator->m_range);
+
+			// Remove from list
+			m_interpolators.remove_request(&interpolator->m_removeTicket);
+		}
+		// OR Update the value
+		else
+		{
+			(this->*interpolatable)(interpolated);
+		}
+	}
+
+	// Remaining interpolators?
+	if (m_interpolators.size() == 0)
+	{
+		m_activeInterpolations = false;
+
+		#ifdef A2D_DE__			
+		SYSOUT_F("[Component] [ComponentId: 0x%X] Turning off interpolators.", m_id);
+		#endif // A2D_DE__
+	}
+}
+
+void Component::animate(Interpolatable xInterpolatable, Tween x_tween, float x_start, float x_range, int x_period)
+{
+	Interpolator * interpolator = new Interpolator();
+
+	interpolator->m_interpolatable = xInterpolatable;
+	interpolator->m_tween = x_tween;
+	interpolator->m_startTime = kerneltimelp__; // current time
+	interpolator->m_start = x_start;
+	interpolator->m_range = x_range;
+	interpolator->m_period = SFLOAT(x_period);
+
+	m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
+
+	m_activeInterpolations = true;
+}
 
 Component& Component::getParent()
 {
@@ -318,6 +413,11 @@ void Component::update()
 {
     Graphics& graphics = *m_graphics;
 
+	if (m_activeInterpolations)
+	{
+		interpolate();
+	}
+
     if (!m_validatedContents)
     {
         validate();
@@ -482,8 +582,14 @@ void Component::setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Uni
 	bordersWidths.m_bottom = xBottom;
 	bordersWidths.m_right = xRight;
 
-	m_validatedContents = false;
 	m_styleSet.markBorderWidthsAsDirty();
+}
+
+void Component::setOpacity(float x_opacity)
+{
+	m_styleSet.m_opacity = x_opacity;
+
+	m_styleSet.markOpacityAsDirty();
 }
 
 void Component::setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)

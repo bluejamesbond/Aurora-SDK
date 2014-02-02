@@ -121,11 +121,13 @@ inline float4 get_euclidean_dist_color(float4 color, float radius, float2 coordi
 
 	if (euclideanDist > radius)
 	{
-		color.a = 0.0f;
-
 		if (euclideanDist < (radius + ANTIALIAS_DISTANCE))
 		{
-			color.a = 1 - smoothstep(radius - ANTIALIAS_DISTANCE, radius + ANTIALIAS_DISTANCE, euclideanDist);
+			color.a *= 1.0f - smoothstep(radius - ANTIALIAS_DISTANCE, radius + ANTIALIAS_DISTANCE, euclideanDist);
+		}
+		else
+		{
+			color.a = 0.0f;
 		}
 
 		return color;
@@ -158,6 +160,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float widthPixel = input[0].optionsSet2[0];
 	float heightPixel = input[0].optionsSet2[1];
 
+	float opacity = input[0].options[3];
+
 	float left = input[0].position[0];
 	float top = input[0].position[1];
 	float right = left + width;
@@ -175,13 +179,16 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 borderRightColor = argb_to_float4(input[0].borderColors[2]);
 	float4 borderBottomColor = argb_to_float4(input[0].borderColors[3]);
 
+	borderLeftColor.a *= opacity;
+	borderTopColor.a *= opacity;
+	borderRightColor.a *= opacity;
+	borderBottomColor.a *= opacity;
+
 	bool hasLeftBorder = borderLeftWidth > 0.0f;
 	bool hasTopBorder = borderTopWidth > 0.0f;
 	bool hasRightBorder = borderRightWidth > 0.0f;
 	bool hasBottomBorder = borderBottomWidth > 0.0f;
-
-	float opacity = input[0].options[3];
-	
+		
 	float4 borderRadii = input[0].borderRadii;
 
 	float4 borderRadiiSet1 = float4(borderRadii[0], borderRadii[0], borderRadii[1], borderRadii[1]); //TopLeft TopRight
@@ -462,6 +469,9 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 	else if (isColorTex == 1.0) // Texture only
 	{
 		float4 color = shaderTexture.Sample(SampleType, float2(input.colorTex[0], input.colorTex[1]));
+
+		// Adjust opacity
+		color.a *= opacity;
 
 		float rawPixelX = input.rawPixel[0];
 		float rawPixelY = input.rawPixel[1];

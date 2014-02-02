@@ -309,13 +309,10 @@ void AbstractFrame::update()
 	{
 		aComponentManager->validate();
 		
-		aComponentManager->updateBottomToTop();
-
 		aValidatedContents = true;
-
-		return;
 	}
 
-	// FIXME
+	// NVIDIA wants us to use bottom to top
+	// and remove depth buffer testing
 	aComponentManager->updateBottomToTop();
 }
