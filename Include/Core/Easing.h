@@ -26,7 +26,7 @@
 namespace A2D {
 
 	// Easing function callback
-	typedef float (*Tween)(float, float, float, float);
+	typedef float (*TWEEN)(float, float, float, float);
 
 	class Easing
 	{
@@ -39,36 +39,36 @@ namespace A2D {
 
 	public:	
 		
-		static Tween                IN_QUAD;
-		static Tween                OUT_QUAD;
-		static Tween                IN_OUT_QUAD;
-		static Tween                IN_CUBIC;
-		static Tween                OUT_CUBIC;
-		static Tween                IN_OUT_CUBIC;
-		static Tween                IN_QUART;
-		static Tween                OUT_QUART;
-		static Tween                IN_OUT_QUART;
-		static Tween                INT_QUINT;
-		static Tween                OUT_QUINT;
-		static Tween                IN_OUT_QUINT;
-		static Tween                IN_SINE;
-		static Tween                OUT_SINE;
-		static Tween                IN_OUT_SINE;
-		static Tween                IN_EXPO;
-		static Tween                OUT_EXPO;
-		static Tween                IN_OUT_EXPO;
-		static Tween                IN_CIRC;
-		static Tween                OUT_CIRC;
-		static Tween                IN_OUT_CIRC;
-		static Tween                IN_ELASTIC;
-		static Tween                OUT_ELASTIC;
-		static Tween                IN_OUT_ELASTIC;
-		static Tween                IN_BACK;
-		static Tween                OUT_BACK;
-		static Tween                IN_OUT_BACK;
-		static Tween                IN_BOUNCE;
-		static Tween                OUT_BOUNCE;
-		static Tween                IN_OUT_BOUNCE;
+		static TWEEN                IN_QUAD;
+		static TWEEN                OUT_QUAD;
+		static TWEEN                IN_OUT_QUAD;
+		static TWEEN                IN_CUBIC;
+		static TWEEN                OUT_CUBIC;
+		static TWEEN                IN_OUT_CUBIC;
+		static TWEEN                IN_QUART;
+		static TWEEN                OUT_QUART;
+		static TWEEN                IN_OUT_QUART;
+		static TWEEN                INT_QUINT;
+		static TWEEN                OUT_QUINT;
+		static TWEEN                IN_OUT_QUINT;
+		static TWEEN                IN_SINE;
+		static TWEEN                OUT_SINE;
+		static TWEEN                IN_OUT_SINE;
+		static TWEEN                IN_EXPO;
+		static TWEEN                OUT_EXPO;
+		static TWEEN                IN_OUT_EXPO;
+		static TWEEN                IN_CIRC;
+		static TWEEN                OUT_CIRC;
+		static TWEEN                IN_OUT_CIRC;
+		static TWEEN                IN_ELASTIC;
+		static TWEEN                OUT_ELASTIC;
+		static TWEEN                IN_OUT_ELASTIC;
+		static TWEEN                IN_BACK;
+		static TWEEN                OUT_BACK;
+		static TWEEN                IN_OUT_BACK;
+		static TWEEN                IN_BOUNCE;
+		static TWEEN                OUT_BOUNCE;
+		static TWEEN                IN_OUT_BOUNCE;
 
 	private:
 

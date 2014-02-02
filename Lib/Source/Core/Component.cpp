@@ -5,7 +5,8 @@
 
 using namespace A2D;
 
-Component::Floater Component::INTERPOLATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
+Component::Floater Component::ANIMATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
+Component::Floater Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, 1.0f);
 
 Component::Component() :
     m_forcedBounds(false),
@@ -56,6 +57,12 @@ void Component::interpolate()
 			// Force end 
 			(this->*interpolator->m_interpolatable)(interpolator->m_start + interpolator->m_range);
 
+			// Execute callback
+			if (interpolator->m_callback)
+			{
+				(*interpolator->m_callback)(interpolator->m_arg);
+			}
+
 			// Remove from list
 			m_interpolators.remove_request(&interpolator->m_removeTicket);
 		}
@@ -77,7 +84,7 @@ void Component::interpolate()
 	}
 }
 
-Animation Component::animate(Floater x_floater, Tween x_tween, float x_to, int x_period)
+Animation Component::animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg)
 {
 	Interpolator * interpolator = new Interpolator();
 
@@ -87,6 +94,8 @@ Animation Component::animate(Floater x_floater, Tween x_tween, float x_to, int x
 	interpolator->m_start = (this->*x_floater.m_accessor)();
 	interpolator->m_range = x_to - interpolator->m_start;
 	interpolator->m_period = SFLOAT(x_period);
+	interpolator->m_callback = x_callback;
+	interpolator->m_arg = x_arg;
 
 	m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
 
@@ -99,7 +108,7 @@ Animation Component::animate(Floater x_floater, Tween x_tween, float x_to, int x
 	return &interpolator->m_removeTicket;
 }
 
-void Component::cancelAnimation(Animation x_animation)
+void Component::stop(Animation x_animation, bool x_arg)
 {
 	m_interpolators.remove_request(x_animation);
 }
@@ -299,6 +308,20 @@ void Component::setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHe
 	size.m_heightUnits = xHeightUnits;
 	size.m_width = xWidth;
 	size.m_height = xHeight;
+
+	m_validatedContents = false;
+}
+
+void Component::setWidth(float x_width)
+{
+	m_styleSet.m_size.m_width = x_width;
+
+	m_validatedContents = false;
+}
+
+void Component::setWidthUnits(Style::Units x_units)
+{
+	m_styleSet.m_size.m_widthUnits = x_units;
 
 	m_validatedContents = false;
 }

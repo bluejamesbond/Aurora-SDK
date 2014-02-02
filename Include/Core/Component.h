@@ -48,6 +48,7 @@ namespace A2D {
 	// Typedef interpolatables
 	typedef void (Component::*INTERPOLATABLEMUTATOR)(float);
 	typedef float (Component::*INTERPOLATABLEACCESSOR)(void);
+	typedef void(*CALLBACK_)(void*);
 
 	// Typedef animation
 	typedef void** Animation;
@@ -69,8 +70,9 @@ namespace A2D {
 		
 		struct Interpolator
 		{
-			Tween m_tween;
+			TWEEN m_tween;
 			INTERPOLATABLEMUTATOR m_interpolatable;
+			CALLBACK_ m_callback;
 
 			int m_startTime;
 
@@ -78,6 +80,7 @@ namespace A2D {
 			float m_range;
 			float m_start;
 
+			void * m_arg;
 			void * m_removeTicket;
 
 			Interpolator() :
@@ -154,10 +157,12 @@ namespace A2D {
 
     public:
 
-		static Floater				INTERPOLATE_OPACITY;
+		static Floater				ANIMATE_OPACITY;
+		static Floater				ANIMATE_WIDTH;
 		
-		Animation					animate(Floater x_floater, Tween x_tween, float x_to, int x_period);
-		void						cancelAnimation(Animation x_animation);
+		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
+		void						stop(Animation x_animation, bool x_callback);
+		
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
 		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
@@ -173,8 +178,12 @@ namespace A2D {
 		void                        setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
 		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
         void                        setFocusable(bool xFocusable);
-		void						setOpacity(float x_opacity);
 
+		void						setWidthUnits(Style::Units x_units);
+		void						setWidth(float x_width);
+		inline float				getWidth() { return m_styleSet.m_size.m_width; }
+
+		void						setOpacity(float x_opacity);
 		inline float				getOpacity() { return m_styleSet.m_opacity; }
 
         STATUS                      requestFocus();
