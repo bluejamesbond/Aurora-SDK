@@ -108,7 +108,7 @@ void MouseListener::mouseEntered(MouseEvent * xEvent)
 	#endif // A2D_DE__
 
 	Component * source = static_cast<Component*>(xEvent->getSource());
-	source->animate(Component::INTERPOLATE_OPACITY, Easing::IN_QUAD, 0, 1.0f, 1000);
+	source->animate(Component::INTERPOLATE_OPACITY, Easing::IN_QUAD, 0, 1.0f, 200);
 	xEvent->setConsumed(true);
 }
 
