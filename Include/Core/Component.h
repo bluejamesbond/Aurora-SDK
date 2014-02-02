@@ -43,10 +43,8 @@ namespace A2D {
     class Component;
     struct ImageProperties;
     class ComponentManager;
-
-	// Easing function callback
-	typedef float(*Tween)(float, float, float, float);
-
+	class Easing;
+	
 	// Typedef interpolatables
 	typedef void (Component::*Interpolatable)(float);
 
@@ -130,38 +128,7 @@ namespace A2D {
     public:
 
 		static Interpolatable		INTERPOLATE_OPACITY;
-
-		static Tween                TWEEN_IN_QUAD;
-		static Tween                TWEEN_OUT_QUAD;
-		static Tween                TWEEN_IN_OUT_QUAD;
-		static Tween                TWEEN_IN_CUBIC;
-		static Tween                TWEEN_OUT_CUBIC;
-		static Tween                TWEEN_IN_OUT_CUBIC;
-		static Tween                TWEEN_IN_QUART;
-		static Tween                TWEEN_OUT_QUART;
-		static Tween                TWEEN_IN_OUT_QUART;
-		static Tween                TWEEN_INT_QUINT;
-		static Tween                TWEEN_OUT_QUINT;
-		static Tween                TWEEN_IN_OUT_QUINT;
-		static Tween                TWEEN_IN_SINE;
-		static Tween                TWEEN_OUT_SINE;
-		static Tween                TWEEN_IN_OUT_SINE;
-		static Tween                TWEEN_IN_EXPO;
-		static Tween                TWEEN_OUT_EXPO;
-		static Tween                TWEEN_IN_OUT_EXPO;
-		static Tween                TWEEN_IN_CIRC;
-		static Tween                TWEEN_OUT_CIRC;
-		static Tween                TWEEN_IN_OUT_CIRC;
-		static Tween                TWEEN_IN_ELASTIC;
-		static Tween                TWEEN_OUT_ELASTIC;
-		static Tween                TWEEN_IN_OUT_ELASTIC;
-		static Tween                TWEEN_IN_BACK;
-		static Tween                TWEEN_OUT_BACK;
-		static Tween                TWEEN_IN_OUT_BACK;
-		static Tween                TWEEN_IN_BOUNCE;
-		static Tween                TWEEN_OUT_BOUNCE;
-		static Tween                TWEEN_IN_OUT_BOUNCE;
-
+		
 		void						animate(Interpolatable xInterpolatable, Tween x_tween, float x_start, float x_range, int x_period);
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);

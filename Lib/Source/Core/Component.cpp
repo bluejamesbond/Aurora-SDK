@@ -7,38 +7,6 @@ using namespace A2D;
 
 Interpolatable Component::INTERPOLATE_OPACITY = &Component::setOpacity;
 
-Tween Component::TWEEN_IN_QUAD = &Easing::inQuad;
-Tween Component::TWEEN_OUT_QUAD = &Easing::outQuad;
-Tween Component::TWEEN_IN_OUT_QUAD = &Easing::inOutQuad;
-Tween Component::TWEEN_IN_CUBIC = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_CUBIC = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_CUBIC = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_QUART = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_QUART = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_QUART = &Easing::inOutBounce;
-Tween Component::TWEEN_INT_QUINT = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_QUINT = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_QUINT = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_SINE = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_SINE = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_SINE = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_EXPO = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_EXPO = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_EXPO = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_CIRC = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_CIRC = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_CIRC = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_ELASTIC = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_ELASTIC = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_ELASTIC = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_BACK = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_BACK = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_BACK = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_BOUNCE = &Easing::inOutBounce;
-Tween Component::TWEEN_OUT_BOUNCE = &Easing::inOutBounce;
-Tween Component::TWEEN_IN_OUT_BOUNCE = &Easing::inOutBounce;
-
-
 Component::Component() :
     m_forcedBounds(false),
     m_parent(NULL),
@@ -124,6 +92,10 @@ void Component::animate(Interpolatable xInterpolatable, Tween x_tween, float x_s
 	m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
 
 	m_activeInterpolations = true;
+
+	#ifdef A2D_DE__			
+	SYSOUT_F("[Component] [ComponentId: 0x%X] Adding interpolator.", m_id);
+	#endif // A2D_DE__
 }
 
 Component& Component::getParent()

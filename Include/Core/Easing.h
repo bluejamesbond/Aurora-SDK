@@ -24,7 +24,10 @@
 #include "ExtLibs.h"
 
 namespace A2D {
-	
+
+	// Easing function callback
+	typedef float (*Tween)(float, float, float, float);
+
 	class Easing
 	{
 		// Cheat sheet
@@ -34,7 +37,40 @@ namespace A2D {
 		// c - total_change
 		// d - duration
 
-	public:		
+	public:	
+		
+		static Tween                IN_QUAD;
+		static Tween                OUT_QUAD;
+		static Tween                IN_OUT_QUAD;
+		static Tween                IN_CUBIC;
+		static Tween                OUT_CUBIC;
+		static Tween                IN_OUT_CUBIC;
+		static Tween                IN_QUART;
+		static Tween                OUT_QUART;
+		static Tween                IN_OUT_QUART;
+		static Tween                INT_QUINT;
+		static Tween                OUT_QUINT;
+		static Tween                IN_OUT_QUINT;
+		static Tween                IN_SINE;
+		static Tween                OUT_SINE;
+		static Tween                IN_OUT_SINE;
+		static Tween                IN_EXPO;
+		static Tween                OUT_EXPO;
+		static Tween                IN_OUT_EXPO;
+		static Tween                IN_CIRC;
+		static Tween                OUT_CIRC;
+		static Tween                IN_OUT_CIRC;
+		static Tween                IN_ELASTIC;
+		static Tween                OUT_ELASTIC;
+		static Tween                IN_OUT_ELASTIC;
+		static Tween                IN_BACK;
+		static Tween                OUT_BACK;
+		static Tween                IN_OUT_BACK;
+		static Tween                IN_BOUNCE;
+		static Tween                OUT_BOUNCE;
+		static Tween                IN_OUT_BOUNCE;
+
+	private:
 
 		template<class T>
 		inline static T inQuad(T t, T b, T c, T d) {
