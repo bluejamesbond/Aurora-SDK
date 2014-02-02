@@ -95,8 +95,8 @@ void MouseListener::mouseExited(MouseEvent * xEvent)
 	SYSOUT_STR("[MouseListener] Handling exited.");
 	#endif // A2D_DE__
 
-	Component * source = (Component*)xEvent->getSource();
-	source->animate(Component::INTERPOLATE_OPACITY, Easing::OUT_QUAD, 1.0f, 0, 1000);
+	Component * source = static_cast<Component*>(xEvent->getSource());
+	source->animate(Component::INTERPOLATE_OPACITY, Easing::OUT_QUAD, 1.0f, -1.0f, 1000);
 	xEvent->setConsumed(true);
 }
 
@@ -107,7 +107,7 @@ void MouseListener::mouseEntered(MouseEvent * xEvent)
 	SYSOUT_STR("[MouseListener] Handling entered.");
 	#endif // A2D_DE__
 
-	Component * source = (Component*)xEvent->getSource();
+	Component * source = static_cast<Component*>(xEvent->getSource());
 	source->animate(Component::INTERPOLATE_OPACITY, Easing::IN_QUAD, 0, 1.0f, 1000);
 	xEvent->setConsumed(true);
 }
