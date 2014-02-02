@@ -1,6 +1,5 @@
 #include "../../../include/Core/ExtLibs.h"
 #include "../../../include/Core/MouseListener.h"
-#include "../../../include/Core/Component.h"
 
 using namespace A2D;
 
@@ -94,10 +93,6 @@ void MouseListener::mouseExited(MouseEvent * xEvent)
 	#ifdef A2D_DE__
 	SYSOUT_STR("[MouseListener] Handling exited.");
 	#endif // A2D_DE__
-
-	Component * source = static_cast<Component*>(xEvent->getSource());
-	source->animate(Component::INTERPOLATE_OPACITY, Easing::OUT_QUAD, 1.0f, -1.0f, 1000);
-	xEvent->setConsumed(true);
 }
 
 void MouseListener::mouseEntered(MouseEvent * xEvent)
@@ -106,10 +101,6 @@ void MouseListener::mouseEntered(MouseEvent * xEvent)
 	#ifdef A2D_DE__
 	SYSOUT_STR("[MouseListener] Handling entered.");
 	#endif // A2D_DE__
-
-	Component * source = static_cast<Component*>(xEvent->getSource());
-	source->animate(Component::INTERPOLATE_OPACITY, Easing::IN_QUAD, 0, 1.0f, 200);
-	xEvent->setConsumed(true);
 }
 
 // For debugging only.
