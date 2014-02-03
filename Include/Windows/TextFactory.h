@@ -157,14 +157,12 @@ namespace A2D {
 		{
 			
 			Rect * clipR = new Rect;
-			Rect * inputR = xRect;
 			Texture * texture = aCurrentFont->aFontTexture;
 			Font * font = aCurrentFont;
 			const char * input = xText->aText.c_str();
 
-
-			float boxWidth = inputR->aWidth;
-			float boxHeight = inputR->aHeight;
+			float boxWidth = xRect->aWidth;
+			float boxHeight = xRect->aHeight;
 			float currentWidth = 0;
 			int inputLength = xText->aText.length();
 			int indexV = 0;
@@ -185,10 +183,13 @@ namespace A2D {
 				top, bottom, left, right;
 
 			float charX, charY, width, height, offsetX, offsetY,
-				advanceX, baseWidth, baseHeight, scaledWidth, scaledHeight;
+				advanceX, scaledWidth, scaledHeight;
+
+			float baseWidth = aCurrentFont->aFontTexture->GetSize()->aWidth;
+			float baseHeight = aCurrentFont->aFontTexture->GetSize()->aHeight;
 
 			float shadowOffset = 1;
-			float pixelSize = 2;
+			float pixelSize = 5;
 
 			FontVertex * vertices = new FontVertex[xText->aNumVertices];
 			unsigned long * indices = new unsigned long[xText->aNumIndices];
@@ -207,12 +208,12 @@ namespace A2D {
 				offsetX = FLOAT(font->aCharacters[input[i]].aXOffset);
 				offsetY = FLOAT(font->aCharacters[input[i]].aYOffset);
 				advanceX = FLOAT(font->aCharacters[input[i]].aXAdvance);
-				baseWidth = FLOAT(font->aWidth);
-				baseHeight = FLOAT(font->aHeight);
 
 				scaledWidth = width * pixelSize;
 				scaledHeight = height * pixelSize;
 				advanceX *= pixelSize;
+				offsetX *= pixelSize;
+				offsetY *= pixelSize;
 
 				scaledWidth = currentWidth + scaledWidth + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : scaledWidth;
 				scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
@@ -226,35 +227,18 @@ namespace A2D {
 				right = left + scaledWidth;
 				bottom = top + scaledHeight;
 
-				//left = left / aConstraints.aWidth;
-				//top = top / aConstraints.aHeight;
-				//right = right / aConstraints.aWidth;
-				//bottom = bottom / aConstraints.aHeight;
-
 				left = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + left);
 				top = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + top);
 				right = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + right);
 				bottom = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + bottom);
-
-				//left = -1;
-				//top = 1;
-				//right = 1;
-				//bottom = -1;
-
-				baseWidth = baseHeight = 256;
 				
-				float modCharX = charX; // put the modified version here later
-				float modCharY = charY; // aka shadow offsets
+				float modCharX = charX + 1.0f; // put the modified version here later
+				float modCharY = charY - 1.0f; // aka shadow offsets
 
 				leftTx = modCharX / baseWidth;
 				rightTx = (modCharX + texWidth) / baseWidth;
 				topTx = modCharY / baseHeight;
 				bottomTx = (modCharY + texHeight) / baseHeight;
-
-				//leftTx = 0.0f;
-				//rightTx = 1.0f;
-				//topTx = 0.0f;
-				//bottomTx = 1.0f;
 
 				// Load vertex data.
 				vertices[indexV].position = D3DXVECTOR3(left, top, depth);
@@ -277,15 +261,12 @@ namespace A2D {
 				indices[indexI++] = indexV - 2;
 				indices[indexI++] = indexV - 1;
 
-				break;
-
 				// Prepare for next letter.
-				inputR->aX += advanceX;
-
+				rectX += advanceX;
 
 				// Add measurements.
-				//currentWidth += scaledWidth + advanceX;
-				//i = 20;
+				currentWidth += scaledWidth + advanceX;
+			
 			}
 
 			// Map vertex and index buffers.

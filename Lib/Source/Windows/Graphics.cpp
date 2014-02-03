@@ -192,7 +192,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	// ~~~~~~~ Supposed inputs ~~~~~~~~~
 
-	string input = "W";
+	string input = "Brent";
 	Fonts * fontInput = &Fonts::MUSEO;
 	QuadData<TextureVertex, 6> * quadData;
 
@@ -252,7 +252,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	{
 		aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 		aTextFactory->renderText(text, sizeof(FontVertex));
-		aTextureShader->renderShader();
+		aTextureShader->renderShader(text->aNumIndices);
 	}
 
 	//if (aQuadFactory->updateVertexBuffer(quadData, &xRect, aTextFactory->aCurrentFont->aFontTexture, false))
