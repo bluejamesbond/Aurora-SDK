@@ -10,6 +10,8 @@ Component::Floater Component::ANIMATE_WIDTH(&Component::getWidth, &Component::se
 Component::Floater Component::ANIMATE_HEIGHT(&Component::getHeight, &Component::setHeight, 0.0f, FLT_MAX);
 Component::Floater Component::ANIMATE_BORDER_RADII_TOP_LEFT(&Component::getBorderRadiiTopLeft, &Component::setBorderRadiiTopLeft, 0.0f, FLT_MAX);
 Component::Floater Component::ANIMATE_BORDER_RADII_UNIFIED(&Component::getBorderRadiiUnified, &Component::setBorderRadiiUnified, 0.0f, FLT_MAX);
+Component::Floater Component::ANIMATE_BOUNDS_X(&Component::getBoundsX, &Component::setBoundsX, FLT_MIN, FLT_MAX);
+Component::Floater Component::ANIMATE_BOUNDS_Y(&Component::getBoundsY, &Component::setBoundsY, FLT_MIN, FLT_MAX);
 
 Component::Component() :
     m_forcedBounds(false),
@@ -24,7 +26,11 @@ Component::Component() :
     m_nextCompListener(NULL),
 	m_prevCompListener(NULL),
 	m_activeInterpolations(false),
-	m_componentTreeValidationRequest(false)
+	m_componentTreeValidationRequest(false),
+	m_calculatedRowIndex(0),
+	m_calculatedColumnIndex(0),
+	m_previousCalculatedRowIndex(0),
+	m_previousCalculatedColumnIndex(0)
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;

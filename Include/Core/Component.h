@@ -132,9 +132,18 @@ namespace A2D {
 		Component*                  m_nextCompListener;
         Component*                  m_prevCompListener;
 		
+		Animation					m_positionAnimationX = NULL;
+		Animation					m_positionAnimationY = NULL;
+
     protected:
 
 		int							m_id;
+
+		int							m_calculatedRowIndex;
+		int							m_calculatedColumnIndex;
+
+		int							m_previousCalculatedRowIndex;
+		int							m_previousCalculatedColumnIndex;
 
 		bool                        m_validatedContents;
 		bool						m_activeInterpolations;
@@ -163,6 +172,8 @@ namespace A2D {
 		static Floater				ANIMATE_HEIGHT;
 		static Floater				ANIMATE_BORDER_RADII_TOP_LEFT;
 		static Floater				ANIMATE_BORDER_RADII_UNIFIED;
+		static Floater				ANIMATE_BOUNDS_X;
+		static Floater				ANIMATE_BOUNDS_Y;
 		
 		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
@@ -262,27 +273,75 @@ namespace A2D {
 
         inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
         {
-            m_region.aWidth = xWidth;
-            m_region.aHeight = xHeight;
-            m_region.aX = xX;
-            m_region.aY = xY;
-
-            m_backgroundRegion.aWidth = xWidth;
-            m_backgroundRegion.aHeight = xHeight;
-
-			if (m_region.aHeight != m_previousDimensions.aHeight ||
-				m_region.aWidth != m_previousDimensions.aWidth)
+			if (m_previousCalculatedRowIndex != m_calculatedRowIndex ||
+				m_previousCalculatedColumnIndex != m_calculatedColumnIndex)
 			{
-				// FIXME Use SSE2 Acceleration
-				m_previousDimensions.aWidth = m_region.aWidth;
-				m_previousDimensions.aHeight = m_region.aHeight;
+				m_region.aWidth = xWidth;
+				m_region.aHeight = xHeight;
 
-				m_styleSet.markBackgroundAsDirty();
+				if (m_positionAnimationX)
+				{
+					stop(m_positionAnimationX);
+				}
+				if (m_positionAnimationY)
+				{
+					stop(m_positionAnimationY);
+				}
+
+				m_positionAnimationX = animate(Component::ANIMATE_BOUNDS_X, Easing::OUT_QUAD, xX, 200, NULL, NULL);
+				m_positionAnimationY = animate(Component::ANIMATE_BOUNDS_Y, Easing::OUT_QUAD, xY, 200, NULL, NULL);
+
+				m_previousCalculatedRowIndex = m_calculatedRowIndex;
+				m_previousCalculatedColumnIndex = m_calculatedColumnIndex;
+			}
+			else
+			{
+				m_region.aWidth = xWidth;
+				m_region.aHeight = xHeight;
+				m_region.aX = xX;
+				m_region.aY = xY;
+
+				m_backgroundRegion.aWidth = xWidth;
+				m_backgroundRegion.aHeight = xHeight;
+
+				if (m_region.aHeight != m_previousDimensions.aHeight ||
+					m_region.aWidth != m_previousDimensions.aWidth)
+				{
+					// FIXME Use SSE2 Acceleration
+					m_previousDimensions.aWidth = m_region.aWidth;
+					m_previousDimensions.aHeight = m_region.aHeight;
+
+					m_styleSet.markBackgroundAsDirty();
+				}
 			}
 
 			m_validatedContents = false;
 			m_styleSet.markRequestRegionAsDirty();
         }
+
+		inline void Component::setBoundsX(float x_x)
+		{
+			m_region.aX = x_x;
+			m_validatedContents = false;
+			m_styleSet.markRequestRegionAsDirty();
+		}
+
+		inline float Component::getBoundsX()
+		{
+			return m_region.aX;
+		}
+
+		inline void Component::setBoundsY(float x_y)
+		{
+			m_region.aY = x_y;
+			m_validatedContents = false;
+			m_styleSet.markRequestRegionAsDirty();
+		}
+
+		inline float Component::getBoundsY()
+		{
+			return m_region.aY;
+		}
     };
 }
 #endif

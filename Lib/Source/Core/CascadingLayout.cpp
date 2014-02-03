@@ -26,7 +26,9 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		positionLeft,
 		positionTop,
 		positionBottom,
-		positionRight;
+		positionRight,
+		rowIndex = 0,
+		columnIndex = 0; 
 
 	unsigned int
 		width,
@@ -147,6 +149,9 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 
 					// new row
 					maxElementHeight = 0;
+
+					rowIndex++;
+					columnIndex = 0;
 				}
 				else
 				{
@@ -235,15 +240,21 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			// Update bounds
 			//------------------------------------------------------------------------------
 			component->m_styleSet.m_visible = true;
+			component->m_calculatedRowIndex = rowIndex;
+			component->m_calculatedColumnIndex = columnIndex;
+
 			component->setBounds(SFLOAT(mX + positionLeft + positionRight), 
 								 SFLOAT(mY + positionTop + positionBottom), 
 								 SFLOAT(width),
 								 SFLOAT(height));
-
+			
 			if (display == Style::INLINE_BLOCK)
 			{
 				mX = mX + width + marginRight;
 				// mY = mY;
+
+				// Next column
+				columnIndex++;
 
 				// Inline block uses last_height
 				maxElementHeight = (tempVerticalOffset = marginBottom + height) > maxElementHeight ? tempVerticalOffset : maxElementHeight;
@@ -252,6 +263,10 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			{
 				mX = 0;
 				mY = mY + height + marginBottom;
+
+				// New row
+				rowIndex++;
+				columnIndex = 0;
 			}
 		}
 		else/*if (position == Style::ABSOLUTE_)*/
