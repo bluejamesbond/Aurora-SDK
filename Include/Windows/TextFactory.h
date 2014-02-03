@@ -174,22 +174,19 @@ namespace A2D {
 			float rectWidth = xRect->aWidth;
 			float rectHeight = xRect->aHeight;
 
-			float texWidth;
-			float texHeight;
-
 			float depth = aDepth;
 
-			float topTx, bottomTx, leftTx, rightTx,
+			float topTexel, bottomTexel, leftTexel, rightTexel ,
 				top, bottom, left, right;
 
-			float charX, charY, width, height, offsetX, offsetY,
+			float charX, charY, texWidth, texHeight, offsetX, offsetY,
 				advanceX, scaledWidth, scaledHeight;
 
 			float baseWidth = aCurrentFont->aFontTexture->GetSize()->aWidth;
 			float baseHeight = aCurrentFont->aFontTexture->GetSize()->aHeight;
 
 			float shadowOffset = 1;
-			float pixelSize = 5;
+			float pixelSize = 2;
 
 			FontVertex * vertices = new FontVertex[xText->aNumVertices];
 			unsigned long * indices = new unsigned long[xText->aNumIndices];
@@ -203,27 +200,23 @@ namespace A2D {
 
 				charX = FLOAT(font->aCharacters[input[i]].aX);
 				charY = FLOAT(font->aCharacters[input[i]].aY);
-				width = FLOAT(font->aCharacters[input[i]].aWidth);
-				height = FLOAT(font->aCharacters[input[i]].aHeight);
-				offsetX = FLOAT(font->aCharacters[input[i]].aXOffset);
-				offsetY = FLOAT(font->aCharacters[input[i]].aYOffset);
-				advanceX = FLOAT(font->aCharacters[input[i]].aXAdvance);
+				texWidth = FLOAT(font->aCharacters[input[i]].aWidth);
+				texHeight = FLOAT(font->aCharacters[input[i]].aHeight);
+				offsetX = FLOAT(font->aCharacters[input[i]].aXOffset) * pixelSize;
+				offsetY = FLOAT(font->aCharacters[input[i]].aYOffset) * pixelSize;
+				advanceX = FLOAT(font->aCharacters[input[i]].aXAdvance) * pixelSize;
 
-				scaledWidth = width * pixelSize;
-				scaledHeight = height * pixelSize;
-				advanceX *= pixelSize;
-				offsetX *= pixelSize;
-				offsetY *= pixelSize;
+				scaledWidth = texWidth * pixelSize;
+				scaledHeight = texHeight * pixelSize;
 
+				// Check if over the textbox width/height.
 				scaledWidth = currentWidth + scaledWidth + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : scaledWidth;
 				scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
-
-				texWidth = width;
-				texHeight = height;
 
 				// Calculations.
 				left = rectX + offsetX;
 				top = rectY - offsetY;
+				top += constraints.aHeight - pixelSize * 2;
 				right = left + scaledWidth;
 				bottom = top + scaledHeight;
 
@@ -235,23 +228,23 @@ namespace A2D {
 				float modCharX = charX + 1.0f; // put the modified version here later
 				float modCharY = charY - 1.0f; // aka shadow offsets
 
-				leftTx = modCharX / baseWidth;
-				rightTx = (modCharX + texWidth) / baseWidth;
-				topTx = modCharY / baseHeight;
-				bottomTx = (modCharY + texHeight) / baseHeight;
+				leftTexel = modCharX / baseWidth;
+				rightTexel = (modCharX + texWidth) / baseWidth;
+				topTexel = modCharY / baseHeight;
+				bottomTexel = (modCharY + texHeight) / baseHeight;
 
 				// Load vertex data.
 				vertices[indexV].position = D3DXVECTOR3(left, top, depth);
-				vertices[indexV++].texture = D3DXVECTOR2(leftTx, topTx);
+				vertices[indexV++].texture = D3DXVECTOR2(leftTexel, topTexel);
 
 				vertices[indexV].position = D3DXVECTOR3(left, bottom, depth);
-				vertices[indexV++].texture = D3DXVECTOR2(leftTx, bottomTx);
+				vertices[indexV++].texture = D3DXVECTOR2(leftTexel, bottomTexel);
 
 				vertices[indexV].position = D3DXVECTOR3(right, top, depth);
-				vertices[indexV++].texture = D3DXVECTOR2(rightTx, topTx);
+				vertices[indexV++].texture = D3DXVECTOR2(rightTexel, topTexel);
 
 				vertices[indexV].position = D3DXVECTOR3(right, bottom, depth);
-				vertices[indexV++].texture = D3DXVECTOR2(rightTx, bottomTx);
+				vertices[indexV++].texture = D3DXVECTOR2(rightTexel, bottomTexel);
 
 				// Load index data. Counter-clockwise triangles.
 				indices[indexI++] = indexV - 2;
