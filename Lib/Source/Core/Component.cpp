@@ -6,7 +6,8 @@
 using namespace A2D;
 
 Component::Floater Component::ANIMATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
-Component::Floater Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, 1.0f);
+Component::Floater Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, FLT_MAX);
+Component::Floater Component::ANIMATE_HEIGHT(&Component::getHeight, &Component::setHeight, 0.0f, FLT_MAX);
 
 Component::Component() :
     m_forcedBounds(false),
@@ -50,7 +51,7 @@ void Component::interpolate()
 
 		// Interpolate value
 		interpolated = interpolator->m_tween(duration = SFLOAT(currentTime - interpolator->m_startTime), interpolator->m_start, interpolator->m_range, interpolator->m_period);
-
+		
 		// Remove the node
 		if (duration > interpolator->m_period)
 		{
@@ -259,7 +260,7 @@ void Component::validate()
         Rect& parentRect = parentComp->m_region;
         Rect& parentCalculatedRegion = parentComp->m_calculatedRegion;
         Rect& parentVisibleRegion = parentComp->m_visibleRegion;
-                
+		
         // Running x and y
 		//------------------------------------------------------------------------------
         m_calculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
@@ -304,6 +305,10 @@ void Component::validate()
 			m_previousVisibleDimensions.aWidth = m_visibleRegion.aWidth;
 			m_previousVisibleDimensions.aHeight = m_visibleRegion.aHeight;
 
+			// Request the validation of the components
+			m_componentTreeValidationRequest = true;
+
+			// Mark background as dirty
 			m_styleSet.markBackgroundAsDirty();
 
 			#ifdef A2D_DE__			
@@ -341,14 +346,28 @@ void Component::setWidth(float x_width)
 {
 	m_styleSet.m_size.m_width = x_width;
 
-	m_validatedContents = false;
+	m_parent->m_componentTreeValidationRequest = true;
 }
 
 void Component::setWidthUnits(Style::Units x_units)
 {
 	m_styleSet.m_size.m_widthUnits = x_units;
 
-	m_validatedContents = false;
+	m_parent->m_componentTreeValidationRequest = true;
+}
+
+void Component::setHeight(float x_height)
+{
+	m_styleSet.m_size.m_height = x_height;
+
+	m_parent->m_componentTreeValidationRequest = true;
+}
+
+void Component::setHeightUnits(Style::Units x_units)
+{
+	m_styleSet.m_size.m_widthUnits = x_units;
+
+	m_parent->m_componentTreeValidationRequest = true;
 }
 
 void Component::setDisplay(Style::Display xDisplay)
@@ -438,23 +457,33 @@ void Component::paintComponent()
 void Component::update()
 {
     Graphics& graphics = *m_graphics;
-
-	if (m_activeInterpolations)
-	{
-		interpolate();
-	}
-
-    if (!m_validatedContents)
-    {
-        validate();
-    }
-
+	
 	// If Component is not visible return
 	if (!m_styleSet.m_visible)
 	{
 		return;
 	}
 
+	// Interpolate the options
+	if (m_activeInterpolations)
+	{
+		interpolate();
+	}
+
+	// Update the visible region of the component
+    if (!m_validatedContents)
+    {
+        validate();
+    }
+	// Update the location and revalidate
+	else if (m_componentTreeValidationRequest)
+	{
+		CascadingLayout::doLayout(*this);
+
+		m_componentTreeValidationRequest = false;
+	}
+
+	// Set the graphics clip
 	graphics.setClip(&m_visibleRegion, m_styleSet.m_depth);
 
     // Render the current component

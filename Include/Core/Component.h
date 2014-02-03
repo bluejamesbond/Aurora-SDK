@@ -159,6 +159,7 @@ namespace A2D {
 
 		static Floater				ANIMATE_OPACITY;
 		static Floater				ANIMATE_WIDTH;
+		static Floater				ANIMATE_HEIGHT;
 		
 		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
@@ -183,6 +184,10 @@ namespace A2D {
 		void						setWidthUnits(Style::Units x_units);
 		void						setWidth(float x_width);
 		inline float				getWidth() { return m_styleSet.m_size.m_width; }
+
+		void						setHeightUnits(Style::Units x_units);
+		void						setHeight(float x_height);
+		inline float				getHeight() { return m_styleSet.m_size.m_height; }
 
 		void						setOpacity(float x_opacity);
 		inline float				getOpacity() { return m_styleSet.m_opacity; }

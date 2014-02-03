@@ -41,7 +41,7 @@ typedef unsigned int STATUS;
 
 // Enable/Disable debugging
 //------------------------------------------------------------------------------
-#define A2D_DE__                                        "Comment out this line to remove debugging."
+// #define A2D_DE__                                        "Comment out this line to remove debugging."
 
 // Readability macros
 //------------------------------------------------------------------------------
@@ -107,6 +107,11 @@ SYSINLINE int SYSCDECL max_cpy_cpy(int a, int b)
 SYSINLINE int SYSCDECL min_cpy_cpy(int a, int b)
 {
     return (((a) < (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL min_cpy_cpy(unsigned int a, unsigned int b)
+{
+	return (((a) < (b)) ? (a) : (b));
 }
 
 SYSINLINE int SYSCDECL abs_cpy(int a)

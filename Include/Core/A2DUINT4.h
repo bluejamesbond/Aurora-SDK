@@ -30,9 +30,9 @@ namespace A2D {
 		unsigned int a3;
 		unsigned int a4;
 
-		A2DUINT4(){};
+		inline A2DUINT4(){};
 
-		A2DUINT4(unsigned int x, unsigned int y, unsigned int z, unsigned int w)
+		inline A2DUINT4(unsigned int x, unsigned int y, unsigned int z, unsigned int w)
 		{
 			a1 = x;
 			a2 = y;

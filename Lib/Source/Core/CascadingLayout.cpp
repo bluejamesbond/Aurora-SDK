@@ -96,16 +96,19 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			A2DDISTANCESET4& borderRadii = component->m_styleSet.m_borderRadii;
 			A2DPIXELDISTANCESETUINT4& precalculatedBorderRadii = component->m_styleSet.m_precalculatedBorderRadii;
 
-			precalculatedBorderRadii.m_left = SUINT(cvtsu2px__(borderRadii.m_leftUnits, borderRadii.m_left, compWidth));
-			precalculatedBorderRadii.m_top = SUINT(cvtsu2px__(borderRadii.m_topUnits, borderRadii.m_top, compHeight));
-			precalculatedBorderRadii.m_right = SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_bottom, compHeight));
-			precalculatedBorderRadii.m_bottom = SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_right, compWidth));
+			unsigned int usableDim = min__(width, height);
+
+			precalculatedBorderRadii.m_left = min__(SUINT(cvtsu2px__(borderRadii.m_leftUnits, borderRadii.m_left, compWidth)), usableDim / 2);
+			precalculatedBorderRadii.m_top = min__(SUINT(cvtsu2px__(borderRadii.m_topUnits, borderRadii.m_top, compHeight)), usableDim / 2);
+			precalculatedBorderRadii.m_right = min__(SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_bottom, compHeight)), usableDim / 2);
+			precalculatedBorderRadii.m_bottom = min__(SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_right, compWidth)), usableDim / 2);
 
 			// Mark the border widths as dirty since
 			// borderWidths are affected by validation
 			// windowResize
 			//------------------------------------------------------------------------------
 			component->m_styleSet.markBorderWidthsAsDirty();
+			component->m_styleSet.markBorderRadiiAsDirty();
 
 			// Request children to have full validation
 			//------------------------------------------------------------------------------
