@@ -39,12 +39,9 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
                 eventHandler(msg, &eventQueue);
             }
 			
-            if (eventQueue.dispatchNextEvent())
-            {
-                currentAnimationFrame = defaultAllotedAnimationFrames;
-            }
+			eventQueue.dispatchNextEvent();
 			
-			if ((currentTime = kerneltimelp__) - lastTime < timeBetweenFrames)
+			if ((currentTime = kerneltimelp__) - lastTime < timeBetweenFrames && !resizing)
 			{
 				continue;
 			}
@@ -56,19 +53,19 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 				{
 					frame.update();
 				}
-				else if (currentAnimationFrame > 0)
-				{
-					currentAnimationFrame--;
-					frame.update();
-				}
 				else if (resizing)
 				{
 					frame.update();
 				}
-				else if (GetMessage(&msg, NULL, 0x114, UINT_MAX) > 0)
+				else
 				{
-					TranslateMessage(&msg);
-					eventHandler(msg, &eventQueue);
+					// Do caching here!
+
+					if (GetMessage(&msg, NULL, 0x114, UINT_MAX) > 0)
+					{
+						TranslateMessage(&msg);
+						eventHandler(msg, &eventQueue);
+					}
 				}
 			}
         }
@@ -1307,22 +1304,12 @@ void Window::render()
     {
         SIZE size = {SLONG(relativeWidth),SLONG(relativeHeight) };
         HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
-        HBITMAP memBitmapChild;
         POINT ptDst = {SLONG(relativeX),SLONG(relativeY) }, ptSrc = { 0, 0 };
 
         if (flickerRemoval)
 		{
-            // Create compatible secondary DC
-            memDCChild = CreateCompatibleDC(hwndDC);
-
-            // Create bitmap for child
-            memBitmapChild = CreateCompatibleBitmap(hwndDC, SINT(relativeWidth), SINT(relativeHeight));
-
-            // Select bitmap into memDCChild
-            SelectObject(memDCChild, memBitmapChild);
-
             // Request copy of frameBuffer
-			PrintWindow(aChildHWnd, memDCChild, PW_CLIENTONLY);
+			memDCChild = GetDC(aChildHWnd);
         }
 
         // Create Bitmap to render to
@@ -1361,8 +1348,6 @@ void Window::render()
                 SINT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
                 SRCCOPY);
 
-            ReleaseDC(aParentHWnd, memDCChild);
-            DeleteObject(memBitmapChild);
             DeleteObject(memDCChild);
 		}
 
