@@ -542,7 +542,7 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, int xZ)
 		return; // Source has no listener, so we do not add to the list.
 	}
 
-	OrderedList<Component*> * peerEventSources;
+	OrderedList<Component*> * peerEventSources = NULL;
 	OrderedList<Component*>::Node<Component*> * node;
 
 	int maxZ = aComponentEventSources.size() - 1;

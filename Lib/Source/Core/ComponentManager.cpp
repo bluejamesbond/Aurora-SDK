@@ -72,7 +72,7 @@ bool ComponentManager::addToDepthTracker(Component& xComponent)
 {
 	// Call eventDepthTracker also.
 	m_eventQueue->addEventDepthTracker(&xComponent, xComponent.getDepth());
-	UnorderedList<Component*> * peerComponents;
+	UnorderedList<Component*> * peerComponents = NULL;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;
 	int neededZ = xComponent.getDepth();

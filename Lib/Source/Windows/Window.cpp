@@ -1303,7 +1303,7 @@ void Window::render()
     if (!highPerformance)
     {
         SIZE size = {SLONG(relativeWidth),SLONG(relativeHeight) };
-        HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
+        HDC memDCChild = NULL, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
         POINT ptDst = {SLONG(relativeX),SLONG(relativeY) }, ptSrc = { 0, 0 };
 
         if (flickerRemoval)
