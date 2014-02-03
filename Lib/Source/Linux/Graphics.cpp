@@ -247,8 +247,8 @@ HRESULT Graphics::Shaderinitialize()
 {
 
     // create shaders , tie to "programid". Maybe later make more shaders and tie to different IDs
-	char * aFShader = "/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/tex.fs";
-	char * setVShader = "/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/tex.vs";
+	char * aFShader = "/home/syk435/Muzzler.Linux/Main Application x86/MainApplicationx86/tex.fs";
+	char * setVShader = "/home/syk435/Muzzler.Linux/Main Application x86/MainApplicationx86/tex.vs";
 	programID = GLShaderUtils::LoadEffectFromFile(setVShader, aFShader);
 
 	return S_OK;

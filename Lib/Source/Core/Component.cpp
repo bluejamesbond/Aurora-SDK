@@ -251,7 +251,7 @@ void Component::paintComponent()
 
 	Graphics& graphics = *aGraphics;
 
-	aOptBackgroundSrc = "/home/mathew/Github/Muzzler.Linux/Main Application x86/MainApplicationx86/test.png";
+	aOptBackgroundSrc = "/home/syk435/Muzzler.Linux/Main Application x86/MainApplicationx86/test.png";
 
 	if (aOptBackgroundSrc != NULL)
 	{
