@@ -108,8 +108,33 @@ Animation Component::animate(Floater x_floater, TWEEN x_tween, float x_to, int x
 	return &interpolator->m_removeTicket;
 }
 
+void Component::stop(Animation x_animation)
+{
+	m_interpolators.remove_request(x_animation);
+}
+
 void Component::stop(Animation x_animation, bool x_arg)
 {
+	// BROKEN - FIXME!!!
+	// NOTE: This is not really used in dev.
+
+	if (x_arg)
+	{
+		// Get the data
+		Interpolator ** interpolator = m_interpolators.from_ticket(x_animation);
+	
+		if (!interpolator)
+		{
+			return;
+		}
+
+		// Execute callback
+		if ((*interpolator)->m_callback)
+		{
+			(*(*interpolator)->m_callback)((*interpolator)->m_arg);
+		}
+	}
+
 	m_interpolators.remove_request(x_animation);
 }
 

@@ -162,6 +162,7 @@ namespace A2D {
 		
 		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
+		void						stop(Animation x_animation);
 		
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);

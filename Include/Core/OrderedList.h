@@ -239,7 +239,7 @@ namespace A2D{
 			// Decrement size after remove
 			m_size--;
 		}
-
+		
 		inline Node<T> * find_node(int index)
 		{
 			// This testing is not required because fine_node is an internal method
@@ -668,6 +668,16 @@ namespace A2D{
 		void remove_index(int i)
 		{
 			splice(i, 1);
+		}
+
+		inline T* from_ticket(void ** x_ticket)
+		{
+			if (*x_ticket)
+			{
+				return &static_cast<Node<T>*>(*x_ticket)->value;
+			}
+
+			return NULL;
 		}
 
 		bool remove_request(void ** x)
