@@ -274,7 +274,7 @@ namespace A2D {
         inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
         {
 			if (m_previousCalculatedRowIndex != m_calculatedRowIndex ||
-				m_previousCalculatedColumnIndex != m_calculatedColumnIndex)
+				m_previousCalculatedColumnIndex != m_calculatedColumnIndex /*FIXME && NOT RESIZING*/ )
 			{
 				m_region.aWidth = xWidth;
 				m_region.aHeight = xHeight;
