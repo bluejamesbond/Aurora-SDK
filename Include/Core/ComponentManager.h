@@ -55,6 +55,7 @@ namespace A2D {
 		Component								   *   aRoot;
 		AbstractWindow	  						   *   aWindow;
 		Graphics								   *   aGraphics;
+		AbstractEventQueue						   *   m_eventQueue;
 
 	public:
 

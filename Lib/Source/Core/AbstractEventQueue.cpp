@@ -7,7 +7,11 @@ using namespace A2D;
 
 AbstractEventQueue* AbstractEventQueue::aClassInstance = NULL;
 
-AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) {}
+AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : 
+	aFrame(xFrame),
+	m_animating(0)
+{
+}
 
 AbstractEventQueue::~AbstractEventQueue()
 {

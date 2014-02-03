@@ -66,10 +66,14 @@ namespace A2D{
         OrderedList<Runnable*>          aEventQueue;
         Runnable               *        aImmediateRunnable = NULL;
         AbstractThread         *        aThread = NULL;
-
+		
     protected:
 
-        AbstractFrame         *         aFrame;
+		AbstractFrame         *         aFrame;
+
+	public:
+		
+		int								m_animating;
 
     public:
 
@@ -95,8 +99,7 @@ namespace A2D{
 
         static AbstractEventQueue*      aClassInstance;
         static AbstractEventQueue*      getInstance();
-
-
+				
     public:
 
         // Queue
@@ -143,12 +146,22 @@ namespace A2D{
         void                            run(int xThreadId);
 
         virtual AbstractThread*         createPlatformCompatibleThread(Runnable * xRunnable) IMPLEMENT;
-
-        ////////////////////////////////////////////////////////////////////////////////
-        // ABSTRACT
-        ////////////////////////////////////////////////////////////////////////////////
-
+		
     public:
+
+		////////////////////////////////////////////////////////////////////////////////
+		// INLINE
+		////////////////////////////////////////////////////////////////////////////////
+
+		inline void startedAnimation()
+		{
+			m_animating++;
+		}
+
+		inline void finishedAnimation()
+		{
+			m_animating--;
+		}
 
         virtual STATUS                 initialize();
 

@@ -16,6 +16,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
     MSG msg;
     bool& resizing = aIsResizing;
     bool& visible = aVisible;
+	int& animating = xEventQueue->m_animating;
 
     int defaultAllotedAnimationFrames = 10;
     int currentAnimationFrame = 0;
@@ -23,6 +24,10 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
     AbstractFrame& frame = *aFrame;
     AbstractEventQueue& eventQueue = *xEventQueue;
+
+	int lastTime = kerneltimelp__;
+	int timeBetweenFrames = 1000 / 200;
+	int currentTime;
 
     while (true)
     {
@@ -33,35 +38,44 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
                 TranslateMessage(&msg);
                 eventHandler(msg, &eventQueue);
             }
-
-            // Forced updating of rendering for now
+			
             if (eventQueue.dispatchNextEvent())
             {
                 currentAnimationFrame = defaultAllotedAnimationFrames;
             }
-            else if (currentAnimationFrame > 0)
-            {
-                currentAnimationFrame--;
-                frame.update();
-            }
-            else if (resizing)
-            {
-                frame.update();
-            }
-           /* else if (GetMessage(&msg, NULL, 0, 0) > 0)
-            {
-                TranslateMessage(&msg);
-                eventHandler(msg, &eventQueue);
-            }*/
+			
+			if ((currentTime = kerneltimelp__) - lastTime < timeBetweenFrames)
+			{
+				continue;
+			}
 			else
 			{
-				frame.update();
+				lastTime = currentTime;
+
+				if (animating)
+				{
+					frame.update();
+				}
+				else if (currentAnimationFrame > 0)
+				{
+					currentAnimationFrame--;
+					frame.update();
+				}
+				else if (resizing)
+				{
+					frame.update();
+				}
+				else if (GetMessage(&msg, NULL, 0x114, UINT_MAX) > 0)
+				{
+					TranslateMessage(&msg);
+					eventHandler(msg, &eventQueue);
+				}
 			}
         }
     }
 }
 
-LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
+LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 {
     if (xMsg.message == WM_CREATE)
     {

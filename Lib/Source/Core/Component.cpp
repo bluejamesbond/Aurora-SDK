@@ -65,10 +65,11 @@ void Component::interpolate()
 			{
 				(*interpolator->m_callback)(interpolator->m_arg);
 			}
-
-			// Remove from list
-			m_interpolators.remove_request(&interpolator->m_removeTicket);
+			
+			// Remove request
+			stop(&interpolator->m_removeTicket);
 		}
+
 		// OR Update the value
 		else
 		{
@@ -104,16 +105,13 @@ Animation Component::animate(Floater x_floater, TWEEN x_tween, float x_to, int x
 
 	m_activeInterpolations = true;
 
+	m_eventQueue->startedAnimation();
+
 	#ifdef A2D_DE__			
 	SYSOUT_F("[Component] [ComponentId: 0x%X] Adding interpolator.", m_id);
 	#endif // A2D_DE__
 
 	return &interpolator->m_removeTicket;
-}
-
-void Component::stop(Animation x_animation)
-{
-	m_interpolators.remove_request(x_animation);
 }
 
 void Component::stop(Animation x_animation, bool x_arg)
@@ -191,6 +189,11 @@ void Component::setComponentManager(ComponentManager& x_componentManager)
 void Component::setParent(Component& xParent)
 {
     m_parent = &xParent;
+}
+
+void Component::setEventQueue(AbstractEventQueue& x_eventQueue)
+{
+	m_eventQueue = &x_eventQueue;
 }
 
 Rect Component::getBounds()

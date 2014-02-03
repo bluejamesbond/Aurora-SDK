@@ -127,8 +127,9 @@ namespace A2D {
 		OrderedList<Component*>     m_children;
 		OrderedList<Interpolator*>  m_interpolators;
         ComponentManager*           m_componentManager;
-
-        Component*                  m_nextCompListener;
+		AbstractEventQueue*			m_eventQueue;
+        
+		Component*                  m_nextCompListener;
         Component*                  m_prevCompListener;
 		
     protected:
@@ -165,8 +166,15 @@ namespace A2D {
 		
 		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
-		void						stop(Animation x_animation);
-		
+
+		inline void stop(Animation x_animation)
+		{
+			if (m_interpolators.remove_request(x_animation))
+			{
+				m_eventQueue->finishedAnimation();
+			}
+		}
+
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
 		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
@@ -235,6 +243,7 @@ namespace A2D {
 		void						interpolate();
 		void                        validate();
 
+		void						setEventQueue(AbstractEventQueue& x_eventQueue);
 		void                        setDepth(int xDepth);
 		void                        setGraphics(Graphics& xGraphics);
 		void                        setParent(Component& xComponent);

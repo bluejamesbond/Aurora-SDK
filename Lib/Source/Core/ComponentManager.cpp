@@ -14,6 +14,7 @@ ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, Abstract
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
 	aWindow = xWindow;
+	m_eventQueue = Toolkit::getSystemEventQueue(aWindow->getFrame()->id());
 }
 
 STATUS ComponentManager::initialize()
@@ -27,6 +28,7 @@ STATUS ComponentManager::initialize()
 	root.setGraphics(*aGraphics);
 	root.setComponentManager(*this);
 	root.setDepth(0);
+	root.setEventQueue(*m_eventQueue);
 
 	addToDepthTracker(root);
 
@@ -53,6 +55,7 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
 	xChild.setComponentManager(*unconst__(ComponentManager*));
+	xChild.setEventQueue(*m_eventQueue);
 
 	if (unconst__(ComponentManager*)->addToDepthTracker(xChild))
 	{
@@ -68,7 +71,7 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 bool ComponentManager::addToDepthTracker(Component& xComponent)
 {
 	// Call eventDepthTracker also.
-	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xComponent.getDepth());
+	m_eventQueue->addEventDepthTracker(&xComponent, xComponent.getDepth());
 	UnorderedList<Component*> * peerComponents;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;

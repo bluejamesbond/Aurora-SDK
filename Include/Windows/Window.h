@@ -121,7 +121,7 @@ namespace A2D {
 
 	public:
 
-		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
+		LRESULT _fastcall				eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 	private:
