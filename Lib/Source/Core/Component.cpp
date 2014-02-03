@@ -5,13 +5,13 @@
 
 using namespace A2D;
 
-Component::Floater Component::ANIMATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
-Component::Floater Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, FLT_MAX);
-Component::Floater Component::ANIMATE_HEIGHT(&Component::getHeight, &Component::setHeight, 0.0f, FLT_MAX);
-Component::Floater Component::ANIMATE_BORDER_RADII_TOP_LEFT(&Component::getBorderRadiiTopLeft, &Component::setBorderRadiiTopLeft, 0.0f, FLT_MAX);
-Component::Floater Component::ANIMATE_BORDER_RADII_UNIFIED(&Component::getBorderRadiiUnified, &Component::setBorderRadiiUnified, 0.0f, FLT_MAX);
-Component::Floater Component::ANIMATE_BOUNDS_X(&Component::getBoundsX, &Component::setBoundsX, FLT_MIN, FLT_MAX);
-Component::Floater Component::ANIMATE_BOUNDS_Y(&Component::getBoundsY, &Component::setBoundsY, FLT_MIN, FLT_MAX);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, FLT_MAX);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_HEIGHT(&Component::getHeight, &Component::setHeight, 0.0f, FLT_MAX);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_BORDER_RADII_TOP_LEFT(&Component::getBorderRadiiTopLeft, &Component::setBorderRadiiTopLeft, 0.0f, FLT_MAX);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_BORDER_RADII_UNIFIED(&Component::getBorderRadiiUnified, &Component::setBorderRadiiUnified, 0.0f, FLT_MAX);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_BOUNDS_X(&Component::getBoundsX, &Component::setBoundsX, FLT_MIN, FLT_MAX);
+A2DANIMATABLEFLOAT1 Component::ANIMATE_BOUNDS_Y(&Component::getBoundsY, &Component::setBoundsY, FLT_MIN, FLT_MAX);
 
 Component::Component() :
     m_forcedBounds(false),
@@ -46,13 +46,13 @@ void Component::paintComponentBorder(){}
 
 void Component::interpolate()
 {
-	OrderedList<Interpolator*>::Node<Interpolator*> * node = m_interpolators._head();
+	OrderedList<A2DINTERPOLATORFLOAT1*>::Node<A2DINTERPOLATORFLOAT1*> * node = m_interpolators._head();
 	int currentTime = kerneltimelp__;
 
 	while (node->value)
 	{
 		float duration, interpolated;
-		Interpolator * interpolator = node->value;
+		A2DINTERPOLATORFLOAT1 * interpolator = node->value;
 
 		// Save the next node
 		node = node->right;
@@ -94,14 +94,14 @@ void Component::interpolate()
 	}
 }
 
-Animation Component::animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg)
+Animation Component::animate(A2DANIMATABLEFLOAT1 x_A2DANIMATABLEFLOAT1, TWEEN x_tween, float x_to, int x_period, A2DCALLBACKVOID1 x_callback, void * x_arg)
 {
-	Interpolator * interpolator = new Interpolator();
+	A2DINTERPOLATORFLOAT1 * interpolator = new A2DINTERPOLATORFLOAT1();
 
-	interpolator->m_interpolatable = x_floater.m_mutator;
+	interpolator->m_interpolatable = x_A2DANIMATABLEFLOAT1.m_mutator;
 	interpolator->m_tween = x_tween;
 	interpolator->m_startTime = kerneltimelp__; // current time
-	interpolator->m_start = (this->*x_floater.m_accessor)();
+	interpolator->m_start = (this->*x_A2DANIMATABLEFLOAT1.m_accessor)();
 	interpolator->m_range = x_to - interpolator->m_start;
 	interpolator->m_period = SFLOAT(x_period);
 	interpolator->m_callback = x_callback;
@@ -128,7 +128,7 @@ void Component::stop(Animation x_animation, bool x_arg)
 	if (x_arg)
 	{
 		// Get the data
-		Interpolator ** interpolator = m_interpolators.from_ticket(x_animation);
+		A2DINTERPOLATORFLOAT1 ** interpolator = m_interpolators.from_ticket(x_animation);
 	
 		if (!interpolator)
 		{
@@ -738,3 +738,28 @@ Paint& Component::getBackgroundPaint()
 	return m_styleSet.m_backgroundPaint;
 };
 
+void Component::setBoundsX(float x_x)
+{
+	m_region.aX = x_x;
+
+	m_validatedContents = false;
+	m_styleSet.markRequestRegionAsDirty();
+}
+
+float Component::getBoundsX()
+{
+	return m_region.aX;
+}
+
+void Component::setBoundsY(float x_y)
+{
+	m_region.aY = x_y;
+
+	m_validatedContents = false;
+	m_styleSet.markRequestRegionAsDirty();
+}
+
+float Component::getBoundsY()
+{
+	return m_region.aY;
+}

@@ -30,6 +30,8 @@
 #include GRAPHICS__
 #include "ComponentEventSource.h"
 #include "A2DCOMPONENTRENDERSTYLESET.h"
+#include "A2DANIMATABLEFLOAT1.h"
+#include "A2DINTERPOLATORFLOAT1.h"
 
 namespace A2D {
 
@@ -45,11 +47,6 @@ namespace A2D {
     class ComponentManager;
 	class Easing;
 	
-	// Typedef interpolatables
-	typedef void (Component::*INTERPOLATABLEMUTATOR)(float);
-	typedef float (Component::*INTERPOLATABLEACCESSOR)(void);
-	typedef void(*CALLBACK_)(void*);
-
 	// Typedef animation
 	typedef void** Animation;
 
@@ -67,54 +64,6 @@ namespace A2D {
 
         Component();
         ~Component();
-		
-		struct Interpolator
-		{
-			TWEEN m_tween;
-			INTERPOLATABLEMUTATOR m_interpolatable;
-			CALLBACK_ m_callback;
-
-			int m_startTime;
-
-			float m_period;
-			float m_range;
-			float m_start;
-
-			void * m_arg;
-			void * m_removeTicket;
-
-			Interpolator() :
-				m_range(0.0f),
-				m_start(0.0f),
-				m_period(0),
-				m_startTime(0),
-				m_removeTicket(NULL)
-			{
-			}
-		};
-
-		struct Floater
-		{
-			INTERPOLATABLEMUTATOR m_mutator;
-			INTERPOLATABLEACCESSOR m_accessor;
-
-			float m_max;
-			float m_min;
-
-			Floater() :
-				m_max(0.0f),
-				m_min(0.0f)
-			{
-			}
-
-			Floater(INTERPOLATABLEACCESSOR x_accessor, INTERPOLATABLEMUTATOR x_mutator, float x_min, float x_max) :
-				m_mutator(x_mutator),
-				m_accessor(x_accessor),
-				m_min(x_min),
-				m_max(x_max)
-			{
-			}
-		};
 
 	private:
 
@@ -125,7 +74,7 @@ namespace A2D {
         AbstractFrame*              m_frame;
         Component*                  m_parent;
 		OrderedList<Component*>     m_children;
-		OrderedList<Interpolator*>  m_interpolators;
+		OrderedList<A2DINTERPOLATORFLOAT1*>  m_interpolators;
         ComponentManager*           m_componentManager;
 		AbstractEventQueue*			m_eventQueue;
         
@@ -167,15 +116,15 @@ namespace A2D {
 
     public:
 
-		static Floater				ANIMATE_OPACITY;
-		static Floater				ANIMATE_WIDTH;
-		static Floater				ANIMATE_HEIGHT;
-		static Floater				ANIMATE_BORDER_RADII_TOP_LEFT;
-		static Floater				ANIMATE_BORDER_RADII_UNIFIED;
-		static Floater				ANIMATE_BOUNDS_X;
-		static Floater				ANIMATE_BOUNDS_Y;
+		static A2DANIMATABLEFLOAT1				ANIMATE_OPACITY;
+		static A2DANIMATABLEFLOAT1				ANIMATE_WIDTH;
+		static A2DANIMATABLEFLOAT1				ANIMATE_HEIGHT;
+		static A2DANIMATABLEFLOAT1				ANIMATE_BORDER_RADII_TOP_LEFT;
+		static A2DANIMATABLEFLOAT1				ANIMATE_BORDER_RADII_UNIFIED;
+		static A2DANIMATABLEFLOAT1				ANIMATE_BOUNDS_X;
+		static A2DANIMATABLEFLOAT1				ANIMATE_BOUNDS_Y;
 		
-		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
+		Animation					animate(A2DANIMATABLEFLOAT1 x_A2DANIMATABLEFLOAT1, TWEEN x_tween, float x_to, int x_period, A2DCALLBACKVOID1 x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
 
 		inline void stop(Animation x_animation)
@@ -219,6 +168,12 @@ namespace A2D {
 
 		void						setBorderRadiiUnified(float x_value);
 		inline float				getBorderRadiiUnified() { return m_styleSet.m_borderRadii.m_left; }
+
+		float						getBoundsY();
+		void 						setBoundsY(float x_y);
+
+		float						getBoundsX();
+		void						setBoundsX(float x_x);
 
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);
@@ -318,30 +273,6 @@ namespace A2D {
 			m_validatedContents = false;
 			m_styleSet.markRequestRegionAsDirty();
         }
-
-		inline void Component::setBoundsX(float x_x)
-		{
-			m_region.aX = x_x;
-			m_validatedContents = false;
-			m_styleSet.markRequestRegionAsDirty();
-		}
-
-		inline float Component::getBoundsX()
-		{
-			return m_region.aX;
-		}
-
-		inline void Component::setBoundsY(float x_y)
-		{
-			m_region.aY = x_y;
-			m_validatedContents = false;
-			m_styleSet.markRequestRegionAsDirty();
-		}
-
-		inline float Component::getBoundsY()
-		{
-			return m_region.aY;
-		}
     };
 }
 #endif
