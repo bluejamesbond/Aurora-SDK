@@ -188,29 +188,29 @@ namespace A2D {
 		template<class T>
 		inline static T inElastic(T t, T b, T c, T d) {
 			float s = 1.70158f; T p = 0; T a = c;
-			if (t == 0) return b;  if ((t /= d) == 1) return b + c;  if (!p) p = d*.3;
-			if (a < abs(c)) { a = c; T s = p / 4; }
-			else T s = p / (2 * M_PI) * asin(c / a);
-			return -(a*pow(2, 10 * (t -= 1)) * sin((t*d - s)*(2 * M_PI) / p)) + b;
+			if (t == 0) return b;  if ((t /= d) == 1.0f) return b + c;  if (!p) p = d*.3f;
+			if (a < abs(c)) { a = c; T s = p / 4.0f; }
+			else T s = p / (2.0f * 3.1415f) * asin(c / a);
+			return -(a*pow(2.0f, 10.0f * (t -= 1.0f)) * sin((t*d - s)*(2.0f * 3.1415f) / p)) + b;
 		}
 
 		template<class T>
 		inline static T outElastic(T t, T b, T c, T d) {
 			float s = 1.70158f; T p = 0; T a = c;
-			if (t == 0) return b;  if ((t /= d) == 1) return b + c;  if (!p) p = d*.3;
-			if (a < abs(c)) { a = c; T s = p / 4; }
-			else T s = p / (2 * M_PI) * asin(c / a);
-			return a*pow(2, -10 * t) * sin((t*d - s)*(2 * M_PI) / p) + c + b;
+			if (t == 0) return b;  if ((t /= d) == 1) return b + c;  if (!p) p = d*.3f;
+			if (a < abs(c)) { a = c; T s = p / 4.0f; }
+			else T s = p / (2.0f * 3.1415f) * asin(c / a);
+			return a*pow(2.0f, -10.0f * t) * sin((t*d - s)*(2.0f * 3.1415f) / p) + c + b;
 		}
 
 		template<class T>
 		inline static T  inOutElastic(T t, T b, T c, T d) {
 			float s = 1.70158f; T p = 0; T a = c;
-			if (t == 0) return b;  if ((t /= d / 2) == 2) return b + c;  if (!p) p = d*(.3*1.5);
-			if (a < abs(c)) { a = c; T s = p / 4; }
-			else T s = p / (2 * M_PI) * asin(c / a);
-			if (t < 1) return -.5*(a*pow(2, 10 * (t -= 1)) * sin((t*d - s)*(2 * M_PI) / p)) + b;
-			return a*pow(2, -10 * (t -= 1)) * sin((t*d - s)*(2 * M_PI) / p)*.5 + c + b;
+			if (t == 0) return b;  if ((t /= d / 2.0f) == 2.0f) return b + c;  if (!p) p = d*(.3f*1.5f);
+			if (a < abs(c)) { a = c; T s = p / 4.0f; }
+			else T s = p / (2.0f * 3.1415f) * asin(c / a);
+			if (t < 1.0f) return -.5f*(a*pow(2.0f, 10.0f * (t -= 1.0f)) * sin((t*d - s)*(2.0f * 3.1415f) / p)) + b;
+			return a*pow(2.0f, -10.0f * (t -= 1.0f)) * sin((t*d - s)*(2.0f * 3.1415f) / p)*.5f + c + b;
 		}
 
 		template<class T>

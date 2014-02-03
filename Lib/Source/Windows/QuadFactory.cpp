@@ -222,14 +222,18 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 												SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_top),
 												SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_right),
 												SFLOAT(x_renderSet.m_borders.m_precalculatedBorderWidths.m_bottom));
+		
+		x_renderSet.m_dirtyBorderWidths = false;
+	}
 
-
+	if (x_renderSet.m_dirtyBorderRadii)
+	{
 		vertices[0].aBorderRadii = D3DXVECTOR4(SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_left),
 											   SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_top),
 											   SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_right),
 											   SFLOAT(x_renderSet.m_precalculatedBorderRadii.m_bottom));
 
-		x_renderSet.m_dirtyBorderWidths = false;
+		x_renderSet.m_dirtyBorderRadii = false;
 	}
 
 	if (x_renderSet.m_dirty)

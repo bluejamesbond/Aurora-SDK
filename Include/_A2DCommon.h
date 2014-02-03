@@ -179,6 +179,8 @@ inline unsigned long long platform_dependent_kernel_time_high_precision()
 //------------------------------------------------------------------------------
 #define	unconst__(x)									(const_cast<x>(this))
 
+#include <time.h>
+
 // Speed functions
 //------------------------------------------------------------------------------
 #ifndef timeinit__

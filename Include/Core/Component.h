@@ -160,6 +160,8 @@ namespace A2D {
 		static Floater				ANIMATE_OPACITY;
 		static Floater				ANIMATE_WIDTH;
 		static Floater				ANIMATE_HEIGHT;
+		static Floater				ANIMATE_BORDER_RADII_TOP_LEFT;
+		static Floater				ANIMATE_BORDER_RADII_UNIFIED;
 		
 		Animation					animate(Floater x_floater, TWEEN x_tween, float x_to, int x_period, CALLBACK_ x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
@@ -189,8 +191,15 @@ namespace A2D {
 		void						setHeight(float x_height);
 		inline float				getHeight() { return m_styleSet.m_size.m_height; }
 
+		void						setBorderRadiiTopLeftUnits(Style::Units x_units);
+		void						setBorderRadiiTopLeft(float x_value);
+		inline float				getBorderRadiiTopLeft() { return m_styleSet.m_borderRadii.m_left; }
+
 		void						setOpacity(float x_opacity);
 		inline float				getOpacity() { return m_styleSet.m_opacity; }
+
+		void						setBorderRadiiUnified(float x_value);
+		inline float				getBorderRadiiUnified() { return m_styleSet.m_borderRadii.m_left; }
 
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);

@@ -8,6 +8,8 @@ using namespace A2D;
 Component::Floater Component::ANIMATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
 Component::Floater Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, FLT_MAX);
 Component::Floater Component::ANIMATE_HEIGHT(&Component::getHeight, &Component::setHeight, 0.0f, FLT_MAX);
+Component::Floater Component::ANIMATE_BORDER_RADII_TOP_LEFT(&Component::getBorderRadiiTopLeft, &Component::setBorderRadiiTopLeft, 0.0f, FLT_MAX);
+Component::Floater Component::ANIMATE_BORDER_RADII_UNIFIED(&Component::getBorderRadiiUnified, &Component::setBorderRadiiUnified, 0.0f, FLT_MAX);
 
 Component::Component() :
     m_forcedBounds(false),
@@ -661,7 +663,46 @@ void Component::setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Unit
 	borderRadii.m_bottom = xBottom;
 	borderRadii.m_right = xRight;
 
-	m_validatedContents = false;
+	m_styleSet.markBorderRadiiAsDirty();
+}
+
+void Component::setBorderRadiiTopLeft(float x_value)
+{
+	A2DDISTANCESET4& borderRadii = m_styleSet.m_borderRadii;
+	A2DPIXELDISTANCESETUINT4& precalculatedBorderRadii = m_styleSet.m_precalculatedBorderRadii;
+
+	unsigned int width = m_styleSet.m_precalculatedSize.m_width;
+	unsigned int height = m_styleSet.m_precalculatedSize.m_height;
+
+	unsigned int usableDim = min__(width, height);
+	
+	precalculatedBorderRadii.m_left = min__(SUINT(cvtsu2px__(borderRadii.m_leftUnits, (borderRadii.m_left = x_value), width)), usableDim / 2);
+
+	m_styleSet.markBorderRadiiAsDirty();
+}
+
+void Component::setBorderRadiiTopLeftUnits(Style::Units x_units)
+{
+	m_styleSet.m_borderRadii.m_leftUnits = x_units;
+
+	m_styleSet.markBorderRadiiAsDirty();
+}
+
+void Component::setBorderRadiiUnified(float x_value)
+{
+	A2DDISTANCESET4& borderRadii = m_styleSet.m_borderRadii;
+	A2DPIXELDISTANCESETUINT4& precalculatedBorderRadii = m_styleSet.m_precalculatedBorderRadii;
+
+	unsigned int width = m_styleSet.m_precalculatedSize.m_width;
+	unsigned int height = m_styleSet.m_precalculatedSize.m_height;
+
+	unsigned int usableDim = min__(width, height);
+
+	precalculatedBorderRadii.m_left = min__(SUINT(cvtsu2px__(borderRadii.m_leftUnits, (borderRadii.m_left = x_value), width)), usableDim / 2);
+	precalculatedBorderRadii.m_top = min__(SUINT(cvtsu2px__(borderRadii.m_topUnits, (borderRadii.m_top = x_value), height)), usableDim / 2);
+	precalculatedBorderRadii.m_right = min__(SUINT(cvtsu2px__(borderRadii.m_bottomUnits, (borderRadii.m_bottom = x_value), height)), usableDim / 2);
+	precalculatedBorderRadii.m_bottom = min__(SUINT(cvtsu2px__(borderRadii.m_bottomUnits, (borderRadii.m_right = x_value), width)), usableDim / 2);
+
 	m_styleSet.markBorderRadiiAsDirty();
 }
 
