@@ -34,9 +34,7 @@ namespace A2D{
 		A2DANIMATABLEFLOAT1 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
 		TWEEN * m_tween;
-
-		HANIMATION m_animationHandle;
-
+		
 		float m_to;
 		int m_period;
 
@@ -45,8 +43,7 @@ namespace A2D{
 		inline A2DCACHEDANIMATION() :
 			m_to(0.0f),
 			m_period(0),
-			m_arg(NULL),
-			m_animationHandle(NULL)
+			m_arg(NULL)
 		{
 		}
 
@@ -56,8 +53,7 @@ namespace A2D{
 			m_callback(x_callback),
 			m_to(x_to),
 			m_period(x_period),
-			m_arg(x_arg),
-			m_animationHandle(NULL)
+			m_arg(x_arg)
 		{
 		}
 	};
@@ -75,9 +71,9 @@ namespace A2D{
 		static A2DANIMATABLEFLOAT1				COMPONENT_BOUNDS_X;
 		static A2DANIMATABLEFLOAT1				COMPONENT_BOUNDS_Y;
 
-		static Animation _fastcall				animate(Component& x_component,  A2DCACHEDANIMATION& x_cachedAnimation);
+		static HANIMATION _fastcall				animate(Component& x_component, A2DCACHEDANIMATION& x_cachedAnimation);
 		static void	_fastcall					stop(Component& x_component, Animation x_animation, bool x_callback);
-		static void	_fastcall					stop(Component& x_component, Animation x_animation);
+		static void	_fastcall					stop(Component& x_component, HANIMATION x_animation);
 	};
 }
 

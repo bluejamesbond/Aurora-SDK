@@ -14,7 +14,7 @@ A2DANIMATABLEFLOAT1 Animator::COMPONENT_BORDER_RADII_UNIFIED(&Component::getBord
 A2DANIMATABLEFLOAT1 Animator::COMPONENT_BOUNDS_X(&Component::getBoundsX, &Component::setBoundsX, FLT_MIN, FLT_MAX);
 A2DANIMATABLEFLOAT1 Animator::COMPONENT_BOUNDS_Y(&Component::getBoundsY, &Component::setBoundsY, FLT_MIN, FLT_MAX);
 
-Animation _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATION& x_cachedAnimation)
+HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATION& x_cachedAnimation)
 {
 	A2DINTERPOLATORFLOAT1 * interpolator = new A2DINTERPOLATORFLOAT1();
 		
@@ -65,7 +65,7 @@ void _fastcall Animator::stop(Component& x_component, Animation x_animation, boo
 	x_component.m_interpolators.remove_request(x_animation);
 }
 
-void _fastcall Animator::stop(Component& x_component, Animation x_animation)
+void _fastcall Animator::stop(Component& x_component, HANIMATION x_animation)
 {
 	if (x_component.m_interpolators.remove_request(x_animation))
 	{
