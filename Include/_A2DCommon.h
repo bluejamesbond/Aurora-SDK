@@ -24,6 +24,8 @@
 #define _WINDOW_MOVE_BAR_DISTANCE                        25
 #define _WINDOW_MOVE_DEFAULT_DISTANCE                    10
 
+#define FPS												 120
+
 // System error focusing on speed
 //------------------------------------------------------------------------------
 #ifndef __STATUS_DEFINED__
@@ -55,6 +57,7 @@ typedef unsigned int STATUS;
 #define SINT(x)                                         static_cast<int>(x)
 #define SLONG(x)                                        static_cast<long>(x)
 #define SUINT(x)                                        static_cast<unsigned int>(x)
+#define SDOUBLE(x)	                                    static_cast<double>(x)
 #define SULONGLONG(x)                                   static_cast<unsigned long long>(x)
 #define SULONG(x)                                       static_cast<unsigned long>(x)
 #define IMPLEMENT                                       = 0
@@ -128,15 +131,27 @@ SYSINLINE int SYSCDECL abs_cpy(int a)
 
 #include "Windows/ExtLibs.h"
 
+// Long lived frequency
+static LARGE_INTEGER freq;
+
+inline bool get_rdtsc_cpu_frequency()
+{
+	QueryPerformanceFrequency(&freq);
+
+	return true;
+}
+
 // Time access
 // NOTE: Use QueryPerformanceFrequency for raw frequency based time
-inline unsigned long long platform_dependent_kernel_time_high_precision()
+inline double platform_dependent_kernel_time_high_precision()
 {
-	FILETIME time;
+	static bool singleton = get_rdtsc_cpu_frequency();
 
-	GetSystemTimeAsFileTime(&time);
+	LARGE_INTEGER counter1;
 	
-	return (SULONGLONG(time.dwHighDateTime) << 32) | time.dwLowDateTime;
+	QueryPerformanceCounter(&counter1);
+
+	return SDOUBLE(counter1.QuadPart) / SDOUBLE(freq.QuadPart);
 }
 
 // System time used for primarily 
@@ -147,7 +162,7 @@ inline unsigned long long platform_dependent_kernel_time_high_precision()
 #endif
 
 #ifndef kerneltimehp__
-#define kerneltimehp__									GetTickCount64()
+#define kerneltimehp__									platform_dependent_kernel_time_high_precision()
 #endif
 
 #endif

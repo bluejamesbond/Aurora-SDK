@@ -11,6 +11,14 @@
 #endif
 #endif
 
+#ifndef SYSOUT_DBL 
+#ifdef _WIN32
+#define SYSOUT_DBL(x)										  _RPT1( 0, "[Aurora -SDK] %f\n", x )
+#elif __linux__
+#define SYSOUT_DBL(x)										  _RPT1( 0, "[Aurora -SDK] %f\n", x )
+#endif
+#endif
+
 #ifndef SYSOUT_INT 
 #ifdef _WIN32
 #define SYSOUT_INT(x)										  _RPT1( 0, "[Aurora -SDK] %d\n", x )
@@ -26,6 +34,7 @@
 #define SYSOUT_HEX(x)										   _RPT1( 0, "[Aurora -SDK] 0x%X\n", x )
 #endif
 #endif
+
 
 #ifndef SYSOUT_STR
 #ifdef _WIN32

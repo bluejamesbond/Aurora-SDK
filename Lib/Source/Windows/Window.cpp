@@ -25,10 +25,10 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
     AbstractFrame& frame = *aFrame;
     AbstractEventQueue& eventQueue = *xEventQueue;
 
-	int lastTime = kerneltimelp__;
-	int timeBetweenFrames = 1000 / 200;
-	int currentTime;
-
+	double lastTime = kerneltimehp__;
+	double timeBetweenFrames = 1.0 / SDOUBLE(FPS);
+	double currentTime;
+	
     while (true)
     {
         if (visible)
@@ -41,7 +41,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			
 			eventQueue.dispatchNextEvent();
 			
-			if ((currentTime = kerneltimelp__) - lastTime < timeBetweenFrames && !resizing)
+			if ((currentTime = kerneltimehp__) - lastTime < timeBetweenFrames && !resizing)
 			{
 				continue;
 			}
