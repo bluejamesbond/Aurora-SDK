@@ -32,6 +32,7 @@
 #include "A2DCOMPONENTRENDERSTYLESET.h"
 #include "A2DANIMATABLEFLOAT1.h"
 #include "A2DINTERPOLATORFLOAT1.h"
+#include "Animator.h"
 
 namespace A2D {
 
@@ -59,6 +60,7 @@ namespace A2D {
         friend class ComponentManager;
         friend class CascadingLayout;
 		friend class AbstractEventQueue;
+		friend class Animator;
 
     public:
 
@@ -124,7 +126,7 @@ namespace A2D {
 		static A2DANIMATABLEFLOAT1				ANIMATE_BOUNDS_X;
 		static A2DANIMATABLEFLOAT1				ANIMATE_BOUNDS_Y;
 		
-		Animation					animate(A2DANIMATABLEFLOAT1 x_A2DANIMATABLEFLOAT1, TWEEN x_tween, float x_to, int x_period, A2DCALLBACKVOID1 x_callback, void * x_arg);
+		Animation					animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
 
 		inline void stop(Animation x_animation)
@@ -229,11 +231,11 @@ namespace A2D {
         inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
         {
 			if (m_previousCalculatedRowIndex != m_calculatedRowIndex ||
-				m_previousCalculatedColumnIndex != m_calculatedColumnIndex /*FIXME && NOT RESIZING*/ )
+				m_previousCalculatedColumnIndex != m_calculatedColumnIndex /*FIXME && NOT RESIZING*/)
 			{
 				m_region.aWidth = xWidth;
 				m_region.aHeight = xHeight;
-
+				
 				if (m_positionAnimationX)
 				{
 					stop(m_positionAnimationX);

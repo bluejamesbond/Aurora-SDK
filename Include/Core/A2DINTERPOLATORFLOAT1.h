@@ -21,9 +21,9 @@ namespace A2D {
 
 	struct A2DINTERPOLATORFLOAT1
 	{
-		TWEEN m_tween;
-		A2DANIMMUTATORFLOAT1 m_interpolatable;
-		A2DCALLBACKVOID1 m_callback;
+		TWEEN * m_tween;
+		A2DANIMMUTATORFLOAT1* m_interpolatable;
+		A2DCALLBACKVOID1* m_callback;
 
 		int m_startTime;
 
@@ -39,6 +39,7 @@ namespace A2D {
 			m_start(0.0f),
 			m_period(0),
 			m_startTime(0),
+			m_callback(NULL),
 			m_removeTicket(NULL)
 		{
 		}

@@ -58,18 +58,18 @@ void Component::interpolate()
 		node = node->right;
 
 		// Interpolate value
-		interpolated = interpolator->m_tween(duration = SFLOAT(currentTime - interpolator->m_startTime), interpolator->m_start, interpolator->m_range, interpolator->m_period);
+		interpolated = (*interpolator->m_tween)(duration = SFLOAT(currentTime - interpolator->m_startTime), interpolator->m_start, interpolator->m_range, interpolator->m_period);
 		
 		// Remove the node
 		if (duration > interpolator->m_period)
 		{
 			// Force end 
-			(this->*interpolator->m_interpolatable)(interpolator->m_start + interpolator->m_range);
+			(this->*(*interpolator->m_interpolatable))(interpolator->m_start + interpolator->m_range);
 
 			// Execute callback
 			if (interpolator->m_callback)
 			{
-				(*interpolator->m_callback)(interpolator->m_arg);
+				(*(*interpolator->m_callback))(interpolator->m_arg);
 			}
 			
 			// Remove request
@@ -79,7 +79,7 @@ void Component::interpolate()
 		// OR Update the value
 		else
 		{
-			(this->*interpolator->m_interpolatable)(interpolated);
+			(this->*(*interpolator->m_interpolatable))(interpolated);
 		}
 	}
 
@@ -94,12 +94,12 @@ void Component::interpolate()
 	}
 }
 
-Animation Component::animate(A2DANIMATABLEFLOAT1 x_A2DANIMATABLEFLOAT1, TWEEN x_tween, float x_to, int x_period, A2DCALLBACKVOID1 x_callback, void * x_arg)
+Animation Component::animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg)
 {
 	A2DINTERPOLATORFLOAT1 * interpolator = new A2DINTERPOLATORFLOAT1();
 
-	interpolator->m_interpolatable = x_A2DANIMATABLEFLOAT1.m_mutator;
-	interpolator->m_tween = x_tween;
+	interpolator->m_interpolatable = &x_A2DANIMATABLEFLOAT1.m_mutator;
+	interpolator->m_tween = &x_tween;
 	interpolator->m_startTime = kerneltimelp__; // current time
 	interpolator->m_start = (this->*x_A2DANIMATABLEFLOAT1.m_accessor)();
 	interpolator->m_range = x_to - interpolator->m_start;
