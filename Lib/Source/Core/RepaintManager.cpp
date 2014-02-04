@@ -130,6 +130,7 @@ void RepaintManager::update()
 
 	backBuffer->setZBuffer(true);
 	backBuffer->swap();
+	sleep(1);
 }
 
 void RepaintManager::update_forward()
@@ -170,4 +171,5 @@ void RepaintManager::update_forward()
 
 	backBuffer->setZBuffer(true);
 	backBuffer->swap();
+	sleep(1);
 }
