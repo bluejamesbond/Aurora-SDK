@@ -30,7 +30,9 @@ Component::Component() :
 	m_calculatedRowIndex(0),
 	m_calculatedColumnIndex(0),
 	m_previousCalculatedRowIndex(0),
-	m_previousCalculatedColumnIndex(0)
+	m_previousCalculatedColumnIndex(0),
+	m_cachedAnimationPositionX(Animator::COMPONENT_BOUNDS_X, Easing::OUT_QUAD, 0, 200, NULL, NULL),
+	m_cachedAnimationPositionY(Animator::COMPONENT_BOUNDS_Y, Easing::OUT_QUAD, 0, 200, NULL, NULL)
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;

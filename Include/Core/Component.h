@@ -112,6 +112,8 @@ namespace A2D {
 		Dims						m_previousVisibleDimensions;
 		Dims						m_previousDimensions;
 
+		A2DCACHEDANIMATION			m_cachedAnimationPositionX;
+		A2DCACHEDANIMATION			m_cachedAnimationPositionY;
 
 		Pipeline*                   m_pipeline;
 		Graphics*                   m_graphics;    
@@ -238,15 +240,18 @@ namespace A2D {
 				
 				if (m_positionAnimationX)
 				{
-					stop(m_positionAnimationX);
+					Animator::stop(*this, m_positionAnimationX);
 				}
 				if (m_positionAnimationY)
 				{
-					stop(m_positionAnimationY);
+					Animator::stop(*this, m_positionAnimationY);
 				}
 
-				m_positionAnimationX = animate(Component::ANIMATE_BOUNDS_X, Easing::OUT_QUAD, xX, 200, NULL, NULL);
-				m_positionAnimationY = animate(Component::ANIMATE_BOUNDS_Y, Easing::OUT_QUAD, xY, 200, NULL, NULL);
+				m_cachedAnimationPositionX.m_to = xX;
+				m_cachedAnimationPositionY.m_to = xY;
+
+				m_positionAnimationX = Animator::animate(*this, m_cachedAnimationPositionX);
+				m_positionAnimationY = Animator::animate(*this, m_cachedAnimationPositionY);
 
 				m_previousCalculatedRowIndex = m_calculatedRowIndex;
 				m_previousCalculatedColumnIndex = m_calculatedColumnIndex;
