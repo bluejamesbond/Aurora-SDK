@@ -76,7 +76,9 @@ namespace A2D {
         AbstractFrame*              m_frame;
         Component*                  m_parent;
 		OrderedList<Component*>     m_children;
+
 		OrderedList<A2DINTERPOLATORFLOAT1*>  m_interpolators;
+
         ComponentManager*           m_componentManager;
 		AbstractEventQueue*			m_eventQueue;
         
