@@ -269,47 +269,77 @@ void Component::validate()
     }
     else
     {
-        float sX, sY;
         Rect& parentRect = parentComp->m_region;
         Rect& parentCalculatedRegion = parentComp->m_calculatedRegion;
         Rect& parentVisibleRegion = parentComp->m_visibleRegion;
+	
+		float 
+			sX, 
+			sY, 
+			x,
+			y,
+			pX = parentCalculatedRegion.aX,
+			pY = parentCalculatedRegion.aY,
+			width, 
+			height,
+			compX = compRect.aX,
+			compY = compRect.aY,
+			compWidth = compRect.aWidth, 
+			compHeight = compRect.aHeight,
+			parentCalcWidth = parentCalculatedRegion.aWidth,
+			parentCalcHeight = parentCalculatedRegion.aHeight;
+
+		// (64 bit target)
+		// 12 xmmX registers
+		// 1 xmmX register to store 0.0f
+		//------------------------------------------------------------------------------
+		// Load from RAM
+
+		//__asm
+		//{
+		//	push eax;
+		//	mov eax, parentCalculatedRegion;
+		//	movss xmm7, DWORD PTR[eax + 2];
+		//	pop eax;
+		//}
 		
         // Running x and y
 		//------------------------------------------------------------------------------
-        m_calculatedRegion.aX = parentCalculatedRegion.aX + compRect.aX;
-        m_calculatedRegion.aY = parentCalculatedRegion.aY + compRect.aY;
+        x = pX + compX;
+        y = pY + compY;
         
         // Reduce the size based on parent x, y
         // Account for negative x, y of this
         // Accumulate negatives
 		//------------------------------------------------------------------------------
-        m_calculatedRegion.aWidth = compRect.aWidth + (m_calculatedNegativeDeltaX = parentComp->m_calculatedNegativeDeltaX + min__(0.0f, compRect.aX));
-        m_calculatedRegion.aHeight = compRect.aHeight + (m_calculatedNegativeDeltaY = parentComp->m_calculatedNegativeDeltaY + min__(0.0f, compRect.aY));
+		width = compWidth + (m_calculatedNegativeDeltaX = parentComp->m_calculatedNegativeDeltaX + min__(0.0f, compX));
+		height = compHeight + (m_calculatedNegativeDeltaY = parentComp->m_calculatedNegativeDeltaY + min__(0.0f, compY));
         
         // Account for larger than parent
 		//------------------------------------------------------------------------------
-        m_calculatedRegion.aWidth = min__(m_calculatedRegion.aWidth, parentCalculatedRegion.aWidth);
-        m_calculatedRegion.aHeight = min__(m_calculatedRegion.aHeight, parentCalculatedRegion.aHeight);
+		width = min__(width, parentCalcWidth);
+		height = min__(height, parentCalcHeight);
 
         // Account for positive shift
 		//------------------------------------------------------------------------------
-        m_calculatedRegion.aWidth -= SFLOAT((sX = (compRect.aX + m_calculatedRegion.aWidth)) > parentCalculatedRegion.aWidth ? (sX - parentCalculatedRegion.aWidth) : 0.0f);
-        m_calculatedRegion.aHeight -= SFLOAT((sY = (compRect.aY + m_calculatedRegion.aHeight)) > parentCalculatedRegion.aHeight ? (sY - parentCalculatedRegion.aHeight) : 0.0f);
+		width -= (sX = (compX + width)) > parentCalcWidth ? (sX - parentCalcWidth) : 0.0f;
+		height -= (sY = (compY + height)) > parentCalcHeight ? (sY - parentCalcHeight) : 0.0f;
         
         // Account for negative height
 		//------------------------------------------------------------------------------
-        m_calculatedRegion.aWidth = max__(0.0f, m_calculatedRegion.aWidth);
-        m_calculatedRegion.aHeight = max__(0.0f, m_calculatedRegion.aHeight);
+		width = max__(0.0f, width);
+		height = max__(0.0f, height);
 
         // Set the visible x and y based on previous
 		//------------------------------------------------------------------------------
-        m_visibleRegion.aX = parentVisibleRegion.aX + max__(0.0f, min__(m_calculatedRegion.aX, compRect.aX));
-        m_visibleRegion.aY = parentVisibleRegion.aY + max__(0.0f, min__(m_calculatedRegion.aY, compRect.aY));
-
-        // Set the region based on if it is even visible
+		m_visibleRegion = { pX + max__(0.0f, min__(x, compX)), 
+							pY + max__(0.0f, min__(y, compY)), 
+							(x + compWidth) >= 0.0f ? width : 0.0f, 
+							(y + compHeight) >= 0.0f ? height : 0.0f };
+		
+		// Set the calculated width and height
 		//------------------------------------------------------------------------------
-        m_visibleRegion.aWidth = SFLOAT((m_calculatedRegion.aX + compRect.aWidth) >= 0.0f ? m_calculatedRegion.aWidth : 0.0f);
-        m_visibleRegion.aHeight = SFLOAT((m_calculatedRegion.aY + compRect.aHeight) >= 0.0f ? m_calculatedRegion.aHeight : 0.0f); 	
+		m_calculatedRegion = { x, y, width, height };
 
 		if (m_visibleRegion.aHeight != m_previousVisibleDimensions.aHeight ||
 			m_visibleRegion.aWidth != m_previousVisibleDimensions.aWidth)

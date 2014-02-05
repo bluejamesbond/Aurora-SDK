@@ -32,6 +32,18 @@ namespace A2D {
 	{
 		static void				memcpySSE2(Rect * xDest, const Rect * xSrc);
 		static char				memeqlSSE4(Rect * xComp1, Rect * xComp2);
+
+		inline Rect()
+		{
+		}
+
+		inline Rect(float a, float b, float c, float d)
+		{
+			aX = a;
+			aY = b;
+			aWidth = c;
+			aHeight = d;
+		}
 	};
 }
 
