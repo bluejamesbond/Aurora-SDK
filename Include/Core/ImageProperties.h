@@ -20,8 +20,9 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "ExtLibs.h"
 #include "../_A2DCommon.h"
+
+#include "ExtLibs.h"
 
 namespace A2D {
 
