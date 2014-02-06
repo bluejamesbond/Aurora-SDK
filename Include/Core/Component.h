@@ -249,8 +249,8 @@ namespace A2D {
 					Animator::stop(*this, m_positionAnimationY);
 				}
 
-				m_cachedAnimationPositionX.m_to = xX;
-				m_cachedAnimationPositionY.m_to = xY;
+				m_cachedAnimationPositionX.m_to_a = xX;
+				m_cachedAnimationPositionY.m_to_a = xY;
 
 				m_positionAnimationX = Animator::animate(*this, m_cachedAnimationPositionX);
 				m_positionAnimationY = Animator::animate(*this, m_cachedAnimationPositionY);

@@ -16,17 +16,18 @@ A2DANIMATABLEFLOAT1 Animator::COMPONENT_BOUNDS_Y(&Component::getBoundsY, &Compon
 
 HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATION& x_cachedAnimation)
 {
-	A2DINTERPOLATORFLOAT * interpolator = new A2DINTERPOLATORFLOAT();
-		
-	interpolator->m_interpolatable = &x_cachedAnimation.m_animatable->m_mutator;
-	interpolator->m_tween = x_cachedAnimation.m_tween;
-	interpolator->m_startTime = kerneltimelp__; // current time
-	interpolator->m_start_a = (x_component.*x_cachedAnimation.m_animatable->m_accessor)();
-	interpolator->m_range_a = x_cachedAnimation.m_to - interpolator->m_start_a;
-	interpolator->m_period = x_cachedAnimation.m_period;
-	interpolator->m_callback = x_cachedAnimation.m_callback;
-	interpolator->m_arg = x_cachedAnimation.m_arg;
-
+	float start_a = (x_component.*x_cachedAnimation.m_animatable->m_accessor_a)();
+			
+	A2DINTERPOLATORFLOAT * interpolator =
+		new A2DINTERPOLATORFLOAT(&x_cachedAnimation.m_animatable->m_mutator,
+								  x_cachedAnimation.m_tween,
+								  kerneltimelp__, 
+								  start_a,
+								  x_cachedAnimation.m_to_a - start_a,
+								  x_cachedAnimation.m_period,
+								  x_cachedAnimation.m_callback,
+								  x_cachedAnimation.m_arg);
+	
 	x_component.m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
 
 	x_component.m_activeInterpolations = true;

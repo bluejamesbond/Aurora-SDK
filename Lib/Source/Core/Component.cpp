@@ -160,7 +160,7 @@ void Component::interpolate()
 
 Animation Component::animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg)
 {
-	float start_a = (this->*x_A2DANIMATABLEFLOAT1.m_accessor)();
+	float start_a = (this->*x_A2DANIMATABLEFLOAT1.m_accessor_a)();
 
 	A2DINTERPOLATORFLOAT * interpolator = 
 		new A2DINTERPOLATORFLOAT(&x_A2DANIMATABLEFLOAT1.m_mutator,

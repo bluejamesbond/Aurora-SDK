@@ -27,13 +27,14 @@ namespace A2D{
 		A2DCALLBACKVOID1 * m_callback;
 		TWEEN * m_tween;
 
-		float m_to;
+		float m_to_a;
+
 		float m_period;
 
 		void * m_arg;
 
 		inline A2DCACHEDANIMATION() :
-			m_to(0.0f),
+			m_to_a(0.0f),
 			m_period(0),
 			m_arg(NULL)
 		{
@@ -43,10 +44,15 @@ namespace A2D{
 			m_animatable(&x_animatable),
 			m_tween(&x_tween),
 			m_callback(x_callback),
-			m_to(x_to),
+			m_to_a(x_to),
 			m_period(SFLOAT(x_period)),
 			m_arg(x_arg)
 		{
+		}
+
+		inline void toValue(const float x_to_a)
+		{
+			m_to_a = x_to_a;
 		}
 	};
 
@@ -83,6 +89,12 @@ namespace A2D{
 			m_period(SFLOAT(x_period)),
 			m_arg(x_arg)
 		{
+		}
+
+		inline void toValues(const float x_to_a, const float x_to_b)
+		{
+			m_to_a = x_to_a;
+			m_to_b = x_to_b;
 		}
 	};
 		// Cached animations
@@ -122,7 +134,64 @@ namespace A2D{
 				m_arg(x_arg)
 			{
 			}
-	};
+
+			inline void toValues(const float x_to_a, const float x_to_b, const float x_to_c)
+			{
+				m_to_a = x_to_a;
+				m_to_b = x_to_b;
+				m_to_c = x_to_c;
+			}
+		};
+
+		// Cached animations
+		struct A2DCACHEDANIMATION4
+		{
+			A2DANIMATABLEFLOAT4 * m_animatable;
+			A2DCALLBACKVOID1 * m_callback;
+			TWEEN * m_tween;
+
+			float m_to_a;
+			float m_to_b;
+			float m_to_c;
+			float m_to_d;
+
+			float m_period;
+
+			void * m_arg;
+
+			inline A2DCACHEDANIMATION4() :
+				m_to_a(0.0f),
+				m_to_b(0.0f),
+				m_to_c(0.0f),
+				m_to_d(0.0f),
+				m_period(0.0f),
+				m_arg(NULL)
+			{
+			}
+
+			inline A2DCACHEDANIMATION4(A2DANIMATABLEFLOAT4& x_animatable, TWEEN& x_tween,
+										float x_to_a, float x_to_b, float x_to_c, float x_to_d, int x_period,
+										A2DCALLBACKVOID1 * x_callback, void * x_arg) :
+				m_animatable(&x_animatable),
+				m_tween(&x_tween),
+				m_callback(x_callback),
+				m_to_a(x_to_a),
+				m_to_b(x_to_b),
+				m_to_c(x_to_c),
+				m_to_d(x_to_d),
+				m_period(SFLOAT(x_period)),
+				m_arg(x_arg)
+			{
+			}
+
+			inline void toValues(const float x_to_a, const float x_to_b, const float x_to_c, const float x_to_d)
+			{
+				m_to_a = x_to_a;
+				m_to_b = x_to_b;
+				m_to_c = x_to_c;
+				m_to_d = x_to_d;
+			}
+		};
 }
 
 #endif
