@@ -48,25 +48,46 @@ void Component::paintComponentBorder(){}
 
 void Component::interpolate()
 {
-	OrderedList<A2DINTERPOLATORFLOAT1*>::Node<A2DINTERPOLATORFLOAT1*> * node = m_interpolators._head();
+	OrderedList<A2DINTERPOLATORFLOAT*>::Node<A2DINTERPOLATORFLOAT*> * node = m_interpolators._head();
 	int currentTime = kerneltimelp__;
 
 	while (node->value)
 	{
-		float duration, interpolated;
-		A2DINTERPOLATORFLOAT1 * interpolator = node->value;
+		A2DINTERPOLATORFLOAT * interpolator = node->value;
+		float duration = SFLOAT(currentTime - interpolator->m_startTime);
 
 		// Save the next node
 		node = node->right;
-
-		// Interpolate value
-		interpolated = (*interpolator->m_tween)(duration = SFLOAT(currentTime - interpolator->m_startTime), interpolator->m_start, interpolator->m_range, interpolator->m_period);
-		
+				
 		// Remove the node
 		if (duration > interpolator->m_period)
 		{
 			// Force end 
-			(this->*(*interpolator->m_interpolatable))(interpolator->m_start + interpolator->m_range);
+			switch (interpolator->m_mode)
+			{
+				case A2DINTERPOLATORFLOAT::Mode::FOUR_PARAMETERS:{	
+					(this->*(*interpolator->m_interpolatable_d))(interpolator->m_start_a + interpolator->m_range_a, 
+																 interpolator->m_start_b + interpolator->m_range_b, 
+																 interpolator->m_start_c + interpolator->m_range_c, 
+																 interpolator->m_start_d + interpolator->m_range_d);
+					break;
+				}
+				case A2DINTERPOLATORFLOAT::Mode::THREE_PARAMETERS: {
+					(this->*(*interpolator->m_interpolatable_c))(interpolator->m_start_a + interpolator->m_range_a, 
+																 interpolator->m_start_b + interpolator->m_range_b, 
+																 interpolator->m_start_c + interpolator->m_range_c);
+					break;
+				}
+				case A2DINTERPOLATORFLOAT::Mode::TWO_PARAMETERS:{	
+					(this->*(*interpolator->m_interpolatable_b))(interpolator->m_start_a + interpolator->m_range_a,
+															     interpolator->m_start_b + interpolator->m_range_b);
+					break;
+				}
+				case A2DINTERPOLATORFLOAT::Mode::ONE_PARAMETER:{	
+					(this->*(*interpolator->m_interpolatable))(interpolator->m_start_a + interpolator->m_range_a);
+					break;
+				}
+			}
 
 			// Execute callback
 			if (interpolator->m_callback)
@@ -81,7 +102,48 @@ void Component::interpolate()
 		// OR Update the value
 		else
 		{
-			(this->*(*interpolator->m_interpolatable))(interpolated);
+			float interpolated_a,
+				  interpolated_b,
+				  interpolated_c,
+				  interpolated_d,
+				  period = interpolator->m_period;
+
+			TWEEN * tween = interpolator->m_tween;
+
+			switch (interpolator->m_mode)
+			{
+				case A2DINTERPOLATORFLOAT::Mode::FOUR_PARAMETERS : interpolated_d = (*tween)(duration, interpolator->m_start_d, interpolator->m_range_d, period);
+				case A2DINTERPOLATORFLOAT::Mode::THREE_PARAMETERS: interpolated_c = (*tween)(duration, interpolator->m_start_b, interpolator->m_range_c, period);
+				case A2DINTERPOLATORFLOAT::Mode::TWO_PARAMETERS:   interpolated_b = (*tween)(duration, interpolator->m_start_c, interpolator->m_range_b, period);
+				case A2DINTERPOLATORFLOAT::Mode::ONE_PARAMETER:    interpolated_a = (*tween)(duration, interpolator->m_start_a, interpolator->m_range_a, period);
+			}
+
+			switch (interpolator->m_mode)
+			{
+				case A2DINTERPOLATORFLOAT::Mode::FOUR_PARAMETERS:{
+					(this->*(*interpolator->m_interpolatable_d))(interpolated_a, 
+																 interpolated_b, 
+																 interpolated_c, 
+																 interpolated_d);
+					break;
+				}
+				case A2DINTERPOLATORFLOAT::Mode::THREE_PARAMETERS:{
+					(this->*(*interpolator->m_interpolatable_c))(interpolated_a, 
+																 interpolated_b, 
+																 interpolated_c);
+					break;
+				}
+				case A2DINTERPOLATORFLOAT::Mode::TWO_PARAMETERS:{
+					(this->*(*interpolator->m_interpolatable_b))(interpolated_a, 
+																 interpolated_b);
+					break;
+				}
+				case A2DINTERPOLATORFLOAT::Mode::ONE_PARAMETER:{
+					(this->*(*interpolator->m_interpolatable))(interpolated_a);
+					break;
+				}
+			}
+
 		}
 	}
 
@@ -98,16 +160,18 @@ void Component::interpolate()
 
 Animation Component::animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg)
 {
-	A2DINTERPOLATORFLOAT1 * interpolator = new A2DINTERPOLATORFLOAT1();
+	float start_a = (this->*x_A2DANIMATABLEFLOAT1.m_accessor)();
 
-	interpolator->m_interpolatable = &x_A2DANIMATABLEFLOAT1.m_mutator;
-	interpolator->m_tween = &x_tween;
-	interpolator->m_startTime = kerneltimelp__; // current time
-	interpolator->m_start = (this->*x_A2DANIMATABLEFLOAT1.m_accessor)();
-	interpolator->m_range = x_to - interpolator->m_start;
-	interpolator->m_period = SFLOAT(x_period);
-	interpolator->m_callback = x_callback;
-	interpolator->m_arg = x_arg;
+	A2DINTERPOLATORFLOAT * interpolator = 
+		new A2DINTERPOLATORFLOAT(&x_A2DANIMATABLEFLOAT1.m_mutator,
+								  &x_tween,
+								  kerneltimelp__,
+								  start_a,
+								  x_to - start_a,
+								  SFLOAT(x_period),
+								  x_callback,
+								  x_arg);
+
 
 	m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
 
@@ -130,7 +194,7 @@ void Component::stop(Animation x_animation, bool x_arg)
 	if (x_arg)
 	{
 		// Get the data
-		A2DINTERPOLATORFLOAT1 ** interpolator = m_interpolators.from_ticket(x_animation);
+		A2DINTERPOLATORFLOAT ** interpolator = m_interpolators.from_ticket(x_animation);
 	
 		if (!interpolator)
 		{

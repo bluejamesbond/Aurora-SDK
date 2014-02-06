@@ -31,7 +31,7 @@
 #include "ComponentEventSource.h"
 #include "A2DCOMPONENTRENDERSTYLESET.h"
 #include "A2DANIMATABLEFLOAT1.h"
-#include "A2DINTERPOLATORFLOAT1.h"
+#include "A2DINTERPOLATORFLOAT.h"
 #include "Animator.h"
 
 namespace A2D {
@@ -77,7 +77,7 @@ namespace A2D {
         Component*                  m_parent;
 		OrderedList<Component*>     m_children;
 
-		OrderedList<A2DINTERPOLATORFLOAT1*>  m_interpolators;
+		OrderedList<A2DINTERPOLATORFLOAT*>  m_interpolators;
 
         ComponentManager*           m_componentManager;
 		AbstractEventQueue*			m_eventQueue;
