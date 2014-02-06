@@ -15,7 +15,7 @@
 //
 //------------------------------------------------------------------------------
 
-#include "A2DCACHEDANIMATION.h"
+#include "A2DCACHEDANIMATIONX.h"
 
 namespace A2D{
 
