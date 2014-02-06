@@ -59,6 +59,26 @@ namespace A2D {
 
 	private:
 
+		enum Cursor
+		{
+			NORMAL,
+			RESIZE_SIZE_WEST_EAST,
+			RESIZE_NORTH_SOUTH,
+			RESIZE_NORTH_EAST_SOUTH_WEST,
+			RESIZE_NORTH_WEST_SOUTH_EAST,
+			RESIZE_ALL,
+			WAIT,
+			UP_ARROW
+		};
+
+		Cursor							aCursor;
+
+		static HCURSOR					CURSOR_IDC_SIZENWSE;
+		static HCURSOR					CURSOR_IDC_SIZENESW;
+		static HCURSOR					CURSOR_IDC_SIZEWE;
+		static HCURSOR					CURSOR_IDC_SIZENS;
+		static HCURSOR					CURSOR_IDC_ARROW;
+
 		int                             aStyle;
 
 		float                           aPadding;
@@ -81,7 +101,6 @@ namespace A2D {
 		bool                            aIsResizing = false;
 		bool							aIsMoving = false;
 		bool                            aWinMoveRes = false;
-
 
 		bool							aFramebufferInterpolation = false;
 

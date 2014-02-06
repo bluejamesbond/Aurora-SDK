@@ -308,6 +308,12 @@ STATUS Window::updateOnMouseDown(HWND xHwnd)
     return STATUS_OK;
 }
 
+HCURSOR Window::CURSOR_IDC_SIZENWSE = LoadCursor(NULL, IDC_SIZENWSE);
+HCURSOR Window::CURSOR_IDC_SIZENESW = LoadCursor(NULL, IDC_SIZENESW);
+HCURSOR Window::CURSOR_IDC_SIZENS = LoadCursor(NULL, IDC_SIZENS);
+HCURSOR Window::CURSOR_IDC_SIZEWE = LoadCursor(NULL, IDC_SIZEWE);
+HCURSOR Window::CURSOR_IDC_ARROW = LoadCursor(NULL, IDC_ARROW);
+
 STATUS Window::updateOnMouseMove(HWND xHwnd)
 {
     if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
@@ -341,28 +347,32 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
         if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
             y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
+			aCurrentCursor = Window::CURSOR_IDC_SIZENESW;
+			aCursor = Cursor::RESIZE_NORTH_EAST_SOUTH_WEST;
             aWinMoveRes = true;
         }
         //bottom right corner
         else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
             y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
+			aCurrentCursor = Window::CURSOR_IDC_SIZENWSE;
+			aCursor = Cursor::RESIZE_NORTH_WEST_SOUTH_EAST;
             aWinMoveRes = false;
         }
         //top left corner
         else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
             y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
+			aCurrentCursor = Window::CURSOR_IDC_SIZENWSE;
+			aCursor = Cursor::RESIZE_NORTH_WEST_SOUTH_EAST;
             aWinMoveRes = true;
         }
         //top right corner
         else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
             y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
+			aCurrentCursor = Window::CURSOR_IDC_SIZENESW;
+			aCursor = Cursor::RESIZE_NORTH_EAST_SOUTH_WEST;
             aWinMoveRes = false;
         }
         //left border
@@ -370,7 +380,8 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
             y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
             y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
+			aCurrentCursor = Window::CURSOR_IDC_SIZEWE;
+			aCursor = Cursor::RESIZE_SIZE_WEST_EAST;
             aWinMoveRes = true;
         }
         //right border
@@ -378,7 +389,8 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
             y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
             y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
+			aCurrentCursor = Window::CURSOR_IDC_SIZEWE;
+			aCursor = Cursor::RESIZE_SIZE_WEST_EAST;
             aWinMoveRes = false;
         }
         //bottom border
@@ -386,7 +398,8 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
             x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
             x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
+			aCurrentCursor = Window::CURSOR_IDC_SIZENS;
+			aCursor = Cursor::RESIZE_NORTH_SOUTH;
             aWinMoveRes = false;
         }
         //top border
@@ -394,13 +407,15 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
             x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
             x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
+			aCurrentCursor = Window::CURSOR_IDC_SIZENS;
+			aCursor = Cursor::RESIZE_NORTH_SOUTH;
             aWinMoveRes = true;
         }
         //default
         else
         {
-            aCurrentCursor = LoadCursor(NULL, IDC_ARROW);
+			aCurrentCursor = Window::CURSOR_IDC_ARROW;
+			aCursor = Cursor::NORMAL;
             // Handle the window movement here.
             aWinMoveRes = false;
         }
@@ -417,14 +432,12 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
     if (aIsDragged && (aIsResizing || aIsMoving))
     {
         float deltaY, deltaX;
-        HCURSOR currentCursor;
 
         GetCursorPos(&p);
         ScreenToClient(xHwnd, &p);
 
         aOffsetY = deltaY = SFLOAT(aLastDraggedPoint.y - p.y);
         aOffsetX = deltaX = SFLOAT(aLastDraggedPoint.x - p.x);
-        currentCursor = GetCursor();
         
         if (aOffsetY < -2000.0f)
         {
@@ -437,103 +450,110 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
         // Process resizing.
         if (aIsResizing)
         {
-            // Resize up and down.
-            if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
-            {
-                if (aWinMoveRes)
-                {
-                    if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-                        rect.aHeight + deltaY < aMaxDims.aHeight)
-                    {
-                        rect.aY -= (deltaY);
-                        rect.aHeight += (deltaY);
-                        p.y +=SLONG(deltaY);
-                        aFramebufferInterpolation = true;
-                    }
-                }
-                else
-                {
-                    rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
-                }
-            }
-            // Resize left and right.
-            else if (currentCursor == LoadCursor(NULL, IDC_SIZEWE))
-            {
-                if (aWinMoveRes)
-                {
-                    if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-                        rect.aWidth + deltaX < aMaxDims.aWidth)
-                    {
-                        rect.aX -= (deltaX);
-                        rect.aWidth += (deltaX);
-                        p.x +=SLONG(deltaX);
-                        aFramebufferInterpolation = true;
-                    }
-                }
-                else
-                {
-                    rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
-                }
+			switch (aCursor)
+			{
+				case Cursor::RESIZE_NORTH_SOUTH:
+				{
+					if (aWinMoveRes)
+					{
+						if (rect.aHeight + deltaY >= aMinDims.aHeight &&
+							rect.aHeight + deltaY < aMaxDims.aHeight)
+						{
+							rect.aY -= (deltaY);
+							rect.aHeight += (deltaY);
+							p.y += SLONG(deltaY);
+							aFramebufferInterpolation = true;
+						}
+					}
+					else
+					{
+						rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
+					}
 
-            }
-            // Resize upper right and lower left corners.
-            else if (currentCursor == LoadCursor(NULL, IDC_SIZENESW))
-            {
-                if (aWinMoveRes)
-                {
-                    rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
-                    if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-                        rect.aWidth + deltaX < aMaxDims.aWidth)
-                    {
-                        rect.aX -= (deltaX);
-                        rect.aWidth += (deltaX);
-                        p.x +=SLONG(deltaX);
-                        aFramebufferInterpolation = true;
+					break;
+				}
+				case Cursor::RESIZE_SIZE_WEST_EAST:
+				{
+					// Resize left and right.
+					if (aWinMoveRes)
+					{
+						if (rect.aWidth + deltaX >= aMinDims.aWidth &&
+							rect.aWidth + deltaX < aMaxDims.aWidth)
+						{
+							rect.aX -= (deltaX);
+							rect.aWidth += (deltaX);
+							p.x += SLONG(deltaX);
+							aFramebufferInterpolation = true;
+						}
+					}
+					else
+					{
+						rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
+					}
 
-                    }
-                }
-                else
-                {
-                    rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
-                    if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-                        rect.aHeight + deltaY < aMaxDims.aHeight)
-                    {
-                        rect.aY -= (deltaY);
-                        rect.aHeight += (deltaY);
-                        p.y +=SLONG(deltaY);
-                        aFramebufferInterpolation = true;
-                    }
-                }
-            }
-            // Resize upper left and lower right corners.
-            else if (currentCursor == LoadCursor(NULL, IDC_SIZENWSE))
-            {
-                if (aWinMoveRes)
-                {
-                    if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-                        rect.aWidth + deltaX < aMaxDims.aWidth)
-                    {
-                        rect.aX -= (deltaX);
-                        rect.aWidth += (deltaX);
-                        p.x +=SLONG(deltaX);
-                        aFramebufferInterpolation = true;
-                    }
-                    if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-                        rect.aHeight + deltaY < aMaxDims.aHeight)
-                    {
-                        rect.aY -= (deltaY);
-                        rect.aHeight += (deltaY);
-                        p.y +=SLONG(deltaY);
-                        aFramebufferInterpolation = true;
-                    }
+					break;
+				}
+				case Cursor::RESIZE_NORTH_EAST_SOUTH_WEST:
+				{
+					// Resize upper right and lower left corners.
+					if (aWinMoveRes)
+					{
+						rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
+						if (rect.aWidth + deltaX >= aMinDims.aWidth &&
+							rect.aWidth + deltaX < aMaxDims.aWidth)
+						{
+							rect.aX -= (deltaX);
+							rect.aWidth += (deltaX);
+							p.x += SLONG(deltaX);
+							aFramebufferInterpolation = true;
 
-                }
-                else
-                {
-                    rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
-                    rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
-                }
-            }
+						}
+					}
+					else
+					{
+						rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
+						if (rect.aHeight + deltaY >= aMinDims.aHeight &&
+							rect.aHeight + deltaY < aMaxDims.aHeight)
+						{
+							rect.aY -= (deltaY);
+							rect.aHeight += (deltaY);
+							p.y += SLONG(deltaY);
+							aFramebufferInterpolation = true;
+						}
+					}
+					break;
+				}
+				case Cursor::RESIZE_NORTH_WEST_SOUTH_EAST:
+				{	// Resize upper left and lower right corners.
+					if (aWinMoveRes)
+					{
+						if (rect.aWidth + deltaX >= aMinDims.aWidth &&
+							rect.aWidth + deltaX < aMaxDims.aWidth)
+						{
+							rect.aX -= (deltaX);
+							rect.aWidth += (deltaX);
+							p.x += SLONG(deltaX);
+							aFramebufferInterpolation = true;
+						}
+						if (rect.aHeight + deltaY >= aMinDims.aHeight &&
+							rect.aHeight + deltaY < aMaxDims.aHeight)
+						{
+							rect.aY -= (deltaY);
+							rect.aHeight += (deltaY);
+							p.y += SLONG(deltaY);
+							aFramebufferInterpolation = true;
+						}
+
+					}
+					else
+					{
+						rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
+						rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
+					}
+
+					break;
+				}
+			}
 
             // DEFER REGION //
 
