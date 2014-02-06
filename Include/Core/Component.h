@@ -30,7 +30,7 @@
 #include GRAPHICS__
 #include "ComponentEventSource.h"
 #include "A2DCOMPONENTRENDERSTYLESET.h"
-#include "A2DANIMATABLEFLOAT1.h"
+#include "A2DANIMATABLEFLOATX.h"
 #include "A2DINTERPOLATORFLOAT.h"
 #include "Animator.h"
 
@@ -249,8 +249,8 @@ namespace A2D {
 					Animator::stop(*this, m_positionAnimationY);
 				}
 
-				m_cachedAnimationPositionX.m_to_a = xX;
-				m_cachedAnimationPositionY.m_to_a = xY;
+				m_cachedAnimationPositionX.toValue(xX);
+				m_cachedAnimationPositionY.toValue(xY);
 
 				m_positionAnimationX = Animator::animate(*this, m_cachedAnimationPositionX);
 				m_positionAnimationY = Animator::animate(*this, m_cachedAnimationPositionY);

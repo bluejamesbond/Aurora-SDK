@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __A2DANIMATABLEFLOAT1_H__
-#define __A2DANIMATABLEFLOAT1_H__
+#ifndef __A2DANIMATABLEFLOATX_H__
+#define __A2DANIMATABLEFLOATX_H__
 
 //+-----------------------------------------------------------------------------
 //
 //  Struct:
-//      A2DANIMATABLEFLOAT1
+//      A2DANIMATABLEFLOATX
 //
 //  Synopsis:
 //      Differentiates which of the two possible arcs could match the given arc

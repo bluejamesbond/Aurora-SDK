@@ -15,13 +15,13 @@
 //
 //------------------------------------------------------------------------------
 
-#include "A2DANIMATABLEFLOAT1.h"
+#include "A2DANIMATABLEFLOATX.h"
 #include "A2DINTERPOLATORFLOAT.h"
 
 namespace A2D{
 
 	// Cached animations
-	struct A2DCACHEDANIMATION
+	typedef struct A2DCACHEDANIMATION
 	{
 		A2DANIMATABLEFLOAT1 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
@@ -54,10 +54,11 @@ namespace A2D{
 		{
 			m_to_a = x_to_a;
 		}
-	};
+
+	} VALUEANIMATOR1;
 
 	// Cached animations
-	struct A2DCACHEDANIMATION2
+	typedef struct A2DCACHEDANIMATION2
 	{
 		A2DANIMATABLEFLOAT2 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
@@ -96,102 +97,105 @@ namespace A2D{
 			m_to_a = x_to_a;
 			m_to_b = x_to_b;
 		}
-	};
-		// Cached animations
-		struct A2DCACHEDANIMATION3
+	} VALUEANIMATOR2;
+
+	// Cached animations
+	typedef struct A2DCACHEDANIMATION3
+	{
+		A2DANIMATABLEFLOAT3 * m_animatable;
+		A2DCALLBACKVOID1 * m_callback;
+		TWEEN * m_tween;
+
+		float m_to_a;
+		float m_to_b;
+		float m_to_c;
+
+		float m_period;
+
+		void * m_arg;
+
+		inline A2DCACHEDANIMATION3() :
+			m_to_a(0.0f),
+			m_to_b(0.0f),
+			m_to_c(0.0f),
+			m_period(0.0f),
+			m_arg(NULL)
 		{
-			A2DANIMATABLEFLOAT3 * m_animatable;
-			A2DCALLBACKVOID1 * m_callback;
-			TWEEN * m_tween;
+		}
 
-			float m_to_a;
-			float m_to_b;
-			float m_to_c;
-
-			float m_period;
-
-			void * m_arg;
-
-			inline A2DCACHEDANIMATION3() :
-				m_to_a(0.0f),
-				m_to_b(0.0f),
-				m_to_c(0.0f),
-				m_period(0.0f),
-				m_arg(NULL)
-			{
-			}
-
-			inline A2DCACHEDANIMATION3(A2DANIMATABLEFLOAT3& x_animatable, TWEEN& x_tween,
-				float x_to_a, float x_to_b, float x_to_c, int x_period,
-				A2DCALLBACKVOID1 * x_callback, void * x_arg) :
-				m_animatable(&x_animatable),
-				m_tween(&x_tween),
-				m_callback(x_callback),
-				m_to_a(x_to_a),
-				m_to_b(x_to_b),
-				m_to_c(x_to_c),
-				m_period(SFLOAT(x_period)),
-				m_arg(x_arg)
-			{
-			}
-
-			inline void toValues(const float x_to_a, const float x_to_b, const float x_to_c)
-			{
-				m_to_a = x_to_a;
-				m_to_b = x_to_b;
-				m_to_c = x_to_c;
-			}
-		};
-
-		// Cached animations
-		struct A2DCACHEDANIMATION4
+		inline A2DCACHEDANIMATION3(A2DANIMATABLEFLOAT3& x_animatable, TWEEN& x_tween,
+			float x_to_a, float x_to_b, float x_to_c, int x_period,
+			A2DCALLBACKVOID1 * x_callback, void * x_arg) :
+			m_animatable(&x_animatable),
+			m_tween(&x_tween),
+			m_callback(x_callback),
+			m_to_a(x_to_a),
+			m_to_b(x_to_b),
+			m_to_c(x_to_c),
+			m_period(SFLOAT(x_period)),
+			m_arg(x_arg)
 		{
-			A2DANIMATABLEFLOAT4 * m_animatable;
-			A2DCALLBACKVOID1 * m_callback;
-			TWEEN * m_tween;
+		}
 
-			float m_to_a;
-			float m_to_b;
-			float m_to_c;
-			float m_to_d;
+		inline void toValues(const float x_to_a, const float x_to_b, const float x_to_c)
+		{
+			m_to_a = x_to_a;
+			m_to_b = x_to_b;
+			m_to_c = x_to_c;
+		}
 
-			float m_period;
+	} VALUEANIMATOR3;
 
-			void * m_arg;
+	// Cached animations
+	typedef struct A2DCACHEDANIMATION4
+	{
+		A2DANIMATABLEFLOAT4 * m_animatable;
+		A2DCALLBACKVOID1 * m_callback;
+		TWEEN * m_tween;
 
-			inline A2DCACHEDANIMATION4() :
-				m_to_a(0.0f),
-				m_to_b(0.0f),
-				m_to_c(0.0f),
-				m_to_d(0.0f),
-				m_period(0.0f),
-				m_arg(NULL)
-			{
-			}
+		float m_to_a;
+		float m_to_b;
+		float m_to_c;
+		float m_to_d;
 
-			inline A2DCACHEDANIMATION4(A2DANIMATABLEFLOAT4& x_animatable, TWEEN& x_tween,
-										float x_to_a, float x_to_b, float x_to_c, float x_to_d, int x_period,
-										A2DCALLBACKVOID1 * x_callback, void * x_arg) :
-				m_animatable(&x_animatable),
-				m_tween(&x_tween),
-				m_callback(x_callback),
-				m_to_a(x_to_a),
-				m_to_b(x_to_b),
-				m_to_c(x_to_c),
-				m_to_d(x_to_d),
-				m_period(SFLOAT(x_period)),
-				m_arg(x_arg)
-			{
-			}
+		float m_period;
 
-			inline void toValues(const float x_to_a, const float x_to_b, const float x_to_c, const float x_to_d)
-			{
-				m_to_a = x_to_a;
-				m_to_b = x_to_b;
-				m_to_c = x_to_c;
-				m_to_d = x_to_d;
-			}
-		};
+		void * m_arg;
+
+		inline A2DCACHEDANIMATION4() :
+			m_to_a(0.0f),
+			m_to_b(0.0f),
+			m_to_c(0.0f),
+			m_to_d(0.0f),
+			m_period(0.0f),
+			m_arg(NULL)
+		{
+		}
+
+		inline A2DCACHEDANIMATION4(A2DANIMATABLEFLOAT4& x_animatable, TWEEN& x_tween,
+			float x_to_a, float x_to_b, float x_to_c, float x_to_d, int x_period,
+			A2DCALLBACKVOID1 * x_callback, void * x_arg) :
+			m_animatable(&x_animatable),
+			m_tween(&x_tween),
+			m_callback(x_callback),
+			m_to_a(x_to_a),
+			m_to_b(x_to_b),
+			m_to_c(x_to_c),
+			m_to_d(x_to_d),
+			m_period(SFLOAT(x_period)),
+			m_arg(x_arg)
+		{
+		}
+
+		inline void toValues(const float x_to_a, const float x_to_b, const float x_to_c, const float x_to_d)
+		{
+			m_to_a = x_to_a;
+			m_to_b = x_to_b;
+			m_to_c = x_to_c;
+			m_to_d = x_to_d;
+		}
+
+	} VALUEANIMATOR4;
 }
 
 #endif
