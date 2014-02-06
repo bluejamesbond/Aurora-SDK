@@ -84,9 +84,9 @@ namespace A2D {
         
 		Component*                  m_nextCompListener;
         Component*                  m_prevCompListener;
-		
-		Animation					m_positionAnimationX = NULL;
-		Animation					m_positionAnimationY = NULL;
+
+		A2DCACHEDANIMATION2			m_cachedAnimationPositionXY;
+		Animation					m_positionAnimationXY;
 
     protected:
 
@@ -113,9 +113,6 @@ namespace A2D {
         Rect                        m_visibleRegion;
 		Dims						m_previousVisibleDimensions;
 		Dims						m_previousDimensions;
-
-		A2DCACHEDANIMATION			m_cachedAnimationPositionX;
-		A2DCACHEDANIMATION			m_cachedAnimationPositionY;
 
 		Pipeline*                   m_pipeline;
 		Graphics*                   m_graphics;    
@@ -181,6 +178,8 @@ namespace A2D {
 		float						getBoundsX();
 		void						setBoundsX(float x_x);
 
+		void						setBoundsXY(float x_x, float x_y);
+
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);
         STATUS                      addMouseMotionListener(MouseMotionListener * xListener);
@@ -240,20 +239,14 @@ namespace A2D {
 				m_region.aWidth = xWidth;
 				m_region.aHeight = xHeight;
 				
-				if (m_positionAnimationX)
+				if (m_positionAnimationXY)
 				{
-					Animator::stop(*this, m_positionAnimationX);
-				}
-				if (m_positionAnimationY)
-				{
-					Animator::stop(*this, m_positionAnimationY);
+					Animator::stop(*this, m_positionAnimationXY);
 				}
 
-				m_cachedAnimationPositionX.toValue(xX);
-				m_cachedAnimationPositionY.toValue(xY);
+				m_cachedAnimationPositionXY.toValues(xX, xY);
 
-				m_positionAnimationX = Animator::animate(*this, m_cachedAnimationPositionX);
-				m_positionAnimationY = Animator::animate(*this, m_cachedAnimationPositionY);
+				m_positionAnimationXY = Animator::animate(*this, m_cachedAnimationPositionXY);
 
 				m_previousCalculatedRowIndex = m_calculatedRowIndex;
 				m_previousCalculatedColumnIndex = m_calculatedColumnIndex;

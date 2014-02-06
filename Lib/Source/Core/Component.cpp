@@ -31,8 +31,9 @@ Component::Component() :
 	m_calculatedColumnIndex(0),
 	m_previousCalculatedRowIndex(0),
 	m_previousCalculatedColumnIndex(0),
-	m_cachedAnimationPositionX(Animator::COMPONENT_BOUNDS_X, Easing::OUT_QUAD, 0, 200, NULL, NULL),
-	m_cachedAnimationPositionY(Animator::COMPONENT_BOUNDS_Y, Easing::OUT_QUAD, 0, 200, NULL, NULL)
+	m_positionAnimationXY(NULL),
+	m_eventQueue(NULL),
+	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_QUAD, 0, 0, 200, NULL, NULL) 
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
@@ -113,8 +114,8 @@ void Component::interpolate()
 			switch (interpolator->m_mode)
 			{
 				case A2DINTERPOLATORFLOAT::Mode::FOUR_PARAMETERS : interpolated_d = (*tween)(duration, interpolator->m_start_d, interpolator->m_range_d, period);
-				case A2DINTERPOLATORFLOAT::Mode::THREE_PARAMETERS: interpolated_c = (*tween)(duration, interpolator->m_start_b, interpolator->m_range_c, period);
-				case A2DINTERPOLATORFLOAT::Mode::TWO_PARAMETERS:   interpolated_b = (*tween)(duration, interpolator->m_start_c, interpolator->m_range_b, period);
+				case A2DINTERPOLATORFLOAT::Mode::THREE_PARAMETERS: interpolated_c = (*tween)(duration, interpolator->m_start_c, interpolator->m_range_c, period);
+				case A2DINTERPOLATORFLOAT::Mode::TWO_PARAMETERS:   interpolated_b = (*tween)(duration, interpolator->m_start_b, interpolator->m_range_b, period);
 				case A2DINTERPOLATORFLOAT::Mode::ONE_PARAMETER:    interpolated_a = (*tween)(duration, interpolator->m_start_a, interpolator->m_range_a, period);
 			}
 
@@ -626,22 +627,21 @@ Rect * Component::getEventRegion()
 
 STATUS Component::addMouseListener(MouseListener * xListener)
 {
-    if (m_componentManager != NULL)
+	if (m_eventQueue)
     {
         // Add depth manually
-		STATUS hr = ComponentEventSource::addMouseListener(xListener);
-        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
+		STATUS status = ComponentEventSource::addMouseListener(xListener);
 
-        if (xListener != NULL)
+        if (xListener)
         {
-			eQ->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth) + 1));
         }
 
-        return hr;
+		return status;
     }
 
     return ComponentEventSource::addMouseListener(xListener);
@@ -649,22 +649,21 @@ STATUS Component::addMouseListener(MouseListener * xListener)
 
 STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
 {
-    if (m_componentManager != NULL)
+    if (m_eventQueue)
     {
         // Add depth manually
-		STATUS hr = ComponentEventSource::addMouseMotionListener(xListener);
-        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
+		STATUS status = ComponentEventSource::addMouseMotionListener(xListener);
 
-        if (xListener != NULL)
+        if (xListener)
         {
-			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth) + 1));
         }
 
-        return hr;
+		return status;
     }
 
     return ComponentEventSource::addMouseMotionListener(xListener);
@@ -672,22 +671,21 @@ STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
 
 STATUS Component::addFocusListener(FocusListener * xListener)
 {
-    if (m_componentManager != NULL)
+	if (m_eventQueue)
     {
         // Add depth manually
-        STATUS hr = ComponentEventSource::addFocusListener(xListener);
-        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
+		STATUS status = ComponentEventSource::addFocusListener(xListener);
 
-        if (xListener != NULL)
+        if (xListener)
         {
-			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth) + 1));
         }
 
-        return hr;
+		return status;
     }
 
     return ComponentEventSource::addFocusListener(xListener);
@@ -851,6 +849,15 @@ void Component::setBoundsY(float x_y)
 {
 	m_region.aY = x_y;
 
+	m_validatedContents = false;
+	m_styleSet.markRequestRegionAsDirty();
+}
+
+void Component::setBoundsXY(float x_x, float x_y)
+{
+	m_region.aX = x_x;
+	m_region.aY = x_y;
+	
 	m_validatedContents = false;
 	m_styleSet.markRequestRegionAsDirty();
 }

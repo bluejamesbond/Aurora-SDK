@@ -13,6 +13,7 @@ A2DANIMATABLEFLOAT1 Animator::COMPONENT_BORDER_RADII_TOP_LEFT(&Component::getBor
 A2DANIMATABLEFLOAT1 Animator::COMPONENT_BORDER_RADII_UNIFIED(&Component::getBorderRadiiUnified, &Component::setBorderRadiiUnified, 0.0f, FLT_MAX);
 A2DANIMATABLEFLOAT1 Animator::COMPONENT_BOUNDS_X(&Component::getBoundsX, &Component::setBoundsX, FLT_MIN, FLT_MAX);
 A2DANIMATABLEFLOAT1 Animator::COMPONENT_BOUNDS_Y(&Component::getBoundsY, &Component::setBoundsY, FLT_MIN, FLT_MAX);
+A2DANIMATABLEFLOAT2 Animator::COMPONENT_BOUNDS_XY(&Component::getBoundsX, &Component::getBoundsY, &Component::setBoundsXY, FLT_MIN, FLT_MAX, FLT_MIN, FLT_MAX);
 
 HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATION& x_cachedAnimation)
 {

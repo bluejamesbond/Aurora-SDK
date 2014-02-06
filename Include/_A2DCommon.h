@@ -24,7 +24,7 @@
 #define _WINDOW_MOVE_BAR_DISTANCE                        25
 #define _WINDOW_MOVE_DEFAULT_DISTANCE                    10
 
-#define FPS												 120
+#define FPS												 60
 
 // System error focusing on speed
 //------------------------------------------------------------------------------
