@@ -188,7 +188,7 @@ namespace A2D {
 			float baseHeight = aCurrentFont->aFontTexture->GetSize()->aHeight;
 
 			float shadowOffset = 1;
-			float pixelSize = 20;
+			float pixelSize = 12;
 
 			FontVertex * vertices = new FontVertex[xText->aNumVertices];
 			unsigned long * indices = new unsigned long[xText->aNumIndices];
@@ -211,14 +211,26 @@ namespace A2D {
 				scaledWidth = texWidth * pixelSize;
 				scaledHeight = texHeight * pixelSize;
 
+				//advanceX *= pixelSize;
+
 				// Check if over the textbox width/height.
 				//scaledWidth = currentWidth + scaledWidth + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : scaledWidth;
 
-				//if (currentWidth + scaledWidth + offsetX > boxWidth)
-				//{ 
-				//	scaledWidth = boxWidth - currentWidth - offsetX;
-				//	i = inputLength; // stop rendering letters after this one. CHANGE THE SIZE OF MAPPING ACCORDING TO THIS INDEX
-				//}
+				if (currentWidth + scaledWidth + offsetX > boxWidth)
+				{ 
+					float calcWidth = boxWidth - currentWidth;
+					float oldS = scaledWidth;
+					float oldT = texWidth;
+					////texWidth -= (scaledWidth - boxWidth) / (scaledWidth)* texWidth;
+					////scaledWidth = boxWidth - currentWidth - offsetX;
+					//scaledWidth = 300;
+
+					scaledWidth = scaledWidth - (scaledWidth - calcWidth);
+
+					texWidth = (scaledWidth * oldT) / oldS;
+
+					i = inputLength; // stop rendering letters after this one. CHANGE THE SIZE OF MAPPING ACCORDING TO THIS INDEX
+				}
 
 				//scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
 
@@ -234,13 +246,18 @@ namespace A2D {
 				if (scaledHeight > boxHeight)
 				{
 					float old = texHeight;
-					texHeight -= (scaledHeight - boxHeight) / scaledHeight * texHeight;
+					float good = (scaledHeight - boxHeight) / scaledHeight * texHeight;
+					texHeight -= (scaledHeight - boxHeight) / (scaledHeight) * texHeight;
 					//charY += texHeight;
 					float offset = old - texHeight;
 					charY += offset;
-					rectY += scaledHeight - boxHeight;
+					rectY = scaledHeight - boxHeight;
 					scaledHeight = boxHeight;
 
+				}
+				else
+				{
+					rectY = xRect->aY;
 				}
 
 				// Calculations.
@@ -288,7 +305,7 @@ namespace A2D {
 				rectX += advanceX;
 
 				// Add measurements.
-				currentWidth += scaledWidth + advanceX;
+				currentWidth += advanceX;
 			
 			}
 
