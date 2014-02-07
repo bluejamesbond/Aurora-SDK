@@ -15,7 +15,7 @@
 Texture2D shaderTexture;
 matrix borderCalculationMatrix : register( b0);
 static const float ANTIALIAS_DISTANCE = 2;
-
+static const float BORDER_Z_OFFSET = 0.5f / 1000000.0f;
 
 // -------------------------- borderCalculationMatrix --------------------------
 //
@@ -200,7 +200,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//**********************************************************************
 	// Borders
 	//**********************************************************************
-	float z = (1000000.0f - (input[0].options[2] - 0.5f)) / 1000000.0f;
+	float z = input[0].options[2];
 	// 0.0 indicates color coordinates
 	// 1.0 indicates texture coordinates
 	// 2.0 indicates texture on backgroundColor
@@ -341,7 +341,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	// Main
 	//**********************************************************************
 	float4 mainTexels = input[0].colorTex;
-	z = (1000000.0f - input[0].options[2]) / 1000000.0f;
+	z = input[0].options[2] + BORDER_Z_OFFSET;
 
 	main.options = float4(1.0f, opacity, input[0].options[3], 0.0);
 	main.borderRadii = borderRadii;

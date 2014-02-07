@@ -25,6 +25,7 @@
 #define _WINDOW_MOVE_DEFAULT_DISTANCE                    10
 
 #define FPS												 60
+#define MAX_Z_DEPTH										 1000000.0f
 
 // System error focusing on speed
 //------------------------------------------------------------------------------

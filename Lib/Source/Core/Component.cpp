@@ -33,6 +33,7 @@ Component::Component() :
 	m_previousCalculatedColumnIndex(0),
 	m_positionAnimationXY(NULL),
 	m_eventQueue(NULL),
+	m_depth(0),
 	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_QUAD, 0, 0, 200, NULL, NULL) 
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
@@ -224,7 +225,7 @@ void Component::setId(int x_id)
 
 int Component::getDepth()
 {
-	return SINT(SINT(m_styleSet.m_depth));
+	return m_depth;
 }
 
 AbstractFrame& Component::getFrame()
@@ -244,8 +245,8 @@ Graphics& Component::getGraphics()
 
 void Component::setDepth(int xDepth)
 {
-	m_styleSet.m_depth = SFLOAT(xDepth);
-
+	m_styleSet.m_depth = (MAX_Z_DEPTH - SFLOAT(m_depth = xDepth)) / MAX_Z_DEPTH;
+	
 	m_styleSet.markDepthAsDirty();
 }
 

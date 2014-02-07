@@ -73,6 +73,8 @@ namespace A2D {
         bool                        m_focused;
         bool                        m_focusable;
 
+		int							m_depth;
+
         AbstractFrame*              m_frame;
         Component*                  m_parent;
 		OrderedList<Component*>     m_children;
