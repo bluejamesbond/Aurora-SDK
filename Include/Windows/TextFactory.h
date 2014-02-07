@@ -161,8 +161,7 @@ namespace A2D {
 			Font * font = aCurrentFont;
 			const char * input = xText->aText.c_str();
 
-			float boxWidth = xRect->aWidth;
-			float boxHeight = xRect->aHeight;
+
 			float currentWidth = 0;
 			int inputLength = xText->aText.length();
 			int indexV = 0;
@@ -171,8 +170,11 @@ namespace A2D {
 			Rect& constraints = aConstraints;
 			float rectX = xRect->aX;
 			float rectY = xRect->aY;
-			float rectWidth = xRect->aWidth;
-			float rectHeight = xRect->aHeight;
+			float rectWidth = min(xRect->aWidth, constraints.aWidth);
+			float rectHeight = min(xRect->aHeight, constraints.aHeight);
+
+			float boxWidth = rectWidth;
+			float boxHeight = rectHeight;
 
 			float depth = aDepth;
 
@@ -186,7 +188,7 @@ namespace A2D {
 			float baseHeight = aCurrentFont->aFontTexture->GetSize()->aHeight;
 
 			float shadowOffset = 1;
-			float pixelSize = 2;
+			float pixelSize = 20;
 
 			FontVertex * vertices = new FontVertex[xText->aNumVertices];
 			unsigned long * indices = new unsigned long[xText->aNumIndices];
@@ -210,8 +212,36 @@ namespace A2D {
 				scaledHeight = texHeight * pixelSize;
 
 				// Check if over the textbox width/height.
-				scaledWidth = currentWidth + scaledWidth + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : scaledWidth;
-				scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
+				//scaledWidth = currentWidth + scaledWidth + offsetX > boxWidth ? boxWidth - currentWidth - offsetX : scaledWidth;
+
+				//if (currentWidth + scaledWidth + offsetX > boxWidth)
+				//{ 
+				//	scaledWidth = boxWidth - currentWidth - offsetX;
+				//	i = inputLength; // stop rendering letters after this one. CHANGE THE SIZE OF MAPPING ACCORDING TO THIS INDEX
+				//}
+
+				//scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
+
+				//if (scaledHeight > boxHeight) 
+				//{
+				//	rectY = constraints.aY;
+				//	//float offset = (scaledHeight - boxHeight) / scaledHeight * texHeight;
+				//	scaledHeight = boxHeight;
+				//	//texHeight -= offset;
+				//	//charX += offset;
+				//}
+
+				if (scaledHeight > boxHeight)
+				{
+					float old = texHeight;
+					texHeight -= (scaledHeight - boxHeight) / scaledHeight * texHeight;
+					//charY += texHeight;
+					float offset = old - texHeight;
+					charY += offset;
+					rectY += scaledHeight - boxHeight;
+					scaledHeight = boxHeight;
+
+				}
 
 				// Calculations.
 				left = rectX + offsetX;
