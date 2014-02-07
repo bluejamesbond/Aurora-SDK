@@ -93,7 +93,6 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
     else
     {
         HWND xHwnd = xMsg.hwnd;
-        POINT p;
         Point point;
 
         switch (xMsg.message)
@@ -110,11 +109,8 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
             }
 
             // Fire MouseEvent
-            GetCursorPos(&p);
-            ScreenToClient(aChildHWnd, &p);
-
-            point.aX = SFLOAT(p.x);
-            point.aY = SFLOAT(p.y);
+			point.aX = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.aY = SFLOAT(HI16UINT32(xMsg.lParam));
 
             aMouseDown->setLocation(point);
 
@@ -123,12 +119,9 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
         case WM_MOUSEMOVE:
 
-            //// Fire MouseEvent
-            GetCursorPos(&p);
-            ScreenToClient(aChildHWnd, &p);
-
-            point.aX = SFLOAT(p.x);
-            point.aY = SFLOAT(p.y);
+            // Fire MouseEvent
+			point.aX = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.aY = SFLOAT(HI16UINT32(xMsg.lParam));
 
             aMouseMove->setLocation(point);
 
@@ -147,11 +140,9 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
         case WM_LBUTTONUP:
 
             // Fire MouseEvent
-            GetCursorPos(&p);
-            ScreenToClient(aChildHWnd, &p);
 
-            point.aX = SFLOAT(p.x);
-            point.aY = SFLOAT(p.y);
+			point.aX = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.aY = SFLOAT(HI16UINT32(xMsg.lParam));
 
             aMouseUp->setLocation(point);
 

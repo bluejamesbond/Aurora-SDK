@@ -63,6 +63,9 @@ typedef unsigned int STATUS;
 #define SULONG(x)                                       static_cast<unsigned long>(x)
 #define IMPLEMENT                                       = 0
 
+#define LOW16UINT32(x)										x & 0xFFFF
+#define HI16UINT32(x)										x >> 16
+
 // System independent definitions
 //------------------------------------------------------------------------------
 #define SYSINLINE                                       __forceinline
