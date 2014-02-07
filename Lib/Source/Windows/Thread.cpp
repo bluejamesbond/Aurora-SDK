@@ -4,9 +4,6 @@
 
 using namespace A2D;
 
-// Set an instance of this. So it can call waitAll
-AbstractThread* Thread::aClassInstance = new Thread(NULL); 
-
 // Intiialize the OrderedList
 OrderedList<HANDLE> Thread::aThreadHandles;
 

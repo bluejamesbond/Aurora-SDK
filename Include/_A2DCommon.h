@@ -166,6 +166,10 @@ inline double platform_dependent_kernel_time_high_precision()
 #define kerneltimehp__									platform_dependent_kernel_time_high_precision()
 #endif
 
+#ifndef threadid__										
+#define	threadid__										SINT(GetCurrentThreadId())
+#endif 
+
 #endif
 //////////////////////////////////////////////////////////////////////////////
 // PLATFORM DEPENDENT - END

@@ -44,7 +44,10 @@ AbstractThread* AbstractThread::getSingleton()
 
 STATUS AbstractThread::initialize()
 {
+
 	NULLCHECK(aRunnable);
+
+	aSingleton = this;
 
 	aId = ++aInstanceCount;
 

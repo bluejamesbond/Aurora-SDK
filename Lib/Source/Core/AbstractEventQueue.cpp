@@ -157,7 +157,7 @@ bool AbstractEventQueue::isDispatchingThread(int xFrameId)
 		return false;
 	}
 
-	return eventQueue->getDispatchingThread()->id() == thread->getCurrentThreadId();
+	return eventQueue->getDispatchingThread()->id() == threadid__;
 }
 
 Runnable * AbstractEventQueue::peekEvent()
@@ -196,7 +196,7 @@ bool AbstractEventQueue::dispatchNextEvent()
 
 		return true;
 	}
-
+	
 	return false;
 }
 

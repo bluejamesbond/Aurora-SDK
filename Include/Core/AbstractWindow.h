@@ -66,7 +66,7 @@ namespace A2D {
 
 		int                          aDefaultCloseOperation;
 
-		bool                         aVisible;
+		bool                         aVisible = false;
 		bool                         aShadowed;
 		bool                         aUndecorated;
 

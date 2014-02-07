@@ -30,16 +30,19 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 	double currentTime;
 	
     while (true)
-    {
+	{
+		if (eventQueue.dispatchNextEvent())
+		{
+			currentAnimationFrame = defaultAllotedAnimationFrames;
+		}
+
         if (visible)
         {
             if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
             {
                 TranslateMessage(&msg);
                 eventHandler(msg, &eventQueue);
-            }
-			
-			eventQueue.dispatchNextEvent();
+            }			
 			
 			if ((currentTime = kerneltimehp__) - lastTime < timeBetweenFrames && !resizing)
 			{
@@ -57,6 +60,11 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 				{
 					frame.update();
 				}
+				else if (currentAnimationFrame > 0)
+				{
+					currentAnimationFrame--;
+					frame.update();
+				}
 				else
 				{
 					// Do caching here!
@@ -68,7 +76,11 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 					}
 				}
 			}
-        }
+		}
+		else
+		{
+			Sleep(500);
+		}
     }
 }
 
@@ -174,6 +186,7 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
     Window * aWindow;
+	
 
     if (xMessage == WM_CREATE)
     {
@@ -187,28 +200,28 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
         switch (xMessage)
         {
 
-        case WM_ACTIVATE:
+		case WM_ACTIVATE:
+		{
+			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 
-            aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-
-            if (LOWORD(xWParam) == WA_INACTIVE)
-            {
-                WindowEvent * wEvent = aWindow->aWindowDeactivated;
-                if (wEvent)
-                {
-                    Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
-                }
-            }
-            else
-            {
-                WindowEvent * wEvent = aWindow->aWindowActivated;
-                if (wEvent)
-                {
-                    Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
-                }
-            }
-            return STATUS_OK;
-
+			if (LOWORD(xWParam) == WA_INACTIVE)
+			{
+				WindowEvent * wEvent = aWindow->aWindowDeactivated;
+				if (wEvent)
+				{
+					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
+				}
+			}
+			else
+			{
+				WindowEvent * wEvent = aWindow->aWindowActivated;
+				if (wEvent)
+				{
+					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
+				}
+			}
+			return STATUS_OK;
+		}
         case WM_SIZE:
         {
             aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
