@@ -122,7 +122,6 @@ void AbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, f
 
 	aWindow->setBorder(&color, xWidth);
 
-
 	aWindow->invalidate();
 
 	if (aWindow->isVisible())

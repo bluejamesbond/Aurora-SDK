@@ -635,11 +635,11 @@ STATUS Component::addMouseListener(MouseListener * xListener)
 
         if (xListener)
         {
-			m_eventQueue->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(m_depth));
         }
         else
         {
-			m_eventQueue->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(m_depth + 1));
         }
 
 		return status;
@@ -657,11 +657,11 @@ STATUS Component::addMouseMotionListener(MouseMotionListener * xListener)
 
         if (xListener)
         {
-			m_eventQueue->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(m_depth));
         }
         else
         {
-			m_eventQueue->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(m_depth + 1));
         }
 
 		return status;
@@ -679,11 +679,11 @@ STATUS Component::addFocusListener(FocusListener * xListener)
 
         if (xListener)
         {
-			m_eventQueue->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(m_depth));
         }
         else
         {
-			m_eventQueue->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(m_depth + 1));
         }
 
 		return status;
@@ -694,19 +694,18 @@ STATUS Component::addFocusListener(FocusListener * xListener)
 
 STATUS Component::addActionListener(ActionListener * xListener)
 {
-    if (m_componentManager != NULL)
+	if (m_eventQueue)
     {
         // Add depth manually
 		STATUS hr = ComponentEventSource::addActionListener(xListener);
-        AbstractEventQueue * eQ = Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id());
 
         if (xListener != NULL)
         {
-			Toolkit::getSystemEventQueue(m_componentManager->getWindow()->getFrame()->id())->addEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth)));
+			m_eventQueue->addEventDepthTracker(this, abs__(m_depth));
         }
         else
         {
-			eQ->removeEventDepthTracker(this, abs__(SINT(m_styleSet.m_depth ) + 1));
+			m_eventQueue->removeEventDepthTracker(this, abs__(m_depth + 1));
         }
 
         return hr;
