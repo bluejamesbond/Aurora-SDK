@@ -161,7 +161,7 @@ namespace A2D {
 			vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
 			vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
 			vertices[0].aBorderColors = A2DUINT4(0xFF0000FF, 0xFFFFFFFF, 0x0000FFFF, 0xFFFF00FF);
-			vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, 2), pixelsToRelativeDistance(winHeight, 2), pixelsToRelativeDistance(winWidth, 2), pixelsToRelativeDistance(winHeight, 2));
+			vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, 0), pixelsToRelativeDistance(winHeight, 0), pixelsToRelativeDistance(winWidth, 0), pixelsToRelativeDistance(winHeight, 0));
 			vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, aDepth, 1.0f);
 
 			// Lock the vertex buffer.

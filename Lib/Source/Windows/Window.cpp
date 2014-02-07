@@ -96,6 +96,8 @@ LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
 
 		case WM_MOUSEMOVE:
 
+			
+
 			//// Fire MouseEvent
 			GetCursorPos(&p);
 			ScreenToClient(aChildHWnd, &p);
