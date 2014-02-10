@@ -52,7 +52,7 @@ namespace A2D {
 	{
 		friend class ComponentManager;
 		friend class CascadingLayout;
-                friend class AbstractEventQueue;
+        friend class AbstractEventQueue;
 
 	public:
 
@@ -69,11 +69,11 @@ namespace A2D {
 		Component			    *		aParent = NULL;
 		OrderedList<Component*>			aChildren;
 		Pipeline				*		aPipeline = NULL;
-		ComponentManager                *                aComponentManager = NULL;
+		ComponentManager        *       aComponentManager = NULL;
 
 	protected:
 
-		bool                                                        aVisible = true;
+		bool                            aVisible = true;
 
 		Styles::Display					aDisplay = Styles::Display::BLOCK;
 		Styles::Position				aPosition = Styles::Position::RELATIVE_;
@@ -179,8 +179,7 @@ namespace A2D {
 		Component&						getParent();
 		Component&						getRoot();
 		AbstractFrame&					getFrame();
-                Rect *                                                        getVisibleRegion();
-
+        Rect *                          getVisibleRegion();
 		void							update();
 		Rect                            getBounds();
 		void                            setBounds(Rect& xRect);

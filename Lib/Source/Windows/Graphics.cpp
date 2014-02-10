@@ -185,15 +185,15 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 //	}
 //}
 
-void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component has a pipeline
+void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, Fonts * xFontInput) // each component has a pipeline
 {
 	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
 	Rect * clip = aClip;
 
 	// ~~~~~~~ Supposed inputs ~~~~~~~~~
 
-	string input = "adawarv wa";
-	Fonts * fontInput = &Fonts::MUSEO;
+	//string input = "adawarv wa";
+	//Fonts * fontInput = &Fonts::MUSEO;
 	QuadData<TextureVertex, 6> * quadData;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,8 +203,8 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	Text * text;
 
 	// Process inputs.
-	const char * input_c = input.c_str();
-	int inputLength = input.length();
+	const char * input_c = xInput->c_str();
+	int inputLength = xInput->length();
 
 	if (*xPipeline == NULL)
 	{
@@ -212,7 +212,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 		*xPipeline = new Pipeline();
 		
-		text = new Text(input);
+		text = new Text(*xInput);
 		quadData = new QuadData<TextureVertex, 6>();
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
@@ -226,7 +226,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 		//DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, 6);
 		//DXUtils::CreateDefaultIndexBuffer(*aDevice, &text->aIndexBuffer, 6);
 
-		aTextFactory->setFont(fontInput);
+		aTextFactory->setFont(xFontInput);
 
 		(*xPipeline)->aPipelineComps[0] = text;
 		(*xPipeline)->aPipelineComps[1] = quadData;
@@ -238,14 +238,14 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	text = static_cast<Text*>((*xPipeline)->aPipelineComps[0]);
 	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
 
-	if (aTextFactory->getCurrentFont() != fontInput)
+	if (aTextFactory->getCurrentFont() != xFontInput)
 	{
-		aTextFactory->setFont(fontInput);
+		aTextFactory->setFont(xFontInput);
 	}
 
-	if (text->aText != input)
+	if (text->aText != *xInput)
 	{
-		text->setText(&input);
+		text->setText(xInput);
 	}
 
 	//xRect.aY = 10;

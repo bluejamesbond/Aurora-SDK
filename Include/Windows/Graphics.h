@@ -103,7 +103,7 @@ namespace A2D {
 		BackBuffer*						getBackBuffer();
 		
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
-		void							drawString(Pipeline ** xPipeline, Rect& xRect);
+		void							drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, Fonts * xFontInput);
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat);
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 
