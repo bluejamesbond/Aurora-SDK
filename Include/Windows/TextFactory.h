@@ -168,8 +168,8 @@ namespace A2D {
 			int indexI = 0;
 
 			Rect& constraints = aConstraints;
-			float rectX = xRect->aX;
-			float rectY = xRect->aY;
+			float rectX = min(xRect->aX, constraints.aWidth);
+			float rectY = min(xRect->aY, constraints.aHeight);
 			float rectWidth = min(xRect->aWidth, constraints.aWidth);
 			float rectHeight = min(xRect->aHeight, constraints.aHeight);
 
@@ -188,7 +188,7 @@ namespace A2D {
 			float baseHeight = aCurrentFont->aFontTexture->GetSize()->aHeight;
 
 			float shadowOffset = 1;
-			float pixelSize = 12;
+			float pixelSize = 3;
 
 			FontVertex * vertices = new FontVertex[xText->aNumVertices];
 			unsigned long * indices = new unsigned long[xText->aNumIndices];
@@ -232,38 +232,57 @@ namespace A2D {
 					i = inputLength; // stop rendering letters after this one. CHANGE THE SIZE OF MAPPING ACCORDING TO THIS INDEX
 				}
 
-				//scaledHeight = scaledHeight + offsetY > boxHeight ? boxHeight - offsetY : scaledHeight;
-
-				//if (scaledHeight > boxHeight) 
+				//if (scaledHeight > boxHeight)
 				//{
-				//	rectY = constraints.aY;
-				//	//float offset = (scaledHeight - boxHeight) / scaledHeight * texHeight;
+				//	float old = texHeight;
+				//	float good = (scaledHeight - boxHeight) / scaledHeight * texHeight;
+				//	texHeight -= (scaledHeight - boxHeight) / (scaledHeight)* texHeight;
+				//	//charY += texHeight;
+				//	float offset = old - texHeight;
+				//	charY += offset;
+				//	rectY = scaledHeight - boxHeight;
 				//	scaledHeight = boxHeight;
-				//	//texHeight -= offset;
-				//	//charX += offset;
+
+				//}
+				//else
+				//{
+				//	rectY = xRect->aY;
 				//}
 
-				if (scaledHeight > boxHeight)
+
+				if (rectY < scaledHeight)
 				{
 					float old = texHeight;
-					float good = (scaledHeight - boxHeight) / scaledHeight * texHeight;
-					texHeight -= (scaledHeight - boxHeight) / (scaledHeight) * texHeight;
-					//charY += texHeight;
-					float offset = old - texHeight;
-					charY += offset;
-					rectY = scaledHeight - boxHeight;
-					scaledHeight = boxHeight;
+					offsetY -= scaledHeight - rectY;
+					texHeight -= (scaledHeight - rectY) / scaledHeight * texHeight;
 
-				}
-				else
-				{
-					rectY = xRect->aY;
+					//texHeight += 0;
+					charY += old - texHeight;
+					
+					scaledHeight -= scaledHeight - rectY;
+
+
 				}
 
 				// Calculations.
 				left = rectX + offsetX;
 				top = rectY - offsetY;
-				top += constraints.aHeight - pixelSize * 2;
+				top -= pixelSize * 2;
+				//top += constraints.aHeight - pixelSize * 2;
+				
+				//if (rectY > top)
+				//{
+				//	//float offset = rectY - top;
+				//	//float texOffset = offset * texHeight / scaledHeight;
+				//	////texHeight = texOffset;
+				//	////charX += texOffset;
+				//	////scaledHeight -= offset;
+				//	//top += offset;
+
+				//	scaledHeight -= rectY - top - 10;
+				//}
+
+
 				right = left + scaledWidth;
 				bottom = top + scaledHeight;
 
@@ -272,8 +291,10 @@ namespace A2D {
 				right = pixelsToRelativePoint(aWindowDims->aWidth, constraints.aX + right);
 				bottom = -pixelsToRelativePoint(aWindowDims->aHeight, constraints.aY + bottom);
 				
-				float modCharX = charX + 1.0f; // put the modified version here later
-				float modCharY = charY - 1.0f; // aka shadow offsets
+				//float modCharX = charX + 1.0f; // put the modified version here later
+				//float modCharY = charY - 1.0f; // aka shadow offsets
+				float modCharX = charX;
+				float modCharY = charY;
 
 				leftTexel = modCharX / baseWidth;
 				rightTexel = (modCharX + texWidth) / baseWidth;

@@ -192,7 +192,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 
 	// ~~~~~~~ Supposed inputs ~~~~~~~~~
 
-	string input = "Waea";
+	string input = "adawarv wa";
 	Fonts * fontInput = &Fonts::MUSEO;
 	QuadData<TextureVertex, 6> * quadData;
 
@@ -247,6 +247,8 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect) // each component 
 	{
 		text->setText(&input);
 	}
+
+	//xRect.aY = 10;
 
 	if (aTextFactory->updateVertexBuffer(text, &xRect))
 	{
