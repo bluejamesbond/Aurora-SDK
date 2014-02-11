@@ -55,12 +55,12 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		float calcHeight = x_quadData->m_previousCalcHeight = calcBottom - calcTop;
 		float calcWidth = x_quadData->m_previousCalcWidth = calcRight - calcLeft;
 		
-		vertices[0].aPosition = D3DXVECTOR4(cvtpx2rp__(winWidth, constraints.aX + calcLeft),
-											-cvtpx2rp__(winHeight, constraints.aY + calcTop), 
+		vertices[0].aPosition = D3DXVECTOR4(cvtpx2rp__(winWidth, x_renderSet.m_scrollLeft + constraints.aX + calcLeft),
+											-cvtpx2rp__(winHeight, x_renderSet.m_scrollTop + constraints.aY + calcTop), 
 											cvtpx2rd__(winWidth, calcWidth),
 											cvtpx2rd__(winHeight, calcHeight));
 
-		vertices[0].aOptionsSet2 = D3DXVECTOR4(rectWidth, rectHeight, 0.0f, 0.0f);
+		vertices[0].aRect = D3DXVECTOR4(0.0f, 0.0f, rectWidth, rectHeight);
 
 		x_renderSet.m_dirtyVisbleRegion = false;
 		x_renderSet.m_dirtyRequestRegion = false;				
@@ -74,8 +74,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 
 		const Rect& constraints = *x_renderSet.m_visibleRegion;
 
-		float rectX = 0.0f;
-		float rectY = 0.0f;
+		float rectX = x_renderSet.m_region->aX < 0.0f ? abs__(x_renderSet.m_region->aX) : 0.0f;
+		float rectY = x_renderSet.m_region->aY < 0.0f ? abs__(x_renderSet.m_region->aY) : 0.0f;
 		float rectWidth = x_renderSet.m_region->aWidth;
 		float rectHeight = x_renderSet.m_region->aHeight;
 
@@ -124,8 +124,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 			{
 				textureWidth *= resizeVFactor = rectHeight / textureHeight;
 
-				texLeft = (textureWidth - rectWidth) * proportionalConstantX;
-				texTop = 0.0;
+				texLeft = (textureWidth - rectWidth) * proportionalConstantX + rectX;
+				texTop = 0.0f;
 				texRight = rectWidth + texLeft;
 				texBottom = textureHeight;
 			}
@@ -133,8 +133,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 			{
 				textureHeight *= resizeHFactor = rectWidth / textureWidth;
 
-				texLeft = 0.0;
-				texTop = (textureHeight - rectHeight) * proportionalConstantY;
+				texLeft = 0.0f;
+				texTop = (textureHeight - rectHeight) * proportionalConstantY + rectY;
 				texRight = textureWidth;
 				texBottom = rectHeight + texTop;
 			}

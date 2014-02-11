@@ -96,14 +96,17 @@ namespace A2D {
 
 		int							m_calculatedRowIndex;
 		int							m_calculatedColumnIndex;
-
+		
 		int							m_previousCalculatedRowIndex;
 		int							m_previousCalculatedColumnIndex;
-
+		
 		bool                        m_validatedContents;
 		bool						m_activeInterpolations;
 		bool						m_componentTreeValidationRequest;
 		
+		float						m_scrollTop;
+		float						m_scrollLeft;
+
         float                       m_calculatedNegativeDeltaX;
         float                       m_calculatedNegativeDeltaY;
 		
@@ -181,6 +184,10 @@ namespace A2D {
 		void						setBoundsX(float x_x);
 
 		void						setBoundsXY(float x_x, float x_y);
+
+		void						setScroll(float x_left, float x_top);
+		inline float				getScrollLeft() { return m_styleSet.m_scrollLeft;  };
+		inline float				getScrollTop() { return m_styleSet.m_scrollTop; };
 
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);

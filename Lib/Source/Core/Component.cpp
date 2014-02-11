@@ -34,6 +34,8 @@ Component::Component() :
 	m_positionAnimationXY(NULL),
 	m_eventQueue(NULL),
 	m_depth(0),
+	m_scrollTop(0.0f),
+	m_scrollLeft(0.0f),
 	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_QUAD, 0, 0, 200, NULL, NULL) 
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
@@ -245,7 +247,7 @@ Graphics& Component::getGraphics()
 
 void Component::setDepth(int xDepth)
 {
-	m_styleSet.m_depth = (MAX_Z_DEPTH - SFLOAT(m_depth = xDepth)) / MAX_Z_DEPTH;
+	m_styleSet.m_depth = (A2D_MAX_Z_DEPTH - SFLOAT(m_depth = xDepth)) / A2D_MAX_Z_DEPTH;
 	
 	m_styleSet.markDepthAsDirty();
 }
@@ -322,7 +324,7 @@ void Component::validate()
         m_validatedContents = true;
         return;
     }
-
+	
     if (!hasParent)
     {
         m_visibleRegion.aX = m_calculatedRegion.aX = max__(0.0f, compRect.aX);
@@ -424,6 +426,9 @@ void Component::validate()
 			SYSOUT_F("[Component] [ComponentId: 0x%X] Requesting background update.", m_id);
 			#endif // A2D_DE__
 		}
+
+		m_styleSet.m_scrollLeft = m_scrollLeft + m_parent->m_styleSet.m_scrollLeft;
+		m_styleSet.m_scrollTop = m_scrollTop + m_parent->m_styleSet.m_scrollTop;
     }
 
     CascadingLayout::doLayout(*this);
@@ -865,4 +870,14 @@ void Component::setBoundsXY(float x_x, float x_y)
 float Component::getBoundsY()
 {
 	return m_region.aY;
+}
+
+void Component::setScroll(float x_left, float x_top)
+{
+	m_scrollLeft = x_left;
+	m_scrollTop = x_top;
+
+	m_validatedContents = false;
+
+	m_styleSet.markRequestRegionAsDirty();
 }

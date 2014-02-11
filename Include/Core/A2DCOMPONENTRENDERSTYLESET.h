@@ -57,6 +57,9 @@ namespace A2D {
 		float						m_opacity;
 		float	                    m_depth;
 
+		float						m_scrollTop;
+		float						m_scrollLeft;
+
 		const Rect*                 m_region;
 		const Rect*                 m_visibleRegion;
 
@@ -105,7 +108,9 @@ namespace A2D {
 			m_dirtyBackground(false),
 			m_dirtyBorderColors(false),
 			m_dirtyOpacityDepth(false),
-			m_dirtyBorderRadii(false)
+			m_dirtyBorderRadii(false),
+			m_scrollTop(0.0f),
+			m_scrollLeft(0.0f)
 		{
 		}
 

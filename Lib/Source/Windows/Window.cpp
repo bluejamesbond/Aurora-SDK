@@ -26,7 +26,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
     AbstractEventQueue& eventQueue = *xEventQueue;
 
 	double lastTime = kerneltimehp__;
-	double timeBetweenFrames = 1.0 / SDOUBLE(FPS);
+	double timeBetweenFrames = 1.0 / SDOUBLE(A2D_FPS);
 	double currentTime;
 	
     while (true)
@@ -294,15 +294,15 @@ STATUS Window::updateOnMouseDown(HWND xHwnd)
     bottom = top + aRect.aHeight;
     right = left + aRect.aWidth;
 
-    if ((x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE ||
-        x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE ||
-        y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE ||
-        y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
+    if ((x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
+        x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
+        y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
+        y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE) &&
         !aIsResizing)
     {
         aIsResizing = xHwnd == aHResizeWnd ? true : false;
     }
-    else if (y < top + _WINDOW_MOVE_BAR_DISTANCE)
+    else if (y < top + A2D_WINDOW_MOVE_BAR_DISTANCE)
     {
         aIsMoving = xHwnd == aHMoveWnd ? true : false;
     }
@@ -348,68 +348,68 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
     if (!aIsResizing && !aIsMoving)
     {
         //bottom left corner
-        if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
+        if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZENESW;
 			aCursor = Cursor::RESIZE_NORTH_EAST_SOUTH_WEST;
             aWinMoveRes = true;
         }
         //bottom right corner
-        else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZENWSE;
 			aCursor = Cursor::RESIZE_NORTH_WEST_SOUTH_EAST;
             aWinMoveRes = false;
         }
         //top left corner
-        else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZENWSE;
 			aCursor = Cursor::RESIZE_NORTH_WEST_SOUTH_EAST;
             aWinMoveRes = true;
         }
         //top right corner
-        else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZENESW;
 			aCursor = Cursor::RESIZE_NORTH_EAST_SOUTH_WEST;
             aWinMoveRes = false;
         }
         //left border
-        else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZEWE;
 			aCursor = Cursor::RESIZE_SIZE_WEST_EAST;
             aWinMoveRes = true;
         }
         //right border
-        else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZEWE;
 			aCursor = Cursor::RESIZE_SIZE_WEST_EAST;
             aWinMoveRes = false;
         }
         //bottom border
-        else if (y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE  &&
-            x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE  &&
+            x >= left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            x < right - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZENS;
 			aCursor = Cursor::RESIZE_NORTH_SOUTH;
             aWinMoveRes = false;
         }
         //top border
-        else if (y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE  &&
-            x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-            x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
+        else if (y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE  &&
+            x >= left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            x < right - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
         {
 			aCurrentCursor = Window::CURSOR_IDC_SIZENS;
 			aCursor = Cursor::RESIZE_NORTH_SOUTH;
@@ -904,7 +904,7 @@ STATUS Window::createShadowResources()
     Gdiplus::SolidBrush blackBrush(*aShadowColor);
 
     float radius = aOptShadowRadius;
-    float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
+    float radiusSafety = radius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
     float realDim = radius * 3;
     float relativeDim = realDim + radius * 2;
 
@@ -1214,8 +1214,8 @@ void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 void Window::validate()
 {
     // Minimum dimensions has to be greater than border and shadow safety region
-    aMinDims.aWidth = max__((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-    aMinDims.aHeight = max__((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
+    aMinDims.aWidth = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
+    aMinDims.aHeight = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
 
     // Minimum dimensions has to be greater than or equal to minimum size
     aMaxDims.aWidth = max__(aMinDims.aWidth, aMaxDims.aWidth);
@@ -1226,8 +1226,8 @@ void Window::validate()
     aRect.aHeight = min__(max__(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
 
     // Create resize window pointer.
-    aHResizeWnd = aOptBorderWidth < _WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
-    aHMoveWnd = aOptBorderWidth < _WINDOW_MOVE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
+    aHResizeWnd = aOptBorderWidth < A2D_WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
+    aHMoveWnd = aOptBorderWidth < A2D_WINDOW_MOVE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
 
     // Update caches
     updateColorCache();

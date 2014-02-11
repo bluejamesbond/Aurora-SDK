@@ -55,11 +55,11 @@ struct QuadVertex
 {
 	float4 position : POSITION0;
 	float4 options : POSITION1;      // [text/color/both, opacity, zIndex, reserved]      NOTE: contents must be in float. 
-	float4 optionsSet2 : POSITION2;  // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
+	float4 rect : POSITION2;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
 	float4 borderWidths : POSITION3; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
 	float4 borderRadii : POSITION4;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
 	float4 colorTex : COLOR0;
-	uint4 borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
+	uint4  borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };
 
 // >>>>>>> Proposed for future
@@ -157,8 +157,8 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float width = input[0].position[2];
 	float height = input[0].position[3];
 
-	float widthPixel = input[0].optionsSet2[0];
-	float heightPixel = input[0].optionsSet2[1];
+	float widthPixel = input[0].rect[2];
+	float heightPixel = input[0].rect[3];
 
 	float opacity = input[0].options[3];
 
@@ -352,7 +352,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//bottom left
 	main.position = float4(left, bottom, z, 1);
 	main.colorTex = float4(mainTexels[0], mainTexels[3], 0, 0);
-	main.rawPixel = float2(0, input[0].optionsSet2[1]);
+	main.rawPixel = float2(0, heightPixel);
 	quadStream.Append(main);
 	//top left
 	main.position = float4(left, top, z, 1);
@@ -362,12 +362,12 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	//bottom right
 	main.position = float4(right, bottom, z, 1);
 	main.colorTex = float4(mainTexels[2], mainTexels[3], 0, 0);
-	main.rawPixel = float2(input[0].optionsSet2[0], input[0].optionsSet2[1]);
+	main.rawPixel = float2(widthPixel, heightPixel);
 	quadStream.Append(main);
 	//top right
 	main.position = float4(right, top, z, 1);
 	main.colorTex = float4(mainTexels[2], mainTexels[1], 0, 0);
-	main.rawPixel = float2(input[0].optionsSet2[0], 0);
+	main.rawPixel = float2(widthPixel, 0);
 	quadStream.Append(main);
 
 	// Reset

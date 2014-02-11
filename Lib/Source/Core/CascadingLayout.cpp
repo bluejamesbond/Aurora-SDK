@@ -13,8 +13,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	int
 		compWidth = SINT(x_component.m_region.aWidth),
 		compHeight = SINT(x_component.m_region.aHeight),
-		mX = 0, 
-		mY = 0, 
+		mX = 0,
+		mY = 0,
 		aX = 0, 
 		aY = 0,
 		maxElementHeight = 0, 
@@ -156,7 +156,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 				else
 				{
 					mX = mX + marginLeft;
-					mY = firstElement ? marginTop : mY;
+					mY = firstElement ? mY + marginTop : mY;
 
 					// try to move this elswhere
 					firstElement = false;
@@ -242,7 +242,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			component->m_styleSet.m_visible = true;
 			component->m_calculatedRowIndex = rowIndex;
 			component->m_calculatedColumnIndex = columnIndex;
-
+			
 			component->setBounds(SFLOAT(mX + positionLeft + positionRight), 
 								 SFLOAT(mY + positionTop + positionBottom), 
 								 SFLOAT(width),

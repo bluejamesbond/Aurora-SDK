@@ -18,14 +18,14 @@
 
 // Core Constants
 //------------------------------------------------------------------------------
-#define _WINDOW_BOX_SHADOW_SAFELYTY_RATIO                2
-#define _WINDOW_RESIZE_EDGE_DISTANCE                     5
-#define _WINDOW_RESIZE_DEFAULT_DISTANCE                  3
-#define _WINDOW_MOVE_BAR_DISTANCE                        25
-#define _WINDOW_MOVE_DEFAULT_DISTANCE                    10
+#define A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO             2
+#define A2D_WINDOW_RESIZE_EDGE_DISTANCE                  5
+#define A2D_WINDOW_RESIZE_DEFAULT_DISTANCE               3
+#define A2D_WINDOW_MOVE_BAR_DISTANCE                     25
+#define A2D_WINDOW_MOVE_DEFAULT_DISTANCE                 10
 
-#define FPS												 60
-#define MAX_Z_DEPTH										 1000000.0f
+#define A2D_FPS											 60
+#define A2D_MAX_Z_DEPTH									 1000000.0f
 
 // System error focusing on speed
 //------------------------------------------------------------------------------
