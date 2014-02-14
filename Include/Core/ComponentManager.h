@@ -88,9 +88,9 @@ namespace A2D {
 			A2DPIXELDISTANCESETUINT4& borderWidths = aRoot->m_styleSet.m_borders.m_precalculatedBorderWidths;
 
 			aRoot->setBounds(SFLOAT(borderWidths.m_left),
-							 SFLOAT(borderWidths.m_top),
+							 SFLOAT(borderWidths.m_top) + 30.0f,
 							 aBackBufferDims->aWidth - SFLOAT(borderWidths.m_left + borderWidths.m_right),
-							 aBackBufferDims->aHeight - SFLOAT(borderWidths.m_top + borderWidths.m_bottom));
+							 aBackBufferDims->aHeight - SFLOAT(borderWidths.m_top + borderWidths.m_bottom) - 80.0f);
 
 			aRoot->m_componentTreeValidationRequest = true;
 		}
