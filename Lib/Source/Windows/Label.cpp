@@ -13,6 +13,8 @@ Label::~Label(){}
 
 STATUS Label::initialize()
 {
+	Component::initialize();
+
 	// Set draw line to bottom by default.
 	aOptBackgroundRegion.aY = aOptBackgroundRegion.aHeight - 1;
 
