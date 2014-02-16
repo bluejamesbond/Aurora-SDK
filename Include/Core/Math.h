@@ -84,7 +84,6 @@ namespace A2D {
 				&& x_point.m_y >= (a_y = x_rect.m_y)
 				&& x_point.m_x <= (a_x + x_rect.m_width)
 				&& x_point.m_y <= (a_y + x_rect.m_height);
-
 		}
 
 	};

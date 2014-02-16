@@ -13,8 +13,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	int
 		compWidth = SINT(x_component.m_region.m_width),
 		compHeight = SINT(x_component.m_region.m_height),
-		mX = 0,
-		mY = 0,
+		mX = SINT(x_component.m_scrollLeft),
+		mY = SINT(x_component.m_scrollTop),
 		m_x = 0, 
 		m_y = 0,
 		maxElementHeight = 0, 

@@ -105,8 +105,8 @@ namespace A2D {
 		bool						m_activeInterpolations;
 		bool						m_componentTreeValidationRequest;
 		
-		float						m_scrollTop;
-		float						m_scrollLeft;
+		int							m_scrollTop;
+		int							m_scrollLeft;
 		
 		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
 
@@ -184,9 +184,9 @@ namespace A2D {
 
 		void						setBoundsXY(float x_x, float x_y);
 
-		void						setScroll(float x_left, float x_top);
-		inline float				getScrollLeft() { return m_styleSet.m_scrollLeft;  };
-		inline float				getScrollTop() { return m_styleSet.m_scrollTop; };
+		void						setScroll(int x_left, int x_top);
+		inline int					getScrollLeft() { return m_styleSet.m_scrollLeft;  };
+		inline int					getScrollTop() { return m_styleSet.m_scrollTop; };
 
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);

@@ -32,8 +32,8 @@ Component::Component() :
 	m_positionAnimationXY(NULL),
 	m_eventQueue(NULL),
 	m_depth(0),
-	m_scrollTop(0.0f),
-	m_scrollLeft(0.0f),
+	m_scrollTop(0),
+	m_scrollLeft(0),
 	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_QUAD, 0, 0, 200, NULL, NULL) 
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
@@ -806,7 +806,7 @@ float Component::getBoundsY()
 	return m_region.m_y;
 }
 
-void Component::setScroll(float x_left, float x_top)
+void Component::setScroll(int x_left, int x_top)
 {
 	m_scrollLeft = x_left;
 	m_scrollTop = x_top;
