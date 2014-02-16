@@ -56,8 +56,9 @@ struct QuadVertex
 	float4 position : POSITION0;
 	float4 options : POSITION1;      // [text/color/both, opacity, zIndex, reserved]      NOTE: contents must be in float. 
 	float4 rect : POSITION2;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
-	float4 borderWidths : POSITION3; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
-	float4 borderRadii : POSITION4;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
+	float4 croppedDistance : POSITION3;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
+	float4 borderWidths : POSITION4; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
+	float4 borderRadii : POSITION5;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
 	float4 colorTex : COLOR0;
 	uint4  borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };
@@ -198,7 +199,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 relativeBorderRadii_S1 = mul(borderRadiiSet1, borderCalculationMatrix);
 	float4 relativeBorderRadii_S2 = mul(borderRadiiSet2, borderCalculationMatrix);
 	
-	float4 cropped = float4(0.0f, input[0].rect[1], 0.0f, 0.0f);
+	float4 cropped = input[0].croppedDistance;
 	float4 croppedRelative = mul(cropped, borderCalculationMatrix);
 
 	float _top = top;

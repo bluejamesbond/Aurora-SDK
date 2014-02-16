@@ -61,6 +61,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 											cvtpx2rd__(winHeight, calcHeight));
 		
 		vertices[0].aRect = D3DXVECTOR4(0.0f, 0.0f, rectWidth, rectHeight);
+		vertices[0].m_croppedDistance = *x_renderSet.m_cropDistance;
 
 		x_renderSet.m_dirtyVisbleRegion = false;
 		x_renderSet.m_dirtyRequestRegion = false;				

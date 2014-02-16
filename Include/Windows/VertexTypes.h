@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../Core/A2DUINT4.h"
+#include "../Core/A2DFLOAT4.h"
 
 #include "ExtLibs.h"
 
@@ -34,6 +35,7 @@ namespace A2D {
 		D3DXVECTOR4 aPosition;
 		D3DXVECTOR4 aOptions;
 		D3DXVECTOR4 aRect;
+		A2DFLOAT4 m_croppedDistance;
 		D3DXVECTOR4 aBorderWidths;
 		D3DXVECTOR4 aBorderRadii;
 		D3DXVECTOR4 aColorTex;

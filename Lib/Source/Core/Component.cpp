@@ -343,6 +343,7 @@ void Component::validate()
 							   region.aHeight };
 
 		m_visibleRegion = Math::intersect(m_parent->m_visibleRegion, m_calculatedRegion);
+		m_cropDistance = Math::subtract_contains(m_calculatedRegion, m_visibleRegion);
 
 		if (m_visibleRegion.aHeight != m_previousVisibleDimensions.aHeight ||
 			m_visibleRegion.aWidth != m_previousVisibleDimensions.aWidth)
