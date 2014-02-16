@@ -97,6 +97,7 @@ struct QuadPixel
 	nointerpolation float4 borderRadii : FLOAT4_1; // [leftTop, rightTop, leftBottom, rightBottom ]
 	nointerpolation float2 rawDimensions : FLOAT2_0; // [width, height]
 	nointerpolation float4 borderWidths : FLOAT4_2;
+	nointerpolation float4 crop_area : FLOAT4_3;
 	float2 rawPixel : FLOAT2_1;
 };
 
@@ -197,7 +198,11 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 relativeBorderRadii_S1 = mul(borderRadiiSet1, borderCalculationMatrix);
 	float4 relativeBorderRadii_S2 = mul(borderRadiiSet2, borderCalculationMatrix);
 	
-	float4 cropped = float4(0.0f, 0, 0.0f, 0.0f);
+	float4 cropped = float4(0.0f, input[0].rect[1], 0.0f, 0.0f);
+	float4 croppedRelative = mul(cropped, borderCalculationMatrix);
+
+	float _top = top;
+	top += croppedRelative[1];
 
 	//**********************************************************************
 	// Borders
@@ -208,6 +213,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	// 2.0 indicates texture on backgroundColor
 	border.options = float4(0.0, opacity, 0, 0);
 	border.rawPixel = float2(0, 0);
+	border.crop_area = cropped;
 	border.borderRadii = borderRadii;
 	border.rawDimensions = float2(widthPixel, heightPixel);
 	border.borderWidths = input[0].borderWidths;
@@ -233,7 +239,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top left
 		border.position = float4(left - borderLeftWidth, (hasTopBorder ? top + borderTopWidth : top), z, 1);
-		border.rawPixel = float2(0, cropped[1]); // minor fix
+		border.rawPixel = float2(0, 0); // minor fix
 		quadStream.Append(border);
 		//bottom right
 		border.position = float4(left + relativeBorderRadii_S2[0], bottom + relativeBorderRadii_S2[1], z, 1);
@@ -241,7 +247,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top right
 		border.position = float4(left + relativeBorderRadii_S1[0], (hasTopBorder ? top : top) - relativeBorderRadii_S1[1], z, 1); // Look at the previous code, to create the slope correctly!
-		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet1[0], cropped[1] + input[0].borderWidths[1] + borderRadiiSet1[1]);
+		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet1[0],  input[0].borderWidths[1] + borderRadiiSet1[1]);
 		quadStream.Append(border);
 		
 		// Reset
@@ -264,7 +270,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top left
 		border.position = float4((hasLeftBorder ? left - borderLeftWidth : left), top + borderTopWidth, z, 1);
-		border.rawPixel = float2(0, cropped[1]); // Minor fix here
+		border.rawPixel = float2(0, 0); // Minor fix here
 		quadStream.Append(border);
 		//bottom right
 		border.position = float4(right - relativeBorderRadii_S1[2], top - relativeBorderRadii_S1[3], z, 1);
@@ -272,7 +278,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top right
 		border.position = float4((hasRightBorder ? right + borderRightWidth : right), top + borderTopWidth, z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] + input[0].borderWidths[2], cropped[1]);
+		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] + input[0].borderWidths[2], 0);
 		quadStream.Append(border);
 
 		// Reset
@@ -294,7 +300,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top left
 		border.position = float4(right - relativeBorderRadii_S1[2], top - relativeBorderRadii_S1[3], z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet1[2], cropped[1] + input[0].borderWidths[1] + borderRadiiSet1[3]);
+		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet1[2], input[0].borderWidths[1] + borderRadiiSet1[3]);
 		quadStream.Append(border);
 		//bottom right
 		border.position = float4(right + borderRightWidth, (hasBottomBorder ? bottom - borderBottomWidth : bottom), z, 1);
@@ -302,7 +308,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top right
 		border.position = float4(right + borderRightWidth, (hasTopBorder ? top + borderTopWidth : top), z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + input[0].borderWidths[2] + widthPixel, cropped[1]);
+		border.rawPixel = float2(input[0].borderWidths[0] + input[0].borderWidths[2] + widthPixel, 0);
 		quadStream.Append(border);
 
 		// Reset
@@ -323,7 +329,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top left
 		border.position = float4(left + relativeBorderRadii_S2[0], bottom + relativeBorderRadii_S2[1], z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet2[0], cropped[1] + input[0].borderWidths[1] + heightPixel - borderRadiiSet2[1]);
+		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet2[0], input[0].borderWidths[1] + heightPixel - borderRadiiSet2[1]);
 		quadStream.Append(border);
 		//bottom right
 		border.position = float4((hasRightBorder ? right + borderRightWidth : right) , bottom - borderBottomWidth, z, 1);
@@ -331,7 +337,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		quadStream.Append(border);
 		//top right
 		border.position = float4(right - relativeBorderRadii_S2[2], bottom + relativeBorderRadii_S2[3], z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet2[2], cropped[1] + input[0].borderWidths[1] + heightPixel - borderRadiiSet2[3]);
+		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet2[2], input[0].borderWidths[1] + heightPixel - borderRadiiSet2[3]);
 		quadStream.Append(border);
 
 		// Reset
@@ -347,6 +353,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 
 	main.options = float4(1.0f, opacity, input[0].options[3], 0.0);
 	main.borderRadii = borderRadii;
+	main.crop_area = float4(0, 0, 0, 0);
 	main.rawDimensions = float2(widthPixel, heightPixel);
 	main.borderWidths = float4(0, 0, 0, 0);
 	// main.colorTex = float4(input[0].colorTex.rgb, input[0].colorTex.a * opacity);
@@ -357,7 +364,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	main.rawPixel = float2(0, heightPixel);
 	quadStream.Append(main);
 	//top left
-	main.position = float4(left, top, z, 1);
+	main.position = float4(left, _top, z, 1);
 	main.colorTex = float4(mainTexels[0], mainTexels[1], 0, 0);
 	main.rawPixel = float2(0, cropped[1]);
 	quadStream.Append(main);
@@ -367,7 +374,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	main.rawPixel = float2(widthPixel, heightPixel);
 	quadStream.Append(main);
 	//top right
-	main.position = float4(right, top, z, 1);
+	main.position = float4(right, _top, z, 1);
 	main.colorTex = float4(mainTexels[2], mainTexels[1], 0, 0);
 	main.rawPixel = float2(widthPixel, cropped[1]);
 	quadStream.Append(main);
@@ -404,6 +411,12 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		float borderTopWidth = input.borderWidths[1];
 		float borderRightWidth = input.borderWidths[2];
 		float borderBottomWidth = input.borderWidths[3];
+		
+		if (rawPixelY <= (input.crop_area[1]))
+		{
+			color.a = 0.0f;
+			return color;
+		}
 
 		if (isColorTex == 0.0f)
 		{
