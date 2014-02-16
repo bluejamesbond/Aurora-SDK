@@ -26,6 +26,19 @@ namespace A2D {
 		float			aWidth;
 		float			aHeight;
 
+		inline Dims() :
+			aWidth(0.0f),
+			aHeight(0.0f)
+		{
+		}
+
+
+		inline Dims(float x_width, float x_height) :
+			aWidth(x_width),
+			aHeight(x_height)
+		{
+		}
+
 		static inline void memcpySSE2(Dims * xDest, const Dims * xSrc)
 		{
 			// Memcpy built just for Rect and is optimized for

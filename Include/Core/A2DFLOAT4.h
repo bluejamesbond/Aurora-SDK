@@ -1,41 +1,43 @@
-////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __POINT_H__
-#define __POINT_H__
+#ifndef __A2DFLOAT4_H__
+#define __A2DFLOAT4_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:  
-//      POINT
+//  Class: 
+//      VERTEXTYPES
 //
 //  Synopsis:
-//      Texture container class.
+//      Texture quad.
 //
 //------------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
-// DECLARATION
+// INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
+
+#include "ExtLibs.h"
 
 namespace A2D {
 
-	struct Point
+	struct A2DFLOAT4
 	{
-		float			aX;
-		float			aY;
+		float a1;
+		float a2;
+		float a3;
+		float a4;
 
-		inline Point() :
-			aX(0.0f),
-			aY(0.0f)
-		{
-		}
+		inline A2DFLOAT4(){};
 
-		inline Point(float x_x, float x_y) :
-			aX(x_x),
-			aY(x_y)
+		inline A2DFLOAT4(float x, float y, float z, float w)
 		{
+			a1 = x;
+			a2 = y;
+			a3 = z;
+			a4 = w;
 		}
 	};
 }

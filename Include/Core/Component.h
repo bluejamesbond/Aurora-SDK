@@ -33,6 +33,7 @@
 #include "A2DANIMATABLEFLOATX.h"
 #include "A2DINTERPOLATORFLOAT.h"
 #include "Animator.h"
+#include "Math.h"
 
 namespace A2D {
 
@@ -89,6 +90,8 @@ namespace A2D {
 
 		A2DCACHEDANIMATION2			m_cachedAnimationPositionXY;
 		Animation					m_positionAnimationXY;
+
+		A2DFLOAT4					m_cropDistance;
 
     protected:
 

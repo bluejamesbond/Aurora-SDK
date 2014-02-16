@@ -40,6 +40,7 @@ Component::Component() :
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
+	m_styleSet.m_cropDistance = &m_cropDistance;
 	m_styleSet.m_id = &m_id;
 
 	m_styleSet.markBorderColorsAsDirty();
@@ -315,9 +316,8 @@ void Component::validated()
 
 void Component::validate()
 {
-    Component * parentComp = m_parent;
-    Rect& compRect = m_region;
-    bool hasParent = parentComp != NULL;
+    Rect& region = m_region;
+	bool hasParent = m_parent != NULL;
 
 	if (!m_styleSet.m_visible)
     {
@@ -327,87 +327,22 @@ void Component::validate()
 	
     if (!hasParent)
     {
-        m_visibleRegion.aX = m_calculatedRegion.aX = max__(0.0f, compRect.aX);
-        m_visibleRegion.aY = m_calculatedRegion.aY = max__(0.0f, compRect.aY);
-        m_visibleRegion.aWidth = m_calculatedRegion.aWidth = max__(0.0f, compRect.aWidth);
-        m_visibleRegion.aHeight = m_calculatedRegion.aHeight = max__(0.0f, compRect.aHeight);
+		m_visibleRegion.aX = m_calculatedRegion.aX = max__(0.0f, region.aX);
+		m_visibleRegion.aY = m_calculatedRegion.aY = max__(0.0f, region.aY);
+		m_visibleRegion.aWidth = m_calculatedRegion.aWidth = max__(0.0f, region.aWidth);
+		m_visibleRegion.aHeight = m_calculatedRegion.aHeight = max__(0.0f, region.aHeight);
 
         m_calculatedNegativeDeltaX = 0.0f;
         m_calculatedNegativeDeltaY = 0.0f;
     }
     else
     {
-        Rect& parentRect = parentComp->m_region;
-        Rect& parentCalculatedRegion = parentComp->m_calculatedRegion;
-        Rect& parentVisibleRegion = parentComp->m_visibleRegion;
-	
-		float 
-			sX, 
-			sY, 
-			x,
-			y,
-			pX = parentCalculatedRegion.aX,
-			pY = parentCalculatedRegion.aY,
-			width, 
-			height,
-			compX = compRect.aX,
-			compY = compRect.aY,
-			compWidth = compRect.aWidth, 
-			compHeight = compRect.aHeight,
-			parentCalcWidth = parentCalculatedRegion.aWidth,
-			parentCalcHeight = parentCalculatedRegion.aHeight;
+		m_calculatedRegion = { m_parent->m_calculatedRegion.aX + region.aX,
+							   m_parent->m_calculatedRegion.aY + region.aY,
+							   region.aWidth,
+							   region.aHeight };
 
-		// (64 bit target)
-		// 12 xmmX registers
-		// 1 xmmX register to store 0.0f
-		//------------------------------------------------------------------------------
-		// Load from RAM
-
-		//__asm
-		//{
-		//	push eax;
-		//	mov eax, parentCalculatedRegion;
-		//	movss xmm7, DWORD PTR[eax + 2];
-		//	pop eax;
-		//}
-		
-        // Running x and y
-		//------------------------------------------------------------------------------
-        x = pX + compX;
-        y = pY + compY;
-        
-        // Reduce the size based on parent x, y
-        // Account for negative x, y of this
-        // Accumulate negatives
-		//------------------------------------------------------------------------------
-		width = compWidth + (m_calculatedNegativeDeltaX = parentComp->m_calculatedNegativeDeltaX + min__(0.0f, compX));
-		height = compHeight + (m_calculatedNegativeDeltaY = parentComp->m_calculatedNegativeDeltaY + min__(0.0f, compY));
-        
-        // Account for larger than parent
-		//------------------------------------------------------------------------------
-		width = min__(width, parentCalcWidth);
-		height = min__(height, parentCalcHeight);
-
-        // Account for positive shift
-		//------------------------------------------------------------------------------
-		width -= (sX = (compX + width)) > parentCalcWidth ? (sX - parentCalcWidth) : 0.0f;
-		height -= (sY = (compY + height)) > parentCalcHeight ? (sY - parentCalcHeight) : 0.0f;
-        
-        // Account for negative height
-		//------------------------------------------------------------------------------
-		width = max__(0.0f, width);
-		height = max__(0.0f, height);
-
-        // Set the visible x and y based on previous
-		//------------------------------------------------------------------------------
-		m_visibleRegion = { pX + max__(0.0f, min__(x, compX)), 
-							pY + max__(0.0f, min__(y, compY)), 
-							(x + compWidth) >= 0.0f ? width : 0.0f, 
-							(y + compHeight) >= 0.0f ? height : 0.0f };
-		
-		// Set the calculated width and height
-		//------------------------------------------------------------------------------
-		m_calculatedRegion = { x, y, width, height };
+		m_visibleRegion = Math::intersect(m_parent->m_visibleRegion, m_calculatedRegion);
 
 		if (m_visibleRegion.aHeight != m_previousVisibleDimensions.aHeight ||
 			m_visibleRegion.aWidth != m_previousVisibleDimensions.aWidth)
