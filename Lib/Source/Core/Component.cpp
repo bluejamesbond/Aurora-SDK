@@ -19,8 +19,6 @@ Component::Component() :
     m_pipeline(NULL),
 	m_id(rand()),
     m_componentManager(NULL),
-    m_calculatedNegativeDeltaX(0.0f),
-    m_calculatedNegativeDeltaY(0.0f),
     m_focused(false),
     m_focusable(true),
     m_nextCompListener(NULL),
@@ -325,23 +323,23 @@ void Component::validate()
         return;
     }
 	
-    if (!hasParent)
-    {
-		m_visibleRegion.aX = m_calculatedRegion.aX = max__(0.0f, region.aX);
-		m_visibleRegion.aY = m_calculatedRegion.aY = max__(0.0f, region.aY);
-		m_visibleRegion.aWidth = m_calculatedRegion.aWidth = max__(0.0f, region.aWidth);
-		m_visibleRegion.aHeight = m_calculatedRegion.aHeight = max__(0.0f, region.aHeight);
-
-        m_calculatedNegativeDeltaX = 0.0f;
-        m_calculatedNegativeDeltaY = 0.0f;
-    }
+	if (!hasParent)
+	{
+		m_visibleRegion = m_calculatedRegion = 
+					{ max__(0.0f, region.aX), 
+					  max__(0.0f, region.aY), 
+					  max__(0.0f, region.aWidth), 
+					  max__(0.0f, region.aHeight) };
+	}
     else
     {
+		// Create shifts
 		m_calculatedRegion = { m_parent->m_calculatedRegion.aX + region.aX,
 							   m_parent->m_calculatedRegion.aY + region.aY,
 							   region.aWidth,
 							   region.aHeight };
 
+		// Applying constraints
 		m_visibleRegion = Math::intersect(m_parent->m_visibleRegion, m_calculatedRegion);
 		m_cropDistance = Math::subtract_contains(m_calculatedRegion, m_visibleRegion);
 

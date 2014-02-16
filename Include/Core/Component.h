@@ -109,9 +109,6 @@ namespace A2D {
 		
 		float						m_scrollTop;
 		float						m_scrollLeft;
-
-        float                       m_calculatedNegativeDeltaX;
-        float                       m_calculatedNegativeDeltaY;
 		
 		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
 
