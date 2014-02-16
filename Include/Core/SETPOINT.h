@@ -21,17 +21,17 @@
 
 namespace A2D {
 
-	struct SPoint
+	struct SETPOINT
 	{
-		float			m_x1, m_y1;
+		float m_x1, m_y1;
 
-		inline SPoint() :
+		inline SETPOINT() :
 			m_x1(0.0f),
 			m_y1(0.0f)
 		{
 		}
 
-		inline SPoint(float x_x, float x_y) :
+		inline SETPOINT(float x_x, float x_y) :
 			m_x1(x_x),
 			m_y1(x_y)
 		{

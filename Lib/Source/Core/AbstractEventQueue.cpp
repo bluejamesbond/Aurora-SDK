@@ -236,8 +236,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			comp = comps->get(i);
 			eventRegion = comp->getVisibleRegion();
 			numPanels += 1;
-			isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
-				point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
+			isValidRegion = Math::contains(*eventRegion, point);
 
 			if (isValidRegion)
 			{
@@ -307,10 +306,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	{
 		source = nodeE->value;
 		eventRegion = source->getEventRegion();
-		eventRegion->m_x = 0;
-		eventRegion->m_y = 0;
-		isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
-			point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
+		eventRegion->m_x = eventRegion->m_y = 0.0f;
+		isValidRegion = Math::contains(*eventRegion, point);
 
 		if (isValidRegion)
 		{
@@ -381,8 +378,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		{
 			source = comps->get(i);
 			eventRegion = source->getEventRegion();
-			isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
-				point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
+			isValidRegion = Math::contains(*eventRegion, point);
 
 			if (isValidRegion)
 			{
@@ -431,10 +427,8 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	{
 		source = nodeE->value;
 		eventRegion = source->getEventRegion();
-		eventRegion->m_x = 0;
-		eventRegion->m_y = 0;
-		isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
-			point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
+		eventRegion->m_x = eventRegion->m_y = 0.0f;
+		isValidRegion = Math::contains(*eventRegion, point);
 
 		if (isValidRegion)
 		{

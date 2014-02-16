@@ -46,7 +46,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
 		
 		vertices[0].m_position = D3DXVECTOR4(cvtpx2rp__(winWidth, visibleRegion.m_x), -cvtpx2rp__(winHeight, visibleRegion.m_y), 
-											cvtpx2rd__(winWidth, visibleRegion.m_width), cvtpx2rd__(winHeight, visibleRegion.m_height));
+											 cvtpx2rd__(winWidth, visibleRegion.m_width), cvtpx2rd__(winHeight, visibleRegion.m_height));
 		
 		vertices[0].m_rect = D3DXVECTOR4(0.0f, 0.0f, region.m_width, region.m_height);
 		vertices[0].m_subRegion = D3DXVECTOR4(subRegion.m_x, subRegion.m_y, subRegion.m_width, subRegion.m_height);
@@ -64,6 +64,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		const Rect& region = *x_renderSet.m_region;
 		const Rect& subRegion = *x_renderSet.m_subRegion;
 		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
+		const Rect& textureClip = *x_texture->GetClip();
+		const Style::Background backgroundStyle = x_renderSet.m_backgroundStyle;
 
 		float regionX = x_renderSet.m_region->m_x < 0.0f ? abs__(x_renderSet.m_region->m_x) : 0.0f;
 		float regionY = x_renderSet.m_region->m_y < 0.0f ? abs__(x_renderSet.m_region->m_y) : 0.0f;
@@ -75,13 +77,13 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		float visibleX2 = visibleRegion.m_x + visibleWidth;
 		float visibleY2 = visibleRegion.m_y + visibleHeight;
 
-		float textureWidth = x_texture->GetClip()->m_width;
-		float textureHeight = x_texture->GetClip()->m_height;
+		float textureWidth = textureClip.m_width;
+		float textureHeight = textureClip.m_height;
 
 		float texLeft, texTop, texRight, texBottom,
 			texelLeft, texelTop, texelRight, texelBottom;
 
-		if (x_renderSet.m_backgroundStyle.m_layout == Style::Background::Layout::COVER)
+		if (backgroundStyle.m_layout == Style::Background::Layout::COVER)
 		{
 			float resizeVFactor = 1.0,
 				  resizeHFactor = 1.0;
@@ -148,7 +150,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 			texRight = visibleX2 < visibleRegion.m_width ? regionWidth : visibleWidth;
 			texBottom = visibleY2 < visibleRegion.m_height ? regionHeight : visibleHeight;
 
-			if (x_renderSet.m_backgroundStyle.m_layout == Style::Background::Layout::REPEAT)
+			if (backgroundStyle.m_layout == Style::Background::Layout::REPEAT)
 			{
 				texelLeft = texLeft / textureWidth;
 				texelTop = texTop / textureHeight;

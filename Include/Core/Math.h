@@ -76,6 +76,17 @@ namespace A2D {
 			return Rect(c_x, c_y, c_x_ - c_x, c_y_ - c_y);
 		}
 
+		static inline bool contains(const Rect& x_rect, const Point& x_point)
+		{
+			float a_x, a_y;
+
+			return x_point.m_x >= (a_x = x_rect.m_x)
+				&& x_point.m_y >= (a_y = x_rect.m_y)
+				&& x_point.m_x <= (a_x + x_rect.m_width)
+				&& x_point.m_y <= (a_y + x_rect.m_height);
+
+		}
+
 	};
 
 }
