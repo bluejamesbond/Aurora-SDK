@@ -62,6 +62,7 @@ namespace A2D {
 		float						m_scrollLeft;
 
 		const Rect*                 m_region;
+		const Rect*					m_subRegion;
 		const Rect*                 m_visibleRegion;
 
 		Style::Background           m_backgroundStyle;
@@ -82,7 +83,6 @@ namespace A2D {
 		A2DPIXELDISTANCESETINT4     m_precalculatedPadding;
 		A2DPIXELDISTANCESETUINT4	m_precalculatedBorderRadii;
 
-		A2DFLOAT4*					m_cropDistance;
 
 		int*						m_id;
 

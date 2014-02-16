@@ -109,8 +109,8 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
             }
 
             // Fire MouseEvent
-			point.aX = SFLOAT(LOW16UINT32(xMsg.lParam));
-			point.aY = SFLOAT(HI16UINT32(xMsg.lParam));
+			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
 
             aMouseDown->setLocation(point);
 
@@ -120,8 +120,8 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
         case WM_MOUSEMOVE:
 
             // Fire MouseEvent
-			point.aX = SFLOAT(LOW16UINT32(xMsg.lParam));
-			point.aY = SFLOAT(HI16UINT32(xMsg.lParam));
+			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
 
             aMouseMove->setLocation(point);
 
@@ -141,8 +141,8 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
             // Fire MouseEvent
 
-			point.aX = SFLOAT(LOW16UINT32(xMsg.lParam));
-			point.aY = SFLOAT(HI16UINT32(xMsg.lParam));
+			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
 
             aMouseUp->setLocation(point);
 
@@ -247,10 +247,10 @@ HWND Window::createCompatibleWindow(bool isParent)
     DWORD           lStyle, lExStyle;
     LPCWSTR         titleName;
 
-    left = SINT(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
-    top = SINT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
-    width = SINT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
-    height = SINT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
+    left = SINT(isParent ? aRect.m_x - aOptShadowRadius : aRect.m_x + aOptBorderWidth);
+    top = SINT(isParent ? aRect.m_y - aOptShadowRadius : aRect.m_y + aOptBorderWidth);
+    width = SINT(isParent ? aRect.m_width + aOptShadowRadius * 2 : aRect.m_width - aOptBorderWidth * 2);
+    height = SINT(isParent ? aRect.m_height + aOptShadowRadius * 2 : aRect.m_height - aOptBorderWidth * 2);
     lStyle = SINT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
 	lExStyle = SINT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
     hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
@@ -291,8 +291,8 @@ STATUS Window::updateOnMouseDown(HWND xHwnd)
 
     left = (isParent ? aRelativeX + aPadding : aRealX);
     top = (isParent ? aRelativeY + aPadding : aRealY);
-    bottom = top + aRect.aHeight;
-    right = left + aRect.aWidth;
+    bottom = top + aRect.m_height;
+    right = left + aRect.m_width;
 
     if ((x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
         x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
@@ -342,8 +342,8 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 
     left = (isParent ? aRelativeX + aPadding : aRealX);
     top = (isParent ? aRelativeY + aPadding : aRealY);
-    bottom = top + aRect.aHeight;
-    right = left + aRect.aWidth;
+    bottom = top + aRect.m_height;
+    right = left + aRect.m_width;
 
     if (!aIsResizing && !aIsMoving)
     {
@@ -435,18 +435,18 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 
     if (aIsDragged && (aIsResizing || aIsMoving))
     {
-        float deltaY, deltaX;
+        float deltm_y, deltm_x;
 
         GetCursorPos(&p);
         ScreenToClient(xHwnd, &p);
 
-        aOffsetY = deltaY = SFLOAT(aLastDraggedPoint.y - p.y);
-        aOffsetX = deltaX = SFLOAT(aLastDraggedPoint.x - p.x);
+        aOffsetY = deltm_y = SFLOAT(aLastDraggedPoint.y - p.y);
+        aOffsetX = deltm_x = SFLOAT(aLastDraggedPoint.x - p.x);
         
         if (aOffsetY < -2000.0f)
         {
             aOffsetY = 0.0f;
-            deltaY = 0.0f;
+            deltm_y = 0.0f;
         }
         
         memcpy(&aLastRect, &aRect, sizeof(Rect));
@@ -460,18 +460,18 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 				{
 					if (aWinMoveRes)
 					{
-						if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-							rect.aHeight + deltaY < aMaxDims.aHeight)
+						if (rect.m_height + deltm_y >= aMinDims.m_height &&
+							rect.m_height + deltm_y < aMaxDims.m_height)
 						{
-							rect.aY -= (deltaY);
-							rect.aHeight += (deltaY);
-							p.y += SLONG(deltaY);
+							rect.m_y -= (deltm_y);
+							rect.m_height += (deltm_y);
+							p.y += SLONG(deltm_y);
 							aFramebufferInterpolation = true;
 						}
 					}
 					else
 					{
-						rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
+						rect.m_height -= (rect.m_height - deltm_y >= aMinDims.m_height) && (rect.m_height - deltm_y < aMaxDims.m_height) ? SFLOAT(deltm_y) : 0;
 					}
 
 					break;
@@ -481,18 +481,18 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					// Resize left and right.
 					if (aWinMoveRes)
 					{
-						if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-							rect.aWidth + deltaX < aMaxDims.aWidth)
+						if (rect.m_width + deltm_x >= aMinDims.m_width &&
+							rect.m_width + deltm_x < aMaxDims.m_width)
 						{
-							rect.aX -= (deltaX);
-							rect.aWidth += (deltaX);
-							p.x += SLONG(deltaX);
+							rect.m_x -= (deltm_x);
+							rect.m_width += (deltm_x);
+							p.x += SLONG(deltm_x);
 							aFramebufferInterpolation = true;
 						}
 					}
 					else
 					{
-						rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
+						rect.m_width -= (rect.m_width - deltm_x >= aMinDims.m_width) && (rect.m_width - deltm_x < aMaxDims.m_width) ? SFLOAT(deltm_x) : 0;
 					}
 
 					break;
@@ -502,26 +502,26 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 					// Resize upper right and lower left corners.
 					if (aWinMoveRes)
 					{
-						rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
-						if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-							rect.aWidth + deltaX < aMaxDims.aWidth)
+						rect.m_height -= (rect.m_height - deltm_y >= aMinDims.m_height) && (rect.m_height - deltm_y < aMaxDims.m_height) ? SFLOAT(deltm_y) : 0;
+						if (rect.m_width + deltm_x >= aMinDims.m_width &&
+							rect.m_width + deltm_x < aMaxDims.m_width)
 						{
-							rect.aX -= (deltaX);
-							rect.aWidth += (deltaX);
-							p.x += SLONG(deltaX);
+							rect.m_x -= (deltm_x);
+							rect.m_width += (deltm_x);
+							p.x += SLONG(deltm_x);
 							aFramebufferInterpolation = true;
 
 						}
 					}
 					else
 					{
-						rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
-						if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-							rect.aHeight + deltaY < aMaxDims.aHeight)
+						rect.m_width -= (rect.m_width - deltm_x >= aMinDims.m_width) && (rect.m_width - deltm_x < aMaxDims.m_width) ? SFLOAT(deltm_x) : 0;
+						if (rect.m_height + deltm_y >= aMinDims.m_height &&
+							rect.m_height + deltm_y < aMaxDims.m_height)
 						{
-							rect.aY -= (deltaY);
-							rect.aHeight += (deltaY);
-							p.y += SLONG(deltaY);
+							rect.m_y -= (deltm_y);
+							rect.m_height += (deltm_y);
+							p.y += SLONG(deltm_y);
 							aFramebufferInterpolation = true;
 						}
 					}
@@ -531,28 +531,28 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 				{	// Resize upper left and lower right corners.
 					if (aWinMoveRes)
 					{
-						if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-							rect.aWidth + deltaX < aMaxDims.aWidth)
+						if (rect.m_width + deltm_x >= aMinDims.m_width &&
+							rect.m_width + deltm_x < aMaxDims.m_width)
 						{
-							rect.aX -= (deltaX);
-							rect.aWidth += (deltaX);
-							p.x += SLONG(deltaX);
+							rect.m_x -= (deltm_x);
+							rect.m_width += (deltm_x);
+							p.x += SLONG(deltm_x);
 							aFramebufferInterpolation = true;
 						}
-						if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-							rect.aHeight + deltaY < aMaxDims.aHeight)
+						if (rect.m_height + deltm_y >= aMinDims.m_height &&
+							rect.m_height + deltm_y < aMaxDims.m_height)
 						{
-							rect.aY -= (deltaY);
-							rect.aHeight += (deltaY);
-							p.y += SLONG(deltaY);
+							rect.m_y -= (deltm_y);
+							rect.m_height += (deltm_y);
+							p.y += SLONG(deltm_y);
 							aFramebufferInterpolation = true;
 						}
 
 					}
 					else
 					{
-						rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? SFLOAT(deltaX) : 0;
-						rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? SFLOAT(deltaY) : 0;
+						rect.m_width -= (rect.m_width - deltm_x >= aMinDims.m_width) && (rect.m_width - deltm_x < aMaxDims.m_width) ? SFLOAT(deltm_x) : 0;
+						rect.m_height -= (rect.m_height - deltm_y >= aMinDims.m_height) && (rect.m_height - deltm_y < aMaxDims.m_height) ? SFLOAT(deltm_y) : 0;
 					}
 
 					break;
@@ -569,10 +569,10 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
         // Process window movement.
         else if (aIsMoving)
         {
-            rect.aX -= deltaX;
-            rect.aY -= deltaY;
-            p.x +=SLONG(deltaX);
-            p.y +=SLONG(deltaY); 
+            rect.m_x -= deltm_x;
+            rect.m_y -= deltm_y;
+            p.x +=SLONG(deltm_x);
+            p.y +=SLONG(deltm_y); 
 
             // DEFER REGION //
 
@@ -1112,8 +1112,8 @@ void Window::setLocationRelativeTo(AbstractWindow * xRelativeWindow)
 
     if (aRelativeWindow == NULL)
     {
-        aRect.aX = (GetSystemMetrics(SM_CXSCREEN) - aRect.aWidth) / 2;
-        aRect.aY = (GetSystemMetrics(SM_CYSCREEN) - aRect.aHeight) / 2;
+        aRect.m_x = (GetSystemMetrics(SM_CXSCREEN) - aRect.m_width) / 2;
+        aRect.m_y = (GetSystemMetrics(SM_CYSCREEN) - aRect.m_height) / 2;
     }
 }
 
@@ -1139,38 +1139,38 @@ void Window::setVisible(bool xVisible)
 
 void Window::setMinimumSize(Dims * xSize)
 {
-    aMinDims.aWidth = xSize->aWidth;
-    aMinDims.aHeight = xSize->aHeight;
+    aMinDims.m_width = xSize->m_width;
+    aMinDims.m_height = xSize->m_height;
 }
 
 void Window::setMaximumSize(Dims * xSize)
 {
-    aMaxDims.aWidth = xSize->aWidth;
-    aMaxDims.aHeight = xSize->aHeight;
+    aMaxDims.m_width = xSize->m_width;
+    aMaxDims.m_height = xSize->m_height;
 }
 
 void Window::setSize(Dims * xSize)
 {
-    aRect.aWidth = xSize->aWidth;
-    aRect.aHeight = xSize->aHeight;
+    aRect.m_width = xSize->m_width;
+    aRect.m_height = xSize->m_height;
 }
 
 void Window::setMinimumSize(float xWidth, float xHeight)
 {
-    aMinDims.aWidth = xWidth;
-    aMinDims.aHeight = xHeight;
+    aMinDims.m_width = xWidth;
+    aMinDims.m_height = xHeight;
 }
 
 void Window::setMaximumSize(float xWidth, float xHeight)
 {
-    aMaxDims.aWidth = xWidth;
-    aMaxDims.aHeight = xHeight;
+    aMaxDims.m_width = xWidth;
+    aMaxDims.m_height = xHeight;
 }
 
 void Window::setSize(float xWidth, float xHeight)
 {
-    aRect.aWidth = xWidth;
-    aRect.aHeight = xHeight;
+    aRect.m_width = xWidth;
+    aRect.m_height = xHeight;
 }
 
 void Window::setBorderWidth(float xBorderWidth)
@@ -1197,33 +1197,33 @@ void Window::setBorder(Color * xBorderColor, float xBorderWidth)
 
 void Window::setBounds(Rect * xRect)
 {
-    aRect.aWidth = xRect->aWidth;
-    aRect.aX = xRect->aX;
-    aRect.aY = xRect->aY;
-    aRect.aHeight = xRect->aHeight;
+    aRect.m_width = xRect->m_width;
+    aRect.m_x = xRect->m_x;
+    aRect.m_y = xRect->m_y;
+    aRect.m_height = xRect->m_height;
 }
 
 void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 {
-    aRect.aWidth = xWidth;
-    aRect.aX = xLeft;
-    aRect.aY = xTop;
-    aRect.aHeight = xHeight;
+    aRect.m_width = xWidth;
+    aRect.m_x = xLeft;
+    aRect.m_y = xTop;
+    aRect.m_height = xHeight;
 }
 
 void Window::validate()
 {
     // Minimum dimensions has to be greater than border and shadow safety region
-    aMinDims.aWidth = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-    aMinDims.aHeight = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
+    aMinDims.m_width = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.m_width);
+    aMinDims.m_height = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.m_height);
 
     // Minimum dimensions has to be greater than or equal to minimum size
-    aMaxDims.aWidth = max__(aMinDims.aWidth, aMaxDims.aWidth);
-    aMaxDims.aHeight = max__(aMinDims.aHeight, aMaxDims.aHeight);
+    aMaxDims.m_width = max__(aMinDims.m_width, aMaxDims.m_width);
+    aMaxDims.m_height = max__(aMinDims.m_height, aMaxDims.m_height);
 
     // Constrain the rect to between min and max
-    aRect.aWidth = min__(max__(aMinDims.aWidth, aRect.aWidth), aMaxDims.aWidth);
-    aRect.aHeight = min__(max__(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
+    aRect.m_width = min__(max__(aMinDims.m_width, aRect.m_width), aMaxDims.m_width);
+    aRect.m_height = min__(max__(aMinDims.m_height, aRect.m_height), aMaxDims.m_height);
 
     // Create resize window pointer.
     aHResizeWnd = aOptBorderWidth < A2D_WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
@@ -1311,14 +1311,14 @@ void Window::render()
     float padding = aPadding;
     float optBorderWidth = aOptBorderWidth;
 
-    float realX = aRealX = aRect.aX + aOptBorderWidth;
-    float realY = aRealY = aRect.aY + aOptBorderWidth;
-    float realWidth = aDrawableRegion.aWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
-    float realHeight = aDrawableRegion.aHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
-    float relativeX = aRelativeX = aRect.aX - aPadding;
-    float relativeY = aRelativeY = aRect.aY - aPadding;
-    float relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;
-    float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
+    float realX = aRealX = aRect.m_x + aOptBorderWidth;
+    float realY = aRealY = aRect.m_y + aOptBorderWidth;
+    float realWidth = aDrawableRegion.m_width = aRealWidth = aRect.m_width - aOptBorderWidth * 2;
+    float realHeight = aDrawableRegion.m_height = aRealHeight = aRect.m_height - aOptBorderWidth * 2;
+    float relativeX = aRelativeX = aRect.m_x - aPadding;
+    float relativeY = aRelativeY = aRect.m_y - aPadding;
+    float relativeWidth = aRelativeWidth = aRect.m_width + aPadding * 2;
+    float relativeHeight = aRelativeHeight = aRect.m_height + aPadding * 2;
 
     // Paint options
     //------------------------------------------------------------------------------
@@ -1368,8 +1368,8 @@ void Window::render()
                 SINT(realHeight),
                 memDCChild,
                 0, 0,
-                SINT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
-                SINT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
+                SINT(aLastRect.m_width - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
+                SINT(aLastRect.m_height - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
                 SRCCOPY);
 
             DeleteObject(memDCChild);
@@ -1408,10 +1408,10 @@ void Window::render()
 
 void Window::updateLocation()
 {
-    float relativeX = aRelativeX = aRect.aX - aPadding;
-    float relativeY = aRelativeY = aRect.aY - aPadding;
-    float realX = aRealX = aRect.aX + aOptBorderWidth;
-    float realY = aRealY = aRect.aY + aOptBorderWidth;
+    float relativeX = aRelativeX = aRect.m_x - aPadding;
+    float relativeY = aRelativeY = aRect.m_y - aPadding;
+    float realX = aRealX = aRect.m_x + aOptBorderWidth;
+    float realY = aRealY = aRect.m_y + aOptBorderWidth;
 
     HDWP hdwp = BeginDeferWindowPos(2);
 

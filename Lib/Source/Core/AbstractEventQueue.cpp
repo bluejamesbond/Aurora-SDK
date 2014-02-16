@@ -137,7 +137,7 @@ void AbstractEventQueue::run(int xThreadId)
 	// Create event handling resources
 	Point p;
 	Component comp;
-	p.aX = p.aY = 0.0f;
+	p.m_x = p.m_y = 0.0f;
 	aMouseEvent = new MouseEvent(aFrame, MouseEvent::MOUSE_ENTERED, p, 1);
 	aFocusEvent = new FocusEvent(&comp, FocusEvent::FOCUS_FIRST);
 	aActionEvent = new ActionEvent(aFrame, ActionEvent::ACTION_FIRST, "init");
@@ -225,7 +225,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	ID = xEvent->getID();
 
 	#ifdef A2D_DE__
-	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.aX, point.aY);
+	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.m_x, point.m_y);
 	#endif // A2D_DE__
 	while (node)
 	{
@@ -236,8 +236,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			comp = comps->get(i);
 			eventRegion = comp->getVisibleRegion();
 			numPanels += 1;
-			isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
-				point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
+			isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
+				point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
 
 			if (isValidRegion)
 			{
@@ -307,10 +307,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	{
 		source = nodeE->value;
 		eventRegion = source->getEventRegion();
-		eventRegion->aX = 0;
-		eventRegion->aY = 0;
-		isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
-			point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
+		eventRegion->m_x = 0;
+		eventRegion->m_y = 0;
+		isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
+			point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
 
 		if (isValidRegion)
 		{
@@ -381,8 +381,8 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		{
 			source = comps->get(i);
 			eventRegion = source->getEventRegion();
-			isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
-				point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
+			isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
+				point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
 
 			if (isValidRegion)
 			{
@@ -431,10 +431,10 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	{
 		source = nodeE->value;
 		eventRegion = source->getEventRegion();
-		eventRegion->aX = 0;
-		eventRegion->aY = 0;
-		isValidRegion = point.aX >= eventRegion->aX && point.aX <= eventRegion->aX + eventRegion->aWidth &&
-			point.aY >= eventRegion->aY && point.aY <= eventRegion->aY + eventRegion->aHeight;
+		eventRegion->m_x = 0;
+		eventRegion->m_y = 0;
+		isValidRegion = point.m_x >= eventRegion->m_x && point.m_x <= eventRegion->m_x + eventRegion->m_width &&
+			point.m_y >= eventRegion->m_y && point.m_y <= eventRegion->m_y + eventRegion->m_height;
 
 		if (isValidRegion)
 		{

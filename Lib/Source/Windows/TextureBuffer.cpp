@@ -7,8 +7,8 @@ using namespace A2D;
 TextureBuffer::TextureBuffer(ID3D10Device ** xDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize) :
 aDevice(xDevice), aBackBufferaDXDepthStencilView(xBackBufferaDXDepthStencilView)
 {
-	aDims.aWidth = xSize->aWidth;
-	aDims.aHeight = xSize->aHeight;
+	aDims.m_width = xSize->m_width;
+	aDims.m_height = xSize->m_height;
 }
 
 bool TextureBuffer::hasAlpha()
@@ -28,8 +28,8 @@ STATUS TextureBuffer::initialize()
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 
 	// Setup the render target texture description.
-	textureDesc.Width = SINT(aDims.aWidth);
-	textureDesc.Height = SINT(aDims.aHeight);
+	textureDesc.Width = SINT(aDims.m_width);
+	textureDesc.Height = SINT(aDims.m_height);
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

@@ -299,20 +299,20 @@ STATUS AbstractWindow::initialize()
 	aName = L"Aurora-SDK Unititled";
 
 	// Default (0,0)
-	aRect.aX = 0;
-	aRect.aY = 0;
+	aRect.m_x = 0;
+	aRect.m_y = 0;
 
 	// Default size
-	aRect.aWidth = 800;
-	aRect.aHeight = 600;
+	aRect.m_width = 800;
+	aRect.m_height = 600;
 
 	// Default minimium is 0,0
-	aMinDims.aWidth = 0.0f;
-	aMinDims.aHeight = 0.0f;
+	aMinDims.m_width = 0.0f;
+	aMinDims.m_height = 0.0f;
 
 	// Default maximum is full screen
-	aMaxDims.aWidth = FLT_MAX;
-	aMaxDims.aHeight = FLT_MAX;
+	aMaxDims.m_width = FLT_MAX;
+	aMaxDims.m_height = FLT_MAX;
 
 	// Default shadow radius
 	aOptShadowRadius = 30.0f;
@@ -349,8 +349,8 @@ STATUS AbstractWindow::initialize()
 	
 	// Initialize MouseEvent resources
 	Point p;
-	p.aX = aRect.aX;
-	p.aY = aRect.aY;
+	p.m_x = aRect.m_x;
+	p.m_y = aRect.m_y;
 	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
 	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
 	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);

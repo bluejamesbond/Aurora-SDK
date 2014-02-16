@@ -38,10 +38,10 @@ STATUS BackBuffer::initialize()
 
 	unsigned int numModes, i, numerator = 0, denominator = 1, stringLength;
 	int videoCardMemory;
-	float width = windowDims.aWidth, height = windowDims.aHeight;
+	float width = windowDims.m_width, height = windowDims.m_height;
 	char videoCardDescription[128];
 
-	// Create a DirectX graphics interface factory.
+	// Create a DiregionX graphics interface factory.
 	SAFELY(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory));
 
 	// Use the factory to create an adapter for the primary 
@@ -268,8 +268,8 @@ STATUS BackBuffer::initialize()
 	device->RSSetState(aDXRasterState);
 	
 	// Setup the viewport for rendering.
-	viewport.Width = SUINT(aDims.aWidth = width);
-	viewport.Height = SUINT(aDims.aHeight = height);
+	viewport.Width = SUINT(aDims.m_width = width);
+	viewport.Height = SUINT(aDims.m_height = height);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
@@ -384,14 +384,14 @@ void BackBuffer::validate()
 	D3DDESTROY(backBuffer);
 	
 	// Update depth buffer description
-	depthBufferDesc.Width = SUINT(windowDims.aWidth);
-	depthBufferDesc.Height = SUINT(windowDims.aHeight);
+	depthBufferDesc.Width = SUINT(windowDims.m_width);
+	depthBufferDesc.Height = SUINT(windowDims.m_height);
 
 	G_SAFELY(device->CreateTexture2D(&depthBufferDesc, 0, &aDXDepthStencilBuffer));
 	G_SAFELY(device->CreateDepthStencilView(aDXDepthStencilBuffer, 0, &aDXDepthStencilView));
 
-	viewport.Width = SUINT(aDims.aWidth = windowDims.aWidth);
-	viewport.Height = SUINT(aDims.aHeight = windowDims.aHeight);
+	viewport.Width = SUINT(aDims.m_width = windowDims.m_width);
+	viewport.Height = SUINT(aDims.m_height = windowDims.m_height);
 
 	device->RSSetViewports(1, &viewport);
 }

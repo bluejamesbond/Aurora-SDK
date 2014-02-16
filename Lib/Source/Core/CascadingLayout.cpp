@@ -11,12 +11,12 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	OrderedList<Component*>::Node<Component*> * start = x_component.m_children._head();
 
 	int
-		compWidth = SINT(x_component.m_region.aWidth),
-		compHeight = SINT(x_component.m_region.aHeight),
+		compWidth = SINT(x_component.m_region.m_width),
+		compHeight = SINT(x_component.m_region.m_height),
 		mX = 0,
 		mY = 0,
-		aX = 0, 
-		aY = 0,
+		m_x = 0, 
+		m_y = 0,
 		maxElementHeight = 0, 
 		tempVerticalOffset,
 		marginLeft,
@@ -183,25 +183,25 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		}
 		else/*if (position == Style::ABSOLUTE_)*/
 		{
-			aX = marginLeft;
-			aY = marginTop;
+			m_x = marginLeft;
+			m_y = marginTop;
 
 			// left: auto | right: auto
 			if (positionLeft == Style::AUTO && positionRight == Style::AUTO) {}
 			// left: auto | right: X
 			else if (positionLeft == Style::AUTO)
 			{
-				aX += (compWidth - width) - positionRight;
+				m_x += (compWidth - width) - positionRight;
 			}
 			// left: X | right: auto
 			else if (positionRight == Style::AUTO)
 			{
-				aX += positionLeft;
+				m_x += positionLeft;
 			}
 			// left: x | right: X
 			else
 			{
-				aX += positionLeft;
+				m_x += positionLeft;
 				width = compWidth - (positionLeft + positionRight);
 			}
 
@@ -210,21 +210,21 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			// top: auto | bottom: X
 			else if (positionTop == Style::AUTO)
 			{
-				aY += (compWidth - width) - positionBottom;
+				m_y += (compWidth - width) - positionBottom;
 			}
 			// top: X | bottom: auto
 			else if (positionBottom == Style::AUTO)
 			{
-				aY += positionTop;
+				m_y += positionTop;
 			}
 			// top: x | bottom: X
 			else
 			{
-				aY += positionTop;
+				m_y += positionTop;
 				height = compHeight - (positionTop + positionBottom);
 			}
 
-			if (aY >= compHeight || aX >= compWidth)
+			if (m_y >= compHeight || m_x >= compWidth)
 			{
 				#ifdef A2D_DE__			
 				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
@@ -274,7 +274,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			// Update bounds
 			//------------------------------------------------------------------------------
 			component->m_styleSet.m_visible = true;
-			component->setBounds(SFLOAT(aX), SFLOAT(aY), SFLOAT(width), SFLOAT(height));
+			component->setBounds(SFLOAT(m_x), SFLOAT(m_y), SFLOAT(width), SFLOAT(height));
 		}
 
 		start = start->right;

@@ -27,8 +27,8 @@ STATUS QuadFactory::initialize()
 // Temporarily moved to cpp to make the build process faster
 void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadData, A2DCOMPONENTRENDERSTYLESET& x_renderSet, Texture * x_texture)
 {
-	float winWidth = aWindowDims->aWidth;
-	float winHeight = aWindowDims->aHeight;
+	float winWidth = aWindowDims->m_width;
+	float winHeight = aWindowDims->m_height;
 
 	QuadExpansionVertex * vertices = x_quadData->aVertices;
 
@@ -41,27 +41,29 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating region.", *x_renderSet.m_id);
 		#endif // A2D_DE__
 
-		const Rect& constraints = *x_renderSet.m_visibleRegion;
+		const Rect& region = *x_renderSet.mR;
+		const Rect& subRegion = *x_renderSet.m_subRegion;
+		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
 
 		float rectX = 0.0f;
 		float rectY = 0.0f;
-		float rectWidth = x_renderSet.m_region->aWidth;
-		float rectHeight = x_renderSet.m_region->aHeight;
+		float rectWidth = x_renderSet.m_region->m_width;
+		float rectHeight = x_renderSet.m_region->m_height;
 
 		float calcLeft = max__(rectX, 0.0);
 		float calcTop = max__(rectY, 0.0);
-		float calcRight = x_quadData->m_previousCalcRight = min__(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-		float calcBottom = x_quadData->m_previousCalcBottom = min__(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
+		float calcRight = x_quadData->m_previousCalcRight = min__(visibleRegion.m_width, rectX > 0 ? rectWidth : rectX + rectWidth);
+		float calcBottom = x_quadData->m_previousCalcBottom = min__(visibleRegion.m_height, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
 		float calcHeight = x_quadData->m_previousCalcHeight = calcBottom - calcTop;
 		float calcWidth = x_quadData->m_previousCalcWidth = calcRight - calcLeft;
 		
-		vertices[0].aPosition = D3DXVECTOR4(cvtpx2rp__(winWidth, x_renderSet.m_scrollLeft + constraints.aX + calcLeft),
-											-cvtpx2rp__(winHeight, x_renderSet.m_scrollTop + constraints.aY + calcTop), 
-											cvtpx2rd__(winWidth, calcWidth),
-											cvtpx2rd__(winHeight, calcHeight));
+		vertices[0].m_position = D3DXVECTOR4(cvtpx2rp__(winWidth, visibleRegion.m_x),
+											-cvtpx2rp__(winHeight, visibleRegion.m_y), 
+											cvtpx2rd__(winWidth, visibleRegion.m_width),
+											cvtpx2rd__(winHeight, visibleRegion.m_height));
 		
-		vertices[0].aRect = D3DXVECTOR4(0.0f, 0.0f, rectWidth, rectHeight);
-		vertices[0].m_croppedDistance = *x_renderSet.m_cropDistance;
+		vertices[0].m_rect = D3DXVECTOR4(0.0f, 0.0f, rectWidth, rectHeight);
+		vertices[0].m_subRegion = D3DXVECTOR4(subRegion.m_x, subRegion.m_y, subRegion.m_width, subRegion.m_height);
 
 		x_renderSet.m_dirtyVisbleRegion = false;
 		x_renderSet.m_dirtyRequestRegion = false;				
@@ -73,20 +75,20 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating texel.", *x_renderSet.m_id);
 		#endif // A2D_DE__
 
-		const Rect& constraints = *x_renderSet.m_visibleRegion;
+		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
 
-		float rectX = x_renderSet.m_region->aX < 0.0f ? abs__(x_renderSet.m_region->aX) : 0.0f;
-		float rectY = x_renderSet.m_region->aY < 0.0f ? abs__(x_renderSet.m_region->aY) : 0.0f;
-		float rectWidth = x_renderSet.m_region->aWidth;
-		float rectHeight = x_renderSet.m_region->aHeight;
+		float rectX = x_renderSet.m_region->m_x < 0.0f ? abs__(x_renderSet.m_region->m_x) : 0.0f;
+		float rectY = x_renderSet.m_region->m_y < 0.0f ? abs__(x_renderSet.m_region->m_y) : 0.0f;
+		float rectWidth = x_renderSet.m_region->m_width;
+		float rectHeight = x_renderSet.m_region->m_height;
 
 		float calcRight = x_quadData->m_previousCalcRight;
 		float calcBottom = x_quadData->m_previousCalcBottom;
 		float calcHeight = x_quadData->m_previousCalcHeight;
 		float calcWidth = x_quadData->m_previousCalcWidth;
 
-		float textureWidth = x_texture->GetClip()->aWidth;
-		float textureHeight = x_texture->GetClip()->aHeight;
+		float textureWidth = x_texture->GetClip()->m_width;
+		float textureHeight = x_texture->GetClip()->m_height;
 
 		float 
 			texLeft, 
@@ -162,8 +164,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		{
 			texLeft = rectX > 0 ? 0.0f : abs__(rectX);
 			texTop = rectY > 0 ? 0.0f : abs__(rectY);
-			texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
-			texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
+			texRight = calcRight < visibleRegion.m_width ? rectWidth : calcWidth;
+			texBottom = calcBottom < visibleRegion.m_height ? rectHeight : calcHeight;
 
 			if (x_renderSet.m_backgroundStyle.m_layout == Style::Background::Layout::REPEAT)
 			{
@@ -194,7 +196,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		SYSOUT_F("[QuadFactory] [ComponentId: 0x%X] Recalculating opacity/depth.", *x_renderSet.m_id);
 		#endif // A2D_DE__
 
-		vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, aDepth, x_renderSet.m_opacity);
+		vertices[0].m_options = D3DXVECTOR4(1.0f, 0.0f, aDepth, x_renderSet.m_opacity);
 
 		x_renderSet.m_dirtyOpacityDepth = false;
 	}

@@ -75,10 +75,10 @@ STATUS DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 STATUS SYSFASTCALL DXUtils::updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize)
 {
 	// Set
-	D3DXMATRIX borderMatrix(2.0f / x_windowSize->aWidth, 0.0f, 0.0f, 0.0f,
-							0.0f, 2.0f / x_windowSize->aHeight, 0.0f, 0.0f,
-							0.0f, 0.0f, 2.0f / x_windowSize->aWidth, 0.0f,
-							0.0f, 0.0f, 0.0f, 2.0f / x_windowSize->aHeight);
+	D3DXMATRIX borderMatrix(2.0f / x_windowSize->m_width, 0.0f, 0.0f, 0.0f,
+							0.0f, 2.0f / x_windowSize->m_height, 0.0f, 0.0f,
+							0.0f, 0.0f, 2.0f / x_windowSize->m_width, 0.0f,
+							0.0f, 0.0f, 0.0f, 2.0f / x_windowSize->m_height);
 	
 	memcpy(x_borderMatrix, &borderMatrix, sizeof(D3DXMATRIX));
 
@@ -92,7 +92,7 @@ STATUS DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, D
 
 	// Set
 	fieldOfView = ((float)D3DX_PI / 4.0f);
-	screenAspect = xWindowSize->aWidth / xWindowSize->aHeight;
+	screenAspect = xWindowSize->m_width / xWindowSize->m_height;
 
 	*xProjectionMatrix = new D3DXMATRIX;
 
@@ -108,7 +108,7 @@ STATUS DXUtils::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, D
 	*xProjectionMatrix = new D3DXMATRIX;
 
 	// initialize
-	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
+	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->m_width, xWindowSize->m_height, xSettings->aScreenNear, xSettings->aScreenDepth);
 
 	return STATUS_OK;
 }

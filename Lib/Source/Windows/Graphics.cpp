@@ -75,7 +75,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 {
 	Rect * clip = aClip;
 
-	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+	if (xRect.m_x >= clip->m_width || xRect.m_y >= clip->m_height || clip->m_width <= 0 || clip->m_height <= 0)	return;
 
 	QuadData<ColorVertex, 6> * quadData;
 
@@ -111,7 +111,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 	const Rect * rect = x_renderSet.m_region;
 
 	// Check if drawing request is even visible
-	if (clip->aWidth <= 0.0f || clip->aHeight <= 0.0f)	return;
+	if (clip->m_width <= 0.0f || clip->m_height <= 0.0f)	return;
 
 	// Cache all the classes that are going to be 
 	// used.
@@ -201,7 +201,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
 	Rect * clip = aClip;
 
-	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+	if (xRect.m_x >= clip->m_width || xRect.m_y >= clip->m_height || clip->m_width <= 0 || clip->m_height <= 0)	return;
 
 	Texture * texture;
 	QuadData<TextureVertex, 6> * quadData;	

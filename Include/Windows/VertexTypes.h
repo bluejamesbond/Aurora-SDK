@@ -32,10 +32,10 @@ namespace A2D {
 
 	struct QuadExpansionVertex
 	{
-		D3DXVECTOR4 aPosition;
-		D3DXVECTOR4 aOptions;
-		D3DXVECTOR4 aRect;
-		A2DFLOAT4 m_croppedDistance;
+		D3DXVECTOR4 m_position;
+		D3DXVECTOR4 m_options;
+		D3DXVECTOR4 m_rect;
+		D3DXVECTOR4 m_subRegion;
 		D3DXVECTOR4 aBorderWidths;
 		D3DXVECTOR4 aBorderRadii;
 		D3DXVECTOR4 aColorTex;

@@ -32,33 +32,33 @@ namespace A2D {
 	public:
 
 		// Calculate difference between two Rects
-		static inline A2DFLOAT4 subtract(const Rect& x_rect_a, const Rect& x_rect_b)
+		static inline Rect subtract(const Rect& x_rect_a, const Rect& x_rect_b)
 		{
-			float a_x = x_rect_a.aX,
-				  a_y = x_rect_a.aY,
-				  a_x_ = a_x + x_rect_a.aWidth,
-				  a_y_ = a_y + x_rect_a.aHeight;
+			float a_x = x_rect_a.m_x,
+				  a_y = x_rect_a.m_y,
+				  a_x_ = a_x + x_rect_a.m_width,
+				  a_y_ = a_y + x_rect_a.m_height;
 
-			float b_x = x_rect_b.aX,
-				  b_y = x_rect_b.aY,
-				  b_x_ = b_x + x_rect_b.aWidth,
-				  b_y_ = b_y + x_rect_b.aHeight;
+			float b_x = x_rect_b.m_x,
+				  b_y = x_rect_b.m_y,
+				  b_x_ = b_x + x_rect_b.m_width,
+				  b_y_ = b_y + x_rect_b.m_height;
 
-			return A2DFLOAT4(a_x - b_x, a_y - b_y, a_x_ - b_x_, a_y_ - b_y_);
+			return Rect(a_x - b_x, a_y - b_y, a_x_ - b_x_, a_y_ - b_y_);
 		}
 
 		// Rectangle Intersection
 		static inline Rect intersect(const Rect& x_rect_a, const Rect& x_rect_b)
 		{
-			float a_x = x_rect_a.aX,
-				  a_y = x_rect_a.aY,
-				  a_x_ = a_x + x_rect_a.aWidth,
-				  a_y_ = a_y + x_rect_a.aHeight;
+			float a_x = x_rect_a.m_x,
+				  a_y = x_rect_a.m_y,
+				  a_x_ = a_x + x_rect_a.m_width,
+				  a_y_ = a_y + x_rect_a.m_height;
 
-			float b_x = x_rect_b.aX,
-				  b_y = x_rect_b.aY,
-				  b_x_ = b_x + x_rect_b.aWidth,
-				  b_y_ = b_y + x_rect_b.aHeight;
+			float b_x = x_rect_b.m_x,
+				  b_y = x_rect_b.m_y,
+				  b_x_ = b_x + x_rect_b.m_width,
+				  b_y_ = b_y + x_rect_b.m_height;
 
 			if (a_x > b_x_  ||  a_y > b_y_ || a_x_ < b_x || a_y_ < b_y)
 			{

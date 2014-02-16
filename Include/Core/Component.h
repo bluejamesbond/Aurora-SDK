@@ -91,8 +91,6 @@ namespace A2D {
 		A2DCACHEDANIMATION2			m_cachedAnimationPositionXY;
 		Animation					m_positionAnimationXY;
 
-		A2DFLOAT4					m_cropDistance;
-
     protected:
 
 		int							m_id;
@@ -113,6 +111,7 @@ namespace A2D {
 		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
 
 		Rect                        m_region;
+		Rect						m_subRegion;
 		Rect                        m_backgroundRegion;
         Rect                        m_calculatedRegion;
         Rect                        m_visibleRegion;
@@ -245,8 +244,8 @@ namespace A2D {
 			if (m_previousCalculatedRowIndex != m_calculatedRowIndex ||
 				m_previousCalculatedColumnIndex != m_calculatedColumnIndex /*FIXME && NOT RESIZING*/)
 			{
-				m_region.aWidth = xWidth;
-				m_region.aHeight = xHeight;
+				m_region.m_width = xWidth;
+				m_region.m_height = xHeight;
 				
 				if (m_positionAnimationXY)
 				{
@@ -262,20 +261,20 @@ namespace A2D {
 			}
 			else
 			{
-				m_region.aWidth = xWidth;
-				m_region.aHeight = xHeight;
-				m_region.aX = xX;
-				m_region.aY = xY;
+				m_region.m_width = xWidth;
+				m_region.m_height = xHeight;
+				m_region.m_x = xX;
+				m_region.m_y = xY;
 
-				m_backgroundRegion.aWidth = xWidth;
-				m_backgroundRegion.aHeight = xHeight;
+				m_backgroundRegion.m_width = xWidth;
+				m_backgroundRegion.m_height = xHeight;
 
-				if (m_region.aHeight != m_previousDimensions.aHeight ||
-					m_region.aWidth != m_previousDimensions.aWidth)
+				if (m_region.m_height != m_previousDimensions.m_height ||
+					m_region.m_width != m_previousDimensions.m_width)
 				{
 					// FIXME Use SSE2 Acceleration
-					m_previousDimensions.aWidth = m_region.aWidth;
-					m_previousDimensions.aHeight = m_region.aHeight;
+					m_previousDimensions.m_width = m_region.m_width;
+					m_previousDimensions.m_height = m_region.m_height;
 
 					m_styleSet.markBackgroundAsDirty();
 				}

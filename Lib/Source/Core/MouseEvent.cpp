@@ -10,8 +10,8 @@ aMouseName(xString){};
 MouseEvent::MouseEvent(EventSource * xSource, int xEventID, int xLocX, int xLocY, int xClickCount)
 {
 	Point point;
-	point.aX = SFLOAT(xLocX); 
-	point.aY = SFLOAT(xLocY);
+	point.m_x = SFLOAT(xLocX); 
+	point.m_y = SFLOAT(xLocY);
 	MouseEvent(xSource, xEventID, point, xClickCount, BUTTON1);
 }
 
@@ -27,12 +27,12 @@ MouseEvent::~MouseEvent(){}
 
 float MouseEvent::getX()
 {
-	return aPoint.aX;
+	return aPoint.m_x;
 }
 
 float MouseEvent::getY()
 {
-	return aPoint.aY;
+	return aPoint.m_y;
 }
 
 int MouseEvent::getButton()

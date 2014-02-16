@@ -50,10 +50,10 @@ STATUS Texture::initialize()
 		
 	// Load the texture in.
 	// Store the texture properties
-	aClip.aX = 0;
-	aClip.aY = 0;
-	aClip.aWidth = aDims.aWidth = (float)srcInfo.Width;
-	aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
+	aClip.m_x = 0;
+	aClip.m_y = 0;
+	aClip.m_width = aDims.m_width = (float)srcInfo.Width;
+	aClip.m_height = aDims.m_height = (float)srcInfo.Height;
 		
 	return STATUS_OK;
 }

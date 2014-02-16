@@ -24,19 +24,19 @@ void AbstractTexture::SetClip(Rect * xClip, int xIndex)
 {
 	if (!xClip)
 	{
-		aClip.aX = 0.0f;
-		aClip.aY = 0.0f;
-		aClip.aWidth = aDims.aWidth;
-		aClip.aHeight = aDims.aHeight;
+		aClip.m_x = 0.0f;
+		aClip.m_y = 0.0f;
+		aClip.m_width = aDims.m_width;
+		aClip.m_height = aDims.m_height;
 
 		return;
 	}
 
 	// All values greater than zero but less than height/width
-	aClip.aX = min__(max__(xClip->aX, 0.0f), aDims.aWidth);
-	aClip.aY = min__(max__(xClip->aY, 0.0f), aDims.aHeight);
-	aClip.aWidth = min__(max__(xClip->aWidth, 0.0f), aDims.aWidth);
-	aClip.aHeight = min__(max__(xClip->aHeight, 0.0f), aDims.aHeight);
+	aClip.m_x = min__(max__(xClip->m_x, 0.0f), aDims.m_width);
+	aClip.m_y = min__(max__(xClip->m_y, 0.0f), aDims.m_height);
+	aClip.m_width = min__(max__(xClip->m_width, 0.0f), aDims.m_width);
+	aClip.m_height = min__(max__(xClip->m_height, 0.0f), aDims.m_height);
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -44,12 +44,7 @@ namespace A2D {
 		Rect			aPreviousTextureClip;	  // cached
 		Dims			aPreviousTextureSize;	  // cached
 		ImageProperties aPreviousImageProperties; // cached
-
-		float			m_previousCalcRight = 0.0f;
-		float			m_previousCalcBottom = 0.0f;
-		float			m_previousCalcWidth = 0.0f;
-		float			m_previousCalcHeight = 0.0f;
-
+		
 		// Do not delete only adjust the values! 
 		T				aVertices[V];
 

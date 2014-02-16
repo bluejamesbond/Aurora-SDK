@@ -2,8 +2,8 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __POINT_H__
-#define __POINT_H__
+#ifndef __SPOINT_H__
+#define __SPOINT_H__
 
 //+-----------------------------------------------------------------------------
 //
@@ -21,20 +21,19 @@
 
 namespace A2D {
 
-	struct Point
+	struct SPoint
 	{
-		float			m_x;
-		float			m_y;
+		float			m_x1, m_y1;
 
-		inline Point() :
-			m_x(0.0f),
-			m_y(0.0f)
+		inline SPoint() :
+			m_x1(0.0f),
+			m_y1(0.0f)
 		{
 		}
 
-		inline Point(float x_x, float x_y) :
-			m_x(x_x),
-			m_y(x_y)
+		inline SPoint(float x_x, float x_y) :
+			m_x1(x_x),
+			m_y1(x_y)
 		{
 		}
 	};

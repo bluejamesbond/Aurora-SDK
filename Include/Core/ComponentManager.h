@@ -89,8 +89,8 @@ namespace A2D {
 
 			aRoot->setBounds(SFLOAT(borderWidths.m_left),
 							 SFLOAT(borderWidths.m_top) + 30.0f,
-							 aBackBufferDims->aWidth - SFLOAT(borderWidths.m_left + borderWidths.m_right),
-							 aBackBufferDims->aHeight - SFLOAT(borderWidths.m_top + borderWidths.m_bottom) - 80.0f);
+							 aBackBufferDims->m_width - SFLOAT(borderWidths.m_left + borderWidths.m_right),
+							 aBackBufferDims->m_height - SFLOAT(borderWidths.m_top + borderWidths.m_bottom) - 80.0f);
 
 			aRoot->m_componentTreeValidationRequest = true;
 		}

@@ -23,19 +23,19 @@ namespace A2D {
 
 	struct Dims
 	{
-		float			aWidth;
-		float			aHeight;
+		float			m_width;
+		float			m_height;
 
 		inline Dims() :
-			aWidth(0.0f),
-			aHeight(0.0f)
+			m_width(0.0f),
+			m_height(0.0f)
 		{
 		}
 
 
 		inline Dims(float x_width, float x_height) :
-			aWidth(x_width),
-			aHeight(x_height)
+			m_width(x_width),
+			m_height(x_height)
 		{
 		}
 

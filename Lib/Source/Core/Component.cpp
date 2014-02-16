@@ -38,7 +38,7 @@ Component::Component() :
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
-	m_styleSet.m_cropDistance = &m_cropDistance;
+	m_styleSet.m_subRegion = &m_subRegion;
 	m_styleSet.m_id = &m_id;
 
 	m_styleSet.markBorderColorsAsDirty();
@@ -326,29 +326,29 @@ void Component::validate()
 	if (!hasParent)
 	{
 		m_visibleRegion = m_calculatedRegion = 
-					{ max__(0.0f, region.aX), 
-					  max__(0.0f, region.aY), 
-					  max__(0.0f, region.aWidth), 
-					  max__(0.0f, region.aHeight) };
+					{ max__(0.0f, region.m_x), 
+					  max__(0.0f, region.m_y), 
+					  max__(0.0f, region.m_width), 
+					  max__(0.0f, region.m_height) };
 	}
     else
     {
 		// Create shifts
-		m_calculatedRegion = { m_parent->m_calculatedRegion.aX + region.aX,
-							   m_parent->m_calculatedRegion.aY + region.aY,
-							   region.aWidth,
-							   region.aHeight };
+		m_calculatedRegion = { m_parent->m_calculatedRegion.m_x + region.m_x,
+							   m_parent->m_calculatedRegion.m_y + region.m_y,
+							   region.m_width,
+							   region.m_height };
 
 		// Applying constraints
 		m_visibleRegion = Math::intersect(m_parent->m_visibleRegion, m_calculatedRegion);
-		m_cropDistance = Math::subtract(m_visibleRegion, m_calculatedRegion);
+		m_subRegion = Math::subtract(m_visibleRegion, m_calculatedRegion);
 
-		if (m_visibleRegion.aHeight != m_previousVisibleDimensions.aHeight ||
-			m_visibleRegion.aWidth != m_previousVisibleDimensions.aWidth)
+		if (m_visibleRegion.m_height != m_previousVisibleDimensions.m_height ||
+			m_visibleRegion.m_width != m_previousVisibleDimensions.m_width)
 		{
 			// FIXME Use SSE2 Acceleration
-			m_previousVisibleDimensions.aWidth = m_visibleRegion.aWidth;
-			m_previousVisibleDimensions.aHeight = m_visibleRegion.aHeight;
+			m_previousVisibleDimensions.m_width = m_visibleRegion.m_width;
+			m_previousVisibleDimensions.m_height = m_visibleRegion.m_height;
 
 			// Request the validation of the components
 			m_componentTreeValidationRequest = true;
@@ -773,7 +773,7 @@ Paint& Component::getBackgroundPaint()
 
 void Component::setBoundsX(float x_x)
 {
-	m_region.aX = x_x;
+	m_region.m_x = x_x;
 
 	m_validatedContents = false;
 	m_styleSet.markRequestRegionAsDirty();
@@ -781,12 +781,12 @@ void Component::setBoundsX(float x_x)
 
 float Component::getBoundsX()
 {
-	return m_region.aX;
+	return m_region.m_x;
 }
 
 void Component::setBoundsY(float x_y)
 {
-	m_region.aY = x_y;
+	m_region.m_y = x_y;
 
 	m_validatedContents = false;
 	m_styleSet.markRequestRegionAsDirty();
@@ -794,8 +794,8 @@ void Component::setBoundsY(float x_y)
 
 void Component::setBoundsXY(float x_x, float x_y)
 {
-	m_region.aX = x_x;
-	m_region.aY = x_y;
+	m_region.m_x = x_x;
+	m_region.m_y = x_y;
 	
 	m_validatedContents = false;
 	m_styleSet.markRequestRegionAsDirty();
@@ -803,7 +803,7 @@ void Component::setBoundsXY(float x_x, float x_y)
 
 float Component::getBoundsY()
 {
-	return m_region.aY;
+	return m_region.m_y;
 }
 
 void Component::setScroll(float x_left, float x_top)
