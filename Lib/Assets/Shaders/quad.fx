@@ -56,50 +56,23 @@ struct QuadVertex
 	float4 position : POSITION0;
 	float4 options : POSITION1;      // [text/color/both, opacity, zIndex, reserved]      NOTE: contents must be in float. 
 	float4 rect : POSITION2;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
-	float4 croppedDistance : POSITION3;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
-	float4 borderWidths : POSITION4; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
-	float4 borderRadii : POSITION5;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
-	float4 colorTex : COLOR0;
-	uint4  borderColors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
+	float4 crop_dist : POSITION3;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
+	float4 border_widths : POSITION4; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
+	float4 border_radii : POSITION5;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
+	float4 color_tex : COLOR0;
+	uint4  border_colors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };
-
-// >>>>>>> Proposed for future
-// >>>>>>> [complexOptions, opacity, reserved, reserved]
-//
-// ------------------------- ComplexOptions - BitLayout ------------------------
-//
-//  Values are 32 bit values laid out as follows:
-//
-//   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-//  +-+-+-+-+-+---------------------+-------------------------------+
-//  |r|r|r|C|I|   TextureSlice      |            Z-Index            |
-//  +-+-+-+-+-+---------------------+-------------------------------+
-//
-//  where
-//
-//      C - Contents - indicates whether the contents in float4: colorTex
-//                     are representing texture or color                 
-//
-//          0 - true (Texture)
-//          1 - false (Color) 
-//
-//      B - InsetBorder - indicates whether the borders are inset or
-//                        outset
-//
-//      r - reserved for future use
-//
-//------------------------------------------------------------------------------
 
 struct QuadPixel
 {
 	float4 position : SV_POSITION;
-	float4 colorTex : COLOR;
-	nointerpolation float4 options : FLOAT4_0; // [texture/color/both/left/top/bottom/right, opacity, radius, borderWidth]
-	nointerpolation float4 borderRadii : FLOAT4_1; // [leftTop, rightTop, leftBottom, rightBottom ]
-	nointerpolation float2 rawDimensions : FLOAT2_0; // [width, height]
-	nointerpolation float4 borderWidths : FLOAT4_2;
-	nointerpolation float4 crop_area : FLOAT4_3;
-	float2 rawPixel : FLOAT2_1;
+	float4 color_tex : COLOR;
+	nointerpolation float4 options : FLOAT4_0; // [texture/color/both/left/top/bottom/right, opacity, radius, border_width]
+	nointerpolation float4 border_radii : FLOAT4_1; // [leftTop, rightTop, leftBottom, rightBottom ]
+	nointerpolation float2 raw_dims : FLOAT2_0; // [width, height]
+	nointerpolation float4 border_widths : FLOAT4_2;
+	nointerpolation float4 crop_dist : FLOAT4_3;
+	float2 raw_px : FLOAT2_1;
 };
 
 //------------------------------------------------------------------------------
@@ -154,101 +127,97 @@ QuadVertex QuadCollapsedShader(QuadVertex input)
 [maxvertexcount(24)]
 void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPixel> quadStream)
 {
-	QuadPixel main, border;
-
-	float width = input[0].position[2];
-	float height = input[0].position[3];
-
-	float widthPixel = input[0].rect[2];
-	float heightPixel = input[0].rect[3];
-
-	float opacity = input[0].options[3];
-
-	float left = input[0].position[0];
-	float top = input[0].position[1];
-	float right = left + width;
-	float bottom = top - height;	
-
-	float4 relativeBorderWidths = mul(input[0].borderWidths, borderCalculationMatrix);
-
-	float borderLeftWidth = relativeBorderWidths[0];
-	float borderTopWidth = relativeBorderWidths[1];
-	float borderRightWidth = relativeBorderWidths[2];
-	float borderBottomWidth = relativeBorderWidths[3];
-
-	float4 borderLeftColor = argb_to_float4(input[0].borderColors[0]);
-	float4 borderTopColor = argb_to_float4(input[0].borderColors[1]);
-	float4 borderRightColor = argb_to_float4(input[0].borderColors[2]);
-	float4 borderBottomColor = argb_to_float4(input[0].borderColors[3]);
-
-	borderLeftColor.a *= opacity;
-	borderTopColor.a *= opacity;
-	borderRightColor.a *= opacity;
-	borderBottomColor.a *= opacity;
-
-	bool hasLeftBorder = borderLeftWidth > 0.0f;
-	bool hasTopBorder = borderTopWidth > 0.0f;
-	bool hasRightBorder = borderRightWidth > 0.0f;
-	bool hasBottomBorder = borderBottomWidth > 0.0f;
-		
-	float4 borderRadii = input[0].borderRadii;
-
-	float4 borderRadiiSet1 = float4(borderRadii[0], borderRadii[0], borderRadii[1], borderRadii[1]); //TopLeft TopRight
-	float4 borderRadiiSet2 = float4(borderRadii[2], borderRadii[2], borderRadii[3], borderRadii[3]); //BottomLeft BottomRight
-	
-	float4 relativeBorderRadii_S1 = mul(borderRadiiSet1, borderCalculationMatrix);
-	float4 relativeBorderRadii_S2 = mul(borderRadiiSet2, borderCalculationMatrix);
-	
-	float4 cropped = input[0].croppedDistance;
-	float4 croppedRelative = mul(cropped, borderCalculationMatrix);
-
-	float _top = top;
-	top += croppedRelative[1];
-
-	//**********************************************************************
-	// Borders
-	//**********************************************************************
-	float z = input[0].options[2];
-	// 0.0 indicates color coordinates
-	// 1.0 indicates texture coordinates
-	// 2.0 indicates texture on backgroundColor
-	border.options = float4(0.0, opacity, 0, 0);
-	border.rawPixel = float2(0, 0);
-	border.crop_area = cropped;
-	border.borderRadii = borderRadii;
-	border.rawDimensions = float2(widthPixel, heightPixel);
-	border.borderWidths = input[0].borderWidths;
-
 	///////////////////////////////////////////////////////////////////////////
 	//
 	//  NOTE THAT THIS REGION IS NOT OPTIMIZED AT ALL
 	//
 	///////////////////////////////////////////////////////////////////////////
 
-	//*******************************
+	QuadPixel main, border;
+
+	float left, top, right, bottom;
+
+	float width = input[0].position[2],
+	      height = input[0].position[3],
+		  width_px = input[0].rect[2],
+		  height_px = input[0].rect[3],
+		  opacity = input[0].options[3],
+		  _left =  left = input[0].position[0],
+		  _top = top = input[0].position[1],
+		  _right = right = left + width,
+		  _bottom = bottom = top - height;
+
+	float4 rel_border_widths = mul(input[0].border_widths, borderCalculationMatrix);
+
+	float border_left_width = rel_border_widths[0],
+	      border_top_width = rel_border_widths[1],
+		  border_right_width = rel_border_widths[2],
+		  border_bottom_width = rel_border_widths[3];
+		
+	bool has_left_border = border_left_width > 0.0f,
+	     has_top_border = border_top_width > 0.0f,
+		 has_right_border = border_right_width > 0.0f,
+		 has_bottom_border = border_bottom_width > 0.0f;
+		
+	float4 border_radii = input[0].border_radii,
+		   border_radiiSet1 = float4(border_radii[0], border_radii[0], border_radii[1], border_radii[1]), //TopLeft TopRight
+		   border_radiiSet2 = float4(border_radii[2], border_radii[2], border_radii[3], border_radii[3]), //BottomLeft BottomRight
+		   rel_border_radii_s1 = mul(border_radiiSet1, borderCalculationMatrix),
+		   rel_border_radii_s2 = mul(border_radiiSet2, borderCalculationMatrix),
+		   crop_dist = input[0].crop_dist,
+		   rel_crop_dist = mul(crop_dist, borderCalculationMatrix);
+		
+	float4 border_left_color = argb_to_float4(input[0].border_colors[0]),
+	       border_top_color = argb_to_float4(input[0].border_colors[1]),
+	       border_right_color = argb_to_float4(input[0].border_colors[2]),
+		   border_bottom_color = argb_to_float4(input[0].border_colors[3]);
+
+	border_left_color.a *= opacity;
+	border_top_color.a *= opacity;
+	border_right_color.a *= opacity;
+	border_bottom_color.a *= opacity;
+
+	left += rel_crop_dist[0];
+	top += rel_crop_dist[1];
+	right += rel_crop_dist[2];
+	bottom += rel_crop_dist[3];
+
+	// Borders
+	//------------------------------------------------------
+	float z = input[0].options[2];
+	border.options = float4(0.0, opacity, 0, 0);
+	border.raw_px = float2(0, 0);
+	border.crop_dist = crop_dist;
+	border.border_radii = border_radii;
+	border.raw_dims = float2(width_px, height_px);
+	border.border_widths = input[0].border_widths;
+
 	// Left
-	//*******************************
-	if (hasLeftBorder && borderLeftColor.a)
+	//------------------------------------------------------
+	if (has_left_border && border_left_color.a)
 	{
-		border.colorTex = borderLeftColor;
+		border.color_tex = border_left_color;
 		border.options[0] = 0.0f;
-		border.options[2] = input[0].borderWidths[0];
+		border.options[2] = input[0].border_widths[0];
 		
 		//bottom left
-		border.position = float4(left - borderLeftWidth, (hasBottomBorder ? bottom - borderBottomWidth : bottom), z, 1);
-		border.rawPixel = float2(0, heightPixel + input[0].borderWidths[1] + input[0].borderWidths[3]);
+		border.position = float4(left - border_left_width, (has_bottom_border ? bottom - border_bottom_width : bottom), z, 1);
+		border.raw_px = float2(0, height_px + input[0].border_widths[1] + input[0].border_widths[3]);
 		quadStream.Append(border);
+
 		//top left
-		border.position = float4(left - borderLeftWidth, (hasTopBorder ? top + borderTopWidth : top), z, 1);
-		border.rawPixel = float2(0, 0); // minor fix
+		border.position = float4(left - border_left_width, (has_top_border ? top + border_top_width : top), z, 1);
+		border.raw_px = float2(0, 0); // minor fix
 		quadStream.Append(border);
+
 		//bottom right
-		border.position = float4(left + relativeBorderRadii_S2[0], bottom + relativeBorderRadii_S2[1], z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet2[0], heightPixel + input[0].borderWidths[1] - borderRadiiSet2[1]);
+		border.position = float4(left + rel_border_radii_s2[0], bottom + rel_border_radii_s2[1], z, 1);
+		border.raw_px = float2(input[0].border_widths[0] + border_radiiSet2[0], height_px + input[0].border_widths[1] - border_radiiSet2[1]);
 		quadStream.Append(border);
+
 		//top right
-		border.position = float4(left + relativeBorderRadii_S1[0], (hasTopBorder ? top : top) - relativeBorderRadii_S1[1], z, 1); // Look at the previous code, to create the slope correctly!
-		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet1[0],  input[0].borderWidths[1] + borderRadiiSet1[1]);
+		border.position = float4(left + rel_border_radii_s1[0], (has_top_border ? top : top) - rel_border_radii_s1[1], z, 1); // Look at the previous code, to create the slope correctly!
+		border.raw_px = float2(input[0].border_widths[0] + border_radiiSet1[0],  input[0].border_widths[1] + border_radiiSet1[1]);
 		quadStream.Append(border);
 		
 		// Reset
@@ -256,89 +225,96 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	}
 
 
-	//*******************************
 	// Top
-	//*******************************
-	if (hasTopBorder && borderTopColor.a)
+	//------------------------------------------------------
+	if (has_top_border && border_top_color.a)
 	{
-		border.colorTex = borderTopColor;
+		border.color_tex = border_top_color;
 		border.options[0] = -1.0f;
-		border.options[2] = input[0].borderWidths[1];
+		border.options[2] = input[0].border_widths[1];
 
 		//bottom left
-		border.position = float4((hasLeftBorder ? left : left) + relativeBorderRadii_S1[0], top - relativeBorderRadii_S1[1], z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet1[0], input[0].borderWidths[1] + borderRadiiSet1[1]);
+		border.position = float4((has_left_border ? left : left) + rel_border_radii_s1[0], top - rel_border_radii_s1[1], z, 1);
+		border.raw_px = float2(input[0].border_widths[0] + border_radiiSet1[0], input[0].border_widths[1] + border_radiiSet1[1]);
 		quadStream.Append(border);
+
 		//top left
-		border.position = float4((hasLeftBorder ? left - borderLeftWidth : left), top + borderTopWidth, z, 1);
-		border.rawPixel = float2(0, 0); // Minor fix here
+		border.position = float4((has_left_border ? left - border_left_width : left), top + border_top_width, z, 1);
+		border.raw_px = float2(0, 0); // Minor fix here
 		quadStream.Append(border);
+
 		//bottom right
-		border.position = float4(right - relativeBorderRadii_S1[2], top - relativeBorderRadii_S1[3], z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet1[2], input[0].borderWidths[1] + borderRadiiSet1[3]);
+		border.position = float4(right - rel_border_radii_s1[2], top - rel_border_radii_s1[3], z, 1);
+		border.raw_px = float2(width_px + input[0].border_widths[0] - border_radiiSet1[2], input[0].border_widths[1] + border_radiiSet1[3]);
 		quadStream.Append(border);
+
 		//top right
-		border.position = float4((hasRightBorder ? right + borderRightWidth : right), top + borderTopWidth, z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] + input[0].borderWidths[2], 0);
+		border.position = float4((has_right_border ? right + border_right_width : right), top + border_top_width, z, 1);
+		border.raw_px = float2(width_px + input[0].border_widths[0] + input[0].border_widths[2], 0);
 		quadStream.Append(border);
 
 		// Reset
 		quadStream.RestartStrip();
 	}
 
-	//*******************************
 	// Right
-	//*******************************
-	if (hasRightBorder && borderRightColor.a)
+	//------------------------------------------------------
+	if (has_right_border && border_right_color.a)
 	{
-		border.colorTex = borderRightColor;
+		border.color_tex = border_right_color;
 		border.options[0] = -2.0f;
-		border.options[2] = input[0].borderWidths[2];
+		border.options[2] = input[0].border_widths[2];
 
 		//bottom left
-		border.position = float4(right - relativeBorderRadii_S2[2], bottom + relativeBorderRadii_S2[3], z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet2[2], heightPixel + input[0].borderWidths[1] - borderRadiiSet2[3]);
+		border.position = float4(right - rel_border_radii_s2[2], bottom + rel_border_radii_s2[3], z, 1);
+		border.raw_px = float2(width_px + input[0].border_widths[0] - border_radiiSet2[2], height_px + input[0].border_widths[1] - border_radiiSet2[3]);
 		quadStream.Append(border);
+
 		//top left
-		border.position = float4(right - relativeBorderRadii_S1[2], top - relativeBorderRadii_S1[3], z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet1[2], input[0].borderWidths[1] + borderRadiiSet1[3]);
+		border.position = float4(right - rel_border_radii_s1[2], top - rel_border_radii_s1[3], z, 1);
+		border.raw_px = float2(width_px + input[0].border_widths[0] - border_radiiSet1[2], input[0].border_widths[1] + border_radiiSet1[3]);
 		quadStream.Append(border);
+
 		//bottom right
-		border.position = float4(right + borderRightWidth, (hasBottomBorder ? bottom - borderBottomWidth : bottom), z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + input[0].borderWidths[2] + widthPixel, input[0].borderWidths[1] + input[0].borderWidths[3] + heightPixel);
+		border.position = float4(right + border_right_width, (has_bottom_border ? bottom - border_bottom_width : bottom), z, 1);
+		border.raw_px = float2(input[0].border_widths[0] + input[0].border_widths[2] + width_px, input[0].border_widths[1] + input[0].border_widths[3] + height_px);
 		quadStream.Append(border);
+
 		//top right
-		border.position = float4(right + borderRightWidth, (hasTopBorder ? top + borderTopWidth : top), z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + input[0].borderWidths[2] + widthPixel, 0);
+		border.position = float4(right + border_right_width, (has_top_border ? top + border_top_width : top), z, 1);
+		border.raw_px = float2(input[0].border_widths[0] + input[0].border_widths[2] + width_px, 0);
 		quadStream.Append(border);
 
 		// Reset
 		quadStream.RestartStrip();
 	}
-	//*******************************
+
 	// Bottom
-	//*******************************
-	if (hasBottomBorder && borderBottomColor.a)
+	//------------------------------------------------------
+	if (has_bottom_border && border_bottom_color.a)
 	{
-		border.colorTex = borderBottomColor;
+		border.color_tex = border_bottom_color;
 		border.options[0] = -3.0f;
-		border.options[2] = input[0].borderWidths[3];
+		border.options[2] = input[0].border_widths[3];
 
 		//bottom left
-		border.position = float4((hasLeftBorder ? left - borderLeftWidth : left), bottom - borderBottomWidth, z, 1);
-		border.rawPixel = float2(0, heightPixel + input[0].borderWidths[3] + input[0].borderWidths[1]);
+		border.position = float4((has_left_border ? left - border_left_width : left), bottom - border_bottom_width, z, 1);
+		border.raw_px = float2(0, height_px + input[0].border_widths[3] + input[0].border_widths[1]);
 		quadStream.Append(border);
+
 		//top left
-		border.position = float4(left + relativeBorderRadii_S2[0], bottom + relativeBorderRadii_S2[1], z, 1);
-		border.rawPixel = float2(input[0].borderWidths[0] + borderRadiiSet2[0], input[0].borderWidths[1] + heightPixel - borderRadiiSet2[1]);
+		border.position = float4(left + rel_border_radii_s2[0], bottom + rel_border_radii_s2[1], z, 1);
+		border.raw_px = float2(input[0].border_widths[0] + border_radiiSet2[0], input[0].border_widths[1] + height_px - border_radiiSet2[1]);
 		quadStream.Append(border);
+
 		//bottom right
-		border.position = float4((hasRightBorder ? right + borderRightWidth : right) , bottom - borderBottomWidth, z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[2] + input[0].borderWidths[0], heightPixel + input[0].borderWidths[3] + input[0].borderWidths[1]);
+		border.position = float4((has_right_border ? right + border_right_width : right) , bottom - border_bottom_width, z, 1);
+		border.raw_px = float2(width_px + input[0].border_widths[2] + input[0].border_widths[0], height_px + input[0].border_widths[3] + input[0].border_widths[1]);
 		quadStream.Append(border);
+
 		//top right
-		border.position = float4(right - relativeBorderRadii_S2[2], bottom + relativeBorderRadii_S2[3], z, 1);
-		border.rawPixel = float2(widthPixel + input[0].borderWidths[0] - borderRadiiSet2[2], input[0].borderWidths[1] + heightPixel - borderRadiiSet2[3]);
+		border.position = float4(right - rel_border_radii_s2[2], bottom + rel_border_radii_s2[3], z, 1);
+		border.raw_px = float2(width_px + input[0].border_widths[0] - border_radiiSet2[2], input[0].border_widths[1] + height_px - border_radiiSet2[3]);
 		quadStream.Append(border);
 
 		// Reset
@@ -346,38 +322,40 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	}
 
 
-	//**********************************************************************
 	// Main
-	//**********************************************************************
-	float4 mainTexels = input[0].colorTex;
+	//------------------------------------------------------
+	float4 mainTexels = input[0].color_tex;
 	z = input[0].options[2] + BORDER_Z_OFFSET;
 
 	main.options = float4(1.0f, opacity, input[0].options[3], 0.0);
-	main.borderRadii = borderRadii;
-	main.crop_area = float4(0, 0, 0, 0);
-	main.rawDimensions = float2(widthPixel, heightPixel);
-	main.borderWidths = float4(0, 0, 0, 0);
-	// main.colorTex = float4(input[0].colorTex.rgb, input[0].colorTex.a * opacity);
+	main.border_radii = border_radii;
+	main.crop_dist = float4(0, 0, 0, 0);
+	main.raw_dims = float2(width_px, height_px);
+	main.border_widths = float4(0, 0, 0, 0);
+	// main.color_tex = float4(input[0].color_tex.rgb, input[0].color_tex.a * opacity);
 
 	//bottom left
-	main.position = float4(left, bottom, z, 1);
-	main.colorTex = float4(mainTexels[0], mainTexels[3], 0, 0);
-	main.rawPixel = float2(0, heightPixel);
+	main.position = float4(_left, _bottom, z, 1);
+	main.color_tex = float4(mainTexels[0], mainTexels[3], 0, 0);
+	main.raw_px = float2(crop_dist[0], crop_dist[3]) + float2(0, height_px);
 	quadStream.Append(main);
+
 	//top left
-	main.position = float4(left, _top, z, 1);
-	main.colorTex = float4(mainTexels[0], mainTexels[1], 0, 0);
-	main.rawPixel = float2(0, cropped[1]);
+	main.position = float4(_left, _top, z, 1);
+	main.color_tex = float4(mainTexels[0], mainTexels[1], 0, 0);
+	main.raw_px = float2(crop_dist[0], crop_dist[1]) + float2(0, 0);
 	quadStream.Append(main);
+
 	//bottom right
-	main.position = float4(right, bottom, z, 1);
-	main.colorTex = float4(mainTexels[2], mainTexels[3], 0, 0);
-	main.rawPixel = float2(widthPixel, heightPixel);
+	main.position = float4(_right, _bottom, z, 1);
+	main.color_tex = float4(mainTexels[2], mainTexels[3], 0, 0);
+	main.raw_px = float2(crop_dist[2], crop_dist[3]) + float2(width_px, height_px);
 	quadStream.Append(main);
+
 	//top right
-	main.position = float4(right, _top, z, 1);
-	main.colorTex = float4(mainTexels[2], mainTexels[1], 0, 0);
-	main.rawPixel = float2(widthPixel, cropped[1]);
+	main.position = float4(_right, _top, z, 1);
+	main.color_tex = float4(mainTexels[2], mainTexels[1], 0, 0);
+	main.raw_px = float2(crop_dist[2], crop_dist[1]) + float2(width_px, 0);
 	quadStream.Append(main);
 
 	// Reset
@@ -400,20 +378,19 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 
 	if (isColorTex < 1.0) // Color only
 	{
-		float4 color = float4(input.colorTex.rgb, input.colorTex.a * opacity);
+		float4 color = float4(input.color_tex.rgb, input.color_tex.a * opacity);
 
-		float rawPixelX = input.rawPixel[0];
-		float rawPixelY = input.rawPixel[1];
-		float borderWidth = input.options[2];
-		float width = input.rawDimensions[0];
-		float height = input.rawDimensions[1];
-
-		float borderLeftWidth = input.borderWidths[0];
-		float borderTopWidth = input.borderWidths[1];
-		float borderRightWidth = input.borderWidths[2];
-		float borderBottomWidth = input.borderWidths[3];
+		float x_px = input.raw_px[0],
+		      y_px = input.raw_px[1],
+			  border_width = input.options[2],
+			  width = input.raw_dims[0],
+			  height = input.raw_dims[1],
+			  border_left_width = input.border_widths[0],
+		      border_top_width = input.border_widths[1],
+			  border_right_width = input.border_widths[2],
+			  border_bottom_width = input.border_widths[3];
 		
-		if (rawPixelY <= (input.crop_area[1]))
+		if (y_px <= (input.crop_dist[1]))
 		{
 			color.a = 0.0f;
 			return color;
@@ -422,61 +399,61 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		if (isColorTex == 0.0f)
 		{
 			float radius_1, radius_2;	 float calcSet1, calcSet2;
-			radius_1 = input.borderRadii[0] + borderLeftWidth;
-			radius_2 = input.borderRadii[2] + borderLeftWidth;
+			radius_1 = input.border_radii[0] + border_left_width;
+			radius_2 = input.border_radii[2] + border_left_width;
 			
-			if ((rawPixelX < (calcSet1 = radius_1)) && (rawPixelY < (calcSet2 = (radius_1 + (borderTopWidth - borderLeftWidth)))))
+			if ((x_px < (calcSet1 = radius_1)) && (y_px < (calcSet2 = (radius_1 + (border_top_width - border_left_width)))))
 			{
-				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - rawPixelX, calcSet2 - rawPixelY), borderLeftWidth);
+				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, calcSet2 - y_px), border_left_width);
 			}
-			else if ((rawPixelX < (calcSet1 = radius_2)) && (rawPixelY >(calcSet2 = (height + (borderTopWidth + borderLeftWidth) - radius_2))))
+			else if ((x_px < (calcSet1 = radius_2)) && (y_px >(calcSet2 = (height + (border_top_width + border_left_width) - radius_2))))
 			{		
-				return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - rawPixelX, rawPixelY - calcSet2), borderLeftWidth);
+				return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - x_px, y_px - calcSet2), border_left_width);
 			}
 		}
 		else if (isColorTex == -1.0f)
 		{
 			float radius_1, radius_2; float calcSet1, calcSet2;
-			radius_1 = input.borderRadii[0] + borderTopWidth;
-			radius_2 = input.borderRadii[1] + borderTopWidth;
+			radius_1 = input.border_radii[0] + border_top_width;
+			radius_2 = input.border_radii[1] + border_top_width;
 
-			if ((rawPixelX < (calcSet1 = (radius_1 - borderTopWidth + borderLeftWidth))) && (rawPixelY < (calcSet2 = radius_1)))
+			if ((x_px < (calcSet1 = (radius_1 - border_top_width + border_left_width))) && (y_px < (calcSet2 = radius_1)))
 			{
-				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - rawPixelX, calcSet2 - rawPixelY), borderTopWidth);
+				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, calcSet2 - y_px), border_top_width);
 			}
-			else if ((rawPixelX >(calcSet1 = (width + borderLeftWidth + borderTopWidth - radius_2))) && (rawPixelY < (calcSet2 = radius_2)))
+			else if ((x_px >(calcSet1 = (width + border_left_width + border_top_width - radius_2))) && (y_px < (calcSet2 = radius_2)))
 			{
-				return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - rawPixelX, calcSet2 - rawPixelY), borderTopWidth);
+				return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - x_px, calcSet2 - y_px), border_top_width);
 			}
 		}
 		else if (isColorTex == -3.0f)
 		{
 			float radius_1, radius_2; float calcSet1, calcSet2;
-			radius_1 = input.borderRadii[2] + borderBottomWidth;
-			radius_2 = input.borderRadii[3] + borderBottomWidth;
+			radius_1 = input.border_radii[2] + border_bottom_width;
+			radius_2 = input.border_radii[3] + border_bottom_width;
 			
-			if ((rawPixelX < (calcSet1 = (radius_1 + (borderLeftWidth - borderBottomWidth)))) && rawPixelY >(calcSet2 = (height + (borderTopWidth + borderBottomWidth) - radius_1))) // top + bottom
+			if ((x_px < (calcSet1 = (radius_1 + (border_left_width - border_bottom_width)))) && y_px >(calcSet2 = (height + (border_top_width + border_bottom_width) - radius_1))) // top + bottom
 			{
-				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - rawPixelX, rawPixelY - calcSet2), borderBottomWidth);
+				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, y_px - calcSet2), border_bottom_width);
 			}
-			else if ((rawPixelX > (calcSet1 = (width + borderLeftWidth + borderBottomWidth - radius_2))) && (rawPixelY > (calcSet2 = (height + borderTopWidth + borderBottomWidth - radius_2))))
+			else if ((x_px > (calcSet1 = (width + border_left_width + border_bottom_width - radius_2))) && (y_px > (calcSet2 = (height + border_top_width + border_bottom_width - radius_2))))
 			{
-				return get_euclidean_dist_color(color, radius_2, float2(rawPixelX - calcSet1, rawPixelY - calcSet2), borderBottomWidth);
+				return get_euclidean_dist_color(color, radius_2, float2(x_px - calcSet1, y_px - calcSet2), border_bottom_width);
 			}
 		}
 		else if (isColorTex == -2.0f)
 		{
 			float radius_1, radius_2; float calcSet1, calcSet2;
-			radius_1 = input.borderRadii[1] + borderRightWidth;
-			radius_2 = input.borderRadii[3] + borderRightWidth;
+			radius_1 = input.border_radii[1] + border_right_width;
+			radius_2 = input.border_radii[3] + border_right_width;
 			
-			if ((rawPixelX > (calcSet1 = (width + borderLeftWidth + borderRightWidth - radius_1))) && (rawPixelY < (calcSet2 = (radius_1 + (borderTopWidth - borderRightWidth)))))
+			if ((x_px > (calcSet1 = (width + border_left_width + border_right_width - radius_1))) && (y_px < (calcSet2 = (radius_1 + (border_top_width - border_right_width)))))
 			{
-				return get_euclidean_dist_color(color, radius_1, float2(rawPixelX - calcSet1, calcSet2 - rawPixelY), borderRightWidth);
+				return get_euclidean_dist_color(color, radius_1, float2(x_px - calcSet1, calcSet2 - y_px), border_right_width);
 			}
-			else if ((rawPixelX >(calcSet1 = (width + borderLeftWidth + borderRightWidth - radius_2))) && (rawPixelY > (calcSet2 = (height + borderTopWidth - radius_2 + borderRightWidth))))
+			else if ((x_px >(calcSet1 = (width + border_left_width + border_right_width - radius_2))) && (y_px > (calcSet2 = (height + border_top_width - radius_2 + border_right_width))))
 			{
-				return get_euclidean_dist_color(color, radius_2, float2(rawPixelX - calcSet1, rawPixelY - calcSet2), borderRightWidth);
+				return get_euclidean_dist_color(color, radius_2, float2(x_px - calcSet1, y_px - calcSet2), border_right_width);
 			}
 		}
 
@@ -484,63 +461,63 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 	}
 	else if (isColorTex == 1.0) // Texture only
 	{
-		float4 color = shaderTexture.Sample(SampleType, float2(input.colorTex[0], input.colorTex[1]));
+		float4 color = shaderTexture.Sample(SampleType, float2(input.color_tex[0], input.color_tex[1]));
 
 		// Adjust opacity
 		color.a *= opacity;
 
-		float rawPixelX = input.rawPixel[0];
-		float rawPixelY = input.rawPixel[1];
-		float width = input.rawDimensions[0];
-		float height = input.rawDimensions[1];
+		float x_px = input.raw_px[0];
+		float y_px = input.raw_px[1];
+		float width = input.raw_dims[0];
+		float height = input.raw_dims[1];
 		float antialiasDist = 2;
 		float radius;
 
 		//-------------------------------------------------------------------------------------------
 		// Top left
 
-		radius = input.borderRadii[0];
+		radius = input.border_radii[0];
 		
-		if ((rawPixelX < radius) && (rawPixelY < radius))
+		if ((x_px < radius) && (y_px < radius))
 		{
-			return get_euclidean_dist_color(color, radius, float2(radius - rawPixelX, radius - rawPixelY), 0);
+			return get_euclidean_dist_color(color, radius, float2(radius - x_px, radius - y_px), 0);
 		}
 
 		//-------------------------------------------------------------------------------------------
 		// Top right
 
-		radius = input.borderRadii[1];
+		radius = input.border_radii[1];
 
-		if ((rawPixelX > (width - radius)) && (rawPixelY < radius))
+		if ((x_px > (width - radius)) && (y_px < radius))
 		{
-			return get_euclidean_dist_color(color, radius, float2(rawPixelX - (width - radius), radius - rawPixelY), 0);
+			return get_euclidean_dist_color(color, radius, float2(x_px - (width - radius), radius - y_px), 0);
 		}
 		
 		//-------------------------------------------------------------------------------------------
 		// Bottom left
 		
-		radius = input.borderRadii[2];
+		radius = input.border_radii[2];
 		
-		if ((rawPixelX < radius) && (rawPixelY > (height - radius)))
+		if ((x_px < radius) && (y_px > (height - radius)))
 		{
-			return get_euclidean_dist_color(color, radius, float2(radius - rawPixelX, (height - radius) - rawPixelY), 0);
+			return get_euclidean_dist_color(color, radius, float2(radius - x_px, (height - radius) - y_px), 0);
 		}
 
 		//-------------------------------------------------------------------------------------------
 		// Bottom right
 		
-		radius = input.borderRadii[3];
+		radius = input.border_radii[3];
 
-		if ((rawPixelX > (width - radius)) && (rawPixelY > (height - radius)))
+		if ((x_px > (width - radius)) && (y_px > (height - radius)))
 		{
-			return get_euclidean_dist_color(color, radius, float2(rawPixelX - (width - radius), rawPixelY - (height - radius)), 0);
+			return get_euclidean_dist_color(color, radius, float2(x_px - (width - radius), y_px - (height - radius)), 0);
 		}
 
 		return float4(color.rgb, color.a * opacity);
 	}
 	else // Texture and color
 	{
-		return input.colorTex;
+		return input.color_tex;
 	}
 }
 

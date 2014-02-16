@@ -44,24 +44,7 @@ namespace A2D {
 				  b_x_ = b_x + x_rect_b.aWidth,
 				  b_y_ = b_y + x_rect_b.aHeight;
 
-			return A2DFLOAT4(a_x - b_x, a_y - b_y, a_y_ - b_y_, a_y_ - b_y_);
-		}
-
-		// Calculate difference between two Rects for effects
-		// Requirement: x_rect_from MUST CONTAIN x_rect_by
-		static inline A2DFLOAT4 subtract_contains(const Rect& x_rect_from, const Rect& x_rect_by)
-		{
-			float f_x = x_rect_from.aX,
-				  f_y = x_rect_from.aY,
-			      f_x_ = f_x + x_rect_from.aWidth,
-				  f_y_ = f_y + x_rect_from.aHeight;
-
-			float b_x = x_rect_by.aX,
-				  b_y = x_rect_by.aY,
-				  b_x_ = b_x + x_rect_by.aWidth,
-				  b_y_ = b_y + x_rect_by.aHeight;
-
-			return A2DFLOAT4(b_x - f_x, b_y - f_y, f_y_ - b_y_, f_y_ - b_y_);
+			return A2DFLOAT4(a_x - b_x, a_y - b_y, a_x_ - b_x_, a_y_ - b_y_);
 		}
 
 		// Rectangle Intersection
