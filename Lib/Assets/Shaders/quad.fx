@@ -13,11 +13,11 @@
 //------------------------------------------------------------------------------
 
 Texture2D shaderTexture;
-matrix borderCalculationMatrix : register( b0);
+matrix position_matrix : register( b0);
 static const float ANTIALIAS_DISTANCE = 2;
 static const float BORDER_Z_OFFSET = 0.5f / 1000000.0f;
 
-// -------------------------- borderCalculationMatrix --------------------------
+// -------------------------- position_matrix --------------------------
 //
 //  Matrix:
 //
@@ -54,22 +54,22 @@ SamplerState SampleType
 struct QuadVertex
 {
 	float4 position : POSITION0;
-	float4 options : POSITION1;      // [text/color/both, opacity, zIndex, reserved]      NOTE: contents must be in float. 
-	float4 rect : POSITION2;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
-	float4 crop_dist : POSITION3;		 // [width, height, reserved, reserved]				  NOTE: contents must be in float. 
+	float4 options : POSITION1;       // [text/color/both, opacity, zIndex, reserved]        NOTE: contents must be in float. 
+	float4 rect : POSITION2;		  // [width, height, reserved, reserved]			     NOTE: contents must be in float. 
+	float4 crop_dist : POSITION3;	  // [width, height, reserved, reserved]				 NOTE: contents must be in float. 
 	float4 border_widths : POSITION4; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
 	float4 border_radii : POSITION5;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
 	float4 color_tex : COLOR0;
-	uint4  border_colors : UINT4_0;    // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
+	uint4  border_colors : UINT4_0;   // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };
 
 struct QuadPixel
 {
 	float4 position : SV_POSITION;
 	float4 color_tex : COLOR;
-	nointerpolation float4 options : FLOAT4_0; // [texture/color/both/left/top/bottom/right, opacity, radius, border_width]
-	nointerpolation float4 border_radii : FLOAT4_1; // [leftTop, rightTop, leftBottom, rightBottom ]
-	nointerpolation float2 raw_dims : FLOAT2_0; // [width, height]
+	nointerpolation float4 options : FLOAT4_0;			// [texture/color/both/left/top/bottom/right, opacity, radius, border_width]
+	nointerpolation float4 border_radii : FLOAT4_1;		// [leftTop, rightTop, leftBottom, rightBottom ]
+	nointerpolation float2 raw_dims : FLOAT2_0;			// [width, height]
 	nointerpolation float4 border_widths : FLOAT4_2;
 	nointerpolation float4 crop_dist : FLOAT4_3;
 	float2 raw_px : FLOAT2_1;
@@ -147,7 +147,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 		  _right = right = left + width,
 		  _bottom = bottom = top - height;
 
-	float4 rel_border_widths = mul(input[0].border_widths, borderCalculationMatrix);
+	float4 rel_border_widths = mul(input[0].border_widths, position_matrix);
 
 	float border_left_width = rel_border_widths[0],
 	      border_top_width = rel_border_widths[1],
@@ -162,10 +162,10 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 border_radii = input[0].border_radii,
 		   border_radiiSet1 = float4(border_radii[0], border_radii[0], border_radii[1], border_radii[1]), //TopLeft TopRight
 		   border_radiiSet2 = float4(border_radii[2], border_radii[2], border_radii[3], border_radii[3]), //BottomLeft BottomRight
-		   rel_border_radii_s1 = mul(border_radiiSet1, borderCalculationMatrix),
-		   rel_border_radii_s2 = mul(border_radiiSet2, borderCalculationMatrix),
+		   rel_border_radii_s1 = mul(border_radiiSet1, position_matrix),
+		   rel_border_radii_s2 = mul(border_radiiSet2, position_matrix),
 		   crop_dist = input[0].crop_dist,
-		   rel_crop_dist = mul(crop_dist, borderCalculationMatrix);
+		   rel_crop_dist = mul(crop_dist, position_matrix);
 		
 	float4 border_left_color = argb_to_float4(input[0].border_colors[0]),
 	       border_top_color = argb_to_float4(input[0].border_colors[1]),

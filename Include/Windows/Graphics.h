@@ -92,7 +92,7 @@ namespace A2D {
 		QuadExpansionShader  *			aQuadExpansionShader;
 
 		ID3D10Device		**			aDevice;
-		D3DXMATRIX						m_borderCalculationMatrix;
+		D3DXMATRIX						m_m_position_matrix;
 
 	public:
 
@@ -122,7 +122,7 @@ namespace A2D {
 
 		void inline	validate()
 		{
-			DXUtils::updateBorderMatrix(&m_borderCalculationMatrix, aBackBufferDims);
+			DXUtils::updateBorderMatrix(&m_m_position_matrix, aBackBufferDims);
 		}
 	};
 }

@@ -48,8 +48,8 @@ namespace A2D {
 
 	public:
 
-		ID3D10EffectMatrixVariable*		m_borderCalculationMatrixPtr;
-		void							updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix);
+		ID3D10EffectMatrixVariable*		m_positionMatrixPtr;
+		void							updatePositionMatrix(D3DXMATRIX * x_position_matrix);
 		
 		///////////////////////////////////////////////////////////
 		// INLINE FUNCTION

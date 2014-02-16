@@ -10,7 +10,7 @@ QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) :
 	AbstractShader(xDevice),
 	aQuadEffect(NULL),
 	aTexturePtr(NULL),
-	m_borderCalculationMatrixPtr(NULL)
+	m_positionMatrixPtr(NULL)
 {
 	if (!m_singelton)
 	{
@@ -24,9 +24,9 @@ QuadExpansionShader::~QuadExpansionShader()
 	DESTROY(aTexturePtr);
 }
 
-void QuadExpansionShader::updateBorderCalculationMatrix(D3DXMATRIX * x_borderCalculationMatrix)
+void QuadExpansionShader::updatePositionMatrix(D3DXMATRIX * x_position_matrix)
 {
-	m_borderCalculationMatrixPtr->SetMatrix((float*)(x_borderCalculationMatrix));
+	m_positionMatrixPtr->SetMatrix((float*)(x_position_matrix));
 }
 
 ID3D10Effect ** QuadExpansionShader::getEffect()
@@ -49,9 +49,9 @@ STATUS QuadExpansionShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 		aTexturePtr = xEffect->GetVariableByName("shaderTexture")->AsShaderResource();
 	}
 
-	if (!m_borderCalculationMatrixPtr)
+	if (!m_positionMatrixPtr)
 	{
-		m_borderCalculationMatrixPtr = xEffect->GetVariableByName("borderCalculationMatrix")->AsMatrix();
+		m_positionMatrixPtr = xEffect->GetVariableByName("position_matrix")->AsMatrix();
 	}
 
 	return STATUS_OK;
