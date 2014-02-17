@@ -15,8 +15,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		compHeight = SINT(x_component.m_region.m_height),
 		mX = SINT(x_component.m_scrollLeft),
 		mY = SINT(x_component.m_scrollTop),
-		m_x = 0, 
-		m_y = 0,
+		aX = 0, 
+		aY = 0,
 		maxElementHeight = 0, 
 		tempVerticalOffset,
 		marginLeft,
@@ -30,7 +30,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		rowIndex = 0,
 		columnIndex = 0; 
 
-	unsigned int
+	int
 		width,
 		height;
 
@@ -68,8 +68,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			A2DDISTANCESET2& size = component->m_styleSet.m_size;
 			A2DPIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
 
-			width = precalculatedSize.m_width = SUINT(cvtsu2px__(size.m_widthUnits, size.m_width, compWidth));
-			height = precalculatedSize.m_height = SUINT(cvtsu2px__(size.m_heightUnits, size.m_height, compHeight));
+			width = precalculatedSize.m_width = SINT(cvtsu2px__(size.m_widthUnits, size.m_width, compWidth));
+			height = precalculatedSize.m_height = SINT(cvtsu2px__(size.m_heightUnits, size.m_height, compHeight));
 
 			A2DDISTANCESET4& margins = component->m_styleSet.m_margins;
 			A2DPIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
@@ -170,38 +170,28 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 				// try to move this elswhere
 				firstElement = false;
 			}
-
-			if (mY >= compHeight || mX >= compWidth)
-			{
-				#ifdef A2D_DE__			
-				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
-				#endif // A2D_DE__
-
-				component->m_styleSet.m_visible = false;
-				continue;
-			}
 		}
 		else/*if (position == Style::ABSOLUTE_)*/
 		{
-			m_x = marginLeft;
-			m_y = marginTop;
+			aX = marginLeft;
+			aY = marginTop;
 
 			// left: auto | right: auto
 			if (positionLeft == Style::AUTO && positionRight == Style::AUTO) {}
 			// left: auto | right: X
 			else if (positionLeft == Style::AUTO)
 			{
-				m_x += (compWidth - width) - positionRight;
+				aX += (compWidth - width) - positionRight;
 			}
 			// left: X | right: auto
 			else if (positionRight == Style::AUTO)
 			{
-				m_x += positionLeft;
+				aX += positionLeft;
 			}
 			// left: x | right: X
 			else
 			{
-				m_x += positionLeft;
+				aX += positionLeft;
 				width = compWidth - (positionLeft + positionRight);
 			}
 
@@ -210,21 +200,21 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			// top: auto | bottom: X
 			else if (positionTop == Style::AUTO)
 			{
-				m_y += (compWidth - width) - positionBottom;
+				aY += (compWidth - width) - positionBottom;
 			}
 			// top: X | bottom: auto
 			else if (positionBottom == Style::AUTO)
 			{
-				m_y += positionTop;
+				aY += positionTop;
 			}
 			// top: x | bottom: X
 			else
 			{
-				m_y += positionTop;
+				aY += positionTop;
 				height = compHeight - (positionTop + positionBottom);
 			}
 
-			if (m_y >= compHeight || m_x >= compWidth)
+			if (aY >= compHeight || aX >= compWidth)
 			{
 				#ifdef A2D_DE__			
 				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
@@ -237,17 +227,32 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 
 		if (position == Style::RELATIVE_)
 		{
-			// Update bounds
-			//------------------------------------------------------------------------------
-			component->m_styleSet.m_visible = true;
-			component->m_calculatedRowIndex = rowIndex;
-			component->m_calculatedColumnIndex = columnIndex;
+
+			if (mX >= compWidth
+			 || mX + width <= 0
+			 || mY >= compHeight
+			 || mY + height <= 0)
+			{
+				#ifdef A2D_DE__			
+				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
+				#endif // A2D_DE__
+
+				component->m_styleSet.m_visible = false;
+			}
+			else
+			{ 
+				// Update bounds
+				//------------------------------------------------------------------------------
+				component->m_styleSet.m_visible = true;
+				component->m_calculatedRowIndex = rowIndex;
+				component->m_calculatedColumnIndex = columnIndex;
 			
-			component->setBounds(SFLOAT(mX + positionLeft + positionRight), 
-								 SFLOAT(mY + positionTop + positionBottom), 
-								 SFLOAT(width),
-								 SFLOAT(height));
-			
+				component->setBounds(SFLOAT(mX + positionLeft + positionRight), 
+									 SFLOAT(mY + positionTop + positionBottom), 
+									 SFLOAT(width),
+									 SFLOAT(height));
+			}
+
 			if (display == Style::INLINE_BLOCK)
 			{
 				mX = mX + width + marginRight;
@@ -274,7 +279,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			// Update bounds
 			//------------------------------------------------------------------------------
 			component->m_styleSet.m_visible = true;
-			component->setBounds(SFLOAT(m_x), SFLOAT(m_y), SFLOAT(width), SFLOAT(height));
+			component->setBounds(SFLOAT(aX), SFLOAT(aY), SFLOAT(width), SFLOAT(height));
 		}
 
 		start = start->right;
