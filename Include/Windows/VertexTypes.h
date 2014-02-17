@@ -36,6 +36,7 @@ namespace A2D {
 		D3DXVECTOR4 m_options;
 		D3DXVECTOR4 m_rect;
 		D3DXVECTOR4 m_subRegion;
+		D3DXVECTOR4 m_subBordersRegion;
 		D3DXVECTOR4 aBorderWidths;
 		D3DXVECTOR4 aBorderRadii;
 		D3DXVECTOR4 aColorTex;

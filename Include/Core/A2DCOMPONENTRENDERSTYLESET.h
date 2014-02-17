@@ -63,6 +63,7 @@ namespace A2D {
 
 		const Rect*                 m_region;
 		const Rect*					m_subRegion;
+		const Rect*					m_subBordersRegion;
 		const Rect*                 m_visibleRegion;
 
 		Style::Background           m_backgroundStyle;

@@ -112,6 +112,7 @@ namespace A2D {
 
 		Rect                        m_region;
 		Rect						m_subRegion;
+		Rect						m_subBordersRegion;
 		Rect                        m_backgroundRegion;
         Rect                        m_calculatedRegion;
         Rect                        m_visibleRegion;

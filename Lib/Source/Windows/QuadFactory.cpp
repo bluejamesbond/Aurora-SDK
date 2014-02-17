@@ -43,6 +43,7 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 
 		const Rect& region = *x_renderSet.m_region;
 		const Rect& subRegion = *x_renderSet.m_subRegion;
+		const Rect& subBordersRegion = *x_renderSet.m_subBordersRegion;
 		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
 		
 		vertices[0].m_position = D3DXVECTOR4(cvtpx2rp__(winWidth, visibleRegion.m_x), -cvtpx2rp__(winHeight, visibleRegion.m_y), 
@@ -50,7 +51,8 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		
 		vertices[0].m_rect = D3DXVECTOR4(0.0f, 0.0f, region.m_width, region.m_height);
 		vertices[0].m_subRegion = D3DXVECTOR4(subRegion.m_x, subRegion.m_y, subRegion.m_width, subRegion.m_height);
-
+		vertices[0].m_subBordersRegion = D3DXVECTOR4(subBordersRegion.m_x, subBordersRegion.m_y, subBordersRegion.m_width, subBordersRegion.m_height);
+		
 		x_renderSet.m_dirtyVisbleRegion = false;
 		x_renderSet.m_dirtyRequestRegion = false;				
 	}

@@ -57,8 +57,9 @@ struct QuadVertex
 	float4 options : POSITION1;       // [text/color/both, opacity, zIndex, reserved]        NOTE: contents must be in float. 
 	float4 rect : POSITION2;		  // [width, height, reserved, reserved]			     NOTE: contents must be in float. 
 	float4 crop_dist : POSITION3;	  // [width, height, reserved, reserved]				 NOTE: contents must be in float. 
-	float4 border_widths : POSITION4; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
-	float4 border_radii : POSITION5;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
+	float4 crop_dist_borders : POSITION4;	  // [width, height, reserved, reserved]				 NOTE: contents must be in float. 
+	float4 border_widths : POSITION5; // [leftWidth, topWidth, rightWidth, bottomWidth]      NOTE: contents must be in float.
+	float4 border_radii : POSITION6;  // [leftRadius, topRadius, rightRadius, bottomRadius]  NOTE: contents must be in float.
 	float4 color_tex : COLOR0;
 	uint4  border_colors : UINT4_0;   // [leftColor, topColor, rightColor, bottomColor]      NOTE: contents must be in uint4.
 };
@@ -187,7 +188,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float z = input[0].options[2];
 	border.options = float4(0.0, opacity, 0, 0);
 	border.raw_px = float2(0, 0);
-	border.crop_dist = crop_dist;
+	border.crop_dist = input[0].crop_dist_borders;
 	border.border_radii = border_radii;
 	border.raw_dims = float2(width_px, height_px);
 	border.border_widths = input[0].border_widths;
@@ -362,6 +363,11 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	quadStream.RestartStrip();
 }
 
+float inverse_neg(float a)
+{
+	return a < 0 ? -a : 0;
+}
+
 //------------------------------------------------------------------------------
 // PS
 //------------------------------------------------------------------------------
@@ -390,7 +396,10 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 			  border_right_width = input.border_widths[2],
 			  border_bottom_width = input.border_widths[3];
 		
-		if (y_px <= (input.crop_dist[1]))
+		if (x_px <= input.crop_dist[0]
+		 || y_px <= input.crop_dist[1]
+		 || x_px >= width + input.crop_dist[2]
+		 || y_px >= height + input.crop_dist[3])
 		{
 			color.a = 0.0f;
 			return color;
