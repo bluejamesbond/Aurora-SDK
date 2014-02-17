@@ -482,6 +482,8 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		float antialiasDist = 2;
 		float radius;
 
+		color = pow(color, 1.2);
+
 		//-------------------------------------------------------------------------------------------
 		// Top left
 
