@@ -24,7 +24,7 @@
 #define A2D_WINDOW_MOVE_BAR_DISTANCE                     25
 #define A2D_WINDOW_MOVE_DEFAULT_DISTANCE                 10
 
-#define A2D_FPS											 60
+#define A2D_FPS											 120
 #define A2D_MAX_Z_DEPTH									 1000000.0f
 
 // System error focusing on speed

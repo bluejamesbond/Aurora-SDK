@@ -813,12 +813,21 @@ float Component::getBoundsY()
 	return m_region.m_y;
 }
 
-void Component::setScroll(int x_left, int x_top)
+void Component::setScroll(float x_left, float x_top)
 {
 	m_scrollLeft = x_left;
 	m_scrollTop = x_top;
 
-	m_validatedContents = false;
+	m_componentTreeValidationRequest = m_validatedContents = false;
+
+	m_styleSet.markRequestRegionAsDirty();
+}
+
+void Component::setScrollTop(float x_top)
+{
+	m_scrollTop = x_top;
+
+	m_componentTreeValidationRequest = m_validatedContents = false;
 
 	m_styleSet.markRequestRegionAsDirty();
 }

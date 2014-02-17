@@ -58,8 +58,8 @@ namespace A2D {
 		float						m_opacity;
 		float	                    m_depth;
 
-		int							m_scrollTop;
-		int							m_scrollLeft;
+		float						m_scrollTop;
+		float						m_scrollLeft;
 
 		const Rect*                 m_region;
 		const Rect*					m_subRegion;
