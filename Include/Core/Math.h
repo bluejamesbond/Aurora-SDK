@@ -46,7 +46,22 @@ namespace A2D {
 
 			return Rect(a_x - b_x, a_y - b_y, a_x_ - b_x_, a_y_ - b_y_);
 		}
+		
+		// Calculate difference between two Rects
+		static inline Rect subtract_fx(const Rect& x_rect_a, const Rect& x_rect_b)
+		{
+			float a_x = x_rect_a.m_x,
+				  a_y = x_rect_a.m_y,
+				  a_x_ = a_x + x_rect_a.m_width,
+				  a_y_ = a_y + x_rect_a.m_height;
 
+			float b_x = x_rect_b.m_x,
+				  b_y = x_rect_b.m_y,
+				  b_x_ = b_x + x_rect_b.m_width,
+				  b_y_ = b_y + x_rect_b.m_height;
+
+			return Rect(a_x - b_x, a_y - b_y, min__(a_x_ - b_x_, 0.0f), min__(a_y_ - b_y_, 0.0f));
+		}
 		// Rectangle Intersection
 		static inline Rect intersect(const Rect& x_rect_a, const Rect& x_rect_b)
 		{

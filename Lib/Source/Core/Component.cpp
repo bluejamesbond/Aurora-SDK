@@ -39,6 +39,7 @@ Component::Component() :
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
 	m_styleSet.m_subRegion = &m_subRegion;
+	m_styleSet.m_subBordersRegion = &m_subBordersRegion;
 	m_styleSet.m_id = &m_id;
 
 	m_styleSet.markBorderColorsAsDirty();
@@ -338,10 +339,18 @@ void Component::validate()
 							   m_parent->m_calculatedRegion.m_y + region.m_y,
 							   region.m_width,
 							   region.m_height };
+		
+		A2DPIXELDISTANCESETUINT4& borderWidths = m_styleSet.m_borders.m_precalculatedBorderWidths;
+
+		Rect borderCalculatedRegion = { m_calculatedRegion.m_x + borderWidths.m_left,
+									    m_calculatedRegion.m_y + borderWidths.m_top,
+										m_calculatedRegion.m_width + borderWidths.m_left + borderWidths.m_right,
+										m_calculatedRegion.m_height + borderWidths.m_top + borderWidths.m_bottom};
 
 		// Applying constraints
 		m_visibleRegion = Math::intersect(m_parent->m_visibleRegion, m_calculatedRegion);
 		m_subRegion = Math::subtract(m_visibleRegion, m_calculatedRegion);
+		m_subBordersRegion = Math::subtract_fx(m_parent->m_visibleRegion, borderCalculatedRegion);
 
 		if (m_visibleRegion.m_height != m_previousVisibleDimensions.m_height ||
 			m_visibleRegion.m_width != m_previousVisibleDimensions.m_width)
