@@ -34,3 +34,4 @@ TWEEN Easing::IN_OUT_BACK = &Easing::inOutBounce;
 TWEEN Easing::IN_BOUNCE = &Easing::inBounce;
 TWEEN Easing::OUT_BOUNCE = &Easing::outBounce;
 TWEEN Easing::IN_OUT_BOUNCE = &Easing::inOutBounce;
+TWEEN Easing::OUT_BACK_CIRC = &Easing::outBackCirc;

@@ -34,7 +34,7 @@ Component::Component() :
 	m_depth(0),
 	m_scrollTop(0),
 	m_scrollLeft(0),
-	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_QUAD, 0, 0, 200, NULL, NULL) 
+	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_CIRC, 0, 0, 200, NULL, NULL) 
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;

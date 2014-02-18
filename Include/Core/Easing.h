@@ -69,6 +69,7 @@ namespace A2D {
 		static TWEEN                IN_BOUNCE;
 		static TWEEN                OUT_BOUNCE;
 		static TWEEN                IN_OUT_BOUNCE;
+		static TWEEN                OUT_BACK_CIRC;
 
 	private:
 
@@ -257,6 +258,13 @@ namespace A2D {
 		inline static T inOutBounce(T t, T b, T c, T d) {
 			if (t < d / 2) return inBounce<T>(t * 2, 0, c, d) * 0.5f + b;
 			return outBounce<T>(t * 2 - d, 0, c, d) * 0.5f + c* 0.5f + b;
+		}
+
+		template<class T>
+		inline static T outBackCirc(T t, T b, T c, T d) {
+			float ts = (t /= d)*t;
+			float tc = ts*t;
+			return 	b + c*(-4.245f*tc*ts + 6.6925f*ts*ts + 4.2f*tc + -12.695f*ts + 7.0475f*t);
 		}
 	};
 }

@@ -28,9 +28,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		positionBottom,
 		positionRight,
 		rowIndex = 0,
-		columnIndex = 0; 
-
-	int
+		columnIndex = 0,
 		width,
 		height;
 

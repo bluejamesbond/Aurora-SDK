@@ -14,8 +14,14 @@
 
 Texture2D shaderTexture;
 matrix position_matrix : register( b0);
+
 static const float ANTIALIAS_DISTANCE = 2;
 static const float BORDER_Z_OFFSET = 0.5f / 1000000.0f;
+static const float RENDER_BORDER_LEFT = 0.0f;
+static const float RENDER_BORDER_TOP = 1.0f;
+static const float RENDER_BORDER_RIGHT = 2.0f;
+static const float RENDER_BORDER_BOTTOM = 3.0f;
+static const float RENDER_MAIN_CONTENT = -1.0f;
 
 // -------------------------- position_matrix --------------------------
 //
@@ -198,7 +204,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	if (has_left_border && border_left_color.a)
 	{
 		border.color_tex = border_left_color;
-		border.options[0] = 0.0f;
+		border.options[0] = RENDER_BORDER_LEFT;
 		border.options[2] = input[0].border_widths[0];
 		
 		//bottom left
@@ -231,7 +237,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	if (has_top_border && border_top_color.a)
 	{
 		border.color_tex = border_top_color;
-		border.options[0] = -1.0f;
+		border.options[0] = RENDER_BORDER_TOP;
 		border.options[2] = input[0].border_widths[1];
 
 		//bottom left
@@ -263,7 +269,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	if (has_right_border && border_right_color.a)
 	{
 		border.color_tex = border_right_color;
-		border.options[0] = -2.0f;
+		border.options[0] = RENDER_BORDER_RIGHT;
 		border.options[2] = input[0].border_widths[2];
 
 		//bottom left
@@ -295,7 +301,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	if (has_bottom_border && border_bottom_color.a)
 	{
 		border.color_tex = border_bottom_color;
-		border.options[0] = -3.0f;
+		border.options[0] = RENDER_BORDER_BOTTOM;
 		border.options[2] = input[0].border_widths[3];
 
 		//bottom left
@@ -328,7 +334,7 @@ void QuadExpansionShader(point QuadVertex input[1], inout TriangleStream<QuadPix
 	float4 mainTexels = input[0].color_tex;
 	z = input[0].options[2] + BORDER_Z_OFFSET;
 
-	main.options = float4(1.0f, opacity, input[0].options[3], 0.0);
+	main.options = float4(RENDER_MAIN_CONTENT, opacity, input[0].options[3], 0.0);
 	main.border_radii = border_radii;
 	main.crop_dist = float4(0, 0, 0, 0);
 	main.raw_dims = float2(width_px, height_px);
@@ -382,7 +388,7 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 	float isColorTex = input.options[0];
 	float opacity = input.options[1];
 
-	if (isColorTex < 1.0) // Color only
+	if (isColorTex >= 0.0) // Color only
 	{
 		float4 color = float4(input.color_tex.rgb, input.color_tex.a * opacity);
 
@@ -405,70 +411,81 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 			return color;
 		}
 
-		if (isColorTex == 0.0f)
+		switch (isColorTex)
 		{
-			float radius_1, radius_2;	 float calcSet1, calcSet2;
-			radius_1 = input.border_radii[0] + border_left_width;
-			radius_2 = input.border_radii[2] + border_left_width;
-			
-			if ((x_px < (calcSet1 = radius_1)) && (y_px < (calcSet2 = (radius_1 + (border_top_width - border_left_width)))))
+			case RENDER_BORDER_LEFT:
 			{
-				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, calcSet2 - y_px), border_left_width);
+				float radius_1, radius_2;	 float calcSet1, calcSet2;
+				radius_1 = input.border_radii[0] + border_left_width;
+				radius_2 = input.border_radii[2] + border_left_width;
+			
+				if ((x_px < (calcSet1 = radius_1)) && (y_px < (calcSet2 = (radius_1 + (border_top_width - border_left_width)))))
+				{
+					return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, calcSet2 - y_px), border_left_width);
+				}
+				else if ((x_px < (calcSet1 = radius_2)) && (y_px >(calcSet2 = (height + (border_top_width + border_left_width) - radius_2))))
+				{		
+					return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - x_px, y_px - calcSet2), border_left_width);
+				}
+			
+				break;
 			}
-			else if ((x_px < (calcSet1 = radius_2)) && (y_px >(calcSet2 = (height + (border_top_width + border_left_width) - radius_2))))
-			{		
-				return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - x_px, y_px - calcSet2), border_left_width);
-			}
-		}
-		else if (isColorTex == -1.0f)
-		{
-			float radius_1, radius_2; float calcSet1, calcSet2;
-			radius_1 = input.border_radii[0] + border_top_width;
-			radius_2 = input.border_radii[1] + border_top_width;
+			case RENDER_BORDER_TOP:
+			{
+				float radius_1, radius_2; float calcSet1, calcSet2;
+				radius_1 = input.border_radii[0] + border_top_width;
+				radius_2 = input.border_radii[1] + border_top_width;
 
-			if ((x_px < (calcSet1 = (radius_1 - border_top_width + border_left_width))) && (y_px < (calcSet2 = radius_1)))
-			{
-				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, calcSet2 - y_px), border_top_width);
+				if ((x_px < (calcSet1 = (radius_1 - border_top_width + border_left_width))) && (y_px < (calcSet2 = radius_1)))
+				{
+					return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, calcSet2 - y_px), border_top_width);
+				}
+				else if ((x_px >(calcSet1 = (width + border_left_width + border_top_width - radius_2))) && (y_px < (calcSet2 = radius_2)))
+				{
+					return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - x_px, calcSet2 - y_px), border_top_width);
+				}
+
+				break;
 			}
-			else if ((x_px >(calcSet1 = (width + border_left_width + border_top_width - radius_2))) && (y_px < (calcSet2 = radius_2)))
+			case RENDER_BORDER_BOTTOM:
 			{
-				return get_euclidean_dist_color(color, radius_2, float2(calcSet1 - x_px, calcSet2 - y_px), border_top_width);
-			}
-		}
-		else if (isColorTex == -3.0f)
-		{
-			float radius_1, radius_2; float calcSet1, calcSet2;
-			radius_1 = input.border_radii[2] + border_bottom_width;
-			radius_2 = input.border_radii[3] + border_bottom_width;
+				float radius_1, radius_2; float calcSet1, calcSet2;
+				radius_1 = input.border_radii[2] + border_bottom_width;
+				radius_2 = input.border_radii[3] + border_bottom_width;
 			
-			if ((x_px < (calcSet1 = (radius_1 + (border_left_width - border_bottom_width)))) && y_px >(calcSet2 = (height + (border_top_width + border_bottom_width) - radius_1))) // top + bottom
-			{
-				return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, y_px - calcSet2), border_bottom_width);
+				if ((x_px < (calcSet1 = (radius_1 + (border_left_width - border_bottom_width)))) && y_px >(calcSet2 = (height + (border_top_width + border_bottom_width) - radius_1))) // top + bottom
+				{
+					return get_euclidean_dist_color(color, radius_1, float2(calcSet1 - x_px, y_px - calcSet2), border_bottom_width);
+				}
+				else if ((x_px > (calcSet1 = (width + border_left_width + border_bottom_width - radius_2))) && (y_px > (calcSet2 = (height + border_top_width + border_bottom_width - radius_2))))
+				{
+					return get_euclidean_dist_color(color, radius_2, float2(x_px - calcSet1, y_px - calcSet2), border_bottom_width);
+				}
+
+				break;
 			}
-			else if ((x_px > (calcSet1 = (width + border_left_width + border_bottom_width - radius_2))) && (y_px > (calcSet2 = (height + border_top_width + border_bottom_width - radius_2))))
+			case RENDER_BORDER_RIGHT:
 			{
-				return get_euclidean_dist_color(color, radius_2, float2(x_px - calcSet1, y_px - calcSet2), border_bottom_width);
-			}
-		}
-		else if (isColorTex == -2.0f)
-		{
-			float radius_1, radius_2; float calcSet1, calcSet2;
-			radius_1 = input.border_radii[1] + border_right_width;
-			radius_2 = input.border_radii[3] + border_right_width;
+				float radius_1, radius_2; float calcSet1, calcSet2;
+				radius_1 = input.border_radii[1] + border_right_width;
+				radius_2 = input.border_radii[3] + border_right_width;
 			
-			if ((x_px > (calcSet1 = (width + border_left_width + border_right_width - radius_1))) && (y_px < (calcSet2 = (radius_1 + (border_top_width - border_right_width)))))
-			{
-				return get_euclidean_dist_color(color, radius_1, float2(x_px - calcSet1, calcSet2 - y_px), border_right_width);
-			}
-			else if ((x_px >(calcSet1 = (width + border_left_width + border_right_width - radius_2))) && (y_px > (calcSet2 = (height + border_top_width - radius_2 + border_right_width))))
-			{
-				return get_euclidean_dist_color(color, radius_2, float2(x_px - calcSet1, y_px - calcSet2), border_right_width);
+				if ((x_px > (calcSet1 = (width + border_left_width + border_right_width - radius_1))) && (y_px < (calcSet2 = (radius_1 + (border_top_width - border_right_width)))))
+				{
+					return get_euclidean_dist_color(color, radius_1, float2(x_px - calcSet1, calcSet2 - y_px), border_right_width);
+				}
+				else if ((x_px >(calcSet1 = (width + border_left_width + border_right_width - radius_2))) && (y_px > (calcSet2 = (height + border_top_width - radius_2 + border_right_width))))
+				{
+					return get_euclidean_dist_color(color, radius_2, float2(x_px - calcSet1, y_px - calcSet2), border_right_width);
+				}
+
+				break;
 			}
 		}
 
 		return color;
 	}
-	else if (isColorTex == 1.0) // Texture only
+	else // Texture only
 	{
 		float4 color = shaderTexture.Sample(SampleType, float2(input.color_tex[0], input.color_tex[1]));
 
@@ -525,10 +542,6 @@ float4 QuadExpandedShader(QuadPixel input) : SV_Target
 		}
 
 		return float4(color.rgb, color.a * opacity);
-	}
-	else // Texture and color
-	{
-		return input.color_tex;
 	}
 }
 
