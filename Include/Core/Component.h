@@ -34,6 +34,7 @@
 #include "A2DINTERPOLATORFLOAT.h"
 #include "Animator.h"
 #include "Math.h"
+#include "Toolkit.h"
 
 namespace A2D {
 

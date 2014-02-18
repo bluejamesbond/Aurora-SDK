@@ -178,6 +178,7 @@ inline double platform_dependent_kernel_time_high_precision()
 // PLATFORM DEPENDENT - END
 //////////////////////////////////////////////////////////////////////////////
 
+#define nanotime__									Toolkit::SYSTEM_NANOTIME
 
 //High performance min/max/abs for
 //floats and int. Any extra variables that need

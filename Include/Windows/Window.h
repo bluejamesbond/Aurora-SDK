@@ -24,6 +24,7 @@
 #include "../Core/Rect.h"
 #include "../Core/Dims.h"
 #include "../Core/AbstractWindow.h"
+#include "../Core/Toolkit.h"
 
 #include "ExtLibs.h"
 #include "EventQueue.h"

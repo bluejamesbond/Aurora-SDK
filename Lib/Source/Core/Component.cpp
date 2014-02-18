@@ -53,12 +53,12 @@ void Component::paintComponentBorder(){}
 void Component::interpolate()
 {
 	OrderedList<A2DINTERPOLATORFLOAT*>::Node<A2DINTERPOLATORFLOAT*> * node = m_interpolators._head();
-	int currentTime = kerneltimelp__;
+	double currentTime = nanotime__;
 
 	while (node->value)
 	{
 		A2DINTERPOLATORFLOAT * interpolator = node->value;
-		float duration = SFLOAT(currentTime - interpolator->m_startTime);
+		float duration = SFLOAT((currentTime - interpolator->m_startTime) * 1000.0f);
 
 		// Save the next node
 		node = node->right;

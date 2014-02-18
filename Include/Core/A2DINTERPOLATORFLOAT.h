@@ -38,7 +38,7 @@ namespace A2D {
 		
 		A2DCALLBACKVOID1 * m_callback;
 		
-		int m_startTime;
+		double m_startTime;
 
 		float m_period; // To reduce conversions during animations
 
@@ -58,7 +58,7 @@ namespace A2D {
 
 		inline A2DINTERPOLATORFLOAT(A2DANIMMUTATORFLOAT1 * x_interpolatable,
 							  TWEEN * x_tween, 
-							  int x_startTime, 
+							  double x_startTime, 
 							  float x_start_a, 
 							  float x_range_a, 
 							  float x_period, 
@@ -78,7 +78,7 @@ namespace A2D {
 
 		inline A2DINTERPOLATORFLOAT(A2DANIMMUTATORFLOAT2 * x_interpolatable,
 							  TWEEN * x_tween,
-							  int x_startTime,
+							  double x_startTime,
 							  float x_start_a,
 							  float x_range_a,
 							  float x_start_b,
@@ -102,7 +102,7 @@ namespace A2D {
 
 		inline A2DINTERPOLATORFLOAT(A2DANIMMUTATORFLOAT3 * x_interpolatable,
 							  TWEEN * x_tween,
-							  int x_startTime,
+							  double x_startTime,
 							  float x_start_a,
 							  float x_range_a,
 							  float x_start_b,
@@ -131,7 +131,7 @@ namespace A2D {
 
 		inline A2DINTERPOLATORFLOAT(A2DANIMMUTATORFLOAT4 * x_interpolatable,
 							  TWEEN * x_tween,
-							  int x_startTime,
+							  double x_startTime,
 							  float x_start_a,
 							  float x_range_a,
 							  float x_start_b,

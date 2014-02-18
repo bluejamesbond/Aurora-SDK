@@ -27,7 +27,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
 	double lastTime = kerneltimehp__;
 	double timeBetweenFrames = 1.0 / SDOUBLE(A2D_FPS);
-	double currentTime;
+	double& currentTime = nanotime__;
 	
     while (true)
 	{

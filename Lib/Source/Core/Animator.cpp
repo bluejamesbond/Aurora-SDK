@@ -23,7 +23,7 @@ HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATIO
 	A2DINTERPOLATORFLOAT * interpolator =
 		new A2DINTERPOLATORFLOAT(&x_cachedAnimation.m_animatable->m_mutator,
 								  x_cachedAnimation.m_tween,
-								  kerneltimelp__, 
+								  nanotime__,
 								  start_a,
 								  x_cachedAnimation.m_to_a - start_a,
 								  x_cachedAnimation.m_period,
@@ -51,7 +51,7 @@ HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATIO
 	A2DINTERPOLATORFLOAT * interpolator = 
 		new A2DINTERPOLATORFLOAT(&x_cachedAnimation.m_animatable->m_mutator,
 								  x_cachedAnimation.m_tween,
-								  kerneltimelp__, 
+								  nanotime__,
 								  start_a,
 								  x_cachedAnimation.m_to_a - start_a,
 								  start_b,
