@@ -42,16 +42,16 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		#endif // A2D_DE__
 
 		const Rect& region = *x_renderSet.m_region;
-		const Rect& subRegion = *x_renderSet.m_subRegion;
-		const Rect& subBordersRegion = *x_renderSet.m_subBordersRegion;
 		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
+		const A2DFLOAT4& subRegion = *x_renderSet.m_subRegion;
+		const A2DFLOAT4& subBordersRegion = *x_renderSet.m_subBordersRegion;
 		
 		vertices[0].m_position = D3DXVECTOR4(cvtpx2rp__(winWidth, visibleRegion.m_x), -cvtpx2rp__(winHeight, visibleRegion.m_y), 
 											 cvtpx2rd__(winWidth, visibleRegion.m_width), cvtpx2rd__(winHeight, visibleRegion.m_height));
 		
 		vertices[0].m_rect = D3DXVECTOR4(0.0f, 0.0f, region.m_width, region.m_height);
-		vertices[0].m_subRegion = D3DXVECTOR4(subRegion.m_x, subRegion.m_y, subRegion.m_width, subRegion.m_height);
-		vertices[0].m_subBordersRegion = D3DXVECTOR4(subBordersRegion.m_x, subBordersRegion.m_y, subBordersRegion.m_width, subBordersRegion.m_height);
+		vertices[0].m_subRegion = subRegion;
+		vertices[0].m_subBordersRegion = subBordersRegion;
 		
 		x_renderSet.m_dirtyVisbleRegion = false;
 		x_renderSet.m_dirtyRequestRegion = false;				
@@ -64,7 +64,6 @@ void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * x_quadDa
 		#endif // A2D_DE__
 
 		const Rect& region = *x_renderSet.m_region;
-		const Rect& subRegion = *x_renderSet.m_subRegion;
 		const Rect& visibleRegion = *x_renderSet.m_visibleRegion;
 		const Rect& textureClip = *x_texture->GetClip();
 		const Style::Background backgroundStyle = x_renderSet.m_backgroundStyle;

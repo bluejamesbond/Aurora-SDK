@@ -112,9 +112,9 @@ namespace A2D {
 		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
 
 		Rect                        m_region;
-		Rect						m_subRegion;
-		Rect						m_subBordersRegion;
-		Rect                        m_backgroundRegion;
+		A2DFLOAT4					m_subRegion;
+		A2DFLOAT4					m_subBordersRegion;
+		Rect						m_backgroundRegion;
         Rect                        m_calculatedRegion;
         Rect                        m_visibleRegion;
 		Dims						m_previousVisibleDimensions;

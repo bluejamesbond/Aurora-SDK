@@ -32,7 +32,7 @@ namespace A2D {
 	public:
 
 		// Calculate difference between two Rects
-		static inline Rect subtract(const Rect& x_rect_a, const Rect& x_rect_b)
+		static inline A2DFLOAT4 subtract(const Rect& x_rect_a, const Rect& x_rect_b)
 		{
 			float a_x = x_rect_a.m_x,
 				  a_y = x_rect_a.m_y,
@@ -44,11 +44,11 @@ namespace A2D {
 				  b_x_ = b_x + x_rect_b.m_width,
 				  b_y_ = b_y + x_rect_b.m_height;
 
-			return Rect(a_x - b_x, a_y - b_y, a_x_ - b_x_, a_y_ - b_y_);
+			return A2DFLOAT4(a_x - b_x, a_y - b_y, a_x_ - b_x_, a_y_ - b_y_);
 		}
 		
 		// Calculate difference between two Rects
-		static inline Rect subtract_fx(const Rect& x_rect_a, const Rect& x_rect_b)
+		static inline A2DFLOAT4 subtract_fx(const Rect& x_rect_a, const Rect& x_rect_b)
 		{
 			float a_x = x_rect_a.m_x,
 				  a_y = x_rect_a.m_y,
@@ -60,7 +60,7 @@ namespace A2D {
 				  b_x_ = b_x + x_rect_b.m_width,
 				  b_y_ = b_y + x_rect_b.m_height;
 
-			return Rect(max__(0.0, a_x - b_x), max__(0.0f, a_y - b_y), min__(a_x_ - b_x_, 0.0f), min__(a_y_ - b_y_, 0.0f));
+			return A2DFLOAT4(max__(0.0, a_x - b_x), max__(0.0f, a_y - b_y), min__(a_x_ - b_x_, 0.0f), min__(a_y_ - b_y_, 0.0f));
 		}
 		// Rectangle Intersection
 		static inline Rect intersect(const Rect& x_rect_a, const Rect& x_rect_b)

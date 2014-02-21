@@ -62,8 +62,8 @@ namespace A2D {
 		float						m_scrollLeft;
 
 		const Rect*                 m_region;
-		const Rect*					m_subRegion;
-		const Rect*					m_subBordersRegion;
+		const A2DFLOAT4*			m_subRegion;
+		const A2DFLOAT4*			m_subBordersRegion;
 		const Rect*                 m_visibleRegion;
 
 		Style::Background           m_backgroundStyle;
