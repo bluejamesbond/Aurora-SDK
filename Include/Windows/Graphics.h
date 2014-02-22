@@ -123,6 +123,7 @@ namespace A2D {
 		void inline	validate()
 		{
 			DXUtils::updateBorderMatrix(&m_position_matrix, aBackBufferDims);
+			aQuadExpansionShader->updatePositionMatrix(&m_position_matrix);
 		}
 	};
 }
