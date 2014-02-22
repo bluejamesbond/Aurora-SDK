@@ -26,7 +26,8 @@ namespace A2D {
 
 	typedef float (Component::*A2DANIMACCESSORFLOAT1)(void);
 
-	typedef void (*A2DCALLBACKVOID1)(void*);
+	typedef void(*A2DCALLBACKVOID1)(void*);
+	typedef void(*A2DCALLBACKVOID1INT1)(void*, int);
 }
 
 #endif

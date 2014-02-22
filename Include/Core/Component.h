@@ -35,6 +35,7 @@
 #include "Animator.h"
 #include "Math.h"
 #include "Toolkit.h"
+#include "Drawable.h"
 
 namespace A2D {
 
@@ -119,19 +120,19 @@ namespace A2D {
         Rect                        m_visibleRegion;
 		Dims						m_previousVisibleDimensions;
 		Dims						m_previousDimensions;
-
+		
 		Pipeline*                   m_pipeline;
 		Graphics*                   m_graphics;    
 
     public:
 
-		static A2DANIMATABLEFLOAT1				ANIMATE_OPACITY;
-		static A2DANIMATABLEFLOAT1				ANIMATE_WIDTH;
-		static A2DANIMATABLEFLOAT1				ANIMATE_HEIGHT;
-		static A2DANIMATABLEFLOAT1				ANIMATE_BORDER_RADII_TOP_LEFT;
-		static A2DANIMATABLEFLOAT1				ANIMATE_BORDER_RADII_UNIFIED;
-		static A2DANIMATABLEFLOAT1				ANIMATE_BOUNDS_X;
-		static A2DANIMATABLEFLOAT1				ANIMATE_BOUNDS_Y;
+		static A2DANIMATABLEFLOAT1  ANIMATE_OPACITY;
+		static A2DANIMATABLEFLOAT1	ANIMATE_WIDTH;
+		static A2DANIMATABLEFLOAT1	ANIMATE_HEIGHT;
+		static A2DANIMATABLEFLOAT1	ANIMATE_BORDER_RADII_TOP_LEFT;
+		static A2DANIMATABLEFLOAT1	ANIMATE_BORDER_RADII_UNIFIED;
+		static A2DANIMATABLEFLOAT1	ANIMATE_BOUNDS_X;
+		static A2DANIMATABLEFLOAT1	ANIMATE_BOUNDS_Y;
 		
 		Animation					animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg);
 		void						stop(Animation x_animation, bool x_callback);
@@ -146,7 +147,7 @@ namespace A2D {
 
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
-		void                        setBackgroundImage(wchar_t* xOptBackgroundImage);
+		void                        setBackgroundImage(wchar_t * x_src);
 		void                        setBackgroundPaint(Paint& xOptPaint);
         void                        setPosition(Style::Position xPosition);
         void                        setDisplay(Style::Display xDisplay);
@@ -215,7 +216,7 @@ namespace A2D {
         Rect*                       getVisibleRegion();
         Rect*                       getBoundsAsPtr();
         Rect                        getBounds();
-		LPCWSTR                     getBackgroundImage();
+		wchar_t*                    getBackgroundImage();
 		Paint&                      getBackgroundPaint();
  
         bool                        isDoubleBuffered();     

@@ -187,7 +187,7 @@ void AbstractFrame::setVisible(bool xVisible)
 	}
 }
 
-void AbstractFrame::run(int xThreadId)
+void AbstractFrame::run(void * x_param, int xThreadId)
 {
 	this->update();
 }

@@ -27,6 +27,7 @@
 #include "../Core/ImageProperties.h"
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
+#include "../Core/Drawable.h"
 
 #include "../Core/A2DCOMPONENTRENDERSTYLESET.h"
 
@@ -40,6 +41,7 @@
 #include "DXUtils.h"
 #include "TextureShader.h"
 #include "ColorShader.h"
+#include "Thread.h"
 
 namespace A2D {
 
@@ -61,7 +63,22 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Graphics
+	class TextureBindingParameter
+	{
+
+	public:
+
+		ID3D10Device ** m_device;
+		Drawable * m_drawable;
+
+		TextureBindingParameter(ID3D10Device ** x_device, Drawable * x_drawable) :
+			m_device(x_device),
+			m_drawable(x_drawable)
+		{
+		}
+	};
+
+	class Graphics : public Runnable
 	{
 	public:
 
@@ -114,6 +131,41 @@ namespace A2D {
 		////////////////////////////////////////////////////////////////////////////////
 		// INLINE
 		////////////////////////////////////////////////////////////////////////////////
+
+		void inline run(void * x_param, int x_thread)
+		{
+			TextureBindingParameter * parameter = static_cast<TextureBindingParameter*>(x_param);
+			Drawable * drawable = parameter->m_drawable;
+
+			Texture * texture = new Texture(aDevice, drawable->getSource());
+			G_SAFELY(texture->initialize());
+
+			drawable->m_activeTexture = texture;
+			drawable->fireChangeListeners();
+
+			DESTROY(parameter);
+		}
+
+		void inline resetDrawable(Drawable& x_drawable)
+		{
+			x_drawable.m_activeTexture = Texture::DEFAULT_TEXTURE;
+		}
+
+		void inline unbindDrawable(Drawable& x_drawable)
+		{
+			Texture * inActiveTexture = static_cast<Texture*>(x_drawable.m_inActiveTexture);
+			Texture * activeTexture = static_cast<Texture*>(x_drawable.m_activeTexture);
+
+			DESTROY(inActiveTexture);
+			DESTROY(activeTexture);
+		}
+
+		void inline	bindDrawable(Drawable& x_drawable)
+		{
+			Thread thread(this, new TextureBindingParameter(aDevice, &x_drawable));
+			G_SAFELY(thread.initialize());
+			thread.start();
+		}
 
 		inline void Graphics::setClip(Rect * xClip, float xDepth)
 		{

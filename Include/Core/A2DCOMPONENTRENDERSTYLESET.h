@@ -26,6 +26,7 @@
 #include "Rect.h"
 #include "Paint.h"
 #include "Style.h"
+#include "Drawable.h"
 
 #include "A2DBORDERSET4.h"
 #include "A2DDISTANCESET2.h"
@@ -87,7 +88,7 @@ namespace A2D {
 
 		int*						m_id;
 
-		wchar_t*                    m_backgroundSrc;
+		Drawable					m_drawable;
 		Paint                       m_backgroundPaint;
 
 		bool						m_dirty;
@@ -105,7 +106,7 @@ namespace A2D {
 			m_visible(true),
 			m_display(Style::Display::BLOCK),
 			m_position(Style::Position::RELATIVE_),
-			m_backgroundSrc(NULL),
+			m_drawable(NULL),
 			m_dirty(false),
 			m_dirtyRequestRegion(false),
 			m_dirtyVisbleRegion(false),

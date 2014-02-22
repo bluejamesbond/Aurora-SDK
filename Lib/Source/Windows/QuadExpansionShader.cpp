@@ -12,10 +12,7 @@ QuadExpansionShader::QuadExpansionShader(ID3D10Device ** xDevice) :
 	aTexturePtr(NULL),
 	m_positionMatrixPtr(NULL)
 {
-	if (!m_singelton)
-	{
-		m_singelton = this;
-	}
+	EXECUTE_ONCE(QuadExpansionShader*, 0x000000, m_singelton = this);
 }
 QuadExpansionShader::~QuadExpansionShader()
 {
@@ -27,6 +24,23 @@ QuadExpansionShader::~QuadExpansionShader()
 void QuadExpansionShader::updatePositionMatrix(D3DXMATRIX * x_position_matrix)
 {
 	m_positionMatrixPtr->SetMatrix((float*)(x_position_matrix));
+}
+
+void QuadExpansionShader::update(void * x_param, int x_id)
+{
+	Drawable * drawable = static_cast<Drawable*>(x_param);
+
+	if (drawable)
+	{
+		Texture * texture = static_cast<Texture*>(drawable->m_activeTexture);
+
+		if (texture)
+		{
+			SYSOUT_STR("[QuadExpansionShader] Setting new texture.");
+
+			setTexture(texture);
+		}
+	}
 }
 
 ID3D10Effect ** QuadExpansionShader::getEffect()

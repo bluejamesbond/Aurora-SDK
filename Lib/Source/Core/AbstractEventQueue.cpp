@@ -31,7 +31,7 @@ void AbstractEventQueue::invokeAndWait(Runnable * xRunnable)
 {
 	if (getQueueLock())
 	{
-		xRunnable->run(aThread->id());
+		xRunnable->run(NULL, aThread->id());
 		releaseQueueLock();
 	}
 }
@@ -129,7 +129,7 @@ void AbstractEventQueue::stopDispatchingThread()
 	THREAD_DESTROY(aThread);
 }
 
-void AbstractEventQueue::run(int xThreadId)
+void AbstractEventQueue::run(void * x_param, int xThreadId)
 {
 	// Create frame resources inside EDT
 	aFrame->createResources();
@@ -190,7 +190,7 @@ bool AbstractEventQueue::dispatchNextEvent()
 	if (hasEvent())
 	{
 		getQueueLock();
-		peekEvent()->run(aThread->id());
+		peekEvent()->run(NULL, aThread->id());
 		popEvent();
 		releaseQueueLock();
 

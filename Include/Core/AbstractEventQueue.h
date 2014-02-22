@@ -143,7 +143,7 @@ namespace A2D{
 
         void                            pushEvent(Runnable * xRunnable);
         void                            removeAllEvents();
-        void                            run(int xThreadId);
+        void                            run(void * x_param, int xThreadId);
 
         virtual AbstractThread*         createPlatformCompatibleThread(Runnable * xRunnable) IMPLEMENT;
 		

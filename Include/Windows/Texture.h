@@ -38,6 +38,9 @@ namespace A2D {
 
 	class Texture : public AbstractTexture
 	{
+
+		friend class Graphics;
+
 	public:
 		// Constructor
 		Texture(ID3D10Device ** xDevice, LPCWSTR xFilename);
@@ -60,6 +63,8 @@ namespace A2D {
 		// Virtual
 		virtual	bool					hasAlpha();
 		
+		static Texture*					DEFAULT_TEXTURE;
+
 		inline void * Texture::getPlatformCompatibleResource()
 		{
 			return aResource;

@@ -115,7 +115,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 
 	// Cache all the classes that are going to be 
 	// used.
-	Texture * texture;
+	Drawable * drawable;
 	Pipelineable ** pipelineables;
 	QuadData<QuadExpansionVertex, 1> * quadData;
 	QuadExpansionShader * quadExpansionShader;
@@ -130,14 +130,15 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 		pipelineables = (*xPipeline)->aPipelineComps;
 
 		// Create a unique expansion shader for each
-		// component
+		// component which will create internal driver
+		// states. FIXME Do this by hand with VSSetShader...
 		quadExpansionShader = new QuadExpansionShader(aDevice);
 		G_SAFELY(quadExpansionShader->initialize());
 		
 		// Create the texture
-		texture = new Texture(aDevice, x_renderSet.m_backgroundSrc);
-		G_SAFELY(texture->initialize());
-		
+		drawable = &x_renderSet.m_drawable;
+		// drawable->addChangeListener(reinterpret_cast<ChangeListener*>(quadExpansionShader));
+
 		// Create the QuadData
 		quadData = new QuadData<QuadExpansionVertex, 1>();
 		
@@ -150,12 +151,12 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 		// requires large textures from having to put into
 		// the GPU memory from CPU - this is a slow
 		// process.
-		quadExpansionShader->setTexture(texture);
+		quadExpansionShader->setTexture(static_cast<Texture*>(drawable->m_activeTexture));
 
 		// Since everything has been safely initialized
 		// store into the pipeline
 		pipelineables[0] = quadExpansionShader;
-		pipelineables[1] = texture;
+		pipelineables[1] = drawable;
 		pipelineables[2] = quadData;
 
 		// Set the pipeline length to be
@@ -170,25 +171,25 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 
 	// Find the specific pipelineable
 	quadExpansionShader = static_cast<QuadExpansionShader*>(pipelineables[0]);
-	texture = static_cast<Texture*>(pipelineables[1]);
+	drawable = static_cast<Drawable*>(pipelineables[1]);
 	quadData = static_cast<QuadData<QuadExpansionVertex, 1>*>(pipelineables[2]);
 
 	// Update the shader matrix
 	quadExpansionShader->updatePositionMatrix(&m_position_matrix);
 
-	// Check if the texture needs updating
-	if (texture->update(x_renderSet.m_backgroundSrc))
-	{
-		// Update the shader resource with the
-		// new texture
-		quadExpansionShader->setTexture(texture);
-	}
+	//// Check if the texture needs updating
+	//if (drawable->update(x_renderSet.m_backgroundSrc))
+	//{
+	//	// Update the shader resource with the
+	//	// new texture
+	//	quadExpansionShader->setTexture(texture);
+	//}
 
 	// Update the buffer iff it is marked
 	// as dirty
 	if (x_renderSet.m_dirty)
 	{
-		quadFactory->updateVertexBuffer(quadData, x_renderSet, texture);
+		quadFactory->updateVertexBuffer(quadData, x_renderSet, static_cast<Texture*>(drawable->m_activeTexture));
 	}
 
 	// Render the quad
@@ -279,6 +280,10 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
 
 STATUS Graphics::initialize()
 {
+	// Execute this line only once
+	EXECUTE_ONCE(ID3D10Device**, 0x000000, Texture::DEFAULT_TEXTURE->aDevice = aDevice);
+	EXECUTE_ONCE(STATUS, 0x000001, Texture::DEFAULT_TEXTURE->initialize());
+
 //	CameraProperties& cameraProperties = aCameraProperties;
 	GXSettings* settings = aBackBufferSettings;
 	const Dims* size = aBackBufferDims;
@@ -312,6 +317,7 @@ STATUS Graphics::initialize()
 	// are updated
 	validate();
 	
+
 	// QuadExpansionShader::updatePositionMatrix(&m_position_matrix);
 
 	//TextureShader::setViewMatrix(&aViewMatrix);

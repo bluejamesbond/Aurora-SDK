@@ -100,7 +100,7 @@ namespace A2D {
         void                            setLocationRelativeTo(AbstractFrame * xFrame);
         void                            setVsync(bool xVsync);
         void                            setDefaultCloseOperation(int xOperation);
-		void                            run(int xThreadId);
+		void                            run(void * x_param, int xThreadId);
 		AbstractWindow*					getWindow();
         const ComponentManager*			getComponentManager();
 

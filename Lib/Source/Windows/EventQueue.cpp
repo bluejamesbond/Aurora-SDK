@@ -25,5 +25,5 @@ void EventQueue::releaseQueueLock()
 
 AbstractThread* EventQueue::createPlatformCompatibleThread(Runnable * xRunnable)
 {
-	return new Thread(xRunnable);
+	return new Thread(xRunnable, NULL);
 }

@@ -30,7 +30,7 @@ namespace A2D {
 
 	protected:
 
-		virtual void run(int xThreadId) IMPLEMENT;
+		virtual void run(void * x_param, int x_thread_id) IMPLEMENT;
 
 	};
 }

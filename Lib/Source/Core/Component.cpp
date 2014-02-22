@@ -492,6 +492,8 @@ void Component::setPosition(Style::Position xPosition)
 
 STATUS Component::initialize()
 {
+	m_graphics->resetDrawable(m_styleSet.m_drawable);
+
     return STATUS_OK;
 }
 
@@ -499,14 +501,7 @@ void Component::paintComponent()
 {	
     Graphics& graphics = *m_graphics;
 
-	if (m_styleSet.m_backgroundSrc != NULL)
-    {
-		graphics.drawComponent(&m_pipeline, m_styleSet);
-    }
-    else
-    {
-		graphics.fillRect(&m_pipeline, m_backgroundRegion, m_styleSet.m_backgroundPaint);
-    }
+	graphics.drawComponent(&m_pipeline, m_styleSet);
 }
 
 void Component::update()
@@ -660,9 +655,11 @@ STATUS Component::addActionListener(ActionListener * xListener)
     return ComponentEventSource::addActionListener(xListener);
 }
 
-void Component::setBackgroundImage(wchar_t* xOptBackgroundImage)
+void Component::setBackgroundImage(wchar_t* x_src)
 { 
-	m_styleSet.m_backgroundSrc = xOptBackgroundImage;
+	// m_styleSet.m_drawable.setSource(x_src);
+
+	// m_graphics->bindDrawable(m_styleSet.m_drawable);
 
 	m_styleSet.markBackgroundAsDirty();
 }
@@ -768,9 +765,9 @@ void Component::setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned i
 	m_styleSet.markBorderColorsAsDirty();
 }
 
-LPCWSTR Component::getBackgroundImage() 
+wchar_t* Component::getBackgroundImage() 
 { 
-	return m_styleSet.m_backgroundSrc;
+	return m_styleSet.m_drawable.getSource();
 }
 
 Paint& Component::getBackgroundPaint()

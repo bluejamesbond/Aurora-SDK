@@ -39,7 +39,7 @@ namespace A2D {
 
 	public:
 
-		Thread(Runnable * xRunnable);
+		Thread(Runnable * xRunnable, void * x_param);
 		virtual ~Thread();
 
 	private:

@@ -34,7 +34,7 @@ namespace A2D {
 
 	public:
 
-		AbstractThread(Runnable * xRunnable);
+		AbstractThread(Runnable * xRunnable, void * x_param);
 		virtual ~AbstractThread() IMPLEMENT;
 
 	private:
@@ -42,7 +42,7 @@ namespace A2D {
 		Runnable * aRunnable;
 
 		int aId;
-
+		void * m_param;
 
 	protected:
 
@@ -56,6 +56,7 @@ namespace A2D {
 		static int instanceCount();
 		static int activeCount();
 
+		void setParameter(void * x_param);
 		void fire();
 
 	public:

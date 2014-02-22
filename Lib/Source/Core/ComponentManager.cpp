@@ -56,6 +56,7 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 	xChild.setGraphics(xParent.getGraphics());
 	xChild.setComponentManager(*unconst__(ComponentManager*));
 	xChild.setEventQueue(*m_eventQueue);
+	xChild.initialize();
 
 	if (unconst__(ComponentManager*)->addToDepthTracker(xChild))
 	{

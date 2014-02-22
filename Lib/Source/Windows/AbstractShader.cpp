@@ -74,6 +74,6 @@ void AbstractShader::renderShader()
 	{
 		// hard coded 6. change this to a variable later.
 		technique->GetPassByIndex(i)->Apply(0);
-		device->DrawIndexed(6, 0, 0);
+		device->DrawIndexed(1, 0, 0);
 	}
 }

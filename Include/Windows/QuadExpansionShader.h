@@ -21,6 +21,8 @@
 
 #include "../_A2DCommon.h"
 
+#include "../Core/Drawable.h"
+
 #include "ExtLibs.h"
 #include "Texture.h"
 #include "AbstractShader.h"
@@ -31,7 +33,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class QuadExpansionShader : public AbstractShader
+	class QuadExpansionShader : public AbstractShader, ChangeListener
 	{
 	public:
 
@@ -50,7 +52,8 @@ namespace A2D {
 
 		ID3D10EffectMatrixVariable*		m_positionMatrixPtr;
 		void							updatePositionMatrix(D3DXMATRIX * x_position_matrix);
-		
+		virtual void					update(void * x_param, int x_id);
+
 		///////////////////////////////////////////////////////////
 		// INLINE FUNCTION
 		///////////////////////////////////////////////////////////

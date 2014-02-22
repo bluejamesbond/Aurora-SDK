@@ -18,6 +18,7 @@
 
 // Core Constants
 //------------------------------------------------------------------------------
+#define A2D_DEFAULT_TEXTURE								 L"../../../Aurora-SDK/Lib/Assets/Images/transparent [a] 1.png"
 #define A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO             2
 #define A2D_WINDOW_RESIZE_EDGE_DISTANCE                  5
 #define A2D_WINDOW_RESIZE_DEFAULT_DISTANCE               3
@@ -62,6 +63,7 @@ typedef unsigned int STATUS;
 #define SULONGLONG(x)                                   static_cast<unsigned long long>(x)
 #define SULONG(x)                                       static_cast<unsigned long>(x)
 #define IMPLEMENT                                       = 0
+#define EXECUTE_ONCE(x, y, z)							static x generated_##y = z
 
 #define LOW16UINT32(x)										x & 0xFFFF
 #define HI16UINT32(x)										x >> 16
