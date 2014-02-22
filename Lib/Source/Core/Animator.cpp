@@ -27,13 +27,12 @@ HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATIO
 								  start_a,
 								  x_cachedAnimation.m_to_a - start_a,
 								  x_cachedAnimation.m_period,
+								  x_cachedAnimation.m_callable,
 								  x_cachedAnimation.m_callback,
 								  x_cachedAnimation.m_arg);
 	
 	x_component.m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
-
 	x_component.m_activeInterpolations = true;
-
 	x_component.m_eventQueue->startedAnimation();
 
 	#ifdef A2D_DE__			
@@ -57,13 +56,12 @@ HANIMATION _fastcall Animator::animate(Component& x_component, A2DCACHEDANIMATIO
 								  start_b,
 								  x_cachedAnimation.m_to_b - start_b,
 								  x_cachedAnimation.m_period,
+								  x_cachedAnimation.m_callable,
 								  x_cachedAnimation.m_callback,
 								  x_cachedAnimation.m_arg);
 	
 	x_component.m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
-
 	x_component.m_activeInterpolations = true;
-
 	x_component.m_eventQueue->startedAnimation();
 
 	#ifdef A2D_DE__			
@@ -92,7 +90,7 @@ void _fastcall Animator::stop(Component& x_component, Animation x_animation, boo
 		// Execute callback
 		if ((*interpolator)->m_callback)
 		{
-			(*(*interpolator)->m_callback)((*interpolator)->m_arg);
+		//	(*(*interpolator)->m_callback)((*interpolator)->m_arg);
 		}
 	}
 

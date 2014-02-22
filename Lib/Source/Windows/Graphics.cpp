@@ -120,6 +120,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 	QuadData<QuadExpansionVertex, 1> * quadData;
 	QuadExpansionShader * quadExpansionShader = aQuadExpansionShader;
 	QuadFactory * quadFactory = aQuadFactory;
+	Texture * activeTexture, *inActiveTexture;
 
 	if (*xPipeline == NULL)
 	{
@@ -157,23 +158,17 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 	// Find the specific pipelineable
 	drawable = static_cast<Drawable*>(pipelineables[0]);
 	quadData = static_cast<QuadData<QuadExpansionVertex, 1>*>(pipelineables[1]);
+	activeTexture = static_cast<Texture*>(drawable->m_activeTexture);
+	inActiveTexture = static_cast<Texture*>(drawable->m_inActiveTexture);
 
 	// Update the shader matrix
-	quadExpansionShader->setTexture(static_cast<Texture*>(drawable->m_activeTexture));
-
-	//// Check if the texture needs updating
-	//if (drawable->update(x_renderSet.m_backgroundSrc))
-	//{
-	//	// Update the shader resource with the
-	//	// new texture
-	//	quadExpansionShader->setTexture(texture);
-	//}
+	quadExpansionShader->setTexture(activeTexture);
 
 	// Update the buffer iff it is marked
 	// as dirty
 	if (x_renderSet.m_dirty)
 	{
-		quadFactory->updateVertexBuffer(quadData, x_renderSet, static_cast<Texture*>(drawable->m_activeTexture));
+		quadFactory->updateVertexBuffer(quadData, x_renderSet, activeTexture);
 	}
 
 	// Render the quad

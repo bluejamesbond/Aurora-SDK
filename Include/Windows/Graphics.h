@@ -142,8 +142,8 @@ namespace A2D {
 
 			drawable->m_activeTexture = texture;
 			drawable->fireChangeListeners();
-
-			DESTROY(parameter);
+			
+			// DESTROY(parameter);
 		}
 
 		void inline resetDrawable(Drawable& x_drawable)

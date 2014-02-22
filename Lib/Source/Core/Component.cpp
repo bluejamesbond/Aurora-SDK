@@ -5,14 +5,6 @@
 
 using namespace A2D;
 
-A2DANIMATABLEFLOAT1 Component::ANIMATE_OPACITY(&Component::getOpacity, &Component::setOpacity, 0.0f, 1.0f);
-A2DANIMATABLEFLOAT1 Component::ANIMATE_WIDTH(&Component::getWidth, &Component::setWidth, 0.0f, FLT_MAX);
-A2DANIMATABLEFLOAT1 Component::ANIMATE_HEIGHT(&Component::getHeight, &Component::setHeight, 0.0f, FLT_MAX);
-A2DANIMATABLEFLOAT1 Component::ANIMATE_BORDER_RADII_TOP_LEFT(&Component::getBorderRadiiTopLeft, &Component::setBorderRadiiTopLeft, 0.0f, FLT_MAX);
-A2DANIMATABLEFLOAT1 Component::ANIMATE_BORDER_RADII_UNIFIED(&Component::getBorderRadiiUnified, &Component::setBorderRadiiUnified, 0.0f, FLT_MAX);
-A2DANIMATABLEFLOAT1 Component::ANIMATE_BOUNDS_X(&Component::getBoundsX, &Component::setBoundsX, FLT_MIN, FLT_MAX);
-A2DANIMATABLEFLOAT1 Component::ANIMATE_BOUNDS_Y(&Component::getBoundsY, &Component::setBoundsY, FLT_MIN, FLT_MAX);
-
 Component::Component() :
     m_forcedBounds(false),
     m_parent(NULL),
@@ -33,8 +25,9 @@ Component::Component() :
 	m_eventQueue(NULL),
 	m_depth(0),
 	m_scrollTop(0),
+	m_scrolling(false),
 	m_scrollLeft(0),
-	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_CIRC, 0, 0, 200, NULL, NULL) 
+	m_cachedAnimationPositionXY(Animator::COMPONENT_BOUNDS_XY, Easing::OUT_CIRC, 0, 0, 800, NULL, NULL, NULL)
 {
 	m_styleSet.m_visibleRegion = &m_visibleRegion;
 	m_styleSet.m_region = &m_region;
@@ -58,6 +51,7 @@ void Component::interpolate()
 	while (node->value)
 	{
 		A2DINTERPOLATORFLOAT * interpolator = node->value;
+		Callable * callable = interpolator->m_callable;
 		float duration = SFLOAT((currentTime - interpolator->m_startTime) * 1000.0f);
 
 		// Save the next node
@@ -94,13 +88,13 @@ void Component::interpolate()
 			}
 
 			// Execute callback
-			if (interpolator->m_callback)
+			if (callable)
 			{
-				(*(*interpolator->m_callback))(interpolator->m_arg);
+				callable->callback(interpolator->m_arg);
 			}
 			
 			// Remove request
-			stop(&interpolator->m_removeTicket);
+			Animator::stop(*this, &interpolator->m_removeTicket);
 		}
 
 		// OR Update the value
@@ -160,59 +154,6 @@ void Component::interpolate()
 		SYSOUT_F("[Component] [ComponentId: 0x%X] Turning off interpolators.", m_id);
 		#endif // A2D_DE__
 	}
-}
-
-Animation Component::animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg)
-{
-	float start_a = (this->*x_A2DANIMATABLEFLOAT1.m_accessor_a)();
-
-	A2DINTERPOLATORFLOAT * interpolator = 
-		new A2DINTERPOLATORFLOAT(&x_A2DANIMATABLEFLOAT1.m_mutator,
-								  &x_tween,
-								  kerneltimelp__,
-								  start_a,
-								  x_to - start_a,
-								  SFLOAT(x_period),
-								  x_callback,
-								  x_arg);
-
-
-	m_interpolators.push_back(interpolator, &interpolator->m_removeTicket);
-
-	m_activeInterpolations = true;
-
-	m_eventQueue->startedAnimation();
-
-	#ifdef A2D_DE__			
-	SYSOUT_F("[Component] [ComponentId: 0x%X] Adding interpolator.", m_id);
-	#endif // A2D_DE__
-
-	return &interpolator->m_removeTicket;
-}
-
-void Component::stop(Animation x_animation, bool x_arg)
-{
-	// BROKEN - FIXME!!!
-	// NOTE: This is not really used in dev.
-
-	if (x_arg)
-	{
-		// Get the data
-		A2DINTERPOLATORFLOAT ** interpolator = m_interpolators.from_ticket(x_animation);
-	
-		if (!interpolator)
-		{
-			return;
-		}
-
-		// Execute callback
-		if ((*interpolator)->m_callback)
-		{
-			(*(*interpolator)->m_callback)((*interpolator)->m_arg);
-		}
-	}
-
-	m_interpolators.remove_request(x_animation);
 }
 
 Component& Component::getParent()
@@ -367,9 +308,6 @@ void Component::validate()
 			SYSOUT_F("[Component] [ComponentId: 0x%X] Requesting background update.", m_id);
 			#endif // A2D_DE__
 		}
-
-		m_styleSet.m_scrollLeft = m_scrollLeft + m_parent->m_styleSet.m_scrollLeft;
-		m_styleSet.m_scrollTop = m_scrollTop + m_parent->m_styleSet.m_scrollTop;
     }
 
     CascadingLayout::doLayout(*this);
@@ -826,5 +764,59 @@ void Component::setScrollTop(float x_top)
 
 	m_componentTreeValidationRequest = m_validatedContents = false;
 
+	m_styleSet.markRequestRegionAsDirty();
+}
+
+void Component::captureScroll()
+{
+	m_scrolling = true;
+}
+
+void Component::releaseScroll()
+{
+	m_scrolling = false;
+}
+
+void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
+{
+	// FIX-ME
+	if ((m_previousCalculatedRowIndex != m_calculatedRowIndex ||
+		m_previousCalculatedColumnIndex != m_calculatedColumnIndex) && !m_parent->m_scrolling )
+	{
+		m_region.m_width = xWidth;
+		m_region.m_height = xHeight;
+
+		if (m_positionAnimationXY)
+		{
+			Animator::stop(*this, m_positionAnimationXY);
+		}
+
+		m_cachedAnimationPositionXY.toValues(xX, xY);
+
+		m_positionAnimationXY = Animator::animate(*this, m_cachedAnimationPositionXY);
+
+		m_previousCalculatedRowIndex = m_calculatedRowIndex;
+		m_previousCalculatedColumnIndex = m_calculatedColumnIndex;
+	}
+	else
+	{
+		m_region.m_width = xWidth;
+		m_region.m_height = xHeight;
+		m_region.m_x = xX;
+		m_region.m_y = xY;
+
+		m_backgroundRegion.m_width = xWidth;
+		m_backgroundRegion.m_height = xHeight;
+
+		if (m_region.m_height != m_previousDimensions.m_height ||
+			m_region.m_width != m_previousDimensions.m_width)
+		{
+			// FIXME Use SSE2 Acceleration
+			m_previousDimensions = { m_region.m_width, m_region.m_height };
+			m_styleSet.markBackgroundAsDirty();
+		}
+	}
+
+	m_validatedContents = false;
 	m_styleSet.markRequestRegionAsDirty();
 }

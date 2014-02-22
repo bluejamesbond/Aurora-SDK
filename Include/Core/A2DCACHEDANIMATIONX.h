@@ -26,6 +26,7 @@ namespace A2D{
 		A2DANIMATABLEFLOAT1 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
 		TWEEN * m_tween;
+		Callable * m_callable;
 
 		float m_to_a;
 
@@ -36,13 +37,15 @@ namespace A2D{
 		inline A2DCACHEDANIMATION() :
 			m_to_a(0.0f),
 			m_period(0),
-			m_arg(NULL)
+			m_arg(NULL),
+			m_callable(NULL)
 		{
 		}
 
-		inline A2DCACHEDANIMATION(A2DANIMATABLEFLOAT1& x_animatable, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg) :
+		inline A2DCACHEDANIMATION(A2DANIMATABLEFLOAT1& x_animatable, TWEEN& x_tween, float x_to, int x_period, Callable * x_callable, A2DCALLBACKVOID1 * x_callback, void * x_arg) :
 			m_animatable(&x_animatable),
 			m_tween(&x_tween),
+			m_callable(x_callable),
 			m_callback(x_callback),
 			m_to_a(x_to),
 			m_period(SFLOAT(x_period)),
@@ -63,6 +66,7 @@ namespace A2D{
 		A2DANIMATABLEFLOAT2 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
 		TWEEN * m_tween;
+		Callable * m_callable;
 
 		float m_to_a;
 		float m_to_b;
@@ -80,10 +84,11 @@ namespace A2D{
 		}
 
 		inline A2DCACHEDANIMATION2(A2DANIMATABLEFLOAT2& x_animatable, TWEEN& x_tween,
-			float x_to_a, float x_to_b, int x_period,
+			float x_to_a, float x_to_b, int x_period, Callable * x_callable,
 			A2DCALLBACKVOID1 * x_callback, void * x_arg) :
 			m_animatable(&x_animatable),
 			m_tween(&x_tween),
+			m_callable(x_callable),
 			m_callback(x_callback),
 			m_to_a(x_to_a),
 			m_to_b(x_to_b),
@@ -105,6 +110,7 @@ namespace A2D{
 		A2DANIMATABLEFLOAT3 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
 		TWEEN * m_tween;
+		Callable * m_callable;
 
 		float m_to_a;
 		float m_to_b;
@@ -124,10 +130,11 @@ namespace A2D{
 		}
 
 		inline A2DCACHEDANIMATION3(A2DANIMATABLEFLOAT3& x_animatable, TWEEN& x_tween,
-			float x_to_a, float x_to_b, float x_to_c, int x_period,
+			float x_to_a, float x_to_b, float x_to_c, int x_period, Callable * x_callable,
 			A2DCALLBACKVOID1 * x_callback, void * x_arg) :
 			m_animatable(&x_animatable),
 			m_tween(&x_tween),
+			m_callable(x_callable),
 			m_callback(x_callback),
 			m_to_a(x_to_a),
 			m_to_b(x_to_b),
@@ -152,6 +159,7 @@ namespace A2D{
 		A2DANIMATABLEFLOAT4 * m_animatable;
 		A2DCALLBACKVOID1 * m_callback;
 		TWEEN * m_tween;
+		Callable * m_callable;
 
 		float m_to_a;
 		float m_to_b;
@@ -173,10 +181,11 @@ namespace A2D{
 		}
 
 		inline A2DCACHEDANIMATION4(A2DANIMATABLEFLOAT4& x_animatable, TWEEN& x_tween,
-			float x_to_a, float x_to_b, float x_to_c, float x_to_d, int x_period,
+			float x_to_a, float x_to_b, float x_to_c, float x_to_d, int x_period, Callable * x_callable,
 			A2DCALLBACKVOID1 * x_callback, void * x_arg) :
 			m_animatable(&x_animatable),
 			m_tween(&x_tween),
+			m_callable(x_callable),
 			m_callback(x_callback),
 			m_to_a(x_to_a),
 			m_to_b(x_to_b),

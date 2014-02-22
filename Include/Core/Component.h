@@ -107,9 +107,12 @@ namespace A2D {
 		bool						m_activeInterpolations;
 		bool						m_componentTreeValidationRequest;
 		
+		bool						m_scrolling;
 		float						m_scrollTop;
 		float						m_scrollLeft;
 		
+
+
 		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
 
 		Rect                        m_region;
@@ -126,24 +129,8 @@ namespace A2D {
 
     public:
 
-		static A2DANIMATABLEFLOAT1  ANIMATE_OPACITY;
-		static A2DANIMATABLEFLOAT1	ANIMATE_WIDTH;
-		static A2DANIMATABLEFLOAT1	ANIMATE_HEIGHT;
-		static A2DANIMATABLEFLOAT1	ANIMATE_BORDER_RADII_TOP_LEFT;
-		static A2DANIMATABLEFLOAT1	ANIMATE_BORDER_RADII_UNIFIED;
-		static A2DANIMATABLEFLOAT1	ANIMATE_BOUNDS_X;
-		static A2DANIMATABLEFLOAT1	ANIMATE_BOUNDS_Y;
-		
-		Animation					animate(A2DANIMATABLEFLOAT1& x_A2DANIMATABLEFLOAT1, TWEEN& x_tween, float x_to, int x_period, A2DCALLBACKVOID1 * x_callback, void * x_arg);
-		void						stop(Animation x_animation, bool x_callback);
-
-		inline void stop(Animation x_animation)
-		{
-			if (m_interpolators.remove_request(x_animation))
-			{
-				m_eventQueue->finishedAnimation();
-			}
-		}
+		void						captureScroll();
+		void						releaseScroll();
 
 		void						setId(int x_id);
         void                        setDoubleBuffered(bool xDoubleBuffer);
@@ -189,8 +176,8 @@ namespace A2D {
 
 		void						setScroll(float x_left, float x_top);
 		void						setScrollTop(float x_top);
-		inline float				getScrollLeft() { return m_styleSet.m_scrollLeft; };
-		inline float				getScrollTop() { return m_styleSet.m_scrollTop; };
+		inline float				getScrollLeft() { return m_scrollLeft; };
+		inline float				getScrollTop() { return m_scrollTop; };
 
         STATUS                      requestFocus();
         STATUS                      addMouseListener(MouseListener * xListener);
@@ -239,54 +226,8 @@ namespace A2D {
         virtual void                paintComponentBorder();
         virtual Rect*               getEventRegion();
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // INLINE
-    ////////////////////////////////////////////////////////////////////////////////
+		void						setBounds(float xX, float xY, float xWidth, float xHeight);
 
-        inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
-        {
-			if (m_previousCalculatedRowIndex != m_calculatedRowIndex ||
-				m_previousCalculatedColumnIndex != m_calculatedColumnIndex /*FIXME && NOT RESIZING*/)
-			{
-				m_region.m_width = xWidth;
-				m_region.m_height = xHeight;
-				
-				if (m_positionAnimationXY)
-				{
-					Animator::stop(*this, m_positionAnimationXY);
-				}
-
-				m_cachedAnimationPositionXY.toValues(xX, xY);
-
-				m_positionAnimationXY = Animator::animate(*this, m_cachedAnimationPositionXY);
-
-				m_previousCalculatedRowIndex = m_calculatedRowIndex;
-				m_previousCalculatedColumnIndex = m_calculatedColumnIndex;
-			}
-			else
-			{
-				m_region.m_width = xWidth;
-				m_region.m_height = xHeight;
-				m_region.m_x = xX;
-				m_region.m_y = xY;
-
-				m_backgroundRegion.m_width = xWidth;
-				m_backgroundRegion.m_height = xHeight;
-
-				if (m_region.m_height != m_previousDimensions.m_height ||
-					m_region.m_width != m_previousDimensions.m_width)
-				{
-					// FIXME Use SSE2 Acceleration
-					m_previousDimensions.m_width = m_region.m_width;
-					m_previousDimensions.m_height = m_region.m_height;
-
-					m_styleSet.markBackgroundAsDirty();
-				}
-			}
-
-			m_validatedContents = false;
-			m_styleSet.markRequestRegionAsDirty();
-        }
     };
 }
 #endif

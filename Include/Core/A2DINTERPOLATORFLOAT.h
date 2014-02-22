@@ -37,7 +37,9 @@ namespace A2D {
 		A2DANIMMUTATORFLOAT4 * m_interpolatable_d;
 		
 		A2DCALLBACKVOID1 * m_callback;
-		
+		Callable * m_callable;
+
+
 		double m_startTime;
 
 		float m_period; // To reduce conversions during animations
@@ -61,7 +63,8 @@ namespace A2D {
 							  double x_startTime, 
 							  float x_start_a, 
 							  float x_range_a, 
-							  float x_period, 
+							  float x_period,
+							  Callable * x_callable,
 							  A2DCALLBACKVOID1 * x_callback, 
 							  void * x_arg) :
 		m_interpolatable(x_interpolatable),
@@ -71,6 +74,7 @@ namespace A2D {
 		m_range_a(x_range_a),
 		m_period(x_period),
 		m_callback(x_callback),
+		m_callable(x_callable),
 		m_arg(x_arg),
 		m_mode(A2DINTERPOLATORFLOAT::Mode::ONE_PARAMETER)
 		{
@@ -84,6 +88,7 @@ namespace A2D {
 							  float x_start_b,
 							  float x_range_b,
 							  float x_period,
+							  Callable * x_callable,
 							  A2DCALLBACKVOID1 * x_callback,
 							  void * x_arg) :
 		m_interpolatable_b(x_interpolatable),
@@ -95,6 +100,7 @@ namespace A2D {
 		m_range_b(x_range_b),
 		m_period(x_period),
 		m_callback(x_callback),
+		m_callable(x_callable),
 		m_arg(x_arg),
 		m_mode(A2DINTERPOLATORFLOAT::Mode::TWO_PARAMETERS)
 		{
@@ -110,6 +116,7 @@ namespace A2D {
 							  float x_start_c,
 							  float x_range_c,
 							  float x_period,
+							  Callable * x_callable,
 							  A2DCALLBACKVOID1 * x_callback,
 							  void * x_arg) :
 		m_interpolatable_c(x_interpolatable),
@@ -123,6 +130,7 @@ namespace A2D {
 		m_range_c(x_range_c),
 		m_period(x_period),
 		m_callback(x_callback),
+		m_callable(x_callable),
 		m_arg(x_arg),
 		m_mode(A2DINTERPOLATORFLOAT::Mode::THREE_PARAMETERS)
 		{
@@ -141,6 +149,7 @@ namespace A2D {
 							  float x_start_d,
 							  float x_range_d,
 							  float x_period,
+							  Callable * x_callable,
 							  A2DCALLBACKVOID1 * x_callback,
 							  void * x_arg) :
 		m_interpolatable_d(x_interpolatable),
@@ -156,6 +165,7 @@ namespace A2D {
 		m_range_d(x_range_d),
 		m_period(x_period),
 		m_callback(x_callback),
+		m_callable(x_callable),
 		m_arg(x_arg),
 		m_mode(A2DINTERPOLATORFLOAT::Mode::FOUR_PARAMETERS)
 		{
