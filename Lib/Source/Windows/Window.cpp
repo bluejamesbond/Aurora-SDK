@@ -114,7 +114,10 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
             aMouseDown->setLocation(point);
 
-            xEventQueue->processMouseEvent(aMouseDown);
+			if (!aIsResizing)
+			{
+				xEventQueue->processMouseEvent(aMouseDown);
+			}
             return updateOnMouseDown(xHwnd);
 
         case WM_MOUSEMOVE:
@@ -125,16 +128,20 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
             aMouseMove->setLocation(point);
 
-            if (aIsDragged)
-            {
-                aMouseDragged->setLocation(point);
-                xEventQueue->processMouseMotionEvent(aMouseDragged);
-            }
-            else
-            {
-                aMouseMove->setLocation(point);
-                xEventQueue->processMouseMotionEvent(aMouseMove);
-            }
+			if (!aIsResizing)
+			{
+				if (aIsDragged)
+				{
+					aMouseDragged->setLocation(point);
+					xEventQueue->processMouseMotionEvent(aMouseDragged);
+				}
+				else
+				{
+					aMouseMove->setLocation(point);
+					xEventQueue->processMouseMotionEvent(aMouseMove);
+				}
+			}
+
             return updateOnMouseMove(xHwnd);
 
         case WM_LBUTTONUP:
@@ -146,7 +153,11 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
             aMouseUp->setLocation(point);
 
-            xEventQueue->processMouseEvent(aMouseUp);
+			if (!aIsResizing)
+			{
+				xEventQueue->processMouseEvent(aMouseUp);
+			}
+   
             return updateOnMouseUp(xHwnd);
 
         case WM_CLOSE:
