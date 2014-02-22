@@ -781,7 +781,8 @@ void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 {
 	// FIX-ME
 	if ((m_previousCalculatedRowIndex != m_calculatedRowIndex ||
-		m_previousCalculatedColumnIndex != m_calculatedColumnIndex) && !m_parent->m_scrolling )
+		m_previousCalculatedColumnIndex != m_calculatedColumnIndex) && 
+		!m_parent->m_scrolling )
 	{
 		m_region.m_width = xWidth;
 		m_region.m_height = xHeight;
