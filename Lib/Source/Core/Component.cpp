@@ -657,9 +657,9 @@ STATUS Component::addActionListener(ActionListener * xListener)
 
 void Component::setBackgroundImage(wchar_t* x_src)
 { 
-	// m_styleSet.m_drawable.setSource(x_src);
+	m_styleSet.m_drawable.setSource(x_src);
 
-	// m_graphics->bindDrawable(m_styleSet.m_drawable);
+	m_graphics->bindDrawable(m_styleSet.m_drawable);
 
 	m_styleSet.markBackgroundAsDirty();
 }

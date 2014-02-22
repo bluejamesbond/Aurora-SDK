@@ -11,7 +11,6 @@ Texture::Texture(ID3D10Device ** xDevice, LPCWSTR xSrc) :
 	aDevice(xDevice),
 	aResource(NULL)
 {
-	SYSOUT_STR(aSrc);
 }
 
 Texture::~Texture()
