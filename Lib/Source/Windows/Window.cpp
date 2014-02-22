@@ -44,7 +44,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
                 eventHandler(msg, &eventQueue);
             }			
 			
-			if ((currentTime = kerneltimehp__) - lastTime < timeBetweenFrames && !resizing)
+			if ((currentTime = kerneltimehp__) - lastTime < timeBetweenFrames)
 			{
 				continue;
 			}
