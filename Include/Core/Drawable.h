@@ -56,6 +56,8 @@ namespace A2D {
 		Rect							m_rect;
 		void*							m_activeTexture;
 		void*							m_inActiveTexture;
+		byte*							m_data;
+		unsigned int					m_bytes;
 
 	public:
 		

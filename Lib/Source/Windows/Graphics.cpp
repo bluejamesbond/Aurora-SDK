@@ -310,3 +310,86 @@ STATUS Graphics::initialize()
 
 	return STATUS_OK;
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// INLINE
+////////////////////////////////////////////////////////////////////////////////
+
+void Graphics::run(void * x_param, int x_thread)
+{
+	//TextureBindingParameter * parameter = static_cast<TextureBindingParameter*>(x_param);
+	//Drawable * drawable = parameter->m_drawable;
+
+	//HANDLE fileStream = CreateFile(drawable->getSource(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+
+	//if (fileStream == INVALID_HANDLE_VALUE)
+	//{
+	//	CloseHandle(fileStream);
+	//}
+
+	//LARGE_INTEGER fileSize;
+	//GetFileSizeEx(fileStream, &fileSize);
+
+	//UINT bytes = fileSize.LowPart;
+	//byte* data = new byte[bytes];
+
+	//DWORD BytesRead;
+
+	//if (ReadFile(fileStream, data, bytes, &BytesRead, NULL) == NULL)
+	//{
+	//	delete[] data;
+	//}
+
+	//drawable->m_requestUpdate = true;
+	//drawable->m_data = data;
+	//drawable->m_bytes = bytes;
+
+	//CloseHandle(fileStream);
+	//DESTROY(parameter);
+
+	TextureBindingParameter * parameter = static_cast<TextureBindingParameter*>(x_param);
+	Drawable * drawable = parameter->m_drawable;
+
+	Texture * texture = new Texture(aDevice, drawable->getSource());
+	G_SAFELY(texture->initialize());
+
+	drawable->m_activeTexture = texture;
+	drawable->fireChangeListeners();
+
+	DESTROY(parameter);
+}
+
+void Graphics::resetDrawable(Drawable& x_drawable)
+{
+	x_drawable.m_activeTexture = Texture::DEFAULT_TEXTURE;
+}
+
+void Graphics::unbindDrawable(Drawable& x_drawable)
+{
+	Texture * inActiveTexture = static_cast<Texture*>(x_drawable.m_inActiveTexture);
+	Texture * activeTexture = static_cast<Texture*>(x_drawable.m_activeTexture);
+
+	DESTROY(inActiveTexture);
+	DESTROY(activeTexture);
+}
+
+void  Graphics::bindDrawable(Drawable& x_drawable)
+{
+	//Thread * thread = new Thread(this, new TextureBindingParameter(aDevice, &x_drawable));
+	//G_SAFELY(thread->initialize());
+	//thread->start();
+
+	run(new TextureBindingParameter(aDevice, &x_drawable), 0);
+}
+
+void Graphics::setClip(Rect * xClip, float xDepth)
+{
+	aQuadFactory->setConstraints(aClip = xClip, xDepth);
+}
+
+void Graphics::validate()
+{
+	DXUtils::updateBorderMatrix(&m_position_matrix, aBackBufferDims);
+	aQuadExpansionShader->updatePositionMatrix(&m_position_matrix);
+}

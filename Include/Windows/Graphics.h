@@ -123,62 +123,18 @@ namespace A2D {
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 		
 		void							drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet);
-		
+
+
+		void run(void * x_param, int x_thread);
+		void resetDrawable(Drawable& x_drawable);
+		void unbindDrawable(Drawable& x_drawable);
+		void bindDrawable(Drawable& x_drawable);
+		void setClip(Rect * xClip, float xDepth);
+		void validate();
+
 	public:
 
 		virtual STATUS                 initialize();
-
-		////////////////////////////////////////////////////////////////////////////////
-		// INLINE
-		////////////////////////////////////////////////////////////////////////////////
-
-		void inline run(void * x_param, int x_thread)
-		{
-			TextureBindingParameter * parameter = static_cast<TextureBindingParameter*>(x_param);
-			Drawable * drawable = parameter->m_drawable;
-			
-			Texture * texture = new Texture(aDevice, drawable->getSource());
-			G_SAFELY(texture->initialize());
-
-			drawable->m_activeTexture = texture;
-			drawable->fireChangeListeners();
-			
-			// DESTROY(parameter);
-		}
-
-		void inline resetDrawable(Drawable& x_drawable)
-		{
-			x_drawable.m_activeTexture = Texture::DEFAULT_TEXTURE;
-		}
-
-		void inline unbindDrawable(Drawable& x_drawable)
-		{
-			Texture * inActiveTexture = static_cast<Texture*>(x_drawable.m_inActiveTexture);
-			Texture * activeTexture = static_cast<Texture*>(x_drawable.m_activeTexture);
-
-			DESTROY(inActiveTexture);
-			DESTROY(activeTexture);
-		}
-
-		void inline	bindDrawable(Drawable& x_drawable)
-		{
-			// Thread * thread = new Thread(this, new TextureBindingParameter(aDevice, &x_drawable));
-			// G_SAFELY(thread->initialize());
-			// thread->start();
-
-			run(new TextureBindingParameter(aDevice, &x_drawable), 0);
-		}
-
-		inline void Graphics::setClip(Rect * xClip, float xDepth)
-		{
-			aQuadFactory->setConstraints(aClip = xClip, xDepth);
-		}
-
-		void inline	validate()
-		{
-			DXUtils::updateBorderMatrix(&m_position_matrix, aBackBufferDims);
-			aQuadExpansionShader->updatePositionMatrix(&m_position_matrix);
-		}
 	};
 }
 
