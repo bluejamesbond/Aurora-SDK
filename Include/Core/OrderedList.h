@@ -680,6 +680,16 @@ namespace A2D{
 			return NULL;
 		}
 
+		bool exists(void ** x)
+		{
+			if (*x == NULL)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		bool remove_request(void ** x)
 		{
 			if (*x == NULL)

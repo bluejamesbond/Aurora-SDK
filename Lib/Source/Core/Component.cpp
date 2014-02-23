@@ -782,7 +782,7 @@ void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 	// FIX-ME
 	if ((m_previousCalculatedRowIndex != m_calculatedRowIndex ||
 		m_previousCalculatedColumnIndex != m_calculatedColumnIndex) && 
-		!m_parent->m_scrolling )
+		!m_parent->m_scrolling)
 	{
 		m_region.m_width = xWidth;
 		m_region.m_height = xHeight;
@@ -799,7 +799,7 @@ void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 		m_previousCalculatedRowIndex = m_calculatedRowIndex;
 		m_previousCalculatedColumnIndex = m_calculatedColumnIndex;
 	}
-	else
+	else /*if (!Animator::isAnimating(*this, m_positionAnimationXY))*/
 	{
 		m_region.m_width = xWidth;
 		m_region.m_height = xHeight;

@@ -97,6 +97,11 @@ void _fastcall Animator::stop(Component& x_component, Animation x_animation, boo
 	x_component.m_interpolators.remove_request(x_animation);
 }
 
+bool Animator::isAnimating(Component& x_component, HANIMATION x_animation)
+{
+	return x_animation ? x_component.m_interpolators.exists(x_animation) : false;
+}
+
 void _fastcall Animator::stop(Component& x_component, HANIMATION x_animation)
 {
 	if (x_component.m_interpolators.remove_request(x_animation))

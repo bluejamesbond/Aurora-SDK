@@ -43,6 +43,7 @@ namespace A2D{
 
 		static A2DANIMATABLEFLOAT2				COMPONENT_BOUNDS_XY;
 
+		static bool								isAnimating(Component& x_component, HANIMATION x_animation);
 		static HANIMATION _fastcall				animate(Component& x_component, A2DCACHEDANIMATION& x_cachedAnimation);
 		static HANIMATION _fastcall				animate(Component& x_component, A2DCACHEDANIMATION2& x_cachedAnimation);
 		static void	_fastcall					stop(Component& x_component, Animation x_animation, bool x_callback);
