@@ -5,6 +5,7 @@ matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
+float4 pixelColor;
 
 
 ///////////////////
@@ -47,6 +48,17 @@ struct TexturePixel
 	float2 tex : TEXCOORD0;
 };
 
+struct FontPixel
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+	float4 color : COLOR;
+};
+
+struct FontColor
+{
+	float4 color: COLOR;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
@@ -95,9 +107,9 @@ float4 ColoredTexturePixelShader(ColoredTexturePixel input) : SV_Target
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-TexturePixel TextureVertexShader(TextureVertex input)
+FontPixel TextureVertexShader(TextureVertex input)
 {
-	TexturePixel output;
+	FontPixel output;
 
 	// Force w-buffer to be 1.0
 	input.position.w = 1.0f;
@@ -110,6 +122,8 @@ TexturePixel TextureVertexShader(TextureVertex input)
 	output.position = input.position;
 
 	output.tex = input.tex;
+	output.color = float4(0.9, 0.1, 1.0, 1.0);; // Use black as default
+
 
 	return output;
 }
@@ -204,7 +218,7 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 
 }
 
-float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
+float4 TextureShadowedPixelShader(FontPixel input, FontColor fontColor) : SV_TARGET
 {
 	// Process distance field texture for base font.
 	float4 base, baseColor;
@@ -214,7 +228,8 @@ float4 TextureShadowedPixelShader(TexturePixel input) : SV_TARGET
 
 	base = shaderTexture.Sample(SampleType, input.tex);
 	alphaBaseDistance = base.a;
-	baseColor = float4(0.2, 0.1, 1.0, 1.0); // base color should be blue, for testing purposes
+	//baseColor = float4(0.2, 0.1, 1.0, 1.0); // base color should be blue, for testing purposes
+	baseColor = fontColor.color;
 
 	// Threshold.
 	if (base.a > 0.5)
@@ -293,12 +308,6 @@ technique10 TextureTechnique
 		SetGeometryShader(NULL);
 	}
 
-	//pass pass1
-	//{
-	//	SetVertexShader(CompileShader(vs_4_0, TextureVertexShader()));
-	//	SetPixelShader(CompileShader(ps_4_0, TextureShadowPixelShader()));
-	//	SetGeometryShader(NULL);
-	//}
 }
 
 
