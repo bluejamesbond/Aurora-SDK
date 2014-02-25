@@ -39,7 +39,7 @@ namespace A2D {
 
 	public:
 
-		Thread(Runnable * xRunnable);
+		Thread(Runnable * xRunnable, void * x_param);
 		virtual ~Thread();
 
 	private:
@@ -60,11 +60,7 @@ namespace A2D {
 		virtual int	id();
 		virtual void waitAll();
 		virtual int getCurrentThreadId();
-
-	protected:
-
-		static AbstractThread * aClassInstance;
-
+		
 	private:
 
 		static DWORD WINAPI initThread(void * xParam);

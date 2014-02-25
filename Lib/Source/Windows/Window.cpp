@@ -13,159 +13,197 @@ Window::Window(AbstractFrame * xFrame, HINSTANCE xHInstance) : AbstractWindow(xF
 
 void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue)
 {
-	MSG msg;
-	bool& resizing = aIsResizing;
-	bool& visible = aVisible;
+    MSG msg;
+    bool& resizing = aIsResizing;
+    bool& visible = aVisible;
+	int& animating = xEventQueue->m_animating;
 
-	int defaultAllotedAnimationFrames = 10;
-	int currentAnimationFrame = 0;
-	int counter = 0;
+    int defaultAllotedAnimationFrames = 10;
+    int currentAnimationFrame = 0;
+    int counter = 0;
 
-	AbstractFrame& frame = *aFrame;
-	AbstractEventQueue& eventQueue = *xEventQueue;
+    AbstractFrame& frame = *aFrame;
+    AbstractEventQueue& eventQueue = *xEventQueue;
 
-	while (true)
+	double lastTime = kerneltimehp__;
+	double timeBetweenFrames = 1.0 / SDOUBLE(A2D_FPS);
+	double& currentTime = nanotime__;
+	
+    while (true)
 	{
-		//if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		//{
-		//	eventHandler(msg, aEventQueue);
-		//}
-
-		if (visible)
+		if (eventQueue.dispatchNextEvent())
 		{
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				TranslateMessage(&msg);
-				eventHandler(msg, &eventQueue);
-			}
-
-			// Forced updating of rendering for now
-			if (eventQueue.dispatchNextEvent())
-			{
-				currentAnimationFrame = defaultAllotedAnimationFrames;
-			}
-			else if (currentAnimationFrame > 0)
-			{
-				currentAnimationFrame--;
-				frame.update();
-			}
-			else if (resizing)
-			{
-				frame.update();
-			}
-			else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			{
-				TranslateMessage(&msg);
-				eventHandler(msg, &eventQueue);
-			}
-
+			currentAnimationFrame = defaultAllotedAnimationFrames;
 		}
-	}
-}
 
-LRESULT Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
-{
-	if (xMsg.message == WM_CREATE)
-	{
-		return STATUS_OK;
-	}
-	else
-	{
-		HWND xHwnd = xMsg.hwnd;
-		switch (xMsg.message)
-		{
-			POINT p;
-		case WM_LBUTTONDOWN:
-
-			SetForegroundWindow(xHwnd);
-
-			// Firing window event. Opposite window isnt supported yet!!
-			// WM_ACTIVATE doesnt work in eventHandler.
-			if (aCurrentState != WindowEvent::WINDOW_ACTIVATED)
+        if (visible)
+        {
+            if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+            {
+                TranslateMessage(&msg);
+                eventHandler(msg, &eventQueue);
+            }			
+			
+			if ((currentTime = kerneltimehp__) - lastTime < timeBetweenFrames)
 			{
-				xEventQueue->processWindowEvent(aWindowActivated);
-			}
-
-			// Fire MouseEvent
-			GetCursorPos(&p);
-			ScreenToClient(aChildHWnd, &p);
-			aMouseDown->setLocation(p);
-
-			xEventQueue->processMouseEvent(aMouseDown);
-			return updateOnMouseDown(xHwnd);
-
-		case WM_MOUSEMOVE:
-
-			//// Fire MouseEvent
-			GetCursorPos(&p);
-			ScreenToClient(aChildHWnd, &p);
-			aMouseMove->setLocation(p);
-
-			if (aIsDragged)
-			{
-				aMouseDragged->setLocation(p);
-				xEventQueue->processMouseMotionEvent(aMouseDragged);
+				continue;
 			}
 			else
 			{
-				aMouseMove->setLocation(p);
-				xEventQueue->processMouseMotionEvent(aMouseMove);
+				lastTime = currentTime;
+
+				if (animating)
+				{
+					frame.update();
+				}
+				else if (resizing)
+				{
+					frame.update();
+				}
+				else if (currentAnimationFrame > 0)
+				{
+					currentAnimationFrame--;
+					frame.update();
+				}
+				else
+				{
+					// Do caching here!
+
+					if (GetMessage(&msg, NULL, 0x114, UINT_MAX) > 0)
+					{
+						TranslateMessage(&msg);
+						eventHandler(msg, &eventQueue);
+					}
+				}
 			}
-			return updateOnMouseMove(xHwnd);
-
-		case WM_LBUTTONUP:
-
-			// Fire MouseEvent
-			GetCursorPos(&p);
-			ScreenToClient(aChildHWnd, &p);
-			aMouseUp->setLocation(p);
-
-			xEventQueue->processMouseEvent(aMouseUp);
-			return updateOnMouseUp(xHwnd);
-
-		case WM_CLOSE:
-
-			// Fire WindowEvent
-			xEventQueue->processWindowEvent(aWindowClosed);
-
-			DestroyWindow(xHwnd);
-			return STATUS_OK;
-
-		case WM_SIZE:
-
-			onSize(xHwnd);
-			return STATUS_OK;
-
-		case WM_ERASEBKGND:
-			// OS must not erase background. DirectX and
-			// OpenGL will automatically do its parent
-			// (aChildHWnd) window.
-			return STATUS_OK;
-
-		default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
 		}
+		else
+		{
+			Sleep(500);
+		}
+    }
+}
 
-	}
+LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue)
+{
+    if (xMsg.message == WM_CREATE)
+    {
+        return STATUS_OK;
+    }
+    else
+    {
+        HWND xHwnd = xMsg.hwnd;
+        Point point;
+
+        switch (xMsg.message)
+        {
+        case WM_LBUTTONDOWN:
+
+            SetForegroundWindow(xHwnd);
+
+            // Firing window event. Opposite window isnt supported yet!!
+            // WM_ACTIVATE doesnt work in eventHandler.
+            if (aCurrentState != WindowEvent::WINDOW_ACTIVATED)
+            {
+                xEventQueue->processWindowEvent(aWindowActivated);
+            }
+
+            // Fire MouseEvent
+			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
+
+            aMouseDown->setLocation(point);
+
+			if (!aIsResizing)
+			{
+				xEventQueue->processMouseEvent(aMouseDown);
+			}
+            return updateOnMouseDown(xHwnd);
+
+        case WM_MOUSEMOVE:
+
+            // Fire MouseEvent
+			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
+
+            aMouseMove->setLocation(point);
+
+			if (!aIsResizing)
+			{
+				if (aIsDragged)
+				{
+					aMouseDragged->setLocation(point);
+					xEventQueue->processMouseMotionEvent(aMouseDragged);
+				}
+				else
+				{
+					aMouseMove->setLocation(point);
+					xEventQueue->processMouseMotionEvent(aMouseMove);
+				}
+			}
+
+            return updateOnMouseMove(xHwnd);
+
+        case WM_LBUTTONUP:
+
+            // Fire MouseEvent
+
+			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
+			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
+
+            aMouseUp->setLocation(point);
+
+			if (!aIsResizing)
+			{
+				xEventQueue->processMouseEvent(aMouseUp);
+			}
+   
+            return updateOnMouseUp(xHwnd);
+
+        case WM_CLOSE:
+
+            // Fire WindowEvent
+            xEventQueue->processWindowEvent(aWindowClosed);
+
+            DestroyWindow(xHwnd);
+            return STATUS_OK;
+
+        case WM_SIZE:
+
+            onSize(xHwnd);
+            return STATUS_OK;
+
+        case WM_ERASEBKGND:
+            // OS must not erase background. DirectX and
+            // OpenGL will automatically do its parent
+            // (aChildHWnd) window.
+            return STATUS_OK;
+
+        default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
+        }
+
+    }
 }
 
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
-	Window * aWindow;
+    Window * aWindow;
+	
 
-	if (xMessage == WM_CREATE)
-	{
-		CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
-		aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
-		SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
-		return STATUS_OK;
-	}
-	else
-	{
-		switch (xMessage)
-		{
+    if (xMessage == WM_CREATE)
+    {
+        CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
+        aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
+        SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
+        return STATUS_OK;
+    }
+    else
+    {
+        switch (xMessage)
+        {
 
 		case WM_ACTIVATE:
-
+		{
 			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 
 			if (LOWORD(xWParam) == WA_INACTIVE)
@@ -185,1166 +223,1213 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 				}
 			}
 			return STATUS_OK;
-
-		case WM_SIZE:
-		{
-			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-			return aWindow->onSize(xHwnd);
 		}
+        case WM_SIZE:
+        {
+            aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+            return aWindow->onSize(xHwnd);
+        }
 
 
-		case WM_ERASEBKGND:
-		{
-			// OS must not erase background. DirectX and
-			// OpenGL will automatically do its parent
-			// (aChildHWnd) window.
-			return STATUS_OK;
-		}
-		default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
-		}
-	}
+        case WM_ERASEBKGND:
+        {
+            // OS must not erase background. DirectX and
+            // OpenGL will automatically do its parent
+            // (aChildHWnd) window.
+            return STATUS_OK;
+        }
+        default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
+        }
+    }
 }
 
 STATUS Window::onSize(HWND hwnd)
 {
-	if (hwnd == aChildHWnd)
-		aFrame->invalidate();
+    if (hwnd == aChildHWnd)
+        aFrame->invalidate();
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 HWND Window::createCompatibleWindow(bool isParent)
 {
-	HWND            hWnd, hwndParent;
-	int             left, top, width, height;
-	DWORD           lStyle, lExStyle;
-	LPCWSTR titleName;
+    HWND            hWnd, hwndParent;
+    int             left, top, width, height;
+    DWORD           lStyle, lExStyle;
+    LPCWSTR         titleName;
 
-	left = INT(isParent ? aRect.aX - aOptShadowRadius : aRect.aX + aOptBorderWidth);
-	top = INT(isParent ? aRect.aY - aOptShadowRadius : aRect.aY + aOptBorderWidth);
-	width = INT(isParent ? aRect.aWidth + aOptShadowRadius * 2 : aRect.aWidth - aOptBorderWidth * 2);
-	height = INT(isParent ? aRect.aHeight + aOptShadowRadius * 2 : aRect.aHeight - aOptBorderWidth * 2);
-	lStyle = INT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
-	lExStyle = INT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
-	hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
-	titleName = aName;
+    left = SINT(isParent ? aRect.m_x - aOptShadowRadius : aRect.m_x + aOptBorderWidth);
+    top = SINT(isParent ? aRect.m_y - aOptShadowRadius : aRect.m_y + aOptBorderWidth);
+    width = SINT(isParent ? aRect.m_width + aOptShadowRadius * 2 : aRect.m_width - aOptBorderWidth * 2);
+    height = SINT(isParent ? aRect.m_height + aOptShadowRadius * 2 : aRect.m_height - aOptBorderWidth * 2);
+    lStyle = SINT(isParent ? WS_POPUP | WS_OVERLAPPED | WS_MINIMIZEBOX : WS_POPUP | WS_CHILD);
+	lExStyle = SINT(isParent ? WS_EX_LAYERED | WS_EX_APPWINDOW : 0);
+    hwndParent = isParent ? HWND_DESKTOP : aParentHWnd;
+    titleName = aName;
 
-	hWnd = CreateWindowEx(lExStyle, aClassName->c_str(), titleName, lStyle, left, top, width, height, hwndParent, NULL, aHInstance, this);
+    hWnd = CreateWindowEx(lExStyle, aClassName->c_str(), titleName, lStyle, left, top, width, height, hwndParent, NULL, aHInstance, this);
+	
+    if (aChildHWnd && aParentHWnd)
+    {
+        // Force the child on top of parent!
+        SetWindowPos(aChildHWnd, aParentHWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    }
 
-	aStyle = WS_EX_APPWINDOW;
-
-	if (aChildHWnd && aParentHWnd)
-	{
-		// Force the child on top of parent!
-		SetWindowPos(aChildHWnd, aParentHWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-	}
-
-	return hWnd;
+    return hWnd;
 }
 
 STATUS Window::updateOnMouseDown(HWND xHwnd)
 {
-	aIsDragged = true;
+    aIsDragged = true;
 
-	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
-	{
-		return 0;
-	}
+    if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
+    {
+        return 0;
+    }
 
-	SetCapture(xHwnd);
+    SetCapture(xHwnd);
 
-	bool isParent = aParentHWnd == xHwnd;
-	float left, right, bottom, top;
-	int x, y;
-	POINT p;
+    bool isParent = aParentHWnd == xHwnd;
+    float left, right, bottom, top;
+    int x, y;
+    POINT p;
 
-	GetCursorPos(&p);
+    GetCursorPos(&p);
 
-	x = p.x;
-	y = p.y;
+    x = p.x;
+    y = p.y;
 
 
-	left = (isParent ? aRelativeX + aPadding : aRealX);
-	top = (isParent ? aRelativeY + aPadding : aRealY);
-	bottom = top + aRect.aHeight;
-	right = left + aRect.aWidth;
+    left = (isParent ? aRelativeX + aPadding : aRealX);
+    top = (isParent ? aRelativeY + aPadding : aRealY);
+    bottom = top + aRect.m_height;
+    right = left + aRect.m_width;
 
-	if ((x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE ||
-		x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE ||
-		y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE ||
-		y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE) &&
-		!aIsResizing)
-	{
-		aIsResizing = xHwnd == aHResizeWnd ? true : false;
-	}
-	else if (y < top + _WINDOW_MOVE_BAR_DISTANCE)
-	{
-		aIsMoving = xHwnd == aHMoveWnd ? true : false;
-	}
+    if ((x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
+        x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
+        y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE ||
+        y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE) &&
+        !aIsResizing)
+    {
+        aIsResizing = xHwnd == aHResizeWnd ? true : false;
+    }
+    else if (y < top + A2D_WINDOW_MOVE_BAR_DISTANCE)
+    {
+        aIsMoving = xHwnd == aHMoveWnd ? true : false;
+    }
 
-	SetCursor(aCurrentCursor);
+    SetCursor(aCurrentCursor);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
+
+HCURSOR Window::CURSOR_IDC_SIZENWSE = LoadCursor(NULL, IDC_SIZENWSE);
+HCURSOR Window::CURSOR_IDC_SIZENESW = LoadCursor(NULL, IDC_SIZENESW);
+HCURSOR Window::CURSOR_IDC_SIZENS = LoadCursor(NULL, IDC_SIZENS);
+HCURSOR Window::CURSOR_IDC_SIZEWE = LoadCursor(NULL, IDC_SIZEWE);
+HCURSOR Window::CURSOR_IDC_ARROW = LoadCursor(NULL, IDC_ARROW);
 
 STATUS Window::updateOnMouseMove(HWND xHwnd)
 {
-	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
-	{
-		if (xHwnd == aParentHWnd)
-		{
-			ReleaseCapture();
-		}
-		return 0;
-	}
+    if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
+    {
+        if (xHwnd == aParentHWnd)
+        {
+            ReleaseCapture();
+        }
+        return 0;
+    }
 
-	bool isParent = aParentHWnd == xHwnd;
-	float left, right, bottom, top;
-	int x, y;
-	POINT p;
-	Rect& rect = aRect;
+    bool isParent = aParentHWnd == xHwnd;
+    float left, right, bottom, top;
+    int x, y;
+    POINT p;
+    Rect& rect = aRect;
 
-	GetCursorPos(&p);
+    GetCursorPos(&p);
 
-	x = p.x;
-	y = p.y;
+    x = p.x;
+    y = p.y;
 
-	left = (isParent ? aRelativeX + aPadding : aRealX);
-	top = (isParent ? aRelativeY + aPadding : aRealY);
-	bottom = top + aRect.aHeight;
-	right = left + aRect.aWidth;
+    left = (isParent ? aRelativeX + aPadding : aRealX);
+    top = (isParent ? aRelativeY + aPadding : aRealY);
+    bottom = top + aRect.m_height;
+    right = left + aRect.m_width;
 
-	if (!aIsResizing && !aIsMoving)
-	{
-		//bottom left corner
-		if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
-			aWinMoveRes = true;
-		}
-		//bottom right corner
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
-			aWinMoveRes = false;
-		}
-		//top left corner
-		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENWSE);
-			aWinMoveRes = true;
-		}
-		//top right corner
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENESW);
-			aWinMoveRes = false;
-		}
-		//left border
-		else if (x >= left && x < left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
-			aWinMoveRes = true;
-		}
-		//right border
-		else if (x < right && x >= right - _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y >= top + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			y < bottom - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZEWE);
-			aWinMoveRes = false;
-		}
-		//bottom border
-		else if (y < bottom && y >= bottom - _WINDOW_RESIZE_EDGE_DISTANCE  &&
-			x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
-			aWinMoveRes = false;
-		}
-		//top border
-		else if (y >= top && y < top + _WINDOW_RESIZE_EDGE_DISTANCE  &&
-			x >= left + _WINDOW_RESIZE_EDGE_DISTANCE &&
-			x < right - _WINDOW_RESIZE_EDGE_DISTANCE)
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_SIZENS);
-			aWinMoveRes = true;
-		}
-		//default
-		else
-		{
-			aCurrentCursor = LoadCursor(NULL, IDC_ARROW);
-			// Handle the window movement here.
-			aWinMoveRes = false;
-		}
+    if (!aIsResizing && !aIsMoving)
+    {
+        //bottom left corner
+        if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZENESW;
+			aCursor = Cursor::RESIZE_NORTH_EAST_SOUTH_WEST;
+            aWinMoveRes = true;
+        }
+        //bottom right corner
+        else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZENWSE;
+			aCursor = Cursor::RESIZE_NORTH_WEST_SOUTH_EAST;
+            aWinMoveRes = false;
+        }
+        //top left corner
+        else if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZENWSE;
+			aCursor = Cursor::RESIZE_NORTH_WEST_SOUTH_EAST;
+            aWinMoveRes = true;
+        }
+        //top right corner
+        else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZENESW;
+			aCursor = Cursor::RESIZE_NORTH_EAST_SOUTH_WEST;
+            aWinMoveRes = false;
+        }
+        //left border
+        else if (x >= left && x < left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZEWE;
+			aCursor = Cursor::RESIZE_SIZE_WEST_EAST;
+            aWinMoveRes = true;
+        }
+        //right border
+        else if (x < right && x >= right - A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y >= top + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            y < bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZEWE;
+			aCursor = Cursor::RESIZE_SIZE_WEST_EAST;
+            aWinMoveRes = false;
+        }
+        //bottom border
+        else if (y < bottom && y >= bottom - A2D_WINDOW_RESIZE_EDGE_DISTANCE  &&
+            x >= left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            x < right - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZENS;
+			aCursor = Cursor::RESIZE_NORTH_SOUTH;
+            aWinMoveRes = false;
+        }
+        //top border
+        else if (y >= top && y < top + A2D_WINDOW_RESIZE_EDGE_DISTANCE  &&
+            x >= left + A2D_WINDOW_RESIZE_EDGE_DISTANCE &&
+            x < right - A2D_WINDOW_RESIZE_EDGE_DISTANCE)
+        {
+			aCurrentCursor = Window::CURSOR_IDC_SIZENS;
+			aCursor = Cursor::RESIZE_NORTH_SOUTH;
+            aWinMoveRes = true;
+        }
+        //default
+        else
+        {
+			aCurrentCursor = Window::CURSOR_IDC_ARROW;
+			aCursor = Cursor::NORMAL;
+            // Handle the window movement here.
+            aWinMoveRes = false;
+        }
 
-		SetCursor(aCurrentCursor);
-	}
+        SetCursor(aCurrentCursor);
+    }
 
-	if (!aIsDragged)
-	{
-		GetCursorPos(&aLastDraggedPoint);
-		ScreenToClient(xHwnd, &aLastDraggedPoint);
-	}
+    if (!aIsDragged)
+    {
+        GetCursorPos(&aLastDraggedPoint);
+        ScreenToClient(xHwnd, &aLastDraggedPoint);
+    }
 
-	if (aIsDragged && (aIsResizing || aIsMoving))
-	{
-		float deltaY, deltaX;
-		HCURSOR currentCursor;
+    if (aIsDragged && (aIsResizing || aIsMoving))
+    {
+        float deltm_y, deltm_x;
 
-		GetCursorPos(&p);
-		ScreenToClient(xHwnd, &p);
+        GetCursorPos(&p);
+        ScreenToClient(xHwnd, &p);
 
-		aOffsetY = deltaY = FLOAT(aLastDraggedPoint.y - p.y);
-		aOffsetX = deltaX = FLOAT(aLastDraggedPoint.x - p.x);
-		currentCursor = GetCursor();
-		
-		if (aOffsetY < -2000.0f)
-		{
-			aOffsetY = 0.0f;
-			deltaY = 0.0f;
-		}
-		
-		memcpy(&aLastRect, &aRect, sizeof(Rect));
+        aOffsetY = deltm_y = SFLOAT(aLastDraggedPoint.y - p.y);
+        aOffsetX = deltm_x = SFLOAT(aLastDraggedPoint.x - p.x);
+        
+        if (aOffsetY < -2000.0f)
+        {
+            aOffsetY = 0.0f;
+            deltm_y = 0.0f;
+        }
+        
+        memcpy(&aLastRect, &aRect, sizeof(Rect));
 
-		// Process resizing.
-		if (aIsResizing)
-		{
-			// Resize up and down.
-			if (currentCursor == LoadCursor(NULL, IDC_SIZENS))
+        // Process resizing.
+        if (aIsResizing)
+        {
+			switch (aCursor)
 			{
-				if (aWinMoveRes)
+				case Cursor::RESIZE_NORTH_SOUTH:
 				{
-					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-						rect.aHeight + deltaY < aMaxDims.aHeight)
+					if (aWinMoveRes)
 					{
-						rect.aY -= (deltaY);
-						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
-						aFramebufferInterpolation = true;
+						if (rect.m_height + deltm_y >= aMinDims.m_height &&
+							rect.m_height + deltm_y < aMaxDims.m_height)
+						{
+							rect.m_y -= (deltm_y);
+							rect.m_height += (deltm_y);
+							p.y += SLONG(deltm_y);
+							aFramebufferInterpolation = true;
+						}
 					}
+					else
+					{
+						rect.m_height -= (rect.m_height - deltm_y >= aMinDims.m_height) && (rect.m_height - deltm_y < aMaxDims.m_height) ? SFLOAT(deltm_y) : 0;
+					}
+
+					break;
 				}
-				else
+				case Cursor::RESIZE_SIZE_WEST_EAST:
 				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
+					// Resize left and right.
+					if (aWinMoveRes)
+					{
+						if (rect.m_width + deltm_x >= aMinDims.m_width &&
+							rect.m_width + deltm_x < aMaxDims.m_width)
+						{
+							rect.m_x -= (deltm_x);
+							rect.m_width += (deltm_x);
+							p.x += SLONG(deltm_x);
+							aFramebufferInterpolation = true;
+						}
+					}
+					else
+					{
+						rect.m_width -= (rect.m_width - deltm_x >= aMinDims.m_width) && (rect.m_width - deltm_x < aMaxDims.m_width) ? SFLOAT(deltm_x) : 0;
+					}
+
+					break;
+				}
+				case Cursor::RESIZE_NORTH_EAST_SOUTH_WEST:
+				{
+					// Resize upper right and lower left corners.
+					if (aWinMoveRes)
+					{
+						rect.m_height -= (rect.m_height - deltm_y >= aMinDims.m_height) && (rect.m_height - deltm_y < aMaxDims.m_height) ? SFLOAT(deltm_y) : 0;
+						if (rect.m_width + deltm_x >= aMinDims.m_width &&
+							rect.m_width + deltm_x < aMaxDims.m_width)
+						{
+							rect.m_x -= (deltm_x);
+							rect.m_width += (deltm_x);
+							p.x += SLONG(deltm_x);
+							aFramebufferInterpolation = true;
+
+						}
+					}
+					else
+					{
+						rect.m_width -= (rect.m_width - deltm_x >= aMinDims.m_width) && (rect.m_width - deltm_x < aMaxDims.m_width) ? SFLOAT(deltm_x) : 0;
+						if (rect.m_height + deltm_y >= aMinDims.m_height &&
+							rect.m_height + deltm_y < aMaxDims.m_height)
+						{
+							rect.m_y -= (deltm_y);
+							rect.m_height += (deltm_y);
+							p.y += SLONG(deltm_y);
+							aFramebufferInterpolation = true;
+						}
+					}
+					break;
+				}
+				case Cursor::RESIZE_NORTH_WEST_SOUTH_EAST:
+				{	// Resize upper left and lower right corners.
+					if (aWinMoveRes)
+					{
+						if (rect.m_width + deltm_x >= aMinDims.m_width &&
+							rect.m_width + deltm_x < aMaxDims.m_width)
+						{
+							rect.m_x -= (deltm_x);
+							rect.m_width += (deltm_x);
+							p.x += SLONG(deltm_x);
+							aFramebufferInterpolation = true;
+						}
+						if (rect.m_height + deltm_y >= aMinDims.m_height &&
+							rect.m_height + deltm_y < aMaxDims.m_height)
+						{
+							rect.m_y -= (deltm_y);
+							rect.m_height += (deltm_y);
+							p.y += SLONG(deltm_y);
+							aFramebufferInterpolation = true;
+						}
+
+					}
+					else
+					{
+						rect.m_width -= (rect.m_width - deltm_x >= aMinDims.m_width) && (rect.m_width - deltm_x < aMaxDims.m_width) ? SFLOAT(deltm_x) : 0;
+						rect.m_height -= (rect.m_height - deltm_y >= aMinDims.m_height) && (rect.m_height - deltm_y < aMaxDims.m_height) ? SFLOAT(deltm_y) : 0;
+					}
+
+					break;
 				}
 			}
-			// Resize left and right.
-			else if (currentCursor == LoadCursor(NULL, IDC_SIZEWE))
-			{
-				if (aWinMoveRes)
-				{
-					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-						rect.aWidth + deltaX < aMaxDims.aWidth)
-					{
-						rect.aX -= (deltaX);
-						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
-						aFramebufferInterpolation = true;
-					}
-				}
-				else
-				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
-				}
 
-			}
-			// Resize upper right and lower left corners.
-			else if (currentCursor == LoadCursor(NULL, IDC_SIZENESW))
-			{
-				if (aWinMoveRes)
-				{
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
-					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-						rect.aWidth + deltaX < aMaxDims.aWidth)
-					{
-						rect.aX -= (deltaX);
-						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
-						aFramebufferInterpolation = true;
+            // DEFER REGION //
 
-					}
-				}
-				else
-				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
-					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-						rect.aHeight + deltaY < aMaxDims.aHeight)
-					{
-						rect.aY -= (deltaY);
-						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
-						aFramebufferInterpolation = true;
-					}
-				}
-			}
-			// Resize upper left and lower right corners.
-			else if (currentCursor == LoadCursor(NULL, IDC_SIZENWSE))
-			{
-				if (aWinMoveRes)
-				{
-					if (rect.aWidth + deltaX >= aMinDims.aWidth &&
-						rect.aWidth + deltaX < aMaxDims.aWidth)
-					{
-						rect.aX -= (deltaX);
-						rect.aWidth += (deltaX);
-						p.x += static_cast<long>(deltaX);
-						aFramebufferInterpolation = true;
-					}
-					if (rect.aHeight + deltaY >= aMinDims.aHeight &&
-						rect.aHeight + deltaY < aMaxDims.aHeight)
-					{
-						rect.aY -= (deltaY);
-						rect.aHeight += (deltaY);
-						p.y += static_cast<long>(deltaY);
-						aFramebufferInterpolation = true;
-					}
+            render();
 
-				}
-				else
-				{
-					rect.aWidth -= (rect.aWidth - deltaX >= aMinDims.aWidth) && (rect.aWidth - deltaX < aMaxDims.aWidth) ? FLOAT(deltaX) : 0;
-					rect.aHeight -= (rect.aHeight - deltaY >= aMinDims.aHeight) && (rect.aHeight - deltaY < aMaxDims.aHeight) ? FLOAT(deltaY) : 0;
-				}
-			}
+            // DEFER REGION //
 
-		}
-		// Process window movement.
-		else if (aIsMoving)
-		{
-			rect.aX -= deltaX;
-			rect.aY -= deltaY;
-			p.x += static_cast<long>(deltaX);
-			p.y += static_cast<long>(deltaY);
-		}
+        }
+        // Process window movement.
+        else if (aIsMoving)
+        {
+            rect.m_x -= deltm_x;
+            rect.m_y -= deltm_y;
+            p.x +=SLONG(deltm_x);
+            p.y +=SLONG(deltm_y); 
 
-		// DEFER REGION //
+            // DEFER REGION //
 
-		render();
+            updateLocation();
 
-		// DEFER REGION //
+            // DEFER REGION //
+        }
 
-		aLastDraggedPoint = p;
-	}
-	return STATUS_OK;
+        aLastDraggedPoint = p;
+    }
+    return STATUS_OK;
 }
 
 STATUS Window::updateOnMouseUp(HWND xHwnd)
 {
-	aIsDragged = false;
-	if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
-	{
-		return 0;
-	}
-	ReleaseCapture();
+    // FIXME Why is this here? Why would Dragged be set to false
+    // and the rest of the variables be true?
+    aIsDragged = false;
 
-	aIsResizing = false;
-	aIsMoving = false;
-	
-	aFramebufferInterpolation = false;
+    // FIXME Why is this here? Doesn't this mean that the remaining
+    // things inside the code is not done?
+    if (aHResizeWnd != xHwnd && aHMoveWnd != xHwnd)
+    {
+        return 0;
+    }
 
-	render();
+    // Release accurate mouse capture
+    ReleaseCapture();
+    
+    // Give one more render request to ensure the 
+    // child comes into view again.
+    if (aIsResizing && aFramebufferInterpolation)
+    {
+        // Mark as disabled so that the child is forced
+        // back onto the screen.
+        aFramebufferInterpolation = false;
+        render();
+    }
 
-	return STATUS_OK;
+    // Disable everything
+    aIsResizing = false;
+    aIsMoving = false;
+
+    // Disable StretchBilt
+    aFramebufferInterpolation = false;
+
+    return STATUS_OK;
 }
 
 int Window::aClassInstances = 0;
 
 ATOM Window::registerClass()
 {
-	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
-	wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wcex.lpfnWndProc = Window::wndProc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = aHInstance;
-	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = CreateSolidBrush(RGB(aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue));;
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = aClassName->c_str();
-	wcex.hIconSm = LoadIcon(aHInstance, IDI_APPLICATION);
+    WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
+    wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wcex.lpfnWndProc = Window::wndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = aHInstance;
+    wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground = CreateSolidBrush(RGB(aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue));;
+    wcex.lpszMenuName = NULL;
+    wcex.lpszClassName = aClassName->c_str();
+    wcex.hIconSm = LoadIcon(aHInstance, IDI_APPLICATION);
 
-	return RegisterClassEx(&wcex);
+    return RegisterClassEx(&wcex);
 }
 
 void Window::updateBackgroundCache()
 {
-	destroyBackgroundResources();
-	createBackgroundResources();
+    destroyBackgroundResources();
+    createBackgroundResources();
 
-	HBRUSH brush = CreateSolidBrush(RGB(aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue));
-	SetClassLongPtr(aParentHWnd, GCLP_HBRBACKGROUND, (LONG)brush);
+    HBRUSH brush = CreateSolidBrush(RGB(aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue));
+    SetClassLongPtr(aParentHWnd, GCLP_HBRBACKGROUND, (LONG)brush);
 }
 
 void Window::updateShadowCache()
 {
-	destroyShadowResources();
-	createShadowResources();
+    destroyShadowResources();
+    createShadowResources();
 }
 
 void Window::destroyShadowResources()
 {
-	if (aTopLeftShadow)
-	{
-		delete aTopLeftShadow;
-		aTopLeftShadow = 0;
-	}
+    if (aTopLeftShadow)
+    {
+        delete aTopLeftShadow;
+        aTopLeftShadow = 0;
+    }
 
-	if (aBottomLeftShadow)
-	{
-		delete aBottomLeftShadow;
-		aBottomLeftShadow = 0;
-	}
+    if (aBottomLeftShadow)
+    {
+        delete aBottomLeftShadow;
+        aBottomLeftShadow = 0;
+    }
 
-	if (aTopRightShadow)
-	{
-		delete aTopRightShadow;
-		aTopRightShadow = 0;
-	}
+    if (aTopRightShadow)
+    {
+        delete aTopRightShadow;
+        aTopRightShadow = 0;
+    }
 
-	if (aBottomRightShadow)
-	{
-		delete aBottomRightShadow;
-		aBottomRightShadow = 0;
-	}
+    if (aBottomRightShadow)
+    {
+        delete aBottomRightShadow;
+        aBottomRightShadow = 0;
+    }
 
-	/*****************************************/
-	if (aTopShadow)
-	{
-		delete aTopShadow;
-		aTopShadow = 0;
-	}
+    /*****************************************/
+    if (aTopShadow)
+    {
+        delete aTopShadow;
+        aTopShadow = 0;
+    }
 
-	if (aLeftShadow)
-	{
-		delete aLeftShadow;
-		aLeftShadow = 0;
-	}
-	if (aRightShadow)
-	{
-		delete aRightShadow;
-		aRightShadow = 0;
-	}
+    if (aLeftShadow)
+    {
+        delete aLeftShadow;
+        aLeftShadow = 0;
+    }
+    if (aRightShadow)
+    {
+        delete aRightShadow;
+        aRightShadow = 0;
+    }
 
-	if (aBottomShadow)
-	{
-		delete aBottomShadow;
-		aBottomShadow = 0;
-	}
+    if (aBottomShadow)
+    {
+        delete aBottomShadow;
+        aBottomShadow = 0;
+    }
 
-	/*****************************************/
+    /*****************************************/
 
-	if (aTopShadowBrush)
-	{
-		delete aTopShadowBrush;
-		aTopShadowBrush = 0;
-	}
-	if (aLeftShadowBrush)
-	{
-		delete aLeftShadowBrush;
-		aLeftShadowBrush = 0;
-	}
+    if (aTopShadowBrush)
+    {
+        delete aTopShadowBrush;
+        aTopShadowBrush = 0;
+    }
+    if (aLeftShadowBrush)
+    {
+        delete aLeftShadowBrush;
+        aLeftShadowBrush = 0;
+    }
 
-	if (aRightShadowBrush)
-	{
-		delete aRightShadowBrush;
-		aRightShadowBrush = 0;
-	}
+    if (aRightShadowBrush)
+    {
+        delete aRightShadowBrush;
+        aRightShadowBrush = 0;
+    }
 
-	if (aBottomShadowBrush)
-	{
-		delete aBottomShadowBrush;
-		aBottomShadowBrush = 0;
-	}
+    if (aBottomShadowBrush)
+    {
+        delete aBottomShadowBrush;
+        aBottomShadowBrush = 0;
+    }
 }
 
 void Window::spliceToNinePatch(Gdiplus::Image * src, Gdiplus::Image * dest, float srcX, float srcY, float srcWidth, float srcHeight)
 {
-	Gdiplus::Graphics graphics(dest);
-
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
-	graphics.DrawImage(src, FLT_ZERO, FLT_ZERO, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
+    Gdiplus::Graphics graphics(dest);
+    
+    graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel);
+    graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
+    graphics.DrawImage(src, 0.0f, 0.0f, srcX, srcY, srcWidth, srcHeight, Gdiplus::UnitPixel); // Render twice to increase opacity
 }
 
 float* Window::getGaussianKernel(int xRadius)
 {
-	if (xRadius < 1)
-	{
-		return NULL;
-	}
+    if (xRadius < 1)
+    {
+        return NULL;
+    }
 
-	int dataLength = xRadius * 2 + 1;
+    int dataLength = xRadius * 2 + 1;
 
-	float * data = new float[dataLength];
+    float * data = new float[dataLength];
 
-	float sigma = xRadius / 3.0f;
-	float twoSigmaSquare = 2.0f * sigma * sigma;
-	float sigmaRoot = (float)sqrt(twoSigmaSquare * M_PI);
-	float total = 0.0f;
+    float sigma = xRadius / 3.0f;
+    float twoSigmaSquare = 2.0f * sigma * sigma;
+    float sigmaRoot = (float)sqrt(twoSigmaSquare * M_PI);
+    float total = 0.0f;
 
-	for (int i = -xRadius; i <= xRadius; i++)
-	{
-		float distance = (float)(i * i);
-		int index = i + xRadius;
-		data[index] = (float)exp(-distance / twoSigmaSquare) / sigmaRoot;
-		total += data[index];
-	}
+    for (int i = -xRadius; i <= xRadius; i++)
+    {
+        float distance = (float)(i * i);
+        int index = i + xRadius;
+        data[index] = (float)exp(-distance / twoSigmaSquare) / sigmaRoot;
+        total += data[index];
+    }
 
-	for (int i = 0; i < dataLength; i++)
-	{
-		data[i] /= total;
-	}
+    for (int i = 0; i < dataLength; i++)
+    {
+        data[i] /= total;
+    }
 
-	return data;
+    return data;
 }
 
 Gdiplus::Bitmap * Window::applyGaussianBlur(Gdiplus::Bitmap * src, int radius)
 {
-	// NOTE: There could be memory leaks if the Gdiplus::BitmapData is NULL
-	// PLEASE FIX!
+    // NOTE: There could be memory leaks if the Gdiplus::BitmapData is NULL
+    // PLEASE FIX!
 
-	float * kernel;
-	Gdiplus::Bitmap * blurred, *rotated;
-	Gdiplus::BitmapData * rotatedData, *srcData, *blurredData;
+    float * kernel;
+    Gdiplus::Bitmap * blurred, *rotated;
+    Gdiplus::BitmapData * rotatedData, *srcData, *blurredData;
 
-	kernel = getGaussianKernel(radius);
+    kernel = getGaussianKernel(radius);
 
-	blurred = new Gdiplus::Bitmap(src->GetWidth(), src->GetHeight());
-	rotated = new Gdiplus::Bitmap(src->GetHeight(), src->GetWidth());
+    blurred = new Gdiplus::Bitmap(src->GetWidth(), src->GetHeight());
+    rotated = new Gdiplus::Bitmap(src->GetHeight(), src->GetWidth());
 
-	// horizontal pass 0
-	srcData = getLockedBitmapData(src);
-	if (!srcData) return NULL;
+    // horizontal pass 0
+    srcData = getLockedBitmapData(src);
+    if (!srcData) return NULL;
 
-	blurredData = getLockedBitmapData(blurred);
-	if (!blurredData) return NULL;
+    blurredData = getLockedBitmapData(blurred);
+    if (!blurredData) return NULL;
 
-	applyHorizontalblur(srcData, blurredData, kernel, radius);
+    applyHorizontalblur(srcData, blurredData, kernel, radius);
 
-	src->UnlockBits(srcData);
+    src->UnlockBits(srcData);
 
-	blurred->UnlockBits(blurredData);
-	blurred->RotateFlip(Gdiplus::Rotate90FlipNone);
+    blurred->UnlockBits(blurredData);
+    blurred->RotateFlip(Gdiplus::Rotate90FlipNone);
 
-	delete srcData;
-	delete blurredData;
+    delete srcData;
+    delete blurredData;
 
-	blurredData = getLockedBitmapData(blurred);
-	if (!blurredData) return NULL;
+    blurredData = getLockedBitmapData(blurred);
+    if (!blurredData) return NULL;
 
-	rotatedData = getLockedBitmapData(rotated);
-	if (!rotatedData) return NULL;
+    rotatedData = getLockedBitmapData(rotated);
+    if (!rotatedData) return NULL;
 
-	// horizontal pass 1
-	applyHorizontalblur(blurredData, rotatedData, kernel, radius);
+    // horizontal pass 1
+    applyHorizontalblur(blurredData, rotatedData, kernel, radius);
 
-	blurred->UnlockBits(blurredData);
-	rotated->UnlockBits(rotatedData);
+    blurred->UnlockBits(blurredData);
+    rotated->UnlockBits(rotatedData);
 
-	delete rotatedData;
-	delete blurredData;
+    delete rotatedData;
+    delete blurredData;
 
-	delete blurred;
-	delete kernel;
+    delete blurred;
+    delete kernel;
 
-	return rotated;
+    return rotated;
 }
 
 void  Window::applyHorizontalblur(Gdiplus::BitmapData * srcPixels, Gdiplus::BitmapData * dstPixels, float * kernel, int radius)
 {
-	int ca = 0, cr = 0, cg = 0, cb = 0;
-	float a = 0, r = 0, g = 0, b = 0;
+    int ca = 0, cr = 0, cg = 0, cb = 0;
+    float a = 0, r = 0, g = 0, b = 0;
 
-	int width = srcPixels->Width;
-	int height = srcPixels->Height;
+    int width = srcPixels->Width;
+    int height = srcPixels->Height;
 
-	for (int y = 0; y < height; y++)
-	{
-		byte* pixelSrcRow = (byte *)srcPixels->Scan0 + (y * srcPixels->Stride);
-		byte* pixelDstRow = (byte *)dstPixels->Scan0 + (y * dstPixels->Stride);
+    for (int y = 0; y < height; y++)
+    {
+        byte* pixelSrcRow = (byte *)srcPixels->Scan0 + (y * srcPixels->Stride);
+        byte* pixelDstRow = (byte *)dstPixels->Scan0 + (y * dstPixels->Stride);
 
-		for (int x = 0; x < width; x++)
-		{
-			a = r = g = b = 0.0f;
+        for (int x = 0; x < width; x++)
+        {
+            a = r = g = b = 0.0f;
 
-			for (int i = -radius; i <= radius; i++)
-			{
-				int subOffset = x + i;
+            for (int i = -radius; i <= radius; i++)
+            {
+                int subOffset = x + i;
 
-				if (subOffset < 0 || subOffset >= width)
-				{
-					subOffset = (x + width) % width;
-				}
+                if (subOffset < 0 || subOffset >= width)
+                {
+                    subOffset = (x + width) % width;
+                }
 
-				float blurFactor = kernel[radius + i];
+                float blurFactor = kernel[radius + i];
 
-				int position = subOffset;
+                int position = subOffset;
 
-				a += blurFactor * (float)pixelSrcRow[position * 4 + 3];
-				r += blurFactor * (float)pixelSrcRow[position * 4 + 2];
-				g += blurFactor * (float)pixelSrcRow[position * 4 + 1];
-				b += blurFactor * (float)pixelSrcRow[position * 4];
-			}
+                a += blurFactor * (float)pixelSrcRow[position * 4 + 3];
+                r += blurFactor * (float)pixelSrcRow[position * 4 + 2];
+                g += blurFactor * (float)pixelSrcRow[position * 4 + 1];
+                b += blurFactor * (float)pixelSrcRow[position * 4];
+            }
 
-			ca = INT(a + 0.5f);
-			cr = INT(r + 0.5f);
-			cg = INT(g + 0.5f);
-			cb = INT(b + 0.5f);
+            ca = SINT(a + 0.5f);
+            cr = SINT(r + 0.5f);
+            cg = SINT(g + 0.5f);
+            cb = SINT(b + 0.5f);
 
-			ca = ca > 255 ? 255 : ca;
-			cr = cr > 255 ? 255 : cr;
-			cg = cg > 255 ? 255 : cg;
-			cb = ca > 255 ? 255 : cb;
+            ca = ca > 255 ? 255 : ca;
+            cr = cr > 255 ? 255 : cr;
+            cg = cg > 255 ? 255 : cg;
+            cb = ca > 255 ? 255 : cb;
 
-			pixelDstRow[x * 4 + 3] = ca;
-			pixelDstRow[x * 4 + 2] = cr;
-			pixelDstRow[x * 4 + 1] = cg;
-			pixelDstRow[x * 4] = cb;
-		}
-	}
+            pixelDstRow[x * 4 + 3] = ca;
+            pixelDstRow[x * 4 + 2] = cr;
+            pixelDstRow[x * 4 + 1] = cg;
+            pixelDstRow[x * 4] = cb;
+        }
+    }
 }
 
 Gdiplus::BitmapData * Window::getLockedBitmapData(Gdiplus::Bitmap * src)
 {
-	int srcWidth = src->GetWidth();
-	int srcHeight = src->GetHeight();
+    int srcWidth = src->GetWidth();
+    int srcHeight = src->GetHeight();
 
-	Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData();
+    Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData();
 
-	Gdiplus::Status ret = src->LockBits(new Gdiplus::Rect(0, 0, srcWidth, srcHeight),
-		Gdiplus::ImageLockMode::ImageLockModeRead | Gdiplus::ImageLockMode::ImageLockModeWrite,
-		src->GetPixelFormat(),
-		bitmapData);
+    Gdiplus::Status ret = src->LockBits(new Gdiplus::Rect(0, 0, srcWidth, srcHeight),
+        Gdiplus::ImageLockMode::ImageLockModeRead | Gdiplus::ImageLockMode::ImageLockModeWrite,
+        src->GetPixelFormat(),
+        bitmapData);
 
-	if (ret) return NULL;
+    if (ret) return NULL;
 
-	return bitmapData;
+    return bitmapData;
 }
 
 STATUS Window::createShadowResources()
 {
-	Gdiplus::Bitmap * solid, *blurred;
-	Gdiplus::Graphics * graphics;
-	Gdiplus::SolidBrush blackBrush(*aShadowColor);
+    Gdiplus::Bitmap * solid, *blurred;
+    Gdiplus::Graphics * graphics;
+    Gdiplus::SolidBrush blackBrush(*aShadowColor);
 
-	float radius = aOptShadowRadius;
-	float radiusSafety = radius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
-	float realDim = radius * 3;
-	float relativeDim = realDim + radius * 2;
+    float radius = aOptShadowRadius;
+    float radiusSafety = radius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO;
+    float realDim = radius * 3;
+    float relativeDim = realDim + radius * 2;
 
-	int radiusAsInt = INT(radius);
-	int radiusSafetyAsInt = INT(radiusSafety);
-	int relativeDimAsInt = INT(relativeDim);
+    int radiusAsInt = SINT(radius);
+    int radiusSafetyAsInt = SINT(radiusSafety);
+    int relativeDimAsInt = SINT(relativeDim);
 
-	aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aTopRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
-	aBottomRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt);
+    aTopLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
+    aBottomLeftShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
+    aTopRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
+    aBottomRightShadow = new Gdiplus::Bitmap(radiusSafetyAsInt, radiusSafetyAsInt, PixelFormat32bppPARGB);
 
-	aTopShadow = new Gdiplus::Bitmap(1, radiusAsInt);
-	aLeftShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
-	aRightShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
-	aBottomShadow = new Gdiplus::Bitmap(1, radiusAsInt);
+    aTopShadow = new Gdiplus::Bitmap(1, radiusAsInt);
+    aLeftShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
+    aRightShadow = new Gdiplus::Bitmap(radiusAsInt, 1);
+    aBottomShadow = new Gdiplus::Bitmap(1, radiusAsInt);
 
-	solid = new Gdiplus::Bitmap(relativeDimAsInt, relativeDimAsInt);
-	graphics = new Gdiplus::Graphics(solid);
+    solid = new Gdiplus::Bitmap(relativeDimAsInt, relativeDimAsInt);
+    graphics = new Gdiplus::Graphics(solid);
 
-	// Draw base shape
+    // Draw base shape
 
-	graphics->FillRectangle(&blackBrush, radius, radius, realDim, realDim);
+    graphics->FillRectangle(&blackBrush, radius, radius, realDim, realDim);
 
-	// Create box shadow
+    // Create box shadow
 
-	blurred = applyGaussianBlur(solid, radiusAsInt);
+    blurred = applyGaussianBlur(solid, radiusAsInt);
 
-	// Cache as 9-patch
+    // Cache as 9-patch
 
-	spliceToNinePatch(blurred, aTopLeftShadow, FLT_ZERO, FLT_ZERO, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomLeftShadow, FLT_ZERO, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aBottomRightShadow, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety);
-	spliceToNinePatch(blurred, aTopRightShadow, relativeDim - radiusSafety, FLT_ZERO, radiusSafety, radiusSafety);
+    spliceToNinePatch(blurred, aTopLeftShadow, 0.0f, 0.0f, radiusSafety, radiusSafety);
+    spliceToNinePatch(blurred, aBottomLeftShadow, 0.0f, relativeDim - radiusSafety, radiusSafety, radiusSafety);
+    spliceToNinePatch(blurred, aBottomRightShadow, relativeDim - radiusSafety, relativeDim - radiusSafety, radiusSafety, radiusSafety);
+    spliceToNinePatch(blurred, aTopRightShadow, relativeDim - radiusSafety, 0.0f, radiusSafety, radiusSafety);
 
-	spliceToNinePatch(blurred, aTopShadow, radiusSafety, FLT_ZERO, FLT_ONE, radius);
-	spliceToNinePatch(blurred, aLeftShadow, FLT_ZERO, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, FLT_ONE);
-	spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, FLT_ONE, radius);
+    spliceToNinePatch(blurred, aTopShadow, radiusSafety, 0.0f, 1.0f, radius);
+    spliceToNinePatch(blurred, aLeftShadow, 0.0f, radiusSafety, radius, 1.0f);
+    spliceToNinePatch(blurred, aRightShadow, relativeDim - radius, radiusSafety, radius, 1.0f);
+    spliceToNinePatch(blurred, aBottomShadow, radiusSafety, relativeDim - radius, 1.0f, radius);
 
-	aTopShadowBrush = new Gdiplus::TextureBrush(aTopShadow);
-	aLeftShadowBrush = new Gdiplus::TextureBrush(aLeftShadow);
-	aRightShadowBrush = new Gdiplus::TextureBrush(aRightShadow);
-	aBottomShadowBrush = new Gdiplus::TextureBrush(aBottomShadow);
+    aTopShadowBrush = new Gdiplus::TextureBrush(aTopShadow);
+    aLeftShadowBrush = new Gdiplus::TextureBrush(aLeftShadow);
+    aRightShadowBrush = new Gdiplus::TextureBrush(aRightShadow);
+    aBottomShadowBrush = new Gdiplus::TextureBrush(aBottomShadow);
 
-	// update values
-	aPadding = radius;
-	aShadowPadding = radiusSafety;
+    // update values
+    aPadding = radius;
+    aShadowPadding = radiusSafety;
 
-	delete graphics;
-	delete blurred;
-	delete solid;
+    delete graphics;
+    delete blurred;
+    delete solid;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 STATUS Window::createBackgroundResources()
 {
-	aBackground = new Gdiplus::Bitmap(1, 1);
+    aBackground = new Gdiplus::Bitmap(1, 1);
 
-	Gdiplus::Graphics graphics(aBackground);
-	Gdiplus::SolidBrush blackBrush(*aBackgroundColor);
+    Gdiplus::Graphics graphics(aBackground);
+    Gdiplus::SolidBrush blackBrush(*aBackgroundColor);
 
-	graphics.FillRectangle(&blackBrush, 0, 0, 1, 1);
+    graphics.FillRectangle(&blackBrush, 0, 0, 1, 1);
 
-	aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
+    aBackgroundBrush = new Gdiplus::TextureBrush(aBackground);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 void Window::destroyBackgroundResources()
 {
-	if (aBackground)
-	{
-		delete aBackground;
-		aBackground = 0;
-	}
+    if (aBackground)
+    {
+        delete aBackground;
+        aBackground = 0;
+    }
 
-	if (aBackgroundBrush)
-	{
-		delete aBackgroundBrush;
-		aBackgroundBrush = 0;
-	}
+    if (aBackgroundBrush)
+    {
+        delete aBackgroundBrush;
+        aBackgroundBrush = 0;
+    }
 }
 
 STATUS Window::createResources()
 {
-	SAFELY(createColorResources());
-	SAFELY(createBackgroundResources());
-	SAFELY(createShadowResources());
+    SAFELY(createColorResources());
+    SAFELY(createBackgroundResources());
+    SAFELY(createShadowResources());
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 void Window::destroyResources()
 {
-	destroyShadowResources();
-	destroyBackgroundResources();
-	destroyColorResources();
+    destroyShadowResources();
+    destroyBackgroundResources();
+    destroyColorResources();
 }
 
 void Window::paintComponentBorder(Gdiplus::Graphics& graphics)
 {
-	float padding = aPadding;
-	float optBorderWidth = aOptBorderWidth;
-	float realWidth = aRealWidth;
-	float realHeight = aRealHeight;
+    float padding = aPadding;
+    float optBorderWidth = aOptBorderWidth;
+    float realWidth = aRealWidth;
+    float realHeight = aRealHeight;
 
-	Gdiplus::Color& borderColor = *aBorderColor;
+    Gdiplus::Color& borderColor = *aBorderColor;
+    Gdiplus::Pen borderPen(borderColor, optBorderWidth);
 
-	if (optBorderWidth > 0)
-	{
-		Gdiplus::Pen borderPen(borderColor, optBorderWidth);
-
-		graphics.DrawRectangle(&borderPen, padding + optBorderWidth / 2, padding + optBorderWidth / 2, aRealWidth + optBorderWidth, realHeight + optBorderWidth);
-
-		DeleteObject(&borderPen);
-	}
+    graphics.DrawRectangle(&borderPen, padding + optBorderWidth / 2, padding + optBorderWidth / 2, aRealWidth + optBorderWidth, realHeight + optBorderWidth);
 }
 
 void Window::paintComponent(Gdiplus::Graphics& graphics)
 {
-	float padding = aPadding;
-	float optBorderWidth = aOptBorderWidth;
-	float shadowPadding = aShadowPadding;
-	float relativeWidth = aRelativeWidth;
-	float relativeHeight = aRelativeHeight;
-	float realWidth = aRealWidth;
-	float realHeight = aRealHeight;
+    float padding = aPadding;
+    float optBorderWidth = aOptBorderWidth;
+    float shadowPadding = aShadowPadding;
+    float relativeWidth = aRelativeWidth;
+    float relativeHeight = aRelativeHeight;
+    float realWidth = aRealWidth;
+    float realHeight = aRealHeight;
 
-	Gdiplus::TextureBrush * topShadowBrush = aTopShadowBrush;
-	Gdiplus::TextureBrush * leftShadowBrush = aLeftShadowBrush;
-	Gdiplus::TextureBrush * rightShadowBrush = aRightShadowBrush;
-	Gdiplus::TextureBrush * bottomShadowBrush = aBottomShadowBrush;
-	Gdiplus::TextureBrush * backgroundBrush = aBackgroundBrush;
-
-	Gdiplus::Image * topLeftShadow = aTopLeftShadow;
-	Gdiplus::Image * bottomLeftShadow = aBottomLeftShadow;
-	Gdiplus::Image * topRightShadow = aTopRightShadow;
-	Gdiplus::Image * bottomRightShadow = aBottomRightShadow;
-
+    Gdiplus::TextureBrush * topShadowBrush = aTopShadowBrush;
+    Gdiplus::TextureBrush * leftShadowBrush = aLeftShadowBrush;
+    Gdiplus::TextureBrush * rightShadowBrush = aRightShadowBrush;
+    Gdiplus::TextureBrush * bottomShadowBrush = aBottomShadowBrush;
+    Gdiplus::TextureBrush * backgroundBrush = aBackgroundBrush;
+	
 	topShadowBrush->ResetTransform();
+    topShadowBrush->TranslateTransform(shadowPadding, 0.0f);
+    graphics.FillRectangle(topShadowBrush, shadowPadding, 0.0f, relativeWidth - shadowPadding * 2, padding);
+
 	leftShadowBrush->ResetTransform();
+    leftShadowBrush->TranslateTransform(0.0f, shadowPadding);
+    graphics.FillRectangle(leftShadowBrush, 0.0f, shadowPadding, padding, relativeHeight - shadowPadding * 2);
+
 	rightShadowBrush->ResetTransform();
+    rightShadowBrush->TranslateTransform(relativeWidth - padding, shadowPadding);
+    graphics.FillRectangle(rightShadowBrush, relativeWidth - padding, shadowPadding, padding, relativeHeight - shadowPadding * 2);
+
 	bottomShadowBrush->ResetTransform();
+    bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
+    graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
 
-	topShadowBrush->TranslateTransform(shadowPadding, FLT_ZERO);
-	graphics.FillRectangle(topShadowBrush, shadowPadding, FLT_ZERO, relativeWidth - shadowPadding * 2, padding);
+	graphics.DrawImage(aTopLeftShadow, 0.0f, 0.0f);
+	graphics.DrawImage(aBottomLeftShadow, 0.0f, relativeHeight - shadowPadding);
+	graphics.DrawImage(aTopRightShadow, relativeWidth - shadowPadding, 0.0f);
+	graphics.DrawImage(aBottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding);
 
-	leftShadowBrush->TranslateTransform(FLT_ZERO, shadowPadding);
-	graphics.FillRectangle(leftShadowBrush, FLT_ZERO, shadowPadding, padding, relativeHeight - shadowPadding * 2);
-
-	rightShadowBrush->TranslateTransform(relativeWidth - padding, shadowPadding);
-	graphics.FillRectangle(rightShadowBrush, relativeWidth - padding, shadowPadding, padding, relativeHeight - shadowPadding * 2);
-
-	bottomShadowBrush->TranslateTransform(shadowPadding, relativeHeight - padding);
-	graphics.FillRectangle(bottomShadowBrush, shadowPadding, relativeHeight - padding, relativeWidth - shadowPadding * 2, padding);
-
-	graphics.DrawImage(topLeftShadow, FLT_ZERO, FLT_ZERO, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomLeftShadow, FLT_ZERO, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
-	graphics.DrawImage(topRightShadow, relativeWidth - shadowPadding, FLT_ZERO, shadowPadding, shadowPadding);
-	graphics.DrawImage(bottomRightShadow, relativeWidth - shadowPadding, relativeHeight - shadowPadding, shadowPadding, shadowPadding);
-
-	graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
+    // ## THIS IS A VERY SLOW PROCESS
+    //graphics.FillRectangle(backgroundBrush, padding, padding, realWidth + optBorderWidth, realHeight + optBorderWidth);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // ABSTRACTWINDOW
 ////////////////////////////////////////////////////////////////////////////////
 
-void Window::setName(LPCWSTR xName)
+void Window::setName(wchar_t * xName)
 {
-	aName = xName;
+    aName = xName;
 
-	SetWindowText(aChildHWnd, aName);
-	SetWindowText(aParentHWnd, aName);
+    SetWindowText(aChildHWnd, aName);
+    SetWindowText(aParentHWnd, aName);
 }
 
 void Window::setUndecorated(bool xUndecorated)
 {
-	// we cannot just use WS_POPUP style
-	// WS_THICKFRAME: without this the window cannot be resized and so aero snap, de-maximizing and minimizing won't work
-	// WS_SYSMENU: enables the context menu with the move, close, maximize, minize... commands (shift + right-click on the task bar item)
-	// HOWEVER, this also enables the menu with the maximize buttons in the title bar, which will exist inside your client area and are clickable. 
-	// WS_CAPTION: enables aero minimize animation/transition
-	// WS_MAXIMIZEBOX, WS_MINIMIZEBOX: enable minimize/maximize
+    // we cannot just use WS_POPUP style
+    // WS_THICKFRAME: without this the window cannot be resized and so aero snap, de-maximizing and minimizing won't work
+    // WS_SYSMENU: enables the context menu with the move, close, maximize, minize... commands (shift + right-click on the task bar item)
+    // HOWEVER, this also enables the menu with the maximize buttons in the title bar, which will exist inside your client area and are clickable. 
+    // WS_CAPTION: enables aero minimize animation/transition
+    // WS_MAXIMIZEBOX, WS_MINIMIZEBOX: enable minimize/maximize
 
-	aUndecorated = xUndecorated;
+    aUndecorated = xUndecorated;
 
-	// Window has not been set up, return
-	if (!aParentHWnd)   return;
+    // Window has not been set up, return
+    if (!aParentHWnd)   return;
 
-	LONG lStyle, lExStyle;
+    LONG lStyle, lExStyle;
 
-	lStyle = GetWindowLongPtr(aParentHWnd, GWL_STYLE);
-	lExStyle = GetWindowLongPtr(aParentHWnd, GWL_EXSTYLE);
+    lStyle = GetWindowLongPtr(aParentHWnd, GWL_STYLE);
+    lExStyle = GetWindowLongPtr(aParentHWnd, GWL_EXSTYLE);
 
-	lStyle &= aUndecorated ? ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU) : (WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
-	lStyle |= aUndecorated ? (WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP) : 0;
-	lExStyle |= aUndecorated ? (WS_EX_LAYERED | WS_EX_APPWINDOW) : WS_EX_LAYERED;
+    lStyle &= aUndecorated ? ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU) : (WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
+    lStyle |= aUndecorated ? (WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP) : 0;
+    lExStyle |= aUndecorated ? (WS_EX_LAYERED | WS_EX_APPWINDOW) : WS_EX_LAYERED;
 
-	SetWindowLongPtr(aParentHWnd, GWL_STYLE, lStyle);
-	SetWindowLongPtr(aParentHWnd, GWL_EXSTYLE, lExStyle);
+    SetWindowLongPtr(aParentHWnd, GWL_STYLE, lStyle);
+    SetWindowLongPtr(aParentHWnd, GWL_EXSTYLE, lExStyle);
 
-	SetWindowPos(aParentHWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
+    SetWindowPos(aParentHWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
 void Window::setDefaultCloseOperation(int xDefaultCloseOperation)
 {
-	aDefaultCloseOperation = xDefaultCloseOperation;
+    aDefaultCloseOperation = xDefaultCloseOperation;
 }
 
 void Window::setLocationRelativeTo(AbstractWindow * xRelativeWindow)
 {
-	aRelativeWindow = xRelativeWindow;
+    aRelativeWindow = xRelativeWindow;
 
-	if (aRelativeWindow == NULL)
-	{
-		aRect.aX = (GetSystemMetrics(SM_CXSCREEN) - aRect.aWidth) / 2;
-		aRect.aY = (GetSystemMetrics(SM_CYSCREEN) - aRect.aHeight) / 2;
-	}
+    if (aRelativeWindow == NULL)
+    {
+        aRect.m_x = (GetSystemMetrics(SM_CXSCREEN) - aRect.m_width) / 2;
+        aRect.m_y = (GetSystemMetrics(SM_CYSCREEN) - aRect.m_height) / 2;
+    }
 }
 
 void Window::setVisible(bool xVisible)
 {
-	aVisible = xVisible;
+    aVisible = xVisible;
 
-	if (aVisible)
-	{
-		update();
+    if (aVisible)
+    {
+        update();
 
-		ShowWindow(aChildHWnd, SW_SHOWNORMAL);
-		ShowWindow(aParentHWnd, SW_SHOWNORMAL);
-		// Fire WindowEvent
-		Toolkit::getSystemEventQueue(aFrame->id())->processWindowEvent(aWindowOpened);
-	}
-	else
-	{
-		ShowWindow(aChildHWnd, SW_HIDE);
-		ShowWindow(aParentHWnd, SW_HIDE);
-	}
+        ShowWindow(aChildHWnd, SW_SHOWNORMAL);
+        ShowWindow(aParentHWnd, SW_SHOWNORMAL);
+        // Fire WindowEvent
+        Toolkit::getSystemEventQueue(aFrame->id())->processWindowEvent(aWindowOpened);
+    }
+    else
+    {
+        ShowWindow(aChildHWnd, SW_HIDE);
+        ShowWindow(aParentHWnd, SW_HIDE);
+    }
 }
 
 void Window::setMinimumSize(Dims * xSize)
 {
-	aMinDims.aWidth = xSize->aWidth;
-	aMinDims.aHeight = xSize->aHeight;
+    aMinDims.m_width = xSize->m_width;
+    aMinDims.m_height = xSize->m_height;
 }
 
 void Window::setMaximumSize(Dims * xSize)
 {
-	aMaxDims.aWidth = xSize->aWidth;
-	aMaxDims.aHeight = xSize->aHeight;
+    aMaxDims.m_width = xSize->m_width;
+    aMaxDims.m_height = xSize->m_height;
 }
 
 void Window::setSize(Dims * xSize)
 {
-	aRect.aWidth = xSize->aWidth;
-	aRect.aHeight = xSize->aHeight;
+    aRect.m_width = xSize->m_width;
+    aRect.m_height = xSize->m_height;
 }
 
 void Window::setMinimumSize(float xWidth, float xHeight)
 {
-	aMinDims.aWidth = xWidth;
-	aMinDims.aHeight = xHeight;
+    aMinDims.m_width = xWidth;
+    aMinDims.m_height = xHeight;
 }
 
 void Window::setMaximumSize(float xWidth, float xHeight)
 {
-	aMaxDims.aWidth = xWidth;
-	aMaxDims.aHeight = xHeight;
+    aMaxDims.m_width = xWidth;
+    aMaxDims.m_height = xHeight;
 }
 
 void Window::setSize(float xWidth, float xHeight)
 {
-	aRect.aWidth = xWidth;
-	aRect.aHeight = xHeight;
+    aRect.m_width = xWidth;
+    aRect.m_height = xHeight;
 }
 
 void Window::setBorderWidth(float xBorderWidth)
 {
-	aOptBorderWidth = xBorderWidth;
+    aOptBorderWidth = xBorderWidth;
 }
 
 void Window::setShadowRadius(float xShadowRadius)
 {
-	aOptShadowRadius = xShadowRadius;
+    aOptShadowRadius = xShadowRadius;
 }
 
 void Window::setShadow(Color * xShadowColor, float xShadowRadius)
 {
-	aOptShadowColor = *xShadowColor;
-	aOptShadowRadius = xShadowRadius;
+    aOptShadowColor = *xShadowColor;
+    aOptShadowRadius = xShadowRadius;
 }
 
 void Window::setBorder(Color * xBorderColor, float xBorderWidth)
 {
-	aOptBorderColor = *xBorderColor;
-	aOptBorderWidth = xBorderWidth;
+    aOptBorderColor = *xBorderColor;
+    aOptBorderWidth = xBorderWidth;
 }
 
 void Window::setBounds(Rect * xRect)
 {
-	aRect.aWidth = xRect->aWidth;
-	aRect.aX = xRect->aX;
-	aRect.aY = xRect->aY;
-	aRect.aHeight = xRect->aHeight;
+    aRect.m_width = xRect->m_width;
+    aRect.m_x = xRect->m_x;
+    aRect.m_y = xRect->m_y;
+    aRect.m_height = xRect->m_height;
 }
 
 void Window::setBounds(float xLeft, float xTop, float xWidth, float xHeight)
 {
-	aRect.aWidth = xWidth;
-	aRect.aX = xLeft;
-	aRect.aY = xTop;
-	aRect.aHeight = xHeight;
+    aRect.m_width = xWidth;
+    aRect.m_x = xLeft;
+    aRect.m_y = xTop;
+    aRect.m_height = xHeight;
 }
 
 void Window::validate()
 {
-	// Minimum dimensions has to be greater than border and shadow safety region
-	aMinDims.aWidth = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aWidth);
-	aMinDims.aHeight = max((aOptShadowRadius * _WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.aHeight);
+    // Minimum dimensions has to be greater than border and shadow safety region
+    aMinDims.m_width = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.m_width);
+    aMinDims.m_height = max__((aOptShadowRadius * A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO) + ((aOptBorderWidth * 2) + 1), aMinDims.m_height);
 
-	// Minimum dimensions has to be greater than or equal to minimum size
-	aMaxDims.aWidth = max(aMinDims.aWidth, aMaxDims.aWidth);
-	aMaxDims.aHeight = max(aMinDims.aHeight, aMaxDims.aHeight);
+    // Minimum dimensions has to be greater than or equal to minimum size
+    aMaxDims.m_width = max__(aMinDims.m_width, aMaxDims.m_width);
+    aMaxDims.m_height = max__(aMinDims.m_height, aMaxDims.m_height);
 
-	// Constrain the rect to between min and max
-	aRect.aWidth = min(max(aMinDims.aWidth, aRect.aWidth), aMaxDims.aWidth);
-	aRect.aHeight = min(max(aMinDims.aHeight, aRect.aHeight), aMaxDims.aHeight);
+    // Constrain the rect to between min and max
+    aRect.m_width = min__(max__(aMinDims.m_width, aRect.m_width), aMaxDims.m_width);
+    aRect.m_height = min__(max__(aMinDims.m_height, aRect.m_height), aMaxDims.m_height);
 
-	// Create resize window pointer.
-	aHResizeWnd = aOptBorderWidth < _WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
-	aHMoveWnd = aOptBorderWidth < _WINDOW_MOVE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
+    // Create resize window pointer.
+    aHResizeWnd = aOptBorderWidth < A2D_WINDOW_RESIZE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
+    aHMoveWnd = aOptBorderWidth < A2D_WINDOW_MOVE_DEFAULT_DISTANCE ? aChildHWnd : aParentHWnd;
 
-	// Update caches
-	updateColorCache();
-	updateBackgroundCache();
-	updateShadowCache();
+    // Update caches
+    updateColorCache();
+    updateBackgroundCache();
+    updateShadowCache();
 
-	// Mark as validated
-	validated();
+    // Mark as validated
+    validated();
 }
 
 STATUS Window::createColorResources()
 {
-	aBackgroundColor = new Gdiplus::Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
-	aShadowColor = new Gdiplus::Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
-	aBorderColor = new Gdiplus::Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
+    aBackgroundColor = new Gdiplus::Color(aOptBackgroundColor.aAlpha, aOptBackgroundColor.aRed, aOptBackgroundColor.aGreen, aOptBackgroundColor.aBlue);
+    aShadowColor = new Gdiplus::Color(aOptShadowColor.aAlpha, aOptShadowColor.aRed, aOptShadowColor.aGreen, aOptShadowColor.aBlue);
+    aBorderColor = new Gdiplus::Color(aOptBorderColor.aAlpha, aOptBorderColor.aRed, aOptBorderColor.aGreen, aOptBorderColor.aBlue);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 
 void Window::destroyColorResources()
 {
-	if (aBackgroundColor)
-	{
-		delete aBackgroundColor;
-		aBackgroundColor = 0;
-	}
+    if (aBackgroundColor)
+    {
+        delete aBackgroundColor;
+        aBackgroundColor = 0;
+    }
 
-	if (aShadowColor)
-	{
-		delete aShadowColor;
-		aShadowColor = 0;
-	}
+    if (aShadowColor)
+    {
+        delete aShadowColor;
+        aShadowColor = 0;
+    }
 
-	if (aBorderColor)
-	{
-		delete aBorderColor;
-		aBorderColor = 0;
-	}
+    if (aBorderColor)
+    {
+        delete aBorderColor;
+        aBorderColor = 0;
+    }
 }
 
 void Window::updateColorCache()
 {
-	destroyColorResources();
-	createColorResources();
+    destroyColorResources();
+    createColorResources();
 }
 
 void Window::setBorderColor(Color * xBorderColor)
 {
-	aOptBorderColor = *xBorderColor;
+    aOptBorderColor = *xBorderColor;
 }
 
 void Window::setShadowed(bool xShadowed)
 {
-	aShadowed = xShadowed;
+    aShadowed = xShadowed;
 
-	setShadowRadius(FLT_ZERO);
+    setShadowRadius(0.0f);
 }
 
 void Window::setShadowColor(Color * xShadowColor)
 {
-	aOptShadowColor = *xShadowColor;
+    aOptShadowColor = *xShadowColor;
 }
 
 void Window::setBackgroundColor(Color * xBackgroundColor)
 {
-	aOptBackgroundColor = *xBackgroundColor;
+    aOptBackgroundColor = *xBackgroundColor;
 }
 
 void* Window::getPlatformCompatibleWindowHandle()
 {
-	return static_cast<void*>(&aChildHWnd);
+    return static_cast<void*>(&aChildHWnd);
 }
-
-
-
 
 void Window::render()
 {
-	// Cache variables to ensure that these variables
-	// won't be changed in the middle of update() via concurrent
-	// threads.
+    // Cache variables to ensure that these variables
+    // won't be changed in the middle of update() via concurrent
+    // threads.
+    //------------------------------------------------------------------------------
+    float padding = aPadding;
+    float optBorderWidth = aOptBorderWidth;
 
-	float padding = aPadding;
-	float optBorderWidth = aOptBorderWidth;
+    float realX = aRealX = aRect.m_x + aOptBorderWidth;
+    float realY = aRealY = aRect.m_y + aOptBorderWidth;
+    float realWidth = aDrawableRegion.m_width = aRealWidth = aRect.m_width - aOptBorderWidth * 2;
+    float realHeight = aDrawableRegion.m_height = aRealHeight = aRect.m_height - aOptBorderWidth * 2;
+    float relativeX = aRelativeX = aRect.m_x - aPadding;
+    float relativeY = aRelativeY = aRect.m_y - aPadding;
+    float relativeWidth = aRelativeWidth = aRect.m_width + aPadding * 2;
+    float relativeHeight = aRelativeHeight = aRect.m_height + aPadding * 2;
 
-	float realX = aRealX = aRect.aX + aOptBorderWidth;
-	float realY = aRealY = aRect.aY + aOptBorderWidth;
-	float realWidth = aDrawableRegion.aWidth = aRealWidth = aRect.aWidth - aOptBorderWidth * 2;
-	float realHeight = aDrawableRegion.aHeight = aRealHeight = aRect.aHeight - aOptBorderWidth * 2;
-	float relativeX = aRelativeX = aRect.aX - aPadding;
-	float relativeY = aRelativeY = aRect.aY - aPadding;
-	float relativeWidth = aRelativeWidth = aRect.aWidth + aPadding * 2;
-	float relativeHeight = aRelativeHeight = aRect.aHeight + aPadding * 2;
+    // Paint options
+    //------------------------------------------------------------------------------
+    bool flickerRemoval = true, highPerformance = false;
 
-	/***********************************************/
-	
-	SIZE size = { static_cast<long>(relativeWidth), static_cast<long>(relativeHeight) };
-	HDC memDCChild, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
-	HBITMAP memBitmapChild;
-	POINT ptDst = { static_cast<long>(relativeX), static_cast<long>(relativeY) }, ptSrc = { 0, 0 };
-	
-	if (aFramebufferInterpolation)
-	{
+    if (!highPerformance)
+    {
+        SIZE size = {SLONG(relativeWidth),SLONG(relativeHeight) };
+        HDC memDCChild = NULL, hwndDC = GetDC(aParentHWnd), memDC = CreateCompatibleDC(hwndDC);
+        POINT ptDst = {SLONG(relativeX),SLONG(relativeY) }, ptSrc = { 0, 0 };
 
-		memDCChild = CreateCompatibleDC(hwndDC);
-		// Create secondary DC
-		memBitmapChild = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
-		SelectObject(memDCChild, memBitmapChild);
+        if (flickerRemoval)
+		{
+            // Request copy of frameBuffer
+			memDCChild = GetDC(aChildHWnd);
+        }
 
-		// Request copy of frameBuffer
-		PrintWindow(aChildHWnd, memDCChild, 0);
-	}
+        // Create Bitmap to render to
+        //------------------------------------------------------------------------------
+        HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, SINT(relativeWidth), SINT(relativeHeight));
+        SelectObject(memDC, memBitmap);
+        Gdiplus::Graphics graphics(memDC);
 
-	HBITMAP memBitmap = CreateCompatibleBitmap(hwndDC, INT(relativeWidth), INT(relativeHeight));
-	SelectObject(memDC, memBitmap);
+        // Apply highspeed settings for GDI+
+        //------------------------------------------------------------------------------
+        graphics.SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
+        graphics.SetCompositingQuality(Gdiplus::CompositingQualityHighSpeed);
+        graphics.SetPixelOffsetMode(Gdiplus::PixelOffsetModeNone);
+        graphics.SetSmoothingMode(Gdiplus::SmoothingModeNone);
+        graphics.SetInterpolationMode(Gdiplus::InterpolationModeDefault);
 
-	Gdiplus::Graphics graphics(memDC);
+        // Paint the component
+        //------------------------------------------------------------------------------
+        paintComponent(graphics);        
 
-	/***********************************************/
+        // Paint from frameBuffer of the child HWND into the 
+        // the parent HWND
+        //------------------------------------------------------------------------------
+        if (flickerRemoval)
+        {
+			SetStretchBltMode(memDC, BLACKONWHITE);
 
-	paintComponent(graphics);
-	paintComponentBorder(graphics);
+            StretchBlt(memDC,
+                SINT(aOptBorderWidth + aPadding),
+                SINT(aOptBorderWidth + aPadding),
+                SINT(realWidth),
+                SINT(realHeight),
+                memDCChild,
+                0, 0,
+                SINT(aLastRect.m_width - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
+                SINT(aLastRect.m_height - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
+                SRCCOPY);
 
-	/***********************************************/
-	if (aFramebufferInterpolation)
-	{
-		// Paint from frameBuffer of the child HWND into the 
-		// the parent HWND
-		StretchBlt(memDC, aOptBorderWidth + aPadding,
-			aOptBorderWidth + aPadding,
-			realWidth,
-			realHeight,
-			memDCChild,
-			0, 0,
-			INT(aLastRect.aWidth - aOptBorderWidth * 2 + (aOffsetX < 0 ? aOffsetX : 0)),
-			INT(aLastRect.aHeight - aOptBorderWidth * 2 + (aOffsetY < 0 ? aOffsetY : 0)),
-			SRCCOPY);
+            DeleteObject(memDCChild);
+		}
 
-		ReleaseDC(aParentHWnd, memDCChild);
-		DeleteObject(memBitmapChild);
-		DeleteObject(memDCChild);
-	}
+		// Paint the component border
+		//------------------------------------------------------------------------------
+		if (aOptBorderWidth > 0)
+		{
+			paintComponentBorder(graphics);
+		}
+        
+        // Blend function required for UpdateLayeredWindow and updat the data
+        //------------------------------------------------------------------------------
+        BLENDFUNCTION blendFunction = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-	/***********************************************/
+        UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
 
-	BLENDFUNCTION blendFunction;
-	blendFunction.AlphaFormat = AC_SRC_ALPHA;
-	blendFunction.BlendFlags = 0;
-	blendFunction.BlendOp = AC_SRC_OVER;
-	blendFunction.SourceConstantAlpha = 255;
+        // Release and destroy objects
+        //------------------------------------------------------------------------------
+        graphics.ReleaseHDC(memDC);
+        DeleteObject(memBitmap);
+        ReleaseDC(aParentHWnd, memDC);
+        ReleaseDC(aParentHWnd, hwndDC);
+        DeleteDC(hwndDC);
+        DeleteDC(memDC);
+    }
 
-	/***********************************************/
+    HDWP hdwp = BeginDeferWindowPos(2);
+    
+    DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), SINT(relativeWidth), SINT(relativeHeight), SWP_NOCOPYBITS);
+    DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY) - ((aFramebufferInterpolation && flickerRemoval) ? 3000 : 0), SINT(realWidth), SINT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
 
-	UpdateLayeredWindow(aParentHWnd, hwndDC, &ptDst, &size, memDC, &ptSrc, 0, &blendFunction, ULW_ALPHA);
+    EndDeferWindowPos(hdwp);
+}
 
-	/***********************************************/
+void Window::updateLocation()
+{
+    float relativeX = aRelativeX = aRect.m_x - aPadding;
+    float relativeY = aRelativeY = aRect.m_y - aPadding;
+    float realX = aRealX = aRect.m_x + aOptBorderWidth;
+    float realY = aRealY = aRect.m_y + aOptBorderWidth;
 
-	HDWP hdwp = BeginDeferWindowPos(2);
-	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aParentHWnd, aChildHWnd, INT(relativeX), INT(relativeY), INT(relativeWidth), INT(relativeHeight), SWP_NOCOPYBITS);
-	
-	if (hdwp) hdwp = DeferWindowPos(hdwp, aChildHWnd, NULL, INT(realX), INT(realY) - (aFramebufferInterpolation ? 3000 : 0), INT(realWidth), INT(realHeight), SWP_NOCOPYBITS | SWP_NOREDRAW);
+    HDWP hdwp = BeginDeferWindowPos(2);
 
-	EndDeferWindowPos(hdwp);
+    DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), 0, 0, SWP_NOSIZE);
+    DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY), 0, 0, SWP_NOSIZE);
 
-	/***********************************************/
-	
-	graphics.ReleaseHDC(memDC);
-	DeleteObject(memBitmap);
-	ReleaseDC(aParentHWnd, memDC);
-	ReleaseDC(aParentHWnd, hwndDC);
-	DeleteDC(hwndDC);
-	DeleteDC(memDC);
+    EndDeferWindowPos(hdwp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1353,40 +1438,40 @@ void Window::render()
 
 STATUS Window::initialize()
 {
-	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-	ULONG_PTR           gdiplusToken;
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR           gdiplusToken;
 
-	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
-	// Change class name
-	aClassInstances++;
+    // Change class name
+    aClassInstances++;
 
-	// Update class name
-	std::ostringstream stream;
-	stream << "Window - " << aClassInstances;
-	std::string className(stream.str());
-	aClassName = new std::wstring(className.begin(), className.end());
+    // Update class name
+    std::ostringstream stream;
+    stream << "Window - " << aClassInstances;
+    std::string className(stream.str());
+    aClassName = new std::wstring(className.begin(), className.end());
 
-	// Super
-	AbstractWindow::initialize();
+    // Super
+    AbstractWindow::initialize();
 
-	NULLCHECK(registerClass());
-	NULLCHECK((aParentHWnd = createCompatibleWindow(true)));
-	NULLCHECK((aChildHWnd = createCompatibleWindow(false)));
-	SAFELY(createResources());
+    NULLCHECK(registerClass());
+    NULLCHECK((aParentHWnd = createCompatibleWindow(true)));
+    NULLCHECK((aChildHWnd = createCompatibleWindow(false)));
+    SAFELY(createResources());
 
-	update();
+    update();
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 Window::~Window()
 {
-	destroyResources();
+    destroyResources();
 
-	aParentHWnd = NULL;
-	aChildHWnd = NULL;
+    aParentHWnd = NULL;
+    aChildHWnd = NULL;
 
-	delete aClassName;
-	aClassName = 0;
+    delete aClassName;
+    aClassName = 0;
 }

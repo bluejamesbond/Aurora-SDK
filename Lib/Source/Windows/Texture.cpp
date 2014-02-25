@@ -4,9 +4,13 @@
 
 using namespace A2D;
 
-Texture::Texture(ID3D10Device ** xDevice, LPCWSTR xSrc) : aSrc(xSrc), aDevice(xDevice)
+Texture* Texture::DEFAULT_TEXTURE = new Texture(NULL, A2D_DEFAULT_TEXTURE);
+
+Texture::Texture(ID3D10Device ** xDevice, LPCWSTR xSrc) : 
+	aSrc(xSrc), 
+	aDevice(xDevice),
+	aResource(NULL)
 {
-	aResource = NULL;
 }
 
 Texture::~Texture()
@@ -20,15 +24,10 @@ bool Texture::hasAlpha()
 	return true;
 }
 
-void * Texture::getPlatformCompatibleResource()
-{
-	return aResource;
-}
-
 STATUS Texture::changeTexture(LPCWSTR  xSrc)
 {
 	aSrc = xSrc;
-
+	
 	D3DDESTROY(aResource);
 
 	// Can't catch error here!!!! NOTE: FIX
@@ -41,26 +40,23 @@ STATUS Texture::changeTexture(LPCWSTR  xSrc)
 // REQUIRED BY _ABSTRACT
 ////////////////////////////////////////////////////////////////////////////
 
-ID3D10ShaderResourceView* Texture::aStaticResource;
-
 STATUS Texture::initialize()
 {
 	D3DX10_IMAGE_LOAD_INFO loadInfo;
 	D3DX10_IMAGE_INFO srcInfo;
 
 	loadInfo.pSrcInfo = &srcInfo;
-
-	SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDevice, aSrc, &loadInfo, NULL, &aStaticResource, NULL));
-		
-	aResource = aStaticResource;
-
+	loadInfo.Usage = D3D10_USAGE_IMMUTABLE;
+	
+	SAFELY(D3DX10CreateShaderResourceViewFromFile(*aDevice, aSrc, &loadInfo, NULL, &aResource, NULL));
+	
 	// Load the texture in.
 	// Store the texture properties
-	aClip.aX = 0;
-	aClip.aY = 0;
-	aClip.aWidth = aDims.aWidth = (float)srcInfo.Width;
-	aClip.aHeight = aDims.aHeight = (float)srcInfo.Height;
+	aClip.m_x = 0;
+	aClip.m_y = 0;
+	aClip.m_width = aDims.m_width = (float)srcInfo.Width;
+	aClip.m_height = aDims.m_height = (float)srcInfo.Height;
 
-	
 	return STATUS_OK;
 }
+

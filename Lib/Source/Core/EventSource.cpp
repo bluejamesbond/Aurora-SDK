@@ -164,10 +164,10 @@ bool EventSource::operator==(EventSource& xSource)
 	// If they are exactly in the same region, then they are the same.
 	// Current exceptions: Frame & Window.
 
-	if (thisRegion->aX == thatRegion->aX &&
-		thisRegion->aY == thatRegion->aY &&
-		thisRegion->aWidth == thatRegion->aWidth &&
-		thisRegion->aHeight == thatRegion->aHeight)
+	if (thisRegion->m_x == thatRegion->m_x &&
+		thisRegion->m_y == thatRegion->m_y &&
+		thisRegion->m_width == thatRegion->m_width &&
+		thisRegion->m_height == thatRegion->m_height)
 	{
 		return true;
 	}

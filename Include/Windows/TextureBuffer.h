@@ -50,7 +50,7 @@ namespace A2D {
 		TextureBuffer(ID3D10Device ** xDevice, ID3D10DepthStencilView ** xBackBufferaDXDepthStencilView, Dims * xSize);
 
 		// Deconstructor
-		~TextureBuffer();
+		virtual ~TextureBuffer();
 
 		// Variables
 		ID3D10Device				**	aDevice;

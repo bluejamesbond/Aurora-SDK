@@ -20,8 +20,8 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "ExtLibs.h"
 #include "../_A2DCommon.h"
+#include "Pipelineable.h"
 
 namespace A2D {
 
@@ -38,23 +38,24 @@ namespace A2D {
 
 	class Pipeline
 	{
+		friend class Graphics;
 
 	public:
 
 		Pipeline();
-
 		~Pipeline();
 
-		void				  *			aPipelineComps[8];
+	private:
+
+		Pipelineable		  *			aPipelineComps[8];
 		int							    aLength = 0;
 		int								aLifeCycle = 0;
 		static int						aGlobalLifeCycle;
 
-		static void						nextLifeCycle();
-
 	public:
 
-		virtual STATUS                 initialize();
+		static void						nextLifeCycle();
+		virtual STATUS					initialize();
 
 	};
 }

@@ -19,27 +19,12 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../Core/A2DUINT4.h"
+#include "../Core/A2DFLOAT4.h"
+
 #include "ExtLibs.h"
 
 namespace A2D {
-
-	struct A2DUINT4
-	{
-		unsigned int a1;
-		unsigned int a2;
-		unsigned int a3;
-		unsigned int a4;
-
-		A2DUINT4(){};
-
-		A2DUINT4(unsigned int x, unsigned int y, unsigned int z, unsigned int w)
-		{
-			a1 = x;
-			a2 = y;
-			a3 = z;
-			a4 = w;
-		}
-	};
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
@@ -47,10 +32,13 @@ namespace A2D {
 
 	struct QuadExpansionVertex
 	{
-		D3DXVECTOR4 aPosition;
-		D3DXVECTOR4 aOptions;
+		D3DXVECTOR4 m_position;
+		D3DXVECTOR4 m_options;
+		D3DXVECTOR4 m_rect;
+		A2DFLOAT4 m_subRegion;
+		A2DFLOAT4 m_subBordersRegion;
 		D3DXVECTOR4 aBorderWidths;
-		D3DXVECTOR4 aBorderRadius;
+		D3DXVECTOR4 aBorderRadii;
 		D3DXVECTOR4 aColorTex;
 		A2DUINT4 aBorderColors;
 

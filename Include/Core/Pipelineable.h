@@ -2,59 +2,30 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __STYLES_H__
-#define __STYLES_H__
+#ifndef __PIPELINEABLE_H__
+#define __PIPELINEABLE_H__
 
 //+-----------------------------------------------------------------------------
 //
-//  Class:  
-//      STYLES
+//  Class:
+//      PIPELINEABLE
 //
 //  Synopsis:
-//      Contains Component styles
+//      Differentiates which of the two possible arcs could match the given arc
+//      parameters.
 //
 //------------------------------------------------------------------------------
 
-#include "../_A2DCommon.h"
-
-namespace A2D{
+namespace A2D {
 
 	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Styles
+	class Pipelineable
 	{
 	public:
-
-		enum Position
-		{
-			RELATIVE_,
-			ABSOLUTE_,
-			FIXED
-		};
-
-		enum Display
-		{
-			INLINE_BLOCK,
-			BLOCK
-		};
-
-		enum Float
-		{
-			LEFT,
-			RIGHT,
-			CENTER
-		};
-
-		enum Units
-		{
-			PIXEL,
-			PERCENTAGE
-		};
-
-		static float AUTO;
-
+		virtual ~Pipelineable() {};
 	};
 }
 

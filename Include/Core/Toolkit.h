@@ -31,6 +31,7 @@ namespace A2D {
 	{
 	public:
 
+		static double					SYSTEM_NANOTIME;
 		static int					  waitForBackgroundThreads();
 		static AbstractEventQueue* getSystemEventQueue(int xFrameInstanceIndex);
 		static void					  addSystemEventQueue(AbstractEventQueue * xEventQueue);

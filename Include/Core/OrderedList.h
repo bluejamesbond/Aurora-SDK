@@ -37,7 +37,7 @@
 *
 * -------------------------------------
 * A2D::List push_back - Integer[10000000 iterations]
-* Time taken : 0.736000000s
+* Time taken : 0.436000000s
 * -------------------------------------
 * A2D::List remove - Integer[1 iterations]
 * Time taken : 0.426000000s
@@ -72,6 +72,8 @@
 // - Cached m_t_array is changed
 // - Check for m_arrayed - requires testing
 
+#include "../_A2DCommon.h"
+
 namespace A2D{
 
 	template <class T>
@@ -84,7 +86,7 @@ namespace A2D{
 		template <class U>
 		struct Node
 		{
-			U value; // Let the compiler set this
+			U value = NULL; // Let the compiler set this
 			Node<U> * left = NULL; // Let the compiler set this
 			Node<U> * right = NULL; // Let the compiler set this
 
@@ -92,7 +94,8 @@ namespace A2D{
 			// for 10,000,000 elements.
 
 			// Note: The overhead of making this NULL is too small
-			// to be considered an issue.
+			// to be considered an issue ALTHOUGH in benchmarks it is
+			// critical.
 		};
 
 		template<class U>
@@ -236,13 +239,13 @@ namespace A2D{
 			// Decrement size after remove
 			m_size--;
 		}
-
+		
 		inline Node<T> * find_node(int index)
 		{
 			// This testing is not required because fine_node is an internal method
 			//if (index >= m_size || index < 0)
 			//{
-			//	return 0;
+			//  return 0;
 			//}
 
 			bool start_on_right = index > m_size / 2 ? true : false;
@@ -312,11 +315,11 @@ namespace A2D{
 			// Calculate ammmortization values based on 
 			// the size of T. This will soon have some performance
 			// changes.
-			m_heap_ammort_length = max(sizeof(T), 80) / sizeof(T);
+			m_heap_ammort_length = max__(sizeof(T), 80) / sizeof(T);
 
 			//  Higher size T indicates more
 			// ammortizations during OrderedList lifetime.
-			m_heapptr_ammort_length = max(m_heap_ammort_length / 20, 5);
+			m_heapptr_ammort_length = max__(m_heap_ammort_length / 20, 5);
 			m_fragments_ammort_length = 5;
 
 			// Malloc and prepare the OrderedList
@@ -338,7 +341,7 @@ namespace A2D{
 			for (int i = 0; i <= m_heapptr_index - 1; i++)
 			{
 				// Delete the heaps 
-				delete[] m_heapptr[i];
+				delete[] static_cast<Node<T>*>(m_heapptr[i]);
 				m_heapptr[i] = 0;
 			}
 
@@ -410,7 +413,7 @@ namespace A2D{
 		{
 			m_arrayed = false;
 
-			index = min(abs(index), m_size);
+			index = min__(abs__(index), m_size);
 
 			if (index == 0)
 			{
@@ -456,7 +459,7 @@ namespace A2D{
 				next_node->value = t;
 				next_node->right = node;
 				next_node->left = node->left;
-				if (node->left)	node->left->right = next_node;
+				if (node->left) node->left->right = next_node;
 				node->left = next_node;
 
 				// Increase size
@@ -667,6 +670,26 @@ namespace A2D{
 			splice(i, 1);
 		}
 
+		inline T* from_ticket(void ** x_ticket)
+		{
+			if (*x_ticket)
+			{
+				return &static_cast<Node<T>*>(*x_ticket)->value;
+			}
+
+			return NULL;
+		}
+
+		bool exists(void ** x)
+		{
+			if (*x == NULL)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		bool remove_request(void ** x)
 		{
 			if (*x == NULL)
@@ -687,8 +710,8 @@ namespace A2D{
 			m_arrayed = false;
 
 			// Precaution
-			start = abs(start);
-			items = abs(items);
+			start = abs__(start);
+			items = abs__(items);
 
 			if (m_size == 0 || (start + items) > m_size) return;
 
@@ -800,11 +823,11 @@ namespace A2D{
 
 	private:
 
-		Iterator<T>						m_iterator;
-		int								m_size = 0;
-		Node<T>					*		m_head = NULL;
-		Node<T>					*		m_end = NULL;
-		T					    *		m_t_array = NULL;
+		Iterator<T>                     m_iterator;
+		int                             m_size = 0;
+		Node<T>                 *       m_head = NULL;
+		Node<T>                 *       m_end = NULL;
+		T                       *       m_t_array = NULL;
 	};
 }
 

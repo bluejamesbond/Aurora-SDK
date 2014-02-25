@@ -8,10 +8,11 @@
 //+-----------------------------------------------------------------------------
 //
 //  Class: 
-//      TEXTURESHADER
+//      ABSTRACTSHADER
 //
 //  Synopsis:
-//      Texture quad.
+//      Uses the DX Effect framework to create a basic system for creating
+//      shaders from FX files. This is different from "vanilla" DX.
 //
 //------------------------------------------------------------------------------
 
@@ -19,6 +20,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../Core/Pipelineable.h"
 
 #include "ExtLibs.h"
 #include "DXUtils.h"
@@ -27,52 +29,52 @@
 
 namespace A2D {
 
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractShader
-	{
-	public:
+    class AbstractShader : public Pipelineable
+    {
+    public:
 
-		AbstractShader(ID3D10Device ** xDevice);
-		virtual ~AbstractShader();
+        AbstractShader(ID3D10Device ** xDevice);
+        virtual ~AbstractShader();
 
-	protected:
+    protected:
 
-		// Pull out and cache device
-		ID3D10Device				**	aDevice;
-		ID3D10EffectTechnique		*	aTechnique;
-		ID3D10InputLayout			*	aLayout;
-		bool							aHasAlpha = false;
+        // Pull out and cache device
+        ID3D10Device                **  aDevice;
+        ID3D10EffectTechnique       *   aTechnique;
+        ID3D10InputLayout           *   aLayout;
+        bool                            aHasAlpha = false;
 
 
-	private:
-		
-		static ID3D10BlendState		*	aBlendState;
-		static ID3D10BlendState		*	aBlendDisabledState;
-		
-	public:
+    private:
+        
+        static ID3D10BlendState     *   aBlendState;
+        static ID3D10BlendState     *   aBlendDisabledState;
+        
+    public:
 
-		void							renderShader();
+        void                            renderShader();
 
-	protected:
+    protected:
 
-		virtual STATUS					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) = 0;
-		virtual unsigned int			getPolygonLayoutElementCount() = 0;
-		virtual	LPCSTR					getTechniqueName() = 0;
-		virtual ID3D10Effect		**	getEffect() = 0;
-		virtual LPCWSTR					getEffectName() = 0;
-		virtual STATUS					getUsableVariablePointers(ID3D10Effect * xEffect) = 0;
+        virtual STATUS                  createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout) IMPLEMENT;
+        virtual unsigned int            getPolygonLayoutElementCount() IMPLEMENT;
+        virtual LPCSTR                  getTechniqueName() IMPLEMENT;
+        virtual ID3D10Effect        **  getEffect() IMPLEMENT;
+        virtual LPCWSTR                 getEffectName() IMPLEMENT;
+        virtual STATUS                  getUsableVariablePointers(ID3D10Effect * xEffect) IMPLEMENT;
 
-	public:
+    public:
 
-		//////////////////////////////////////////////////////////
-		// ABSTRACT IMPLEMENTATION
-		//////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
+        // ABSTRACT IMPLEMENTATION
+        //////////////////////////////////////////////////////////
 
-		virtual STATUS	                initialize();
-	};
+        virtual STATUS                  initialize();
+    };
 }
 
 #endif

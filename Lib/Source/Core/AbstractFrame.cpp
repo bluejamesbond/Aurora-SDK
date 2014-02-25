@@ -15,7 +15,7 @@ AbstractFrame::~AbstractFrame()
 	DESTROY(aGraphics);
 }
 
-void AbstractFrame::setName(LPCWSTR xName)
+void AbstractFrame::setName(wchar_t * xName)
 {
 	aWindow->setName(xName);
 }
@@ -122,7 +122,6 @@ void AbstractFrame::setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, f
 
 	aWindow->setBorder(&color, xWidth);
 
-
 	aWindow->invalidate();
 
 	if (aWindow->isVisible())
@@ -188,7 +187,7 @@ void AbstractFrame::setVisible(bool xVisible)
 	}
 }
 
-void AbstractFrame::run(int xThreadId)
+void AbstractFrame::run(void * x_param, int xThreadId)
 {
 	this->update();
 }
@@ -207,7 +206,7 @@ void AbstractFrame::dispose()
 	}
 }
 
-ComponentManager * AbstractFrame::getComponentManager()
+const ComponentManager * AbstractFrame::getComponentManager()
 {
 	return aComponentManager;
 }
@@ -309,10 +308,10 @@ void AbstractFrame::update()
 	{
 		aComponentManager->validate();
 		
-		aComponentManager->update_forward();
-
-		return;
+		aValidatedContents = true;
 	}
 
-	aComponentManager->update();
+	// NVIDIA wants us to use bottom to top
+	// and remove depth buffer testing
+	aComponentManager->updateBottomToTop();
 }

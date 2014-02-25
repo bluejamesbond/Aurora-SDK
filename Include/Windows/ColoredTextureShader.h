@@ -11,7 +11,7 @@
 //      COLOREDTEXTURESHADER
 //
 //  Synopsis:
-//      Texture quad.
+//      Texure and colored vertices shader.
 //
 //------------------------------------------------------------------------------
 

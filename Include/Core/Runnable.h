@@ -15,6 +15,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "../_A2DCommon.h"
+
 namespace A2D {
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -23,10 +25,12 @@ namespace A2D {
 
 	class Runnable
 	{
+		friend class AbstractThread;
+		friend class AbstractEventQueue;
 
-	public:
+	protected:
 
-		virtual void run(int xThreadId) = 0;
+		virtual void run(void * x_param, int x_thread_id) IMPLEMENT;
 
 	};
 }

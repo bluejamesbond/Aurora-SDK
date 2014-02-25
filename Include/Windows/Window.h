@@ -24,6 +24,7 @@
 #include "../Core/Rect.h"
 #include "../Core/Dims.h"
 #include "../Core/AbstractWindow.h"
+#include "../Core/Toolkit.h"
 
 #include "ExtLibs.h"
 #include "EventQueue.h"
@@ -59,6 +60,26 @@ namespace A2D {
 
 	private:
 
+		enum Cursor
+		{
+			NORMAL,
+			RESIZE_SIZE_WEST_EAST,
+			RESIZE_NORTH_SOUTH,
+			RESIZE_NORTH_EAST_SOUTH_WEST,
+			RESIZE_NORTH_WEST_SOUTH_EAST,
+			RESIZE_ALL,
+			WAIT,
+			UP_ARROW
+		};
+
+		Cursor							aCursor;
+
+		static HCURSOR					CURSOR_IDC_SIZENWSE;
+		static HCURSOR					CURSOR_IDC_SIZENESW;
+		static HCURSOR					CURSOR_IDC_SIZEWE;
+		static HCURSOR					CURSOR_IDC_SIZENS;
+		static HCURSOR					CURSOR_IDC_ARROW;
+
 		int                             aStyle;
 
 		float                           aPadding;
@@ -81,7 +102,6 @@ namespace A2D {
 		bool                            aIsResizing = false;
 		bool							aIsMoving = false;
 		bool                            aWinMoveRes = false;
-
 
 		bool							aFramebufferInterpolation = false;
 
@@ -121,7 +141,7 @@ namespace A2D {
 
 	public:
 
-		LRESULT							eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
+		LRESULT _fastcall				eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);
 		static LRESULT CALLBACK         wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam);
 
 	private:
@@ -157,6 +177,7 @@ namespace A2D {
 
 		STATUS							createResources();
 		void							destroyResources();
+		void							updateLocation();
 
 		////////////////////////////////////////////////////////////////////////////////
 		// ABSTRACTWINDOW
@@ -172,7 +193,7 @@ namespace A2D {
 		virtual void					setSize(Dims * xSize);
 		virtual void					setBounds(Rect * xRect);
 		virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight);
-		virtual void                    setName(LPCWSTR xName);
+		virtual void                    setName(wchar_t * xName);
 		virtual void                    setUndecorated(bool xUndecoratedFlag);
 		virtual void                    setDefaultCloseOperation(int xCloseOperation);
 		virtual void                    setLocationRelativeTo(AbstractWindow * xWindow);

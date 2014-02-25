@@ -32,93 +32,91 @@
 #include "EventSource.h"
 
 namespace A2D {
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class	Abstract;
-	class	Container;
-	struct	CameraProperties;
-	class	BackBuffer;
-	class	RootPane;
-	class	Graphics;
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    class   Abstract;
+    class   BackBuffer;
+    class   RootPane;
+    class   Graphics;
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame : public Runnable, public EventSource
-	{
+    class AbstractFrame : public Runnable, public EventSource
+    {
 
-	public:
+    public:
 
-		AbstractFrame();
-		~AbstractFrame();
+        AbstractFrame();
+        ~AbstractFrame();
 
-	private:
+    private:
 
-		AbstractBackBuffer	   *		aBackBuffer;
-		AbstractWindow	  	   *		aWindow;
-		AbstractEventQueue	   *		aEventQueue = NULL;
-		void				   * 		aGraphics;
-		ComponentManager	   *		aComponentManager;
-		Panel                			aRootPane;
-		GXSettings			  			aGXSettings;
+        AbstractBackBuffer     *        aBackBuffer;
+        AbstractWindow         *        aWindow;
+        AbstractEventQueue     *        aEventQueue = NULL;
+        void                   *        aGraphics;
+        ComponentManager       *        aComponentManager;
+        Panel                           aRootPane;
+        GXSettings                      aGXSettings;
 
-		int								aId;
-		static int						aClassInstances;
+        int                             aId;
+        static int                      aClassInstances;
 
-		bool							aValidatedContents;
+        bool                            aValidatedContents;
 
-	public:
+    public:
 
-		Panel&               			getRootPane();
-		STATUS                         createResources();
-		void                            update();
-		void							dispose();
-		void							invalidate();
-		// void							revalidate(); --- Unsafe for AbstractFrame!!!
+        Panel&                          getRootPane();
+        STATUS                          createResources();
+        void                            update();
+        void                            dispose();
+        void                            invalidate();
+        // void                         revalidate(); --- Unsafe for AbstractFrame!!!
 
-	protected:
-		void							validated();
-		void							validate();
-		STATUS							addListener(AbstractListener * xListener);
-		STATUS							removeListener(AbstractListener * xListener);
-		Rect *							getEventRegion();
+    protected:
+        void                            validated();
+        void                            validate();
+        STATUS                          addListener(AbstractListener * xListener);
+        STATUS                          removeListener(AbstractListener * xListener);
+        Rect *                          getEventRegion();
 
-	public:
-		int								id();
-		void							setBackground(byte xRed, byte xGreen, byte xBlue);
-		void							setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
-		void							setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
-		void							setVisible(bool xVisibility);
-		void							setName(LPCWSTR  xName);
-		void							setBounds(Rect * xRect);
-		void							setBounds(float xLeft, float xTop, float xWidth, float xHeight);
-		void							setSize(float xWidth, float xHeight);
-		void							setSize(Dims * xDims);
-		void							setUndecorated(bool xDecorated);
-		void							setLocationRelativeTo(AbstractFrame * xFrame);
-		void							setVsync(bool xVsync);
-		void							setDefaultCloseOperation(int xOperation);
-		AbstractWindow			*		getWindow();
-		void							run(int xThreadId);
-		ComponentManager*					getComponentManager();
+    public:
+        int                             id();
+        void                            setBackground(byte xRed, byte xGreen, byte xBlue);
+        void                            setBorder(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xWidth);
+        void                            setShadow(byte xAlpha, byte xRed, byte xGreen, byte xBlue, float xRadius);
+        void                            setVisible(bool xVisibility);
+        void                            setName(wchar_t *  xName);
+        void                            setBounds(Rect * xRect);
+        void                            setBounds(float xLeft, float xTop, float xWidth, float xHeight);
+        void                            setSize(float xWidth, float xHeight);
+        void                            setSize(Dims * xDims);
+        void                            setUndecorated(bool xDecorated);
+        void                            setLocationRelativeTo(AbstractFrame * xFrame);
+        void                            setVsync(bool xVsync);
+        void                            setDefaultCloseOperation(int xOperation);
+		void                            run(void * x_param, int xThreadId);
+		AbstractWindow*					getWindow();
+        const ComponentManager*			getComponentManager();
 
 
-	protected:
+    protected:
 
-		virtual STATUS					createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) = 0;
-		virtual STATUS					createPlatformCompatibleWindow(AbstractWindow ** xWindow) = 0;
-		virtual STATUS					createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) = 0;
-		virtual STATUS					createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) = 0;
-		
-	public:
+        virtual STATUS                  createPlatformCompatibleEventQueue(AbstractEventQueue ** xEventQueue) IMPLEMENT;
+        virtual STATUS                  createPlatformCompatibleWindow(AbstractWindow ** xWindow) IMPLEMENT;
+        virtual STATUS                  createPlatformCompatibleBackBuffer(AbstractBackBuffer ** xBackBuffer, AbstractWindow * xWindow, GXSettings * xSettings) IMPLEMENT;
+        virtual STATUS                  createAndInitPlatformCompatibleGraphics(void ** xGraphics, AbstractBackBuffer * xBackbuffer) IMPLEMENT;
+        
+    public:
 
-		virtual STATUS                 initialize();
+        virtual STATUS                 initialize();
 
-	};
+    };
 }
 
 #endif

@@ -12,9 +12,9 @@ Texture2D shaderTexture;
 ///////////////////
 SamplerState SampleType
 {
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Wrap;
-	AddressV = Wrap;
+	Filter = ANISOTROPIC;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 
@@ -54,14 +54,16 @@ struct TexturePixel
 ColoredTexturePixel ColoredTextureVertexShader(ColoredTextureVertex input)
 {
 	ColoredTexturePixel output;
-	
-	// Change the position vector to be 4 units for proper matrix calculations.
+
+	// Force w-buffer to be 1.0
 	input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(input.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+	// Calculate z-buffer manually
+	input.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+	output.position = input.position;
 
 	output.tex = input.tex;
 	output.color = input.color;
@@ -97,13 +99,15 @@ TexturePixel TextureVertexShader(TextureVertex input)
 {
 	TexturePixel output;
 
-	// Change the position vector to be 4 units for proper matrix calculations.
+	// Force w-buffer to be 1.0
 	input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(input.position, worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+	// Calculate z-buffer manually
+	input.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+	output.position = input.position;
 
 	output.tex = input.tex;
 
@@ -117,13 +121,20 @@ TexturePixel TextureVertexShader(TextureVertex input)
 float4 TexturePixelShader(TexturePixel input) : SV_Target
 {
 	float4 textureColor;
-
-
+	
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
 
-	// textureColor = saturate(blendColor);
+	textureColor = saturate(textureColor);
 
+	if (textureColor.a >= 0.3)
+	{
+		textureColor.a = 1.0;
+		return textureColor;
+	}
+
+	textureColor.a = 0.0;
+	
 	return textureColor;
 }
 

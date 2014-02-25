@@ -39,7 +39,7 @@ namespace A2D{
 		};
 
 		Paint();
-		Paint(int xColor);
+		Paint(unsigned int xColor);
 		Paint(Color& xColor);
 		Paint(Color3D& xColor);
 		Paint(float xStartX, float xStartY, Color3D& xStart, float xEndX, float xEndY, Color3D& xEnd, Mode xMode);
@@ -79,10 +79,10 @@ namespace A2D{
 		static Paint						ALIZARIN_TO_POMEGRANATE_VERTICAL;
 		static Paint						GREEN_SEA_TO_POMEGRANATE_VERTICAL;
 
-		float								aStartX = FLT_ZERO;
-		float								aStartY = FLT_ZERO;
-		float								aEndX = FLT_ZERO;
-		float								aEndY = FLT_ZERO;
+		float								aStartX = 0.0f;
+		float								aStartY = 0.0f;
+		float								aEndX = 0.0f;
+		float								aEndY = 0.0f;
 
 		Color3D								aStart;
 		Color3D								aEnd;

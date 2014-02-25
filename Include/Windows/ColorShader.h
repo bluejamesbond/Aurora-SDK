@@ -11,7 +11,7 @@
 //      ABSTRACTTEXTURESHADER
 //
 //  Synopsis:
-//      Texture quad.
+//      Pure color shader.
 //
 //------------------------------------------------------------------------------
 

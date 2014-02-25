@@ -7,93 +7,222 @@
 //      COMMON
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Contains basic utility functions used by the core as well as the 
+//      platform dependent implementations.
 //
 //------------------------------------------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINE
-////////////////////////////////////////////////////////////////////////////////
-
-
-#define _PIPELINE_PREPROCESS_START                         0x2510
-#define _PIPELINE_PREPROCESS_CREATE                        0x2511
-#define _PIPELINE_PREPROCESS_FINISH                        0x2512
-
-#define _GRAPHICS_ACTIVE_BUFFER_PRIMARY   		          0x3511
-#define _GRAPHICS_ACTIVE_BUFFER_SECONDARY		          0x3512
-#define _GRAPHICS_ACTIVE_BUFFER_TERTIARY					  0x3513
-
-#define _WINDOW_BOX_SHADOW_SAFELYTY_RATIO					  2
-#define _WINDOW_RESIZE_EDGE_DISTANCE                       5
-#define _WINDOW_RESIZE_DEFAULT_DISTANCE					  3
-#define _WINDOW_MOVE_BAR_DISTANCE							25
-#define _WINDOW_MOVE_DEFAULT_DISTANCE						10
-
-#define _GRAPHICSTOOLKIT_BASIC_TEXTURE_SHADER			  0x4000
-#define _GRAPHICSTOOLKIT_VERTICAL_BLUR_TEXTURE_SHADER      0x4001
-#define _GRAPHICSTOOLKIT_HORIZONTAL_BLUR_TEXTURE_SHADER    0x4002
-
-#define	_OPT_BACKGROUND_REPEAT_REPEAT_X					  0x3001
-#define	_OPT_BACKGROUND_REPEAT_REPEAT_Y					  0x3010
-#define	_OPT_BACKGROUND_REPEAT_NO_REPEAT					  0x3003
-
-#define	_OPT_BACKGROUND_POSITION_CENTER					  0x3004
-#define	_OPT_BACKGROUND_POSITION_TOP						  0x3005
-#define	_OPT_BACKGROUND_POSITION_RIGHT					  0x3006
-#define	_OPT_BACKGROUND_POSITION_BOTTOM					  0x3007
-#define	_OPT_BACKGROUND_POSITION_LEFT					  0x3008
-
-#define	_OPT_BACKGROUND_SIZE_COVER							  0x3009
-#define	_OPT_BACKGROUND_SIZE_STRETCH						  0x300A
-
-#define FLT_255												  255.0f
-#define FLT_ZERO                                              0.0f
-#define FLT_ONE                                               1.0f
-
-#ifndef max
-#define max(a,b)										(((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)										(((a) < (b)) ? (a) : (b))
-#endif
-
 // Debugging
+//------------------------------------------------------------------------------
 #include "_A2DDebug.h"
 
-#define A2D_DE__										"Comment out this line to remove debugging."
+// Core Constants
+//------------------------------------------------------------------------------
+#define A2D_DEFAULT_TEXTURE								 L"../../../Aurora-SDK/Lib/Assets/Images/transparent [a] 1.png"
+#define A2D_WINDOW_BOX_SHADOW_SAFELYTY_RATIO             2
+#define A2D_WINDOW_RESIZE_EDGE_DISTANCE                  5
+#define A2D_WINDOW_RESIZE_DEFAULT_DISTANCE               3
+#define A2D_WINDOW_MOVE_BAR_DISTANCE                     25
+#define A2D_WINDOW_MOVE_DEFAULT_DISTANCE                 10
 
-#define G_SAFELY(hr)									if(hr != 0)	{ SYSOUT_STR("Failure detected");	return;		   }
-#define SAFELY(hr)										if(hr != 0)	{ SYSOUT_STR("Failure detected");	return E_FAIL; }
-#define NULLCHECK(hr)									if(!hr)		{ SYSOUT_STR("Failure detected");	return E_FAIL; }
-#define	DESTROY(x)										if(x)			{ delete x; x = 0; }
-#define D3DDESTROY(x)									if(x)			{ x->Release(); x = 0; }
-#define THREAD_DESTROY(x)								if(x)			{ x->stop(); delete x; x = 0; }
-#define FLOAT(x)										static_cast<float>(x)
-#define INT(x)											static_cast<int>(x)
-#define UINT(x)											static_cast<unsigned int>(x)
-#define TO_PIXELS(unit, value, range)					((unit == A2D::Styles::PERCENTAGE) ? FLOAT(range * (value / 100)) : (value))
+#define A2D_FPS											 120
+#define A2D_MAX_Z_DEPTH									 1000000.0f
 
-inline float pixelsToRelativePoint(const float xPixelDimension, const float xPixels)
-{
-	return xPixels / (xPixelDimension / 2) - 1;
-}
-
-inline float pixelsToRelativeDistance(const float xPixelDimension, const float xPixels)
-{
-	return xPixels / xPixelDimension * 2;
-}
-
+// System error focusing on speed
+//------------------------------------------------------------------------------
 #ifndef __STATUS_DEFINED__
 #define __STATUS_DEFINED__
+
 typedef unsigned int STATUS;
-#define _STATUS_TYPEDEF_(_sc)									((STATUS)_sc)
-#define STATUS_OK												_STATUS_TYPEDEF_(0)
-#define STATUS_FAIL												_STATUS_TYPEDEF_(1)
-#define STATUS_RETRY											_STATUS_TYPEDEF_(2)
-#define STATUS_FORCE_QUIT										_STATUS_TYPEDEF_(3)
-#endif									3
+#define _STATUS_TYPEDEF_(_sc)                           (static_cast<STATUS>(_sc))
+
+#define STATUS_OK                                       _STATUS_TYPEDEF_(0)
+#define STATUS_FAIL                                     _STATUS_TYPEDEF_(1)
+#define STATUS_RETRY                                    _STATUS_TYPEDEF_(2)
+#define STATUS_FORCE_QUIT                               _STATUS_TYPEDEF_(3)
+
+#endif                                  
+
+// Enable/Disable debugging
+//------------------------------------------------------------------------------
+// #define A2D_DE__                                        "Comment out this line to remove debugging."
+
+// Readability macros
+//------------------------------------------------------------------------------
+#define G_SAFELY(hr)                                    if(hr != 0) { SYSOUT_STR("Failure detected");   return; }
+#define SAFELY(hr)                                      if(hr != 0) { SYSOUT_STR("Failure detected");   return STATUS_FAIL; }
+#define NULLCHECK(hr)                                   if(!hr)     { SYSOUT_STR("Failure detected");   return STATUS_FAIL; }
+#define DESTROY(x)                                      if(x)       { delete x; x = 0; }
+#define D3DDESTROY(x)                                   if(x)       { x->Release(); x = 0; }
+#define THREAD_DESTROY(x)                               if(x)       { x->stop(); delete x; x = 0; }
+#define SFLOAT(x)                                       static_cast<float>(x)
+#define SINT(x)                                         static_cast<int>(x)
+#define SLONG(x)                                        static_cast<long>(x)
+#define SUINT(x)                                        static_cast<unsigned int>(x)
+#define SDOUBLE(x)	                                    static_cast<double>(x)
+#define SULONGLONG(x)                                   static_cast<unsigned long long>(x)
+#define SULONG(x)                                       static_cast<unsigned long>(x)
+#define IMPLEMENT                                       = 0
+#define EXECUTE_ONCE(x, y, z)							static x generated_##y = z
+
+#define LOW16UINT32(x)										x & 0xFFFF
+#define HI16UINT32(x)										x >> 16
+
+// System independent definitions
+//------------------------------------------------------------------------------
+#define SYSINLINE                                       __forceinline
+#define SYSCDECL                                        __cdecl
+#define SYSFASTCALL										__fastcall
+
+// Functions for calculating relative point
+//------------------------------------------------------------------------------
+SYSINLINE float SYSCDECL pixToRelPoint_cpy_cpy(float xPixelDimension, float xPixels)
+{
+    return xPixels / (xPixelDimension / 2.0f) - 1.0f;
+}
+
+SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, float xPixels)
+{
+    return xPixels / xPixelDimension * 2.0f;
+}
+
+SYSINLINE float SYSCDECL pixToRelDistance_cpy_cpy(float xPixelDimension, unsigned int xPixels)
+{
+	return xPixels / xPixelDimension * 2.0f;
+}
+
+// Fastest min/max/abs functions
+//------------------------------------------------------------------------------
+SYSINLINE float SYSCDECL max_cpy_cpy(float a, float b)
+{
+    return (((a) > (b)) ? (a) : (b));
+}
+
+SYSINLINE float SYSCDECL min_cpy_cpy(float a, float b)
+{
+    return (((a) < (b)) ? (a) : (b));
+}
+
+SYSINLINE float SYSCDECL abs_cpy(float a)
+{
+    return (((a) < (0.0f)) ? (-a) : (a));
+}
+
+SYSINLINE int SYSCDECL max_cpy_cpy(int a, int b)
+{
+    return (((a) > (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL min_cpy_cpy(int a, int b)
+{
+    return (((a) < (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL min_cpy_cpy(unsigned int a, unsigned int b)
+{
+	return (((a) < (b)) ? (a) : (b));
+}
+
+SYSINLINE int SYSCDECL abs_cpy(int a)
+{
+    return (((a) < (0)) ? (-a) : (a));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// PLATFORM DEPENDENT - START
+//////////////////////////////////////////////////////////////////////////////
+
+// FIXME This code is messy because it has an extra include in here.
+#ifdef _WIN32
+
+#include "Windows/ExtLibs.h"
+
+// Long lived frequency
+static LARGE_INTEGER freq;
+
+inline bool get_rdtsc_cpu_frequency()
+{
+	QueryPerformanceFrequency(&freq);
+
+	return true;
+}
+
+// Time access
+// NOTE: Use QueryPerformanceFrequency for raw frequency based time
+inline double platform_dependent_kernel_time_high_precision()
+{
+	static bool singleton = get_rdtsc_cpu_frequency();
+
+	LARGE_INTEGER counter1;
+	
+	QueryPerformanceCounter(&counter1);
+
+	return SDOUBLE(counter1.QuadPart) / SDOUBLE(freq.QuadPart);
+}
+
+// System time used for primarily 
+// animations
+//------------------------------------------------------------------------------
+#ifndef kerneltimelp__
+#define kerneltimelp__									GetTickCount()
+#endif
+
+#ifndef kerneltimehp__
+#define kerneltimehp__									platform_dependent_kernel_time_high_precision()
+#endif
+
+#ifndef threadid__										
+#define	threadid__										SINT(GetCurrentThreadId())
+#endif 
+
+#endif
+//////////////////////////////////////////////////////////////////////////////
+// PLATFORM DEPENDENT - END
+//////////////////////////////////////////////////////////////////////////////
+
+#define nanotime__									Toolkit::SYSTEM_NANOTIME
+
+//High performance min/max/abs for
+//floats and int. Any extra variables that need
+//to be used should be added.
+//------------------------------------------------------------------------------
+#define max__(x, y)                                     max_cpy_cpy(x, y)
+#define min__(x, y)                                     min_cpy_cpy(x, y)
+#define abs__(x)                                        abs_cpy(x)
+
+// High performance pixel to relative distance
+// functions.
+//------------------------------------------------------------------------------
+#define cvtpx2rp__(x, y)                                pixToRelPoint_cpy_cpy(x, y)
+#define cvtpx2rd__(x, y)                                pixToRelDistance_cpy_cpy(x, y)
+
+// Convert from units to distance
+//------------------------------------------------------------------------------
+#define cvtsu2px__(x_units, x_value, x_range)           ((x_units == Style::PERCENTAGE) ? SINT(x_range * (x_value / 100.0f)) : SINT(x_value))
+
+// unconst is very dangerous
+// Use with caution.
+//------------------------------------------------------------------------------
+#define	unconst__(x)									(const_cast<x>(this))
+
+#include <time.h>
+
+// Speed functions
+//------------------------------------------------------------------------------
+#ifndef timeinit__
+#define timeinit__										clock_t blockTime;
+#endif
+
+#ifndef timestart__
+#define timestart__										blockTime = clock();
+#endif
+
+#ifndef timeend__
+#define timeend__										SYSOUT_F(data "%.9fs", (double) (clock() - blockTime) / CLOCKS_PER_SEC);
+#endif
+
+#ifndef timeblock__             
+#define timeblock__(data)								for (long blockTime = NULL; (blockTime == NULL ? (blockTime = clock()) != NULL : false); SYSOUT_F(data "%.9fs", (double) (clock() - blockTime) / CLOCKS_PER_SEC))
+#endif
 
 #endif

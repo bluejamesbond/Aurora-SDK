@@ -11,8 +11,7 @@
 //      BACKBUFFER
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Creates a renderable context based on the device context of a window.
 //
 //------------------------------------------------------------------------------
 

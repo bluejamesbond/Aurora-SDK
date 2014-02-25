@@ -7,7 +7,11 @@ using namespace A2D;
 
 AbstractEventQueue* AbstractEventQueue::aClassInstance = NULL;
 
-AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : aFrame(xFrame) {}
+AbstractEventQueue::AbstractEventQueue(AbstractFrame * xFrame) : 
+	aFrame(xFrame),
+	m_animating(0)
+{
+}
 
 AbstractEventQueue::~AbstractEventQueue()
 {
@@ -27,7 +31,7 @@ void AbstractEventQueue::invokeAndWait(Runnable * xRunnable)
 {
 	if (getQueueLock())
 	{
-		xRunnable->run(aThread->id());
+		xRunnable->run(NULL, aThread->id());
 		releaseQueueLock();
 	}
 }
@@ -125,15 +129,15 @@ void AbstractEventQueue::stopDispatchingThread()
 	THREAD_DESTROY(aThread);
 }
 
-void AbstractEventQueue::run(int xThreadId)
+void AbstractEventQueue::run(void * x_param, int xThreadId)
 {
 	// Create frame resources inside EDT
 	aFrame->createResources();
 
 	// Create event handling resources
-	POINT p;
+	Point p;
 	Component comp;
-	p.x = p.y = 0;
+	p.m_x = p.m_y = 0.0f;
 	aMouseEvent = new MouseEvent(aFrame, MouseEvent::MOUSE_ENTERED, p, 1);
 	aFocusEvent = new FocusEvent(&comp, FocusEvent::FOCUS_FIRST);
 	aActionEvent = new ActionEvent(aFrame, ActionEvent::ACTION_FIRST, "init");
@@ -153,7 +157,7 @@ bool AbstractEventQueue::isDispatchingThread(int xFrameId)
 		return false;
 	}
 
-	return eventQueue->getDispatchingThread()->id() == thread->getCurrentThreadId();
+	return eventQueue->getDispatchingThread()->id() == threadid__;
 }
 
 Runnable * AbstractEventQueue::peekEvent()
@@ -186,13 +190,13 @@ bool AbstractEventQueue::dispatchNextEvent()
 	if (hasEvent())
 	{
 		getQueueLock();
-		peekEvent()->run(aThread->id());
+		peekEvent()->run(NULL, aThread->id());
 		popEvent();
 		releaseQueueLock();
 
 		return true;
 	}
-
+	
 	return false;
 }
 
@@ -209,7 +213,6 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	bool isConsumedFocus = false;
 	bool isValidRegion = false;
 	bool noComponent = false;
-	POINT point;
 	int ID;
 	OrderedList<Component*> * comps;
 	OrderedList<Rect*> invalidLocs;
@@ -218,11 +221,11 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 	// Prepare for event handling.
 	OrderedList<OrderedList<Component*>*>::Node<OrderedList<Component*>*> * node = componentLocations._end();
-	point = xEvent->getLocation();
+	Point& point = xEvent->getLocation();
 	ID = xEvent->getID();
 
 	#ifdef A2D_DE__
-	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.x, point.y);
+	SYSOUT_F("[AbstractEventQueue] Handling MouseEvent in x: %d, y: %d", point.m_x, point.m_y);
 	#endif // A2D_DE__
 	while (node)
 	{
@@ -233,8 +236,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			comp = comps->get(i);
 			eventRegion = comp->getVisibleRegion();
 			numPanels += 1;
-			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+			isValidRegion = Math::contains(*eventRegion, point);
 
 			if (isValidRegion)
 			{
@@ -253,7 +255,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 
 						// Focus event handling AFTER CLICKED (aka mouseUpRelease)
 						// NOTE: We may change this later once we have keyboard listeners.
-						if (comp->isFocusable && !comp->isFocused && !isConsumedFocus) // Check if already focused/focusable.
+						if (comp->m_focusable && !comp->m_focused && !isConsumedFocus) // Check if already focused/focusable.
 						{
 							// Only the top level components can get focus.
 							isConsumedFocus = true;
@@ -280,7 +282,7 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 					}
 					else
 					{
-						comp = comp->aNextCompListener;
+						comp = comp->m_nextCompListener;
 					}
 				}
 				// Once we are here, that means no components processed the event, 
@@ -304,10 +306,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 	{
 		source = nodeE->value;
 		eventRegion = source->getEventRegion();
-		eventRegion->aX = 0;
-		eventRegion->aY = 0;
-		isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-			point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+		eventRegion->m_x = eventRegion->m_y = 0.0f;
+		isValidRegion = Math::contains(*eventRegion, point);
 
 		if (isValidRegion)
 		{
@@ -359,14 +359,13 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	bool isDone = (isConsumedMouseMove == STATUS_OK && isConsumedMouse == STATUS_OK);
 
 	Rect * eventRegion;
-	POINT point;
 	int ID;
 	bool isValidRegion;
 
 	OrderedList<Component*> * comps;
 	EventSource * source;
 
-	point = xEvent->getLocation();
+	Point& point = xEvent->getLocation();
 	ID = xEvent->getID();
 
 	// Check components.
@@ -379,8 +378,7 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 		{
 			source = comps->get(i);
 			eventRegion = source->getEventRegion();
-			isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-				point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+			isValidRegion = Math::contains(*eventRegion, point);
 
 			if (isValidRegion)
 			{
@@ -429,10 +427,8 @@ void AbstractEventQueue::processMouseMotionEvent(MouseEvent * xEvent)
 	{
 		source = nodeE->value;
 		eventRegion = source->getEventRegion();
-		eventRegion->aX = 0;
-		eventRegion->aY = 0;
-		isValidRegion = point.x >= eventRegion->aX && point.x <= eventRegion->aX + eventRegion->aWidth &&
-			point.y >= eventRegion->aY && point.y <= eventRegion->aY + eventRegion->aHeight;
+		eventRegion->m_x = eventRegion->m_y = 0.0f;
+		isValidRegion = Math::contains(*eventRegion, point);
 
 		if (isValidRegion)
 		{
@@ -500,7 +496,7 @@ void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 	Component * comp = xEvent->GetComponent();
 
 	// We enable focus regardless of the component's focusListener (if it has one or not).
-	comp->isFocused = true;
+	comp->m_focused = true;
 
 	// Fire focus gained event from component that gained focus.
 	comp->processFocusEvent(aFocusEvent);
@@ -510,7 +506,7 @@ void AbstractEventQueue::processFocusEvent(FocusEvent * xEvent)
 		// Also force focus lost. If no component was focused before, aLastFocusedComp can be NULL.
 		aFocusEvent->setProperties(aLastFocusedComp, FocusEvent::FOCUS_LOST, comp);
 		// We are not doing a check here. Possible errors may come.
-		aLastFocusedComp->isFocused = false;
+		aLastFocusedComp->m_focused = false;
 		aLastFocusedComp->processFocusEvent(aFocusEvent);
 	}
 	// Set newly focused component.
@@ -527,7 +523,7 @@ void AbstractEventQueue::processWindowEvent(WindowEvent * xEvent)
 	win->aCurrentState = xEvent->getID();
 }
 
-void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
+void AbstractEventQueue::addEventDepthTracker(Component * xSource, int xZ)
 {
 	//OrderedList<OrderedList<EventSource*>*>::Node<OrderedList<EventSource*>*> * node = aEventSources._end();
 
@@ -540,11 +536,11 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 		return; // Source has no listener, so we do not add to the list.
 	}
 
-	OrderedList<Component*> * peerEventSources;
+	OrderedList<Component*> * peerEventSources = NULL;
 	OrderedList<Component*>::Node<Component*> * node;
 
 	int maxZ = aComponentEventSources.size() - 1;
-	int neededZ = INT(xZ);
+	int neededZ = xZ;
 
 	if (maxZ <= neededZ)
 	{
@@ -560,9 +556,9 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 		Component * nextComp = findNextCompListener(xSource);
 		if (nextComp)
 		{
-			nextComp->aPrevCompListener = xSource;
+			nextComp->m_prevCompListener = xSource;
 		}
-		xSource->aNextCompListener = nextComp;
+		xSource->m_nextCompListener = nextComp;
 	}
 	else
 	{
@@ -583,18 +579,18 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 		Component * nodeComp = findNextCompListener(xSource);
 		if (nodeComp) // Found parent that has listener.
 		{
-			xSource->aPrevCompListener = nodeComp->aPrevCompListener;
-			xSource->aNextCompListener = nodeComp;
-			nodeComp->aPrevCompListener = xSource;
+			xSource->m_prevCompListener = nodeComp->m_prevCompListener;
+			xSource->m_nextCompListener = nodeComp;
+			nodeComp->m_prevCompListener = xSource;
 		}
 		else // No parent has listener. Look for children listeners.
 		{
 			nodeComp = findPrevCompListener(xSource);
 			if (nodeComp)
 			{
-				nodeComp->aNextCompListener = xSource;
+				nodeComp->m_nextCompListener = xSource;
 			}
-			xSource->aPrevCompListener = nodeComp;
+			xSource->m_prevCompListener = nodeComp;
 		}
 
 	}
@@ -603,10 +599,10 @@ void AbstractEventQueue::addEventDepthTracker(Component * xSource, float xZ)
 
 }
 
-void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
+void AbstractEventQueue::removeEventDepthTracker(Component * xSource, int xZ)
 {
 	int maxZ = aComponentEventSources.size();
-	int neededZ = INT(xZ);
+	int neededZ = SINT(xZ);
 
 	if (maxZ <= neededZ)
 	{
@@ -621,16 +617,16 @@ void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 		comp = node->value;
 		if (comp == xSource) // If found, we remove and connect node pointers.
 		{
-			Component * prev = comp->aPrevCompListener;
-			Component * next = comp->aNextCompListener;
+			Component * prev = comp->m_prevCompListener;
+			Component * next = comp->m_nextCompListener;
 
 			if (prev)
 			{
-				prev->aNextCompListener = next;
+				prev->m_nextCompListener = next;
 			}
 			if (next)
 			{
-				next->aPrevCompListener = prev;
+				next->m_prevCompListener = prev;
 			}
 			peerEventSources->remove_request(&comp->aRemoveTicket);
 			return;
@@ -645,14 +641,14 @@ void AbstractEventQueue::removeEventDepthTracker(Component * xSource, float xZ)
 Component * AbstractEventQueue::findNextCompListener(Component * xSource)
 {
 	Component * comp;
-	comp = xSource->aParent;
+	comp = xSource->m_parent;
 	while (comp)
 	{
 		if (hasListener(comp))
 		{
 			return comp;
 		}
-		comp = comp->aParent;
+		comp = comp->m_parent;
 	}
 	// Didnt find a parent with listener
 	return NULL;
@@ -660,7 +656,7 @@ Component * AbstractEventQueue::findNextCompListener(Component * xSource)
 
 Component * AbstractEventQueue::findPrevCompListener(Component * xSource)
 {
-	OrderedList<Component*> children = xSource->aChildren;
+	OrderedList<Component*> children = xSource->m_children;
 	OrderedList<Component*>::Node<Component*> * nodeC = children._end();
 	Component * prevComp;
 	while (nodeC)

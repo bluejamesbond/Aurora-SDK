@@ -21,15 +21,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../_A2DLinkers.h"
+
 #include "OrderedList.h"
 #include "ImageProperties.h"
 #include "Pipeline.h"
-#include "Rect.h"
-#include "Paint.h"
-#include "Styles.h"
 #include "CascadingLayout.h"
+#include "Easing.h"
 #include GRAPHICS__
 #include "ComponentEventSource.h"
+#include "A2DCOMPONENTRENDERSTYLESET.h"
+#include "A2DANIMATABLEFLOATX.h"
+#include "A2DINTERPOLATORFLOAT.h"
+#include "Animator.h"
+#include "Math.h"
+#include "Toolkit.h"
+#include "Drawable.h"
 
 namespace A2D {
 
@@ -37,195 +43,190 @@ namespace A2D {
     // FORWARD DECLARATIONS
     ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractFrame;
+    class AbstractFrame;
     class Abstract;
-	class Graphics;
-	class Component;
-	struct ImageProperties;
-        class ComponentManager;
+    class Graphics;
+    class Component;
+    struct ImageProperties;
+    class ComponentManager;
+	class Easing;
+	
+	// Typedef animation
+	typedef void** Animation;
 
     ////////////////////////////////////////////////////////////////////////////////
     // DECLARATION
     ////////////////////////////////////////////////////////////////////////////////
 
     class Component : public ComponentEventSource
-	{
-		friend class ComponentManager;
-		friend class CascadingLayout;
-                friend class AbstractEventQueue;
+    {
+        friend class ComponentManager;
+        friend class CascadingLayout;
+		friend class AbstractEventQueue;
+		friend class Animator;
 
-	public:
+    public:
 
-		Component();
-		~Component();
+        Component();
+        ~Component();
 
 	private:
 
-		float							aDepth = 0;
+		bool                        m_forcedBounds;
+        bool                        m_focused;
+        bool                        m_focusable;
 
-		bool                                                        aVisible = true;
-		bool							aForced = false;
+		int							m_depth;
 
-		AbstractFrame		    *		aFrame;
-		Component			    *		aParent = NULL;
-		OrderedList<Component*>			aChildren;
-		Pipeline				*		aPipeline = NULL;
-		ComponentManager                *                aComponentManager = NULL;
+        AbstractFrame*              m_frame;
+        Component*                  m_parent;
+		OrderedList<Component*>     m_children;
 
-	protected:
+		OrderedList<A2DINTERPOLATORFLOAT*>  m_interpolators;
 
-		Styles::Display					aDisplay = Styles::Display::BLOCK;
-		Styles::Position				aPosition = Styles::Position::RELATIVE_;
+        ComponentManager*           m_componentManager;
+		AbstractEventQueue*			m_eventQueue;
+        
+		Component*                  m_nextCompListener;
+        Component*                  m_prevCompListener;
 
-		Styles::Units					aSizeWidthUnits = Styles::Units::PIXEL;
-		Styles::Units					aSizeHeightUnits = Styles::Units::PIXEL;	
-		
-		Styles::Units					aMarginLeftUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginTopUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginBottomUnits = Styles::Units::PIXEL;
-		Styles::Units					aMarginRightUnits = Styles::Units::PIXEL;
+		A2DCACHEDANIMATION2			m_cachedAnimationPositionXY;
+		Animation					m_positionAnimationXY;
 
-		Styles::Units					aPositionLeftUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionTopUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionBottomUnits = Styles::Units::PIXEL;
-		Styles::Units					aPositionRightUnits = Styles::Units::PIXEL;
-
-		float							aSizeWidth = 0.0f;
-		float							aSizeHeight = 0.0f;
-
-		float							aMarginLeft = 0.0f;
-		float							aMarginTop = 0.0f;
-		float							aMarginBottom = 0.0f;
-		float							aMarginRight = 0.0f;
-
-		float							aPositionLeft = 0.0f;
-		float							aPositionTop = 0.0f;
-		float							aPositionBottom = 0.0f;
-		float							aPositionRight = 0.0f;
-
-	public:
-		
-		void							setPosition(Styles::Position xPosition);
-		void							setDisplay(Styles::Display xDisplay);
-		void							setFloat(Styles::Float xFloat);
-		void							setSize(Styles::Units xWidthUnits, float xWidth, Styles::Units xHeightUnits, float xHeight);
-		void							setMargins(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
-		void							setPositioning(Styles::Units xLeftUnits, float xLeft, Styles::Units xTopUnits, float xTop, Styles::Units xRightUnits, float xRight, Styles::Units xBottomUnits, float xBottom);
-
-		void							forceBounds(bool xForce);
-	
-	public:
-
-		Rect *							getBoundsAtPtr();
-		void							setDepth(float xDepth);
-		void							setGraphics(Graphics& xGraphics);
-		void                            setParent(Component& xComponent);
-		void							setFrame(AbstractFrame& xFrame);
-		void							add(Component& xComponent);
-		void							remove(Component& xComponent);
-		
-        public:
-
-                STATUS                                                        requestFocus();
-                void                                                        setFocusable(bool xFocusable);
-				virtual        Rect                                        *                getEventRegion();
-
-                STATUS                                                        addMouseListener(MouseListener * xListener);
-                STATUS                                                        addMouseMotionListener(MouseMotionListener * xListener);
-                STATUS                                                        addFocusListener(FocusListener * xListener);
-                STATUS                                                        addActionListener(ActionListener * xListener);
-
-        private:
-
-                bool                                                        isFocused = false;
-                bool                                                        isFocusable = true;
-                Component                                        *        aNextCompListener = 0;
-                Component                                        *        aPrevCompListener = 0;
-                
     protected:
 
-		bool                            aValidatedContents;
-		float							aCalculatedNegativeDeltaX = 0.0f;
-		float							aCalculatedNegativeDeltaY = 0.0f;
-		Graphics                *       aGraphics;
-		Rect                            aOptRegion;
-		Rect                            aOptBackgroundRegion;
-		Rect                            aCalculatedRegion;
-		Rect                            aVisibleRegion;
+		int							m_id;
 
-        ImageProperties                 aOptBackgroundProps;                    // background-size/background-repeat
-        LPCWSTR                         aOptBackgroundSrc = NULL;               // background-image  (CSS)
-        Paint                           aOptBackgroundPaint;			        // background-color  (CSS)
-        int                             aOptBackgroundPosX = 0;                 // background-position-x  (CSS)
-        int                             aOptBackgroundPosY = 0;                 // background-position-x  (CSS)
-
-        virtual void                    paintComponent();
-        virtual void                    paintComponentBorder();
-
-	protected:
+		int							m_calculatedRowIndex;
+		int							m_calculatedColumnIndex;
 		
-		void                    validate();
+		int							m_previousCalculatedRowIndex;
+		int							m_previousCalculatedColumnIndex;
+		
+		bool                        m_validatedContents;
+		bool						m_activeInterpolations;
+		bool						m_componentTreeValidationRequest;
+		
+		bool						m_scrolling;
+		float						m_scrollTop;
+		float						m_scrollLeft;
+		
+
+
+		A2DCOMPONENTRENDERSTYLESET	m_styleSet;
+
+		Rect                        m_region;
+		A2DFLOAT4					m_subRegion;
+		A2DFLOAT4					m_subBordersRegion;
+		Rect						m_backgroundRegion;
+        Rect                        m_calculatedRegion;
+        Rect                        m_visibleRegion;
+		Dims						m_previousVisibleDimensions;
+		Dims						m_previousDimensions;
+		
+		Pipeline*                   m_pipeline;
+		Graphics*                   m_graphics;    
 
     public:
 
-		void							revalidate();
-		void							validated();
-		void							invalidate();
+		void						captureScroll();
+		void						releaseScroll();
 
-		float							getDepth();
-		Graphics&						getGraphics();
-		Component&						getParent();
-		Component&						getRoot();
-		AbstractFrame&					getFrame();
-                Rect *                                                        getVisibleRegion();
+		void						setId(int x_id);
+        void                        setDoubleBuffered(bool xDoubleBuffer);
+		void                        setBackgroundImage(wchar_t * x_src);
+		void                        setBackgroundPaint(Paint& xOptPaint);
+        void                        setPosition(Style::Position xPosition);
+        void                        setDisplay(Style::Display xDisplay);
+        void                        setFloat(Style::Float xFloat);
+        void                        setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight);
+        void                        setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+        void                        setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void                        setPadding(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void                        setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void                        setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
+        void                        setFocusable(bool xFocusable);
 
-		void							update();
-		Rect                            getBounds();
-		void                            setBounds(Rect& xRect);
-        bool                            isDoubleBuffered();
-        LPCWSTR                         getBackgroundImage()                                                    { return    aOptBackgroundSrc; };
-        int                             getBackgroundPositionX()                                                { return    aOptBackgroundPosX; };
-        int                             getBackgroundPositionY()                                                { return    aOptBackgroundPosY; };
-        int                             getBackgroundSizeX()                                                    { return    aOptBackgroundProps.aOptSizeX; };
-        int                             getBackgroundSizeY()                                                    { return    aOptBackgroundProps.aOptSizeY; };
-		Paint&                          getBackgroundPaint()                                                    { return    aOptBackgroundPaint; };
-        int                             getBackgroundRepeat()                                                   { return    aOptBackgroundProps.aOptRepeat; };
-        ImageProperties                 getBackgroundProperties()                                               { return    aOptBackgroundProps; };
-		        
-        void                            setDoubleBuffered(bool xDoubleBuffer);
-        void                            setBackgroundImage(LPCWSTR xOptBackgroundImage)                     { aOptBackgroundSrc = xOptBackgroundImage; };
-        void                            setBackgroundPositionX(int xOptPositionX)                           { aOptBackgroundPosX = xOptPositionX; };
-        void                            setBackgroundPositionY(int xOptPositionY)                           { aOptBackgroundPosY = xOptPositionY; };
-        void                            setBackgroundSizeX(int xOptSizeX)                                   { aOptBackgroundProps.aOptSizeX = xOptSizeX; };
-        void                            setBackgroundSizeY(int xOptSizeY)                                   { aOptBackgroundProps.aOptSizeY = xOptSizeY; };
-		void                            setBackgroundPaint(Paint& xOptPaint)                                   { Paint::from(aOptBackgroundPaint, xOptPaint); };
-        void                            setBackgroundRepeat(int xOptRepeat)                                 { aOptBackgroundProps.aOptRepeat = xOptRepeat; };
-        void                            setBackgroundProperties(ImageProperties& xOptBackgroundProps)        { aOptBackgroundProps = xOptBackgroundProps; };
-        void                            setBackground(LPCWSTR xOptBackgroundImage, int xOptBackroundPositionX, int xOptBackroundPositionY, 
-												      int xOptBackroundSizeX, int xOptBackroundSizeY, Paint& xOptBackgroundPaint, int xOptBackgroundRepeat);
+		void						setWidthUnits(Style::Units x_units);
+		void						setWidth(float x_width);
+		inline float				getWidth() { return m_styleSet.m_size.m_width; }
 
-    public:
+		void						setHeightUnits(Style::Units x_units);
+		void						setHeight(float x_height);
+		inline float				getHeight() { return m_styleSet.m_size.m_height; }
 
-        virtual STATUS                 initialize();
+		void						setBorderRadiiTopLeftUnits(Style::Units x_units);
+		void						setBorderRadiiTopLeft(float x_value);
+		inline float				getBorderRadiiTopLeft() { return m_styleSet.m_borderRadii.m_left; }
 
-	////////////////////////////////////////////////////////////////////////////////
-	// INLINE
-	////////////////////////////////////////////////////////////////////////////////
+		void						setOpacity(float x_opacity);
+		inline float				getOpacity() { return m_styleSet.m_opacity; }
 
-	protected:
+		void						setBorderRadiiUnified(float x_value);
+		inline float				getBorderRadiiUnified() { return m_styleSet.m_borderRadii.m_left; }
 
-		inline void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
-		{
-			aOptRegion.aWidth = xWidth;
-			aOptRegion.aHeight = xHeight;
-			aOptRegion.aX = xX;
-			aOptRegion.aY = xY;
+		float						getBoundsY();
+		void 						setBoundsY(float x_y);
 
-			aOptBackgroundRegion.aWidth = xWidth;
-			aOptBackgroundRegion.aHeight = xHeight;
+		float						getBoundsX();
+		void						setBoundsX(float x_x);
 
-			aValidatedContents = false;
-		}
+		void						setBoundsXY(float x_x, float x_y);
+
+		void						setScroll(float x_left, float x_top);
+		void						setScrollTop(float x_top);
+		inline float				getScrollLeft() { return m_scrollLeft; };
+		inline float				getScrollTop() { return m_scrollTop; };
+
+        STATUS                      requestFocus();
+        STATUS                      addMouseListener(MouseListener * xListener);
+        STATUS                      addMouseMotionListener(MouseMotionListener * xListener);
+        STATUS                      addFocusListener(FocusListener * xListener);
+        STATUS                      addActionListener(ActionListener * xListener);
+
+        void                        update();
+
+        void                        revalidate();
+        void                        validated();
+        void                        invalidate();
+        void                        add(Component& xComponent);
+        void                        remove(Component& xComponent);
+        void                        forceBounds(bool xForce);
+        STATUS						initialize();  
+
+		int							getDepth();
+        Graphics&                   getGraphics();
+        Component&                  getParent();
+        Component&                  getRoot();
+        AbstractFrame&              getFrame();
+        Rect*                       getVisibleRegion();
+        Rect*                       getBoundsAsPtr();
+        Rect                        getBounds();
+		wchar_t*                    getBackgroundImage();
+		Paint&                      getBackgroundPaint();
+ 
+        bool                        isDoubleBuffered();     
+
+	private:
+
+		void						interpolate();
+		void                        validate();
+
+		void						setEventQueue(AbstractEventQueue& x_eventQueue);
+		void                        setDepth(int xDepth);
+		void                        setGraphics(Graphics& xGraphics);
+		void                        setParent(Component& xComponent);
+		void                        setFrame(AbstractFrame& xFrame);
+		void						setComponentManager(ComponentManager& x_componentManager);
+
+    protected:
+
+        virtual void                paintComponent();
+        virtual void                paintComponentBorder();
+        virtual Rect*               getEventRegion();
+
+		void						setBounds(float xX, float xY, float xWidth, float xHeight);
 
     };
 }

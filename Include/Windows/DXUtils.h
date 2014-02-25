@@ -2,8 +2,8 @@
 // GAURDS
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __DXSHADERUTILS_H__
-#define __DXSHADERUTILS_H__
+#ifndef __DXUTILS_H__
+#define __DXUTILS_H__
 
 //+-----------------------------------------------------------------------------
 //
@@ -11,7 +11,7 @@
 //      DXSHADERUTILS
 //
 //  Synopsis:
-//      Texture quad.
+//      DX accesibility functions
 //
 //------------------------------------------------------------------------------
 
@@ -67,6 +67,9 @@ namespace A2D {
 		// Create view matrix
 		static STATUS					createViewMatrix(D3DXMATRIX ** xViewMatrix, CameraProperties& xCameraProperties);
 		
+		// Create border matrix
+		static STATUS SYSFASTCALL		updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize);
+
 		// Create matrix for specific class
 		template<class VertexClass>	
 		inline static STATUS			CreateDefaultDynamicVertexBuffer(ID3D10Device * xDevice, ID3D10Buffer ** xVertexBuffer, int xVertices);

@@ -3,22 +3,37 @@
 #include "../../../include/Core/CascadingLayout.h"
 #include "../../../include/Core/Component.h"
 
-#include <time.h>
-
 using namespace A2D;
 
 void _fastcall CascadingLayout::doLayout(Component& x_component)
 {
-	int size = x_component.aChildren.size();
-	OrderedList<Component*>::Node<Component*> * start = x_component.aChildren._head();
+	int size = x_component.m_children.size();
+	OrderedList<Component*>::Node<Component*> * start = x_component.m_children._head();
 
-	float height, width, mX = 0, mY = 0, aX = 0, aY = 0,
-		marginLeft, marginTop, marginRight, marginBottom, maxElementHeight = 0.0f, tempVerticalOffset,
-		positionLeft, positionTop, positionRight, positionBottom;
+	int
+		compWidth = SINT(x_component.m_region.m_width),
+		compHeight = SINT(x_component.m_region.m_height),
+		mX = SINT(x_component.m_scrollLeft),
+		mY = SINT(x_component.m_scrollTop),
+		aX = 0, 
+		aY = 0,
+		maxElementHeight = 0, 
+		tempVerticalOffset,
+		marginLeft,
+		marginTop,
+		marginBottom,
+		marginRight,
+		positionLeft,
+		positionTop,
+		positionBottom,
+		positionRight,
+		rowIndex = 0,
+		columnIndex = 0,
+		width,
+		height;
 
-	Styles::Display display;
-	Styles::Position position;
-	Rect& compRect = x_component.aOptRegion;
+	Style::Display display;
+	Style::Position position;
 	Component* component;
 
 	bool firstElement = true;
@@ -27,84 +42,147 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 	{
 		component = start->value;
 
-		if (component->aForced)
+		if (component->m_forcedBounds)
 		{
 			#ifdef A2D_DE__			
-			SYSOUT_STR("[CascadingLayout] Skipping calculations. Using forced bounds.");
+			SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Using forced bounds.", component->m_id);
 			#endif // A2D_DE__
 
 			start = start->right;
 			continue;
 		}
-		else if (mY >= compRect.aHeight)
+
+		// FIXME Update on parent resize only
+		//------------------------------------------------------------------------------
+		display = component->m_styleSet.m_display;
+		position = component->m_styleSet.m_position;
+			
+		if (x_component.m_componentTreeValidationRequest)
 		{
 			#ifdef A2D_DE__			
-			SYSOUT_STR("[CascadingLayout] Skipping calculations. Component out of window.");
+			SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Requesting recalculations due to parent resize.", component->m_id);
 			#endif // A2D_DE__
 
-			component->aVisible = false;
-			continue;
+			A2DDISTANCESET2& size = component->m_styleSet.m_size;
+			A2DPIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
+
+			width = precalculatedSize.m_width = SINT(cvtsu2px__(size.m_widthUnits, size.m_width, compWidth));
+			height = precalculatedSize.m_height = SINT(cvtsu2px__(size.m_heightUnits, size.m_height, compHeight));
+
+			A2DDISTANCESET4& margins = component->m_styleSet.m_margins;
+			A2DPIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
+
+			marginLeft = precalculatedMargins.m_left = cvtsu2px__(margins.m_leftUnits, margins.m_left, compWidth);
+			marginTop = precalculatedMargins.m_top = cvtsu2px__(margins.m_topUnits, margins.m_top, compHeight);
+			marginRight = precalculatedMargins.m_right = cvtsu2px__(margins.m_rightUnits, margins.m_right, compWidth);
+			marginBottom = precalculatedMargins.m_bottom = cvtsu2px__(margins.m_bottomUnits, margins.m_bottom, compHeight);
+
+			A2DDISTANCESET4& positioning = component->m_styleSet.m_positioning;
+			A2DPIXELDISTANCESETINT4& precalculatedPositioning = component->m_styleSet.m_precalculatedPositioning;
+
+			positionLeft = precalculatedPositioning.m_left = cvtsu2px__(positioning.m_leftUnits, positioning.m_left, compWidth);
+			positionTop = precalculatedPositioning.m_top = cvtsu2px__(positioning.m_topUnits, positioning.m_top, compHeight);
+			positionRight = precalculatedPositioning.m_right = cvtsu2px__(positioning.m_rightUnits, positioning.m_right, compWidth);
+			positionBottom = precalculatedPositioning.m_bottom = cvtsu2px__(positioning.m_bottomUnits, positioning.m_bottom, compHeight);
+
+			A2DDISTANCESET4& borderWidths = component->m_styleSet.m_borders.m_borderWidths;
+			A2DPIXELDISTANCESETUINT4& precalculatedBorderWidths = component->m_styleSet.m_borders.m_precalculatedBorderWidths;
+
+			precalculatedBorderWidths.m_left = SUINT(cvtsu2px__(borderWidths.m_leftUnits, borderWidths.m_left, compWidth));
+			precalculatedBorderWidths.m_top = SUINT(cvtsu2px__(borderWidths.m_topUnits, borderWidths.m_top, compHeight));
+			precalculatedBorderWidths.m_right = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_bottom, compHeight));
+			precalculatedBorderWidths.m_bottom = SUINT(cvtsu2px__(borderWidths.m_bottomUnits, borderWidths.m_right, compWidth));
+
+			A2DDISTANCESET4& borderRadii = component->m_styleSet.m_borderRadii;
+			A2DPIXELDISTANCESETUINT4& precalculatedBorderRadii = component->m_styleSet.m_precalculatedBorderRadii;
+
+			unsigned int usableDim = min__(width, height);
+
+			precalculatedBorderRadii.m_left = min__(SUINT(cvtsu2px__(borderRadii.m_leftUnits, borderRadii.m_left, compWidth)), usableDim / 2);
+			precalculatedBorderRadii.m_top = min__(SUINT(cvtsu2px__(borderRadii.m_topUnits, borderRadii.m_top, compHeight)), usableDim / 2);
+			precalculatedBorderRadii.m_right = min__(SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_bottom, compHeight)), usableDim / 2);
+			precalculatedBorderRadii.m_bottom = min__(SUINT(cvtsu2px__(borderRadii.m_bottomUnits, borderRadii.m_right, compWidth)), usableDim / 2);
+
+			// Mark the border widths as dirty since
+			// borderWidths are affected by validation
+			// windowResize
+			//------------------------------------------------------------------------------
+			component->m_styleSet.markBorderWidthsAsDirty();
+			component->m_styleSet.markBorderRadiiAsDirty();
+
+			// Request children to have full validation
+			//------------------------------------------------------------------------------
+			component->m_componentTreeValidationRequest = true;
+		}
+		else
+		{
+			A2DPIXELDISTANCESETUINT2& precalculatedSize = component->m_styleSet.m_precalculatedSize;
+
+			width = precalculatedSize.m_width;
+			height = precalculatedSize.m_height;
+
+			A2DPIXELDISTANCESETINT4& precalculatedMargins = component->m_styleSet.m_precalculatedMargins;
+
+			marginLeft = precalculatedMargins.m_left;
+			marginTop = precalculatedMargins.m_top;
+			marginRight = precalculatedMargins.m_right;
+			marginBottom = precalculatedMargins.m_bottom;
+
+			A2DPIXELDISTANCESETINT4& precalculatedPositioning = component->m_styleSet.m_precalculatedPositioning;
+
+			positionLeft = precalculatedPositioning.m_left;
+			positionTop = precalculatedPositioning.m_top;
+			positionRight = precalculatedPositioning.m_right;
+			positionBottom = precalculatedPositioning.m_bottom;
 		}
 
-		///*************************************** CACHE **********************************//
-		display = component->aDisplay;
-		position = component->aPosition;
-
-		width = TO_PIXELS(component->aSizeWidthUnits, component->aSizeWidth, compRect.aWidth);
-		height = TO_PIXELS(component->aSizeHeightUnits, component->aSizeHeight, compRect.aHeight);
-
-		marginLeft = TO_PIXELS(component->aMarginLeftUnits, component->aMarginLeft, compRect.aWidth);
-		marginTop = TO_PIXELS(component->aMarginTopUnits, component->aMarginTop, compRect.aHeight);
-		marginBottom = TO_PIXELS(component->aMarginBottomUnits, component->aMarginBottom, compRect.aHeight);
-		marginRight = TO_PIXELS(component->aMarginRightUnits, component->aMarginRight, compRect.aWidth);
-
-		positionLeft = TO_PIXELS(component->aPositionLeftUnits, component->aPositionLeft, compRect.aWidth);
-		positionTop = TO_PIXELS(component->aPositionTopUnits, component->aPositionTop, compRect.aHeight);
-		positionBottom = TO_PIXELS(component->aPositionBottomUnits, component->aPositionBottom, compRect.aHeight);
-		positionRight = TO_PIXELS(component->aPositionRightUnits, component->aPositionRight, compRect.aWidth);
-		///********************************************************************************//
-
-		if (position == Styles::RELATIVE_)
+		if (position == Style::RELATIVE_)
 		{
-			if (display == Styles::INLINE_BLOCK)
+			if (display == Style::INLINE_BLOCK)
 			{
-				if ((marginLeft + mX + width + marginRight) > (compRect.aWidth + FLT_ONE))
+				if ((marginLeft + mX + width + marginRight) > (compWidth + 1.0f))
 				{
 					mX = marginLeft;
 					mY = mY + maxElementHeight + marginTop;
 
 					// new row
-					maxElementHeight = 0.0;
+					maxElementHeight = 0;
+
+					rowIndex++;
+					columnIndex = 0;
 				}
 				else
 				{
 					mX = mX + marginLeft;
-					mY = firstElement ? marginTop : mY;
+					mY = firstElement ? mY + marginTop : mY;
 
 					// try to move this elswhere
 					firstElement = false;
 				}
 			}
-			else/*if (display == Styles::BLOCK)*/
+			else/*if (display == Style::BLOCK)*/
 			{
 				mX += marginLeft;
 				mY += marginTop;
+
+				// try to move this elswhere
+				firstElement = false;
 			}
 		}
-		else/*if (position == Styles::ABSOLUTE_)*/
+		else/*if (position == Style::ABSOLUTE_)*/
 		{
 			aX = marginLeft;
 			aY = marginTop;
 
 			// left: auto | right: auto
-			if (positionLeft == Styles::AUTO && positionRight == Styles::AUTO) {}
+			if (positionLeft == Style::AUTO && positionRight == Style::AUTO) {}
 			// left: auto | right: X
-			else if (positionLeft == Styles::AUTO)
+			else if (positionLeft == Style::AUTO)
 			{
-				aX += (compRect.aWidth - width) - positionRight;
+				aX += (compWidth - width) - positionRight;
 			}
 			// left: X | right: auto
-			else if (positionRight == Styles::AUTO)
+			else if (positionRight == Style::AUTO)
 			{
 				aX += positionLeft;
 			}
@@ -112,18 +190,18 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			else
 			{
 				aX += positionLeft;
-				width = compRect.aWidth - (positionLeft + positionRight);
+				width = compWidth - (positionLeft + positionRight);
 			}
 
 			// top: auto | bottom: auto
-			if (positionTop == Styles::AUTO && positionBottom == Styles::AUTO) {}
+			if (positionTop == Style::AUTO && positionBottom == Style::AUTO) {}
 			// top: auto | bottom: X
-			else if (positionTop == Styles::AUTO)
+			else if (positionTop == Style::AUTO)
 			{
-				aY += (compRect.aWidth - width) - positionBottom;
+				aY += (compWidth - width) - positionBottom;
 			}
 			// top: X | bottom: auto
-			else if (positionBottom == Styles::AUTO)
+			else if (positionBottom == Style::AUTO)
 			{
 				aY += positionTop;
 			}
@@ -131,37 +209,75 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			else
 			{
 				aY += positionTop;
-				height = compRect.aHeight - (positionTop + positionBottom);
+				height = compHeight - (positionTop + positionBottom);
+			}
+
+			if (aY >= compHeight || aX >= compWidth)
+			{
+				#ifdef A2D_DE__			
+				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
+				#endif // A2D_DE__
+
+				component->m_styleSet.m_visible = false;
+				continue;
 			}
 		}
 
-		if (position == Styles::RELATIVE_)
+		if (position == Style::RELATIVE_)
 		{
-			/***********************************************/
-			component->aVisible = true;
-			component->setBounds(mX + positionLeft + positionRight, mY + positionTop + positionBottom, width, height);
-			/***********************************************/
 
-			if (display == Styles::INLINE_BLOCK)
+			if (mX >= compWidth
+			 || mX + width <= 0
+			 || mY >= compHeight
+			 || mY + height <= 0)
+			{
+				#ifdef A2D_DE__			
+				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
+				#endif // A2D_DE__
+
+				component->m_styleSet.m_visible = false;
+			}
+			else
+			{ 
+				// Update bounds
+				//------------------------------------------------------------------------------
+				component->m_styleSet.m_visible = true;
+				component->m_calculatedRowIndex = rowIndex;
+				component->m_calculatedColumnIndex = columnIndex;
+			
+				component->setBounds(SFLOAT(mX + positionLeft + positionRight), 
+									 SFLOAT(mY + positionTop + positionBottom), 
+									 SFLOAT(width),
+									 SFLOAT(height));
+			}
+
+			if (display == Style::INLINE_BLOCK)
 			{
 				mX = mX + width + marginRight;
 				// mY = mY;
 
+				// Next column
+				columnIndex++;
+
 				// Inline block uses last_height
 				maxElementHeight = (tempVerticalOffset = marginBottom + height) > maxElementHeight ? tempVerticalOffset : maxElementHeight;
 			}
-			else/*if (display == Styles::BLOCK)*/
+			else/*if (display == Style::BLOCK)*/
 			{
-				mX = FLT_ZERO;
+				mX = 0;
 				mY = mY + height + marginBottom;
+
+				// New row
+				rowIndex++;
+				columnIndex = 0;
 			}
 		}
-		else/*if (position == Styles::ABSOLUTE_)*/
+		else/*if (position == Style::ABSOLUTE_)*/
 		{
-			/***********************************************/
-			component->aVisible = true;
-			component->setBounds(aX, aY, width, height);
-			/***********************************************/
+			// Update bounds
+			//------------------------------------------------------------------------------
+			component->m_styleSet.m_visible = true;
+			component->setBounds(SFLOAT(aX), SFLOAT(aY), SFLOAT(width), SFLOAT(height));
 		}
 
 		start = start->right;

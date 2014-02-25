@@ -4,13 +4,10 @@
 
 using namespace A2D;
 
-// Set an instance of this. So it can call waitAll
-AbstractThread* Thread::aClassInstance = new Thread(NULL); 
-
 // Intiialize the OrderedList
 OrderedList<HANDLE> Thread::aThreadHandles;
 
-Thread::Thread(Runnable * xRunnable) : AbstractThread(xRunnable)
+Thread::Thread(Runnable * xRunnable, void * x_param) : AbstractThread(xRunnable, x_param)
 {
 	// Default thread id is 0 until we get
 	// an actual thread id from kernel
@@ -64,7 +61,7 @@ void Thread::interrupt()
 int Thread::id()
 {
 	//return an integer format of thread id
-	return INT(aId);
+	return SINT(aId);
 }
 
 void Thread::resume()
@@ -119,7 +116,7 @@ void Thread::waitAll()
 int Thread::getCurrentThreadId()
 {
 	// returns the current thread from the kernel level
-	return INT(GetCurrentThreadId());
+	return SINT(GetCurrentThreadId());
 }
 
 // This static method is used as the logic loop behind

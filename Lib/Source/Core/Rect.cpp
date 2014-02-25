@@ -20,13 +20,13 @@ void  Rect::memcpySSE2(Rect * xDest, const Rect * xSrc)
 	}
 }
 
-byte Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
+char Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
 {
 	// Memcpy built just for Rect and is optimized for
 	// 64 bit architecture with use of 128 bit registers.
 	// DO NOT USE THIS!
 
-	byte result = 0;
+	char result = 0;
 
 	__asm
 	{
@@ -54,16 +54,16 @@ byte Rect::memeqlSSE4(Rect * xComp1, Rect * xComp2)
 // TEST
 
 //A2D::Rect a1;
-//a1.aX = 10.0f;
-//a1.aY = 0.0f;
-//a1.aWidth = 10.f;
-//a1.aHeight = 0.0f;
+//a1.m_x = 10.0f;
+//a1.m_y = 0.0f;
+//a1.m_width = 10.f;
+//a1.m_height = 0.0f;
 //
 //A2D::Rect a2;
-//a2.aX = 10.0f;
-//a2.aY = 0.0f;
-//a2.aWidth = 11.f;
-//a2.aHeight = 0.0f;
+//a2.m_x = 10.0f;
+//a2.m_y = 0.0f;
+//a2.m_width = 11.f;
+//a2.m_height = 0.0f;
 //
 //clock_t tStart = clock();
 //

@@ -65,7 +65,7 @@ Color AbstractWindow::getBorderColor()
 * @return LPCWSTR
 *			Long string representation of the name
 */
-LPCWSTR AbstractWindow::getName()
+wchar_t * AbstractWindow::getName()
 {
 	return aName;
 }
@@ -83,7 +83,7 @@ Rect AbstractWindow::getBounds()
 	return aRect;
 }
 
-Dims& AbstractWindow::getSizeAsPtr()
+const Dims& AbstractWindow::getSizeAsPtr()
 {
 	return *static_cast<Dims*>(&aRect);
 }
@@ -299,20 +299,20 @@ STATUS AbstractWindow::initialize()
 	aName = L"Aurora-SDK Unititled";
 
 	// Default (0,0)
-	aRect.aX = 0;
-	aRect.aY = 0;
+	aRect.m_x = 0;
+	aRect.m_y = 0;
 
 	// Default size
-	aRect.aWidth = 800;
-	aRect.aHeight = 600;
+	aRect.m_width = 800;
+	aRect.m_height = 600;
 
 	// Default minimium is 0,0
-	aMinDims.aWidth = FLT_ZERO;
-	aMinDims.aHeight = FLT_ZERO;
+	aMinDims.m_width = 0.0f;
+	aMinDims.m_height = 0.0f;
 
 	// Default maximum is full screen
-	aMaxDims.aWidth = FLT_MAX;
-	aMaxDims.aHeight = FLT_MAX;
+	aMaxDims.m_width = FLT_MAX;
+	aMaxDims.m_height = FLT_MAX;
 
 	// Default shadow radius
 	aOptShadowRadius = 30.0f;
@@ -348,9 +348,9 @@ STATUS AbstractWindow::initialize()
 	aWindowDeactivated = new WindowEvent(this, WindowEvent::WINDOW_DEACTIVATED, NULL, WindowEvent::WINDOW_DEACTIVATED);
 	
 	// Initialize MouseEvent resources
-	POINT p;
-	p.x = LONG(aRect.aX);
-	p.y = LONG(aRect.aY);
+	Point p;
+	p.m_x = aRect.m_x;
+	p.m_y = aRect.m_y;
 	aMouseDown = new MouseEvent(this, MouseEvent::MOUSE_PRESSED, p, 1);
 	aMouseUp = new MouseEvent(this, MouseEvent::MOUSE_RELEASED, p, 1);
 	aMouseMove = new MouseEvent(this, MouseEvent::MOUSE_MOVE, p, 1);

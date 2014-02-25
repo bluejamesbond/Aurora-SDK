@@ -20,12 +20,16 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "../Core/../_A2DCommon.h"
+#include "../_A2DCommon.h"
+
 #include "../Core/Paint.h"
 #include "../Core/Color3D.h"
 #include "../Core/ImageProperties.h"
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
+#include "../Core/Drawable.h"
+
+#include "../Core/A2DCOMPONENTRENDERSTYLESET.h"
 
 #include "VertexTypes.h"
 #include "BackBuffer.h"
@@ -37,6 +41,7 @@
 #include "DXUtils.h"
 #include "TextureShader.h"
 #include "ColorShader.h"
+#include "Thread.h"
 
 namespace A2D {
 
@@ -58,7 +63,22 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class Graphics
+	class TextureBindingParameter
+	{
+
+	public:
+
+		ID3D10Device ** m_device;
+		Drawable * m_drawable;
+
+		TextureBindingParameter(ID3D10Device ** x_device, Drawable * x_drawable) :
+			m_device(x_device),
+			m_drawable(x_drawable)
+		{
+		}
+	};
+
+	class Graphics : public Runnable
 	{
 	public:
 
@@ -73,7 +93,7 @@ namespace A2D {
 		float                *			aProjection3DMatrix;
 
 		BackBuffer			 *			aBackBuffer;
-		Dims				 *			aBackBufferDims;
+		const Dims			 *			aBackBufferDims;
 		GXSettings			 *			aBackBufferSettings;
 
 		CameraProperties				aCameraProperties;
@@ -89,29 +109,32 @@ namespace A2D {
 		QuadExpansionShader  *			aQuadExpansionShader;
 
 		ID3D10Device		**			aDevice;
+		D3DXMATRIX						m_position_matrix;
 
 	public:
 
-		Dims*							getDrawableDimensions();
+		const Dims*						getDrawableDimensions();
 		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
 		
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
-		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat);
+		void							drawString(Pipeline ** xPipeline, Rect& xRect);
+		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
+		
+		void							drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet);
+
+
+		void run(void * x_param, int x_thread);
+		void resetDrawable(Drawable& x_drawable);
+		void unbindDrawable(Drawable& x_drawable);
+		void bindDrawable(Drawable& x_drawable);
+		void setClip(Rect * xClip, float xDepth);
+		void validate();
 
 	public:
 
 		virtual STATUS                 initialize();
-
-		////////////////////////////////////////////////////////////////////////////////
-		// INLINE
-		////////////////////////////////////////////////////////////////////////////////
-
-		inline void Graphics::setClip(Rect * xClip, float xDepth)
-		{
-			aQuadFactory->setConstraints(aClip = xClip, xDepth);
-		}
 	};
 }
 

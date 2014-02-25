@@ -10,7 +10,7 @@ AbstractBackBuffer::AbstractBackBuffer(AbstractWindow * xWindow, GXSettings * xG
 	aWindow = xWindow;
 }
 
-Dims * AbstractBackBuffer::getSizeAsPtr()
+const Dims * AbstractBackBuffer::getSizeAsPtr()
 {
 	return &aDims;
 }

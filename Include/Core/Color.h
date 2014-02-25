@@ -25,10 +25,10 @@ namespace A2D{
 
 	struct Color
 	{
-		byte								aAlpha = 0xFF;
-		byte								aRed = 0xFF;
-		byte								aGreen = 0xFF;
-		byte								aBlue = 0xFF;
+		unsigned char						aAlpha = 0xFF;
+		unsigned char						aRed = 0xFF;
+		unsigned char						aGreen = 0xFF;
+		unsigned char						aBlue = 0xFF;
 
 		unsigned int						m_raw;
 

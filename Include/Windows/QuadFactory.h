@@ -22,6 +22,9 @@
 
 #include "../Core/Rect.h"
 #include "../Core/Paint.h"
+#include "../Core/Pipelineable.h"
+#include "../Core/Style.h"
+#include "../Core/A2DCOMPONENTRENDERSTYLESET.h"
 
 #include "ExtLibs.h"
 #include "DXUtils.h"
@@ -47,7 +50,7 @@ namespace A2D {
 	{
 	public:
 
-		QuadFactory(ID3D10Device ** xDevice, Dims * xWindowDims);
+		QuadFactory(ID3D10Device ** xDevice, const Dims * xWindowDims);
 		~QuadFactory();
 
 		ID3D10Buffer	*	aIndexBuffer;
@@ -58,7 +61,7 @@ namespace A2D {
 		///////////////////////////////////////////////////////////
 
 		Rect				aConstraints;
-		Dims			*	aWindowDims;
+		const  Dims		*	aWindowDims;
 		ID3D10Device	**	aDevice;
 
 		///////////////////////////////////////////////////////////
@@ -104,120 +107,52 @@ namespace A2D {
 			device->IASetIndexBuffer(aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 
-		inline bool QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
-		{
-			Rect& constraints = aConstraints;
-			Rect * textureClip = xTexture->GetClip();
-
-			int textureDimsChange = 0;
-			int textureClipChange = 0;
-			int rectChange = 0;
-			int imagePropertiesChange = 0;
-
-			float rectX = xRect->aX;
-			float rectY = xRect->aY;
-			float rectWidth = xRect->aWidth;
-			float rectHeight = xRect->aHeight;
-
-			float winWidth = aWindowDims->aWidth;
-			float winHeight = aWindowDims->aHeight;
-
-			float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
-				left, width, top, height, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
-				texelRight, texelBottom,
-				textureWidth = textureClip->aWidth,
-				textureHeight = textureClip->aHeight,
-				depth = aDepth;
-
-			QuadExpansionVertex * vertices = xQuadData->aVertices;
-			void * mappedVertices = 0;
-
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectY + rectHeight : rectY + rectHeight);
-
-			calcHeight = calcBottom - calcTop;
-			calcWidth = calcRight - calcLeft;
-
-			texLeft = rectX > 0 ? 0.0f : abs(rectX);
-			texTop = rectY > 0 ? 0.0f : abs(rectY);
-			texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
-			texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
-
-			texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
-			texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
-			texelRight = xRepeat ? (calcWidth + texLeft) / textureWidth : texRight / rectWidth;
-			texelBottom = xRepeat ? (calcHeight + texTop) / textureHeight : texBottom / rectHeight;
-
-			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			width = pixelsToRelativeDistance(winWidth, calcWidth);
-			height = pixelsToRelativeDistance(winHeight, calcHeight);
-
-			// Set up vertices
-			vertices[0].aPosition = D3DXVECTOR4(left, top, width, height);
-			vertices[0].aColorTex = D3DXVECTOR4(texelLeft, texelTop, texelRight, texelBottom);
-			vertices[0].aBorderColors = A2DUINT4(0xFF0000FF, 0xFFFFFFFF, 0x0000FFFF, 0xFFFF00FF);
-			vertices[0].aBorderWidths = D3DXVECTOR4(pixelsToRelativeDistance(winWidth, 2), pixelsToRelativeDistance(winHeight, 2), pixelsToRelativeDistance(winWidth, 2), pixelsToRelativeDistance(winHeight, 2));
-			vertices[0].aOptions = D3DXVECTOR4(1.0f, 0.0f, aDepth, 1.0f);
-
-			// Lock the vertex buffer.
-			xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
-
-			// Copy data using SSE2 accelerated method
-			memcpy(static_cast<QuadExpansionVertex*>(mappedVertices), vertices, sizeof(QuadExpansionVertex));
-
-			// Unlock the vertex buffer.
-			xQuadData->aVertexBuffer->Unmap();
-
-			return true;
-		}
+		void QuadFactory::updateVertexBuffer(QuadData<QuadExpansionVertex, 1> * xQuadData, A2DCOMPONENTRENDERSTYLESET& x_renderSet, Texture * xTexture);
 
 		inline bool QuadFactory::updateVertexBuffer(QuadData<ColoredTextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, Paint * xPaint, bool xRepeat)
 		{
 			Rect& constraints = aConstraints;
-			Rect * textureClip = xTexture->GetClip();
+			const Rect * textureClip = xTexture->GetClip();
 
 			int textureDimsChange = 0;
 			int textureClipChange = 0;
 			int rectChange = 0;
 			int imagePropertiesChange = 0;
 
-			float rectX = xRect->aX;
-			float rectY = xRect->aY;
-			float rectWidth = xRect->aWidth;
-			float rectHeight = xRect->aHeight;
+			float regionX = xRect->m_x;
+			float rectY = xRect->m_y;
+			float rectWidth = xRect->m_width;
+			float rectHeight = xRect->m_height;
 
-			if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
+			if (regionX >= constraints.m_width || rectY >= constraints.m_height || constraints.m_width <= 0 || constraints.m_height <= 0)	return false;
 
 			float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 				left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 				texelRight, texelBottom,
-				textureWidth = textureClip->aWidth,
-				textureHeight = textureClip->aHeight,
+				textureWidth = textureClip->m_width,
+				textureHeight = textureClip->m_height,
 				depth = aDepth;
 
 			ColoredTextureVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = max__(regionX, 0.0f);
+			calcTop = max__(rectY, 0.0f);
+			calcRight = min__(constraints.m_width, regionX > 0 ? rectWidth : regionX + rectWidth);
+			calcBottom = min__(constraints.m_height, rectY > 0 ? rectHeight : rectY + rectHeight);
 
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
 
-			left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
+			left = -aWindowDims->m_width / 2 + (constraints.m_x + calcLeft);
 			right = left + calcWidth;
-			top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
+			top = aWindowDims->m_height / 2 - (constraints.m_y + calcTop);
 			bottom = top - calcHeight;
 
-			texLeft = rectX > 0 ? 0.0f : abs(rectX);
-			texTop = rectY > 0 ? 0.0f : abs(rectY);
-			texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
-			texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
+			texLeft = regionX > 0 ? 0.0f : abs__(regionX);
+			texTop = rectY > 0 ? 0.0f : abs__(rectY);
+			texRight = calcRight < constraints.m_width ? rectWidth : calcWidth;
+			texBottom = calcBottom < constraints.m_height ? rectHeight : calcHeight;
 
 			texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
 			texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
@@ -270,47 +205,48 @@ namespace A2D {
 		inline bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex, 6> * xQuadData, Rect * xRect, Texture * xTexture, bool xRepeat)
 		{
 			Rect& constraints = aConstraints;
-			Rect * textureClip = xTexture->GetClip();
+			const Rect * textureClip = xTexture->GetClip();
 
 			int textureDimsChange = 0;
 			int textureClipChange = 0;
 			int rectChange = 0;
 			int imagePropertiesChange = 0;
 
-			float rectX = xRect->aX;
-			float rectY = xRect->aY;
-			float rectWidth = xRect->aWidth;
-			float rectHeight = xRect->aHeight;
-
-			if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
+			float regionX = xRect->m_x;
+			float rectY = xRect->m_y;
+			float rectWidth = xRect->m_width;
+			float rectHeight = xRect->m_height;
 
 			float calcLeft, calcTop, calcRight, calcBottom, calcHeight, calcWidth,
 				left, right, top, bottom, texLeft, texTop, texRight, texBottom, texelLeft, texelTop,
 				texelRight, texelBottom,
-				textureWidth = textureClip->aWidth,
-				textureHeight = textureClip->aHeight,
+				textureWidth = textureClip->m_width,
+				textureHeight = textureClip->m_height,
 				depth = aDepth;
+			
+			float winWidth = aWindowDims->m_width;
+			float winHeight = aWindowDims->m_height;
 
 			TextureVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = max__(regionX, 0.0f);
+			calcTop = max__(rectY, 0.0f);
+			calcRight = min__(constraints.m_width, regionX > 0 ? rectWidth : regionX + rectWidth);
+			calcBottom = min__(constraints.m_height, rectY > 0 ? rectHeight : rectY + rectHeight);
 
 			calcHeight = calcBottom - calcTop;
 			calcWidth = calcRight - calcLeft;
 
-			left = -aWindowDims->aWidth / 2 + (constraints.aX + calcLeft);
-			right = left + calcWidth;
-			top = aWindowDims->aHeight / 2 - (constraints.aY + calcTop);
-			bottom = top - calcHeight;
+			left = cvtpx2rp__(winWidth, constraints.m_x + calcLeft);
+			top = -cvtpx2rp__(winHeight, constraints.m_y + calcTop);
+			right = cvtpx2rd__(winWidth, constraints.m_x + calcRight);
+			bottom = -cvtpx2rd__(winHeight, constraints.m_y + calcBottom);
 
-			texLeft = rectX > 0 ? 0.0f : abs(rectX);
-			texTop = rectY > 0 ? 0.0f : abs(rectY);
-			texRight = calcRight < constraints.aWidth ? rectWidth : calcWidth;
-			texBottom = calcBottom < constraints.aHeight ? rectHeight : calcHeight;
+			texLeft = regionX > 0 ? 0.0f : abs__(regionX);
+			texTop = rectY > 0 ? 0.0f : abs__(rectY);
+			texRight = calcRight < constraints.m_width ? rectWidth : calcWidth;
+			texBottom = calcBottom < constraints.m_height ? rectHeight : calcHeight;
 
 			texelLeft = xRepeat ? texLeft / textureWidth : texLeft / rectWidth;
 			texelTop = xRepeat ? texTop / textureHeight : texTop / rectHeight;
@@ -358,15 +294,15 @@ namespace A2D {
 			int rectChange = 0;
 			int imagePropertiesChange = 0;
 
-			float rectX = xRect->aX;
-			float rectY = xRect->aY;
-			float rectWidth = xRect->aWidth;
-			float rectHeight = xRect->aHeight;
+			float regionX = xRect->m_x;
+			float rectY = xRect->m_y;
+			float rectWidth = xRect->m_width;
+			float rectHeight = xRect->m_height;
 
-			if (rectX >= constraints.aWidth || rectY >= constraints.aHeight || constraints.aWidth <= 0 || constraints.aHeight <= 0)	return false;
+			if (regionX >= constraints.m_width || rectY >= constraints.m_height || constraints.m_width <= 0 || constraints.m_height <= 0)	return false;
 
-			float winWidth = aWindowDims->aWidth;
-			float winHeight = aWindowDims->aHeight;
+			float winWidth = aWindowDims->m_width;
+			float winHeight = aWindowDims->m_height;
 
 			float calcLeft, calcTop, calcRight, calcBottom,
 				left, right, top, bottom, depth = aDepth;
@@ -374,16 +310,16 @@ namespace A2D {
 			ColorVertex * vertices = xQuadData->aVertices;
 			void * mappedVertices = 0;
 
-			calcLeft = max(rectX, 0);
-			calcTop = max(rectY, 0);
-			calcRight = min(constraints.aWidth, rectX > 0 ? rectWidth : rectX + rectWidth);
-			calcBottom = min(constraints.aHeight, rectY > 0 ? rectHeight : rectY + rectHeight);
+			calcLeft = constraints.m_x + max__(regionX, 0.0f);
+			calcTop = constraints.m_y + max__(rectY, 0.0f);
+			calcRight = constraints.m_x + min__(constraints.m_width, regionX > 0 ? rectWidth : regionX + rectWidth);
+			calcBottom = constraints.m_y + min__(constraints.m_height, rectY > 0 ? rectHeight : rectY + rectHeight);
 
-			left = pixelsToRelativePoint(winWidth, constraints.aX + calcLeft);
-			top = -pixelsToRelativePoint(winHeight, constraints.aY + calcTop);
-			right = pixelsToRelativeDistance(winWidth, constraints.aX + calcRight);
-			bottom = -pixelsToRelativePoint(winHeight, constraints.aY + calcBottom);
-
+			left = cvtpx2rp__(winWidth, calcLeft);
+			top = -cvtpx2rp__(winHeight, calcTop);
+			right = cvtpx2rp__(winWidth, calcRight);
+			bottom = -cvtpx2rp__(winHeight, calcBottom);
+			
 			Color3D& topLeftColor = xPaint->aStart;
 			Color3D& topRightColor = xPaint->aStart;
 			Color3D& bottomLeftColor = xPaint->aEnd;
@@ -418,7 +354,6 @@ namespace A2D {
 			xQuadData->aVertexBuffer->Unmap();
 
 			return true;
-
 		}
 
 	private:

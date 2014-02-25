@@ -12,7 +12,7 @@ STATUS DXUtils::LoadEffectFromFile(LPCWSTR xFilename, ID3D10Device * aDevice, ID
 	errorMessage = 0;
 
 	// Load the shader in from the file.
-	SAFELY(D3DX10CreateEffectFromFile(xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	SAFELY(D3DX10CreateEffectFromFile(xFilename, NULL, NULL, "fx_4_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0,
 		aDevice, NULL, NULL, xEffect, &errorMessage, NULL));
 
 	return STATUS_OK;
@@ -72,6 +72,19 @@ STATUS DXUtils::createDefaultWorldMatrix(D3DXMATRIX ** xWorldMatrix)
 	return STATUS_OK;
 }
 
+STATUS SYSFASTCALL DXUtils::updateBorderMatrix(D3DXMATRIX * x_borderMatrix, const Dims * x_windowSize)
+{
+	// Set
+	D3DXMATRIX borderMatrix(2.0f / x_windowSize->m_width, 0.0f, 0.0f, 0.0f,
+							0.0f, 2.0f / x_windowSize->m_height, 0.0f, 0.0f,
+							0.0f, 0.0f, 2.0f / x_windowSize->m_width, 0.0f,
+							0.0f, 0.0f, 0.0f, 2.0f / x_windowSize->m_height);
+	
+	memcpy(x_borderMatrix, &borderMatrix, sizeof(D3DXMATRIX));
+
+	return STATUS_OK;
+}
+
 STATUS DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, Dims * xWindowSize, GXSettings * xSettings)
 {
 	// Create
@@ -79,7 +92,7 @@ STATUS DXUtils::createDefaultProjectionMatrix(D3DXMATRIX ** xProjectionMatrix, D
 
 	// Set
 	fieldOfView = ((float)D3DX_PI / 4.0f);
-	screenAspect = xWindowSize->aWidth / xWindowSize->aHeight;
+	screenAspect = xWindowSize->m_width / xWindowSize->m_height;
 
 	*xProjectionMatrix = new D3DXMATRIX;
 
@@ -95,7 +108,7 @@ STATUS DXUtils::createDefaultOrthogonalMatrix(D3DXMATRIX ** xProjectionMatrix, D
 	*xProjectionMatrix = new D3DXMATRIX;
 
 	// initialize
-	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->aWidth, xWindowSize->aHeight, xSettings->aScreenNear, xSettings->aScreenDepth);
+	D3DXMatrixOrthoLH(*xProjectionMatrix, xWindowSize->m_width, xWindowSize->m_height, xSettings->aScreenNear, xSettings->aScreenDepth);
 
 	return STATUS_OK;
 }

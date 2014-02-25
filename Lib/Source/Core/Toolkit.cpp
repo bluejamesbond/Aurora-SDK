@@ -5,6 +5,8 @@
 
 using namespace A2D;
 
+double Toolkit::SYSTEM_NANOTIME = 0;
+
 int Toolkit::waitForBackgroundThreads()
 {
 	// DO null check here!

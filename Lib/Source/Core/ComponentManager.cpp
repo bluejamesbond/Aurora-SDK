@@ -9,11 +9,12 @@ using namespace A2D;
 
 ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow)
 {
-	aGraphics = xGraphics;
+	aGraphics = static_cast<Graphics*>(xGraphics);
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
 	aWindow = xWindow;
+	m_eventQueue = Toolkit::getSystemEventQueue(aWindow->getFrame()->id());
 }
 
 STATUS ComponentManager::initialize()
@@ -23,11 +24,13 @@ STATUS ComponentManager::initialize()
 	// Set based on camera properties later
 	// For now it is hardcoded
 	// xGraphics->getCameraProperties();
+	//------------------------------------------------------------------------------
+	root.setGraphics(*aGraphics);
+	root.setComponentManager(*this);
+	root.setDepth(0);
+	root.setEventQueue(*m_eventQueue);
 
-	root.setDepth(0.0f);
-	root.setGraphics(*static_cast<Graphics*>(aGraphics));
-
-	addToDepthTracker(root, 0.0f);
+	addToDepthTracker(root);
 
 	return STATUS_OK;
 }
@@ -39,11 +42,11 @@ AbstractWindow * ComponentManager::getWindow()
 	return aWindow;
 }
 
-STATUS ComponentManager::add(Component& xParent, Component& xChild)
+STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 {
-	float depth = xParent.getDepth();
+	int depth = xParent.getDepth();
 
-	if (depth == FLT_MIN)
+	if (depth == INT_MIN)
 	{
 		return STATUS_FAIL;
 	}
@@ -51,8 +54,11 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 	xChild.setParent(xParent);
 	xChild.setDepth(++depth);
 	xChild.setGraphics(xParent.getGraphics());
-	
-	if (addToDepthTracker(xChild, abs(depth)))
+	xChild.setComponentManager(*unconst__(ComponentManager*));
+	xChild.setEventQueue(*m_eventQueue);
+	xChild.initialize();
+
+	if (unconst__(ComponentManager*)->addToDepthTracker(xChild))
 	{
 		xParent.add(xChild);
 		xParent.revalidate(); // force validation asap
@@ -63,15 +69,14 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild)
 	return STATUS_FAIL;
 }
 
-bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
+bool ComponentManager::addToDepthTracker(Component& xComponent)
 {
 	// Call eventDepthTracker also.
-	xComponent.aComponentManager = this;
-	Toolkit::getSystemEventQueue(aWindow->getFrame()->id())->addEventDepthTracker(&xComponent, xZ);
-	UnorderedList<Component*> * peerComponents;
+	m_eventQueue->addEventDepthTracker(&xComponent, xComponent.getDepth());
+	UnorderedList<Component*> * peerComponents = NULL;
 
 	int maxZ = aOpaqueDepthTracker.size() - 1;
-	int neededZ = INT(xZ);
+	int neededZ = xComponent.getDepth();
 
 	if (maxZ <= neededZ)
 	{
@@ -88,16 +93,16 @@ bool ComponentManager::addToDepthTracker(Component& xComponent, float xZ)
 	}
 
 
-	return 1;
+	return true;
 }
 
-void ComponentManager::update()
+void ComponentManager::updateTopToBottom()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
 	backBuffer->setActive();
 	backBuffer->clear();
-//	backBuffer->setZBuffer(false);
+	backBuffer->setZBuffer(true);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.reverse_iterator();
@@ -122,17 +127,16 @@ void ComponentManager::update()
 		}
 	}
 
-//	backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }
 
-void ComponentManager::update_forward()
+void ComponentManager::updateBottomToTop()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 
 	backBuffer->setActive();
 	backBuffer->clear();
-	//backBuffer->setZBuffer(false);
+//	backBuffer->setZBuffer(false);
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.iterator();
@@ -157,6 +161,5 @@ void ComponentManager::update_forward()
 		}
 	}
 
-	//backBuffer->setZBuffer(true);
 	backBuffer->swap();
 }

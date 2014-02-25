@@ -20,10 +20,11 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "../_A2DCommon.h"
+
 #include "ExtLibs.h"
 #include "Rect.h"
 #include "Color.h"
-#include "../_A2DCommon.h"
 #include "AbstractEventQueue.h"
 #include "WindowListener.h"
 #include "EventSource.h"
@@ -65,11 +66,11 @@ namespace A2D {
 
 		int                          aDefaultCloseOperation;
 
-		bool                         aVisible;
+		bool                         aVisible = false;
 		bool                         aShadowed;
 		bool                         aUndecorated;
 
-		LPCWSTR						 aName;
+		wchar_t *					 aName;
 
 		Dims						 aDrawableRegion;
 		Rect                         aRect;
@@ -92,13 +93,13 @@ namespace A2D {
 
 	public:
 
-		Dims&					  		getSizeAsPtr(); // internal use only
+		const Dims&				  		getSizeAsPtr(); // internal use only
 		Dims&					  		getDrawableRegionAsPtr(); // internal use only
 		Dims							getMinimumSize();
 		Dims							getMaximumSize();
 		Rect							getBounds();
 		Dims					  		getSize();
-		LPCWSTR                         getName();
+		wchar_t *                       getName();
 		AbstractFrame		   *		getFrame();
 		bool                            isUndecorated();
 		int                             getDefaultCloseOperation();
@@ -139,34 +140,34 @@ namespace A2D {
 
 	protected:
 
-		virtual void                    render() = 0;
-		virtual void					validate() = 0;
-		virtual void              *     getPlatformCompatibleWindowHandle() = 0;
-		virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) = 0;
+		virtual void                    render() IMPLEMENT;
+		virtual void					validate() IMPLEMENT;
+		virtual void              *     getPlatformCompatibleWindowHandle() IMPLEMENT;
+		virtual void			  		initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQueue) IMPLEMENT;
 
 	public:
 
-		virtual void                    setMinimumSize(Dims * xSize) = 0;
-		virtual void                    setMaximumSize(Dims * xSize) = 0;
-		virtual void					setBounds(Rect * xRect) = 0;
-		virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight) = 0;
-		virtual void					setSize(Dims * xSize) = 0;
-		virtual void                    setMinimumSize(float xWidth, float xHeight) = 0;
-		virtual void                    setMaximumSize(float xWidth, float xHeight) = 0;
-		virtual void					setSize(float xWidth, float xHeight) = 0;
-		virtual void                    setName(LPCWSTR xName) = 0;
-		virtual void                    setUndecorated(bool xUndecoratedFlag) = 0;
-		virtual void                    setDefaultCloseOperation(int xCloseOperation) = 0;
-		virtual void                    setLocationRelativeTo(AbstractWindow * xWindow) = 0;
-		virtual void                    setVisible(bool xVisible) = 0;
-		virtual void                    setShadowed(bool xShadowFlag) = 0;
-		virtual void                    setBorderColor(Color * xBorderColor) = 0;
-		virtual void                    setShadowRadius(float xShadowRadius) = 0;
-		virtual void                    setShadowColor(Color * xShadowColor) = 0;
-		virtual void                    setBackgroundColor(Color * xShadowColor) = 0;
-		virtual void                    setBorderWidth(float xBorderWidth) = 0;
-		virtual void					setBorder(Color * xBorderColor, float xBorderWidth) = 0;
-		virtual void					setShadow(Color * xShadowColor, float xShadowRadius) = 0;
+		virtual void                    setMinimumSize(Dims * xSize) IMPLEMENT;
+		virtual void                    setMaximumSize(Dims * xSize) IMPLEMENT;
+		virtual void					setBounds(Rect * xRect) IMPLEMENT;
+		virtual void					setBounds(float xLeft, float xtop, float xWidth, float xHeight) IMPLEMENT;
+		virtual void					setSize(Dims * xSize) IMPLEMENT;
+		virtual void                    setMinimumSize(float xWidth, float xHeight) IMPLEMENT;
+		virtual void                    setMaximumSize(float xWidth, float xHeight) IMPLEMENT;
+		virtual void					setSize(float xWidth, float xHeight) IMPLEMENT;
+		virtual void                    setName(wchar_t * xName) IMPLEMENT;
+		virtual void                    setUndecorated(bool xUndecoratedFlag) IMPLEMENT;
+		virtual void                    setDefaultCloseOperation(int xCloseOperation) IMPLEMENT;
+		virtual void                    setLocationRelativeTo(AbstractWindow * xWindow) IMPLEMENT;
+		virtual void                    setVisible(bool xVisible) IMPLEMENT;
+		virtual void                    setShadowed(bool xShadowFlag) IMPLEMENT;
+		virtual void                    setBorderColor(Color * xBorderColor) IMPLEMENT;
+		virtual void                    setShadowRadius(float xShadowRadius) IMPLEMENT;
+		virtual void                    setShadowColor(Color * xShadowColor) IMPLEMENT;
+		virtual void                    setBackgroundColor(Color * xShadowColor) IMPLEMENT;
+		virtual void                    setBorderWidth(float xBorderWidth) IMPLEMENT;
+		virtual void					setBorder(Color * xBorderColor, float xBorderWidth) IMPLEMENT;
+		virtual void					setShadow(Color * xShadowColor, float xShadowRadius) IMPLEMENT;
 
 	public:
 

@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Dims.h"
+#include "Point.h"
+#include "SETRECT.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DECLARATION
@@ -27,13 +29,22 @@
 
 namespace A2D {
 
-	struct Rect : public Dims
+	struct Rect : public Dims, public Point
 	{
-		float			aX = 0;
-		float			aY = 0;
-
 		static void				memcpySSE2(Rect * xDest, const Rect * xSrc);
-		static byte				memeqlSSE4(Rect * xComp1, Rect * xComp2);
+		static char				memeqlSSE4(Rect * xComp1, Rect * xComp2);
+
+		inline Rect() :
+			Point(),
+			Dims()
+		{
+		}
+
+		inline Rect(float a, float b, float c, float d) : 
+			Point(a, b),
+			Dims(c, d)
+		{
+		}
 	};
 }
 

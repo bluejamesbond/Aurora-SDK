@@ -20,47 +20,52 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "../_A2DCommon.h"
+
 #include "../Core/Rect.h"
+#include "../Core/Pipelineable.h"
 
 namespace A2D {
 
-	////////////////////////////////////////////////////////////////////////////////
-	// FORWARD DECLARATIONS
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // FORWARD DECLARATIONS
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTexture;
+    class AbstractTexture;
 
-	////////////////////////////////////////////////////////////////////////////////
-	// DECLARATION
-	////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // DECLARATION
+    ////////////////////////////////////////////////////////////////////////////////
 
-	class AbstractTexture
-	{
+    class AbstractTexture : public Pipelineable
+    {
+    public:
 
-	protected:
+        virtual ~AbstractTexture() {};
 
-		// Variables
-		Dims							aDims;
-		Rect							aClip;
+    protected:
 
-	public:
+        // Variables
+        Dims                            aDims;
+        Rect                            aClip;
 
-		// Accessors
-		Dims					*		GetSize();
-		Rect					*		GetClip(int xIndex = 0);
+    public:
 
-		// Mutators
-		void							SetClip(Rect * xClip, int xIndex = 0);
+        // Accessors
+        Dims                    *       GetSize();
+        const Rect              *       GetClip(int xIndex = 0);
 
-		// Virtual
-		virtual void			*		getPlatformCompatibleResource() = 0;
-		virtual	bool					hasAlpha() = 0;
+        // Mutators
+        void                            SetClip(Rect * xClip, int xIndex = 0);
 
-	public:
+        // Virtual
+        virtual void            *       getPlatformCompatibleResource() IMPLEMENT;
+        virtual bool                    hasAlpha() IMPLEMENT;
 
-		virtual STATUS                 initialize() = 0;
+    public:
 
-	};
+        virtual STATUS                 initialize() IMPLEMENT;
+
+    };
 
 }
 

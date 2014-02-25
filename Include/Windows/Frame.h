@@ -11,8 +11,7 @@
 //      FRAME
 //
 //  Synopsis:
-//      Differentiates which of the two possible arcs could match the given arc
-//      parameters.
+//      Platform dependent implementation of frame using WINAPI.
 //
 //------------------------------------------------------------------------------
 

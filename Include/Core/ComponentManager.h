@@ -43,16 +43,19 @@ namespace A2D {
 	class ComponentManager
 	{
 
+		friend class AbstractFrame;
+
 	private:
 
-		Dims										*  aBackBufferDims;
+		const Dims								   *   aBackBufferDims;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
 		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
 
 		AbstractBackBuffer						   *   aBackBuffer;
 		Component								   *   aRoot;
 		AbstractWindow	  						   *   aWindow;
-		void									   *   aGraphics;
+		Graphics								   *   aGraphics;
+		AbstractEventQueue						   *   m_eventQueue;
 
 	public:
 
@@ -63,10 +66,13 @@ namespace A2D {
 		ComponentManager(void * xGraphics, Component * xRoot, AbstractWindow * xWindow);
 		~ComponentManager();
 
-		STATUS										  add(Component& xParent, Component& xChild);
-		bool										  addToDepthTracker(Component& xComponent, float xZ);
-		void										  update();
-		void										  update_forward();
+		STATUS										  add(Component& xParent, Component& xChild) const;
+
+	private:
+
+		bool										  addToDepthTracker(Component& xComponent);
+		void										  updateTopToBottom();
+		void										  updateBottomToTop();
 
 	public:
 
@@ -74,8 +80,20 @@ namespace A2D {
 		
 		inline void ComponentManager::validate()
 		{
+			// FIX ME ... use scrollLeft and variables like that to find offset
+
 			aBackBuffer->validate();
-			aRoot->setBounds(0, 0, aBackBufferDims->aWidth, aBackBufferDims->aHeight);
+			aGraphics->validate();
+
+			/*A2DPIXELDISTANCESETUINT4& borderWidths = aRoot->m_styleSet.m_borders.m_precalculatedBorderWidths;
+
+			aRoot->setBounds(SFLOAT(borderWidths.m_left),
+							 SFLOAT(borderWidths.m_top),
+							 aBackBufferDims->m_width - SFLOAT(borderWidths.m_left + borderWidths.m_right),
+							 aBackBufferDims->m_height - SFLOAT(borderWidths.m_top + borderWidths.m_bottom));*/
+
+			aRoot->setBounds(0,0, aBackBufferDims->m_width, aBackBufferDims->m_height);
+			aRoot->m_componentTreeValidationRequest = true;
 		}
 
 	};

@@ -1,7 +1,8 @@
 
 #include "../../../include/Core/ExtLibs.h"
-#include "../../../include/Core/Styles.h"
+#include "../../../include/Core/Style.h"
+#include "../../../include/_A2DCommon.h"
 
 using namespace A2D;
 
-float Styles::AUTO = FLT_MIN;
+float Style::AUTO = FLT_MIN;

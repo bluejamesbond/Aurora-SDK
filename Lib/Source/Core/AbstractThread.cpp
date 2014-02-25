@@ -9,9 +9,10 @@ int AbstractThread::aActiveCount = 0;
 
 AbstractThread* AbstractThread::aSingleton = NULL;
 
-AbstractThread::AbstractThread(Runnable * xRunnable)
+AbstractThread::AbstractThread(Runnable * xRunnable, void * x_param) :
+	m_param(x_param),
+	aRunnable(xRunnable)
 {
-	aRunnable = xRunnable;
 }
 
 AbstractThread::~AbstractThread()
@@ -19,12 +20,11 @@ AbstractThread::~AbstractThread()
 	aInstanceCount--;
 }
 
-
 void AbstractThread::fire()
 {
 	if (aRunnable)
 	{
-		aRunnable->run(id());
+		aRunnable->run(m_param, id());
 	}
 }
 
@@ -38,7 +38,6 @@ int AbstractThread::instanceCount()
 	return aInstanceCount + 1;
 }
 
-
 AbstractThread* AbstractThread::getSingleton()
 {
 	return aSingleton;
@@ -46,7 +45,10 @@ AbstractThread* AbstractThread::getSingleton()
 
 STATUS AbstractThread::initialize()
 {
+
 	NULLCHECK(aRunnable);
+
+	aSingleton = this;
 
 	aId = ++aInstanceCount;
 
