@@ -309,6 +309,8 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 		eventRegion->m_x = eventRegion->m_y = 0.0f;
 		isValidRegion = Math::contains(*eventRegion, point);
 
+		SYSOUT_INT(ID);
+
 		if (isValidRegion)
 		{
 			if (ID == MouseEvent::MOUSE_PRESSED)
@@ -320,8 +322,10 @@ void AbstractEventQueue::processMouseEvent(MouseEvent * xEvent)
 			{
 				aMouseEvent->setProperties(source, MouseEvent::MOUSE_RELEASED);
 				isConsumedMouse = source->processMouseEvent(aMouseEvent);
+				
 				if (isConsumedAction != STATUS_OK)
 				{
+					// FIX ME
 					aActionEvent->setSource(source);
 					isConsumedAction = processActionEvent(aActionEvent);
 				}

@@ -109,8 +109,7 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
             }
 
             // Fire MouseEvent
-			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
-			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
+			point = { SFLOAT(LOW16UINT32(xMsg.lParam)), SFLOAT(HI16UINT32(xMsg.lParam)) };
 
             aMouseDown->setLocation(point);
 
@@ -119,12 +118,11 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 				xEventQueue->processMouseEvent(aMouseDown);
 			}
             return updateOnMouseDown(xHwnd);
-
+			
         case WM_MOUSEMOVE:
 
             // Fire MouseEvent
-			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
-			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
+			point = { SFLOAT(LOW16UINT32(xMsg.lParam)), SFLOAT(HI16UINT32(xMsg.lParam)) };
 
             aMouseMove->setLocation(point);
 
@@ -144,12 +142,10 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
             return updateOnMouseMove(xHwnd);
 
-        case WM_LBUTTONUP:
+		case WM_LBUTTONUP:
 
             // Fire MouseEvent
-
-			point.m_x = SFLOAT(LOW16UINT32(xMsg.lParam));
-			point.m_y = SFLOAT(HI16UINT32(xMsg.lParam));
+			point = { SFLOAT(LOW16UINT32(xMsg.lParam)), SFLOAT(HI16UINT32(xMsg.lParam)) };
 
             aMouseUp->setLocation(point);
 
@@ -159,6 +155,20 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 			}
    
             return updateOnMouseUp(xHwnd);
+
+		// TEMPORARY FIX!!!!
+
+		case WM_MOUSEWHEEL:
+					
+			aMouseUp->setLocation(aMouseMove->getLocation());
+			Toolkit::SCROLL_DELTA = GET_WHEEL_DELTA_WPARAM(xMsg.wParam) / 120; // <--- SWITCH TO INTERNAL FUNCTION HI16UINT32...
+
+			if (!aIsResizing)
+			{
+				xEventQueue->processMouseEvent(aMouseUp);
+			}
+
+			break;
 
         case WM_CLOSE:
 

@@ -51,26 +51,30 @@ STATUS EventSource::fireListener(AbstractEvent * xEvent, int xListenerID)
 
 	if (listener)
 	{
-		if (xListenerID == A2D_LISTENER_MOUSE)
+		switch (xListenerID)
 		{
-			return (static_cast<MouseListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent)); 
+			case A2D_LISTENER_MOUSE:
+			{
+				return (static_cast<MouseListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
+			}
+			case A2D_LISTENER_FOCUS:
+			{
+				return (static_cast<FocusListener*>(listener))->notify(static_cast<FocusEvent*>(xEvent));
+			}
+			case A2D_LISTENER_ACTION:
+			{
+				return (static_cast<ActionListener*>(listener))->notify(static_cast<ActionEvent*>(xEvent));
+			}
+			case A2D_LISTENER_MOUSEMOTION:
+			{
+				return (static_cast<MouseMotionListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
+			}
+			case A2D_LISTENER_WINDOW:
+			{
+				return (static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
+			}
 		}
-		else if (xListenerID == A2D_LISTENER_FOCUS)
-		{
-			return (static_cast<FocusListener*>(listener))->notify(static_cast<FocusEvent*>(xEvent));
-		}
-		else if (xListenerID == A2D_LISTENER_ACTION)
-		{
-			return (static_cast<ActionListener*>(listener))->notify(static_cast<ActionEvent*>(xEvent));
-		}
-		else if (xListenerID == A2D_LISTENER_MOUSEMOTION)
-		{
-			return (static_cast<MouseMotionListener*>(listener))->notify(static_cast<MouseEvent*>(xEvent));
-		}
-		else if (xListenerID == A2D_LISTENER_WINDOW)
-		{
-			return (static_cast<WindowListener*>(listener))->notify(static_cast<WindowEvent*>(xEvent));
-		}
+
 		return STATUS_FAIL;
 	}
 	else
