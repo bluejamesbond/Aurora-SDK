@@ -18,6 +18,9 @@ STATUS Label::initialize()
 	// Set draw line to bottom by default.
 	aOptBackgroundRegion.aY = aOptBackgroundRegion.aHeight - 1;
 
+	// Set default font size to 1
+	aFontSize = A2D_LABEL_DEFAULT_FONTSIZE;
+
 	return STATUS_OK;
 }
 
@@ -56,6 +59,16 @@ Fonts * Label::getFont()
 	return aFont;
 }
 
+void Label::setFontSize(float xPixelSize)
+{
+	xPixelSize = aFontSize;
+}
+
+float Label::getFontSize()
+{
+	return aFontSize;
+}
+
 void Label::paintComponent()
 {
 	if (!aVisible)
@@ -65,6 +78,6 @@ void Label::paintComponent()
 
 	Graphics& graphics = *aGraphics;
 
-	graphics.drawString(&aPipeline, aOptBackgroundRegion, &aText, aFont);
+	graphics.drawString(&aPipeline, aOptBackgroundRegion, &aText, aFont, aFontSize);
 }
 

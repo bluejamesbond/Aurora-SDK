@@ -153,7 +153,7 @@ namespace A2D {
 			device->IASetIndexBuffer(xText->aIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 
-		inline bool TextFactory::updateVertexBuffer(Text * xText, Rect * xRect)
+		inline bool TextFactory::updateVertexBuffer(Text * xText, Rect * xRect, float xPixelSize)
 		{
 			
 			Rect * clipR = new Rect;
@@ -188,7 +188,7 @@ namespace A2D {
 			float baseHeight = aCurrentFont->aFontTexture->GetSize()->aHeight;
 
 			float shadowOffset = 1;
-			float pixelSize = 3;
+			float pixelSize = xPixelSize;
 
 			FontVertex * vertices = new FontVertex[xText->aNumVertices];
 			unsigned long * indices = new unsigned long[xText->aNumIndices];

@@ -185,7 +185,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 //	}
 //}
 
-void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, Fonts * xFontInput) // each component has a pipeline
+void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, Fonts * xFontInput, float xPixelSize) // each component has a pipeline
 {
 	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
 	Rect * clip = aClip;
@@ -252,7 +252,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 
 
 
-	if (aTextFactory->updateVertexBuffer(text, &xRect))
+	if (aTextFactory->updateVertexBuffer(text, &xRect, xPixelSize))
 	{
 		//aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 		aFontShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);

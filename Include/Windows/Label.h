@@ -28,6 +28,12 @@ using namespace std;
 namespace A2D {
 
 	////////////////////////////////////////////////////////////////////////////////
+	// DEFINE
+	////////////////////////////////////////////////////////////////////////////////
+
+	#define A2D_LABEL_DEFAULT_FONTSIZE			2
+
+	////////////////////////////////////////////////////////////////////////////////
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
@@ -46,10 +52,12 @@ namespace A2D {
 		void							setText(const char * xText);
 		void							setDrawLineLocation(float xDrawLocation);
 		void							setFont(Fonts * xFont);
+		void							setFontSize(float xPixelSize);
 
 		string					*		getText();
 		float							getDrawLineLocation();
 		Fonts					*		getFont();
+		float							getFontSize();
 
 	protected:
 
@@ -59,7 +67,7 @@ namespace A2D {
 
 		Fonts					*		aFont = 0;
 		Pipeline				*		aPipeline = NULL;
-
+		float								aFontSize = 0;
 		string							aText;
 
 		float							translationX = 0;
