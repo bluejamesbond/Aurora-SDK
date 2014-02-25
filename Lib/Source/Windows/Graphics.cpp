@@ -250,12 +250,17 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 
 	//xRect.aY = 10;
 
+
+
 	if (aTextFactory->updateVertexBuffer(text, &xRect))
 	{
 		//aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 		aFontShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
+
+		// Custom settings - may be called only once
 		aFontShader->setTextColor(0.9f, 0.1f, 0.1f, 1.0f); // FORCED FOR NOW
-		aFontShader->setShadowColor(0.9f, 0.1f, 0.1f, 0.67f);
+		aFontShader->setShadowColor(0.0f, 0.0f, 0.1f, 0.67f);
+
 		aTextFactory->renderText(text, sizeof(FontVertex));
 		//aTextureShader->renderShader(text->aNumIndices);
 		aFontShader->renderShader(text->aNumIndices);

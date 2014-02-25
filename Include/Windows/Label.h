@@ -43,6 +43,7 @@ namespace A2D {
 		STATUS							initialize();
 
 		void							setText(string * xLabel);
+		void							setText(const char * xText);
 		void							setDrawLineLocation(float xDrawLocation);
 		void							setFont(Fonts * xFont);
 

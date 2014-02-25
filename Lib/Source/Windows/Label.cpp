@@ -26,6 +26,11 @@ void Label::setText(string * xText)
 	aText = *xText;
 }
 
+void Label::setText(const char * xText)
+{
+	aText = xText;
+}
+
 string * Label::getText()
 {
 	return &aText;
