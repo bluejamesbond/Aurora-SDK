@@ -5,7 +5,8 @@ matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
-float4 pixelColor;
+float4 fontColor;
+float4 shadowColor;
 
 
 ///////////////////
@@ -218,7 +219,7 @@ float4 TexturePixelShader(TexturePixel input) : SV_Target
 
 }
 
-float4 TextureShadowedPixelShader(FontPixel input, FontColor fontColor) : SV_TARGET
+float4 TextureShadowedPixelShader(FontPixel input) : SV_TARGET
 {
 	// Process distance field texture for base font.
 	float4 base, baseColor;
@@ -229,7 +230,7 @@ float4 TextureShadowedPixelShader(FontPixel input, FontColor fontColor) : SV_TAR
 	base = shaderTexture.Sample(SampleType, input.tex);
 	alphaBaseDistance = base.a;
 	//baseColor = float4(0.2, 0.1, 1.0, 1.0); // base color should be blue, for testing purposes
-	baseColor = fontColor.color;
+	baseColor = fontColor;
 
 	// Threshold.
 	if (base.a > 0.5)
@@ -249,7 +250,8 @@ float4 TextureShadowedPixelShader(FontPixel input, FontColor fontColor) : SV_TAR
 	base.z = baseColor.z;
 
 	// Process distance field  texture for shadow.
-	float4 shadow, shadowTexel, shadowColor;
+	float4 shadow, shadowTexel;
+	//float4 shadowColor;
 	float SHADOW_OFFSET = 0.004;
 	float alphaShadowMaskDistance;
 	float2 s_f = input.tex.xy;
@@ -259,7 +261,7 @@ float4 TextureShadowedPixelShader(FontPixel input, FontColor fontColor) : SV_TAR
 	//shadowTexel = shaderTexture.Sample(SampleType, input.tex.xy - SHADOW_OFFSET);
 	shadowTexel = shaderTexture.Sample(SampleType, s_f);
 	alphaShadowMaskDistance = shadow.a;
-	shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
+	//shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
 
 	shadow = shadowColor * smoothstep(0.1, 0.6, shadowTexel.a);
 	//shadow = smoothstep(0.5, 0.6, alphaShadowMaskDistance);
@@ -271,7 +273,7 @@ float4 TextureShadowedPixelShader(FontPixel input, FontColor fontColor) : SV_TAR
 	//shadow.a *= smoothstep(0.1, 1.0, shadow.a); // bigger gap on min and max to get blur effect.
 
 
-	shadow.a *= 0.67; // set opacity
+	//shadow.a *= 0.67; // set opacity
 
 
 	base = lerp(shadow, base, base.a);

@@ -4,7 +4,8 @@
 
 using namespace A2D;
 
-FontShader::FontShader(ID3D10Device ** xDevice) : TextureShader(xDevice) {}
+FontShader::FontShader(ID3D10Device ** xDevice) : AbstractTextureShader(xDevice) {}
+
 
 ID3D10Effect ** FontShader::getEffect()
 {
@@ -28,9 +29,13 @@ STATUS FontShader::getUsableVariablePointers(ID3D10Effect * xEffect)
 	
 	if (!aPixelColorPtr)
 	{
-		aPixelColorPtr = aFontEffect->GetVariableByName("pixelColor")->AsVector();
+		aPixelColorPtr = aFontEffect->GetVariableByName("fontColor")->AsVector();
 	}
 
+	if (!aShadowColorPtr)
+	{
+		aShadowColorPtr = aFontEffect->GetVariableByName("shadowColor")->AsVector();
+	}
 	return STATUS_OK;
 }
 
@@ -50,17 +55,29 @@ void FontShader::setTexture(Texture * xTexture)
 	aTexturePtr->SetResource(static_cast<ID3D10ShaderResourceView*>(xTexture->getPlatformCompatibleResource()));
 }
 
-void FontShader::setColor(Color * xColor)
+void FontShader::setTextColor(Color * xColor)
 {
 	//xColor->aRed;
 	//D3DXVECTOR4 pixelColor = xColor;
 }
 
 // temporary solution
-void FontShader::setColor(float r, float b, float y, float a)
+void FontShader::setTextColor(float r, float b, float y, float a)
 {
 	D3DXVECTOR4 pixelColor = D3DXVECTOR4(r, b, y, a);
 	aPixelColorPtr->SetFloatVector(static_cast<float*>(pixelColor));
+}
+
+void FontShader::setShadowColor(Color * xColor)
+{
+
+}
+
+// temporary solution
+void FontShader::setShadowColor(float r, float b, float y, float a)
+{
+	D3DXVECTOR4 shadowColor = D3DXVECTOR4(r, b, y, a);
+	aShadowColorPtr->SetFloatVector(static_cast<float*>(shadowColor));
 }
 
 void FontShader::renderShader(int xIndexCount)
@@ -71,4 +88,16 @@ void FontShader::renderShader(int xIndexCount)
 		AbstractShader::renderShader();
 
 		aIndexCount = temp;
+}
+
+STATUS FontShader::createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout)
+{
+	*xPolygonLayout = TextureVertex::aPolygonLayout;
+
+	return STATUS_OK;
+}
+
+unsigned int FontShader::getPolygonLayoutElementCount()
+{
+	return 2;
 }

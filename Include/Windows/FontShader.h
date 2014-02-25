@@ -19,7 +19,7 @@
 // INCLUDE
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "TextureShader.h"
+#include "AbstractTextureShader.h"
 
 namespace A2D {
 
@@ -27,22 +27,22 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class FontShader : public TextureShader
+	class FontShader : public AbstractTextureShader
 	{
 	public:
 
 		FontShader(ID3D10Device ** xDevice);
-		virtual ~FontShader();
 
 	private:
 
 		//static Color 						*	aFontColor;
 		
-		static Texture						*	aTexture;
-		static ID3D10EffectShaderResourceVariable*   aTexturePtr;
+		Texture								*	aTexture = 0;
+		ID3D10EffectShaderResourceVariable	*   aTexturePtr = 0;
 
-		static ID3D10Effect					*	aFontEffect;
-		static ID3D10EffectVectorVariable	*	aPixelColorPtr;
+		ID3D10Effect						*	aFontEffect = 0;
+		ID3D10EffectVectorVariable			*	aPixelColorPtr = 0;
+		ID3D10EffectVectorVariable			*	aShadowColorPtr = 0;
 
 	protected:
 
@@ -51,12 +51,17 @@ namespace A2D {
 		virtual STATUS							getUsableVariablePointers(ID3D10Effect * xEffect);
 		virtual	LPCSTR							getTechniqueName();
 
+		virtual STATUS							createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout);
+		virtual unsigned int					getPolygonLayoutElementCount();
+
 	public:
 
 		void									renderShader(int xIndexCount);
 		void									setTexture(Texture * xTexture);
-		void									setColor(Color * xColor);
-		void									setColor(float r, float b, float y, float a);
+		void									setTextColor(Color * xColor);
+		void									setShadowColor(Color * xColor);
+		void									setTextColor(float r, float b, float y, float a);
+		void									setShadowColor(float r, float b, float y, float a);
 
 	};
 }

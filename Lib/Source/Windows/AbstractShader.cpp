@@ -79,6 +79,7 @@ void AbstractShader::renderShader()
 	}
 }
 
+//delete later. look @ fontshader::rendershader()
 void AbstractShader::renderShader(int xIndexCount)
 {
 	int temp = aIndexCount;

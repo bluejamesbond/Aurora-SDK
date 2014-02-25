@@ -33,6 +33,7 @@
 #include "BackBuffer.h"
 #include "ColoredTextureShader.h"
 #include "QuadExpansionShader.h"
+#include "FontShader.h"
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
@@ -93,6 +94,7 @@ namespace A2D {
 		AbstractTextureShader*			aColoredTextureShader;
 		AbstractTextureShader*			aTextureShader;
 		QuadExpansionShader  *			aQuadExpansionShader;
+		FontShader			 *			aFontShader;
 
 		ID3D10Device		**			aDevice;
 

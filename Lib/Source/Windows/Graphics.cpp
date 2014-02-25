@@ -252,9 +252,13 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 
 	if (aTextFactory->updateVertexBuffer(text, &xRect))
 	{
-		aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
+		//aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
+		aFontShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
+		aFontShader->setTextColor(0.9f, 0.1f, 0.1f, 1.0f); // FORCED FOR NOW
+		aFontShader->setShadowColor(0.9f, 0.1f, 0.1f, 0.67f);
 		aTextFactory->renderText(text, sizeof(FontVertex));
-		aTextureShader->renderShader(text->aNumIndices);
+		//aTextureShader->renderShader(text->aNumIndices);
+		aFontShader->renderShader(text->aNumIndices);
 	}
 
 	//if (aQuadFactory->updateVertexBuffer(quadData, &xRect, aTextFactory->aCurrentFont->aFontTexture, false))
@@ -299,6 +303,9 @@ STATUS Graphics::initialize()
 
 	aQuadExpansionShader = new QuadExpansionShader(device);
 	SAFELY(aQuadExpansionShader->initialize());
+
+	aFontShader = new FontShader(device);
+	SAFELY(aFontShader->initialize());
 
 	//TextureShader::setViewMatrix(&aViewMatrix);
 	//ColorShader::setViewMatrix(&aViewMatrix);
