@@ -139,6 +139,8 @@ namespace A2D {
 
 		std::wstring				*	aClassName;
 
+		AbstractEventQueue*				m_eventQueue;
+
 	public:
 
 		LRESULT _fastcall				eventHandler(MSG xMsg, AbstractEventQueue * xEventQueue);

@@ -30,7 +30,7 @@ namespace A2D {
 	class Toolkit
 	{
 	public:
-		static int						SCROLL_DELTA;
+		static float						SCROLL_DELTA;
 		static double					SYSTEM_NANOTIME;
 		static int					  waitForBackgroundThreads();
 		static AbstractEventQueue* getSystemEventQueue(int xFrameInstanceIndex);

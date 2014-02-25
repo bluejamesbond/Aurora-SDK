@@ -24,6 +24,7 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 
     AbstractFrame& frame = *aFrame;
     AbstractEventQueue& eventQueue = *xEventQueue;
+	m_eventQueue = xEventQueue;
 
 	double lastTime = kerneltimehp__;
 	double timeBetweenFrames = 1.0 / SDOUBLE(A2D_FPS);
@@ -159,9 +160,9 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 		// TEMPORARY FIX!!!!
 
 		case WM_MOUSEWHEEL:
-					
+								
 			aMouseUp->setLocation(aMouseMove->getLocation());
-			Toolkit::SCROLL_DELTA = GET_WHEEL_DELTA_WPARAM(xMsg.wParam) / 120; // <--- SWITCH TO INTERNAL FUNCTION HI16UINT32...
+			Toolkit::SCROLL_DELTA = GET_WHEEL_DELTA_WPARAM(xMsg.wParam) / 120.0f; // <--- SWITCH TO INTERNAL FUNCTION HI16UINT32...
 
 			if (!aIsResizing)
 			{
@@ -189,7 +190,9 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
             // (aChildHWnd) window.
             return STATUS_OK;
 
-        default: return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
+        default: 
+			
+			return DefWindowProc(xHwnd, xMsg.message, xMsg.wParam, xMsg.lParam);
         }
 
     }
@@ -197,14 +200,13 @@ LRESULT _fastcall Window::eventHandler(MSG xMsg, AbstractEventQueue * xEventQueu
 
 LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPARAM xLParam)
 {
-    Window * aWindow;
-	
+    Window * window;	
 
     if (xMessage == WM_CREATE)
     {
         CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(xLParam);
-        aWindow = reinterpret_cast<Window*>(pCreate->lpCreateParams);
-        SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)aWindow);
+		window = reinterpret_cast<Window*>(pCreate->lpCreateParams);
+        SetWindowLongPtr(xHwnd, GWLP_USERDATA, (LONG_PTR)window);
         return STATUS_OK;
     }
     else
@@ -214,30 +216,30 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
 
 		case WM_ACTIVATE:
 		{
-			aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			window = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
 
 			if (LOWORD(xWParam) == WA_INACTIVE)
 			{
-				WindowEvent * wEvent = aWindow->aWindowDeactivated;
+				WindowEvent * wEvent = window->aWindowDeactivated;
 				if (wEvent)
 				{
-					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
+					Toolkit::getSystemEventQueue(window->aFrame->id())->processWindowEvent(wEvent);
 				}
 			}
 			else
 			{
-				WindowEvent * wEvent = aWindow->aWindowActivated;
+				WindowEvent * wEvent = window->aWindowActivated;
 				if (wEvent)
 				{
-					Toolkit::getSystemEventQueue(aWindow->aFrame->id())->processWindowEvent(wEvent);
+					Toolkit::getSystemEventQueue(window->aFrame->id())->processWindowEvent(wEvent);
 				}
 			}
 			return STATUS_OK;
 		}
         case WM_SIZE:
         {
-            aWindow = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
-            return aWindow->onSize(xHwnd);
+            window = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+			return window->onSize(xHwnd);
         }
 
 
@@ -248,7 +250,18 @@ LRESULT CALLBACK Window::wndProc(HWND xHwnd, UINT xMessage, WPARAM xWParam, LPAR
             // (aChildHWnd) window.
             return STATUS_OK;
         }
-        default: return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
+        default:
+
+			window = reinterpret_cast<Window *>(static_cast<LONG_PTR>(GetWindowLongPtrW(xHwnd, GWLP_USERDATA)));
+
+			if (window)
+			{
+				return window->eventHandler({ xHwnd, xMessage, xWParam, xLParam }, window->m_eventQueue);
+			}
+			else
+			{
+				return DefWindowProc(xHwnd, xMessage, xWParam, xLParam);
+			}
         }
     }
 }

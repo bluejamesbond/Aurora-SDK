@@ -5,7 +5,7 @@
 
 using namespace A2D;
 
-int Toolkit::SCROLL_DELTA = 0;
+float Toolkit::SCROLL_DELTA = 0;
 double Toolkit::SYSTEM_NANOTIME = 0;
 
 int Toolkit::waitForBackgroundThreads()
