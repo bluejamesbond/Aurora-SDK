@@ -67,7 +67,7 @@ namespace A2D {
 
 		Fonts					*		aFont = 0;
 		Pipeline				*		aPipeline = NULL;
-		float								aFontSize = 0;
+		float							aFontSize = 0;
 		string							aText;
 
 		float							translationX = 0;

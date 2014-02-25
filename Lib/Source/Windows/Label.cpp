@@ -61,7 +61,8 @@ Fonts * Label::getFont()
 
 void Label::setFontSize(float xPixelSize)
 {
-	xPixelSize = aFontSize;
+	//WILL NEED TO CALCULATE PIXEL->FLOAT
+	aFontSize = xPixelSize;
 }
 
 float Label::getFontSize()
