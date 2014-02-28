@@ -70,6 +70,26 @@ float Label::getFontSize()
 	return aFontSize;
 }
 
+void Label::setTextColor(Color3D * xColor)
+{
+	aTextColor = xColor;
+}
+
+Color3D * Label::getTextColor()
+{
+	return aTextColor;
+}
+
+void Label::setShadowColor(Color3D * xColor)
+{
+	aShadowColor = xColor;
+}
+
+Color3D * Label::getShadowColor()
+{
+	return aShadowColor;
+}
+
 void Label::paintComponent()
 {
 	if (!aVisible)
@@ -79,6 +99,6 @@ void Label::paintComponent()
 
 	Graphics& graphics = *aGraphics;
 
-	graphics.drawString(&aPipeline, aOptBackgroundRegion, &aText, aFont, aFontSize);
+	graphics.drawString(&aPipeline, aOptBackgroundRegion, &aText, aFont, aFontSize, aTextColor, aShadowColor);
 }
 

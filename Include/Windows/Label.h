@@ -53,11 +53,15 @@ namespace A2D {
 		void							setDrawLineLocation(float xDrawLocation);
 		void							setFont(Fonts * xFont);
 		void							setFontSize(float xPixelSize);
+		void							setShadowColor(Color3D * xColor);
+		void							setTextColor(Color3D * xColor);
 
 		string					*		getText();
 		float							getDrawLineLocation();
 		Fonts					*		getFont();
 		float							getFontSize();
+		Color3D					*		getShadowColor();
+		Color3D					*		getTextColor();
 
 	protected:
 
@@ -69,6 +73,9 @@ namespace A2D {
 		Pipeline				*		aPipeline = NULL;
 		float							aFontSize = 0;
 		string							aText;
+
+		Color3D					*		aTextColor;
+		Color3D					*		aShadowColor;
 
 		float							translationX = 0;
 		float							translationXG1 = 10;

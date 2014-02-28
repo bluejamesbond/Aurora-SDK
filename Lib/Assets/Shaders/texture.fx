@@ -225,7 +225,7 @@ float4 TextureShadowedPixelShader(FontPixel input) : SV_TARGET
 	float4 base, baseColor;
 	float alphaBaseDistance;
 	const float baseCenter = 0.5;
-	const float smoothing = 1.0 / 16.0;
+	const float smoothing = 2.0 / 16.0;
 
 	base = shaderTexture.Sample(SampleType, input.tex);
 	alphaBaseDistance = base.a;
@@ -263,7 +263,7 @@ float4 TextureShadowedPixelShader(FontPixel input) : SV_TARGET
 	alphaShadowMaskDistance = shadow.a;
 	//shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
 
-	shadow = shadowColor * smoothstep(0.1, 0.6, shadowTexel.a);
+	shadow = shadowColor * smoothstep(0.1, 0.9, shadowTexel.a); // shadow spread hur
 	//shadow = smoothstep(0.5, 0.6, alphaShadowMaskDistance);
 
 	//shadow.x = shadowColor.x;

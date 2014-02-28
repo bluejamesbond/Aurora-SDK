@@ -53,11 +53,10 @@ void Window::initPlatformCompatibleEventDispatcher(AbstractEventQueue * xEventQu
 			{
 				frame.update();
 			}
-			else if (GetMessage(&msg, NULL, 0, 0) > 0)
-			{
-				TranslateMessage(&msg);
-				eventHandler(msg, &eventQueue);
-			}
+
+			frame.update();
+			//eventHandler(msg, &eventQueue);
+
 
 		}
 	}

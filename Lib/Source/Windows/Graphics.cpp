@@ -185,7 +185,7 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 //	}
 //}
 
-void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, Fonts * xFontInput, float xPixelSize) // each component has a pipeline
+void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, Fonts * xFontInput, float xPixelSize, Color3D * xTextColor, Color3D * xShadowColor) // each component has a pipeline
 {
 	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
 	Rect * clip = aClip;
@@ -198,7 +198,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0 || !xPixelSize)	return;
 
 	Text * text;
 
@@ -258,8 +258,8 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 		aFontShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 
 		// Custom settings - may be called only once
-		aFontShader->setTextColor(0.9f, 0.1f, 0.1f, 1.0f); // FORCED FOR NOW
-		aFontShader->setShadowColor(0.0f, 0.0f, 0.1f, 0.67f);
+		aFontShader->setTextColor(xTextColor->aRed, xTextColor->aGreen, xTextColor->aBlue, xTextColor->aAlpha); // FORCED FOR NOW
+		aFontShader->setShadowColor(xShadowColor->aRed, xShadowColor->aGreen, xShadowColor->aBlue, xShadowColor->aAlpha);
 
 		aTextFactory->renderText(text, sizeof(FontVertex));
 		//aTextureShader->renderShader(text->aNumIndices);
