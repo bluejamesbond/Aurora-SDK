@@ -46,6 +46,7 @@ namespace A2D {
 		static TWEEN                OUT_CUBIC;
 		static TWEEN                IN_OUT_CUBIC;
 		static TWEEN                IN_QUART;
+		static TWEEN				SMOOTH_SCROLL;
 		static TWEEN                OUT_QUART;
 		static TWEEN                IN_OUT_QUART;
 		static TWEEN                INT_QUINT;
@@ -95,6 +96,11 @@ namespace A2D {
 		}
 
 		template<class T>
+		inline static T outCubic_(T t, T b, T c, T d) {
+			return c*((t = t / d - 1)*t*t + 1) + b;
+		}
+
+		template<class T>
 		inline static T outCubic(T t, T b, T c, T d) {
 			return c*((t = t / d - 1)*t*t + 1) + b;
 		}
@@ -103,6 +109,13 @@ namespace A2D {
 		inline static T inOutCubic(T t, T b, T c, T d) {
 			if ((t /= d / 2) < 1) return c / 2 * t*t*t + b;
 			return c / 2 * ((t -= 2)*t*t + 2) + b;
+		}
+
+
+		template<class T>
+		inline static T smoothScroll(T t, T b, T c, T d) {
+			if ((t /= d / 2) < 1) return c*((t = t / d - 1)*t*t + 1) + b;
+			else return t*d + b;
 		}
 
 		template<class T>

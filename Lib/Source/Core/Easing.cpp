@@ -12,6 +12,7 @@ TWEEN Easing::OUT_CUBIC = &Easing::outCubic;
 TWEEN Easing::IN_OUT_CUBIC = &Easing::inOutCubic;
 TWEEN Easing::IN_QUART = &Easing::inOutBounce;
 TWEEN Easing::OUT_QUART = &Easing::outQuart;
+TWEEN Easing::SMOOTH_SCROLL = &Easing::smoothScroll;
 TWEEN Easing::IN_OUT_QUART = &Easing::inOutQuart;
 TWEEN Easing::INT_QUINT = &Easing::inOutBounce;
 TWEEN Easing::OUT_QUINT = &Easing::outQuint;
