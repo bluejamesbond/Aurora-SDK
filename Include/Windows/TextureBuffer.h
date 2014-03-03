@@ -21,8 +21,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "../Core/../_A2DCommon.h"
+#include "../_A2DCommon.h"
 #include "../Core/ImageProperties.h"
+#include "../Core/Bufferable.h"
 #include "../Core/Rect.h"
 
 #include "BackBuffer.h"
@@ -41,7 +42,7 @@ namespace A2D {
 	// DECLARATION
 	////////////////////////////////////////////////////////////////////////////////
 
-	class TextureBuffer : public AbstractTexture
+	class TextureBuffer : public AbstractTexture, public Bufferable
 	{
 
 	public:
@@ -65,7 +66,9 @@ namespace A2D {
 		virtual	bool					hasAlpha();
 
 		// Mutators
-		void							SetActive();
+		virtual void					setActive();
+		virtual void					resizeBuffer(Dims& x_dims){};
+		virtual void					clear();
 
 		// Additional
 		void							Clear();

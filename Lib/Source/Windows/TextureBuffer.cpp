@@ -62,7 +62,7 @@ STATUS TextureBuffer::initialize()
 	return STATUS_OK;
 }
 
-void TextureBuffer::SetActive()
+void TextureBuffer::setActive()
 {
 	ID3D10Device * device = *aDevice;
 
@@ -70,24 +70,17 @@ void TextureBuffer::SetActive()
 	device->OMSetRenderTargets(1, &aDXRenderTargetView, *aBackBufferaDXDepthStencilView);
 }
 
-void * TextureBuffer::getPlatformCompatibleResource()
+void* TextureBuffer::getPlatformCompatibleResource()
 {
 	return aResource;
 }
 
-void TextureBuffer::Clear()
+void TextureBuffer::clear()
 {
-	float color[4];
 	ID3D10Device * device = *aDevice;
-	
-	// Setup the color to clear the buffer to.
-	color[0] = 1.0f;
-	color[1] = 0.0f;
-	color[2] = 0.0f;
-	color[3] = 1.0f;
 
 	// Clear the back buffer.
-	device->ClearRenderTargetView(aDXRenderTargetView, color);
+	device->ClearRenderTargetView(aDXRenderTargetView, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 
 	// Clear the depth buffer.
 	device->ClearDepthStencilView(*aBackBufferaDXDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);

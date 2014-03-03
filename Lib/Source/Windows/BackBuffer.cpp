@@ -395,3 +395,8 @@ void BackBuffer::validate()
 
 	device->RSSetViewports(1, &viewport);
 }
+
+ID3D10DepthStencilView** BackBuffer::getDepthStencilViewAsPtr()
+{
+	return &aDXDepthStencilView;
+}

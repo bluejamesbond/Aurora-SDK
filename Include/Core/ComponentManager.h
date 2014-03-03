@@ -56,6 +56,7 @@ namespace A2D {
 		AbstractWindow	  						   *   aWindow;
 		Graphics								   *   aGraphics;
 		AbstractEventQueue						   *   m_eventQueue;
+		Bufferable*									   m_textureBuffer;
 
 	public:
 

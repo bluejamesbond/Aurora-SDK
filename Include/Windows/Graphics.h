@@ -28,6 +28,7 @@
 #include "../Core/Pipeline.h"
 #include "../Core/CameraProperties.h"
 #include "../Core/Drawable.h"
+#include "../Core/Bufferable.h"
 
 #include "../Core/A2DCOMPONENTRENDERSTYLESET.h"
 
@@ -112,7 +113,7 @@ namespace A2D {
 		D3DXMATRIX						m_position_matrix;
 
 	public:
-
+		
 		const Dims*						getDrawableDimensions();
 		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
@@ -131,6 +132,11 @@ namespace A2D {
 		void bindDrawable(Drawable& x_drawable);
 		void setClip(Rect * xClip, float xDepth);
 		void validate();
+	
+		inline Bufferable* createTextureBuffer(Dims& x_dims)
+		{
+			return new TextureBuffer(aDevice, aBackBuffer->getDepthStencilViewAsPtr(), &x_dims);
+		}
 
 	public:
 

@@ -24,6 +24,7 @@
 
 #include "GXSettings.h"
 #include "AbstractWindow.h"
+#include "Bufferable.h"
 
 namespace A2D {
 
@@ -60,9 +61,9 @@ namespace A2D {
 		Dims							getSize();
 		GXSettings				  *		getSettings();
 
-		virtual void                    setActive() IMPLEMENT;
 		virtual void                    swap() IMPLEMENT;
-		virtual void                    clear() IMPLEMENT;
+		virtual void					clear() IMPLEMENT;
+		virtual void					setActive() IMPLEMENT;
 		virtual void                    setZBuffer(bool val) IMPLEMENT;
 		virtual void					validate() IMPLEMENT;
 

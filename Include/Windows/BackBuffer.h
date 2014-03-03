@@ -68,6 +68,7 @@ namespace A2D {
 		virtual void                    swap();
 		virtual void                    clear();
 		virtual void                    setZBuffer(bool val);
+		ID3D10DepthStencilView**		getDepthStencilViewAsPtr();
 
 	public:
 
