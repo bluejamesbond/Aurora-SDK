@@ -32,6 +32,7 @@ namespace A2D {
 		virtual void setActive() IMPLEMENT;
 		virtual void resizeBuffer(Dims& x_dims) IMPLEMENT;
 		virtual void clear() IMPLEMENT;
+		virtual void* getPlatformCompatibleResource() IMPLEMENT;
 	};
 
 }

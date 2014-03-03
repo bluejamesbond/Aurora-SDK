@@ -55,7 +55,7 @@ namespace A2D {
 
 		// Variables
 		ID3D10Device				**	aDevice;
-		ID3D10DepthStencilView		**	aBackBufferaDXDepthStencilView;
+		ID3D10DepthStencilView		**	m_DXDepthStencilView;
 
 		ID3D10Texture2D				*	aDXRenderTargetTexture;
 		ID3D10RenderTargetView		*	aDXRenderTargetView;

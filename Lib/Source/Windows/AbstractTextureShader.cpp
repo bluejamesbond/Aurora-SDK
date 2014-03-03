@@ -105,10 +105,9 @@ void AbstractTextureShader::reloadProjectionMatrix()
 	aProjectionMatrixPtr->SetMatrix(*aProjectionMatrix);
 }
 
-void AbstractTextureShader::setTexture(Texture * xTexture)
+void AbstractTextureShader::setTexture(Bufferable * xTexture)
 {
-	aTexture = xTexture;
-	aHasAlpha = xTexture->hasAlpha();
+	aHasAlpha = true; // FIXME FORCED!!!! FIX THIS
 
 	// Bind and update the texture.
 	// Also cache the texture while doing so.!!!!

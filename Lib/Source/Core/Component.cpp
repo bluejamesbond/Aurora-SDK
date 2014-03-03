@@ -779,7 +779,7 @@ void Component::releaseScroll()
 
 void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 {
-	// FIX-ME
+/*	// FIX-ME
 	if ((m_previousCalculatedRowIndex != m_calculatedRowIndex ||
 		m_previousCalculatedColumnIndex != m_calculatedColumnIndex) && 
 		!m_parent->m_scrolling)
@@ -799,8 +799,8 @@ void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 		m_previousCalculatedRowIndex = m_calculatedRowIndex;
 		m_previousCalculatedColumnIndex = m_calculatedColumnIndex;
 	}
-	else /*if (!Animator::isAnimating(*this, m_positionAnimationXY))*/
-	{
+	else *//*if (!Animator::isAnimating(*this, m_positionAnimationXY))*/
+//	{
 		m_region.m_width = xWidth;
 		m_region.m_height = xHeight;
 		m_region.m_x = xX;
@@ -816,7 +816,7 @@ void Component::setBounds(float xX, float xY, float xWidth, float xHeight)
 			m_previousDimensions = { m_region.m_width, m_region.m_height };
 			m_styleSet.markBackgroundAsDirty();
 		}
-	}
+//	}
 
 	m_validatedContents = false;
 	m_styleSet.markRequestRegionAsDirty();

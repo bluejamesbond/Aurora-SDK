@@ -11,7 +11,7 @@ ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, Abstract
 {
 	aGraphics = static_cast<Graphics*>(xGraphics);
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
-	m_textureBuffer = aGraphics->createTextureBuffer(aBackBuffer->getSize());
+	aGraphics->createTextureBuffer(&m_textureBuffer, aBackBuffer->getSize());
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
 	aWindow = xWindow;
@@ -135,9 +135,11 @@ void ComponentManager::updateBottomToTop()
 {
 	AbstractBackBuffer * backBuffer = aBackBuffer;
 	Bufferable * cacheBuffer = m_textureBuffer;
+	// const Dims& dims = *backBuffer->getSizeAsPtr();
+	// Rect rect = { 0, 0, dims.m_width, dims.m_height };
 
 	backBuffer->setActive();
-//	cacheBuffer->setActive();
+	// cacheBuffer->setActive();
 
 	int i, heapSize = 0, size = 0;
 	OrderedList<UnorderedList<Component*>*>::Iterator<UnorderedList<Component*>*>& iterator = aOpaqueDepthTracker.iterator();
@@ -162,6 +164,6 @@ void ComponentManager::updateBottomToTop()
 		}
 	}
 
-//	backBuffer->setActive();
+	// aGraphics->stretchBlt(&m_pipeline, rect, cacheBuffer);
 	backBuffer->swap();
 }

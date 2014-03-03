@@ -55,7 +55,7 @@ namespace A2D {
 
 		ID3D10Buffer	*	aIndexBuffer;
 		ID3D10Buffer	*	aVertexBuffer;
-		
+
 		float				aDepth = 0.0f;
 
 		///////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace A2D {
 		ID3D10Device	**	aDevice;
 
 		///////////////////////////////////////////////////////////
-		
+
 	public:
 
 		inline void QuadFactory::setDepth(float xZ)
@@ -194,6 +194,55 @@ namespace A2D {
 
 			// Copy data using SSE2 accelerated method
 			QuadFactory::memcpySSE2QuadVertex(static_cast<ColoredTextureVertex*>(mappedVertices), vertices);
+
+			// Unlock the vertex buffer.
+			xQuadData->aVertexBuffer->Unmap();
+
+			return true;
+
+		}
+
+		inline bool QuadFactory::updateVertexBuffer(QuadData<TextureVertex, 1> * xQuadData, Rect * xRect)
+		{
+			TextureVertex * vertices = xQuadData->aVertices;
+			void * mappedVertices = 0;
+
+			float left = -1.0f,
+				  right = 1.0f,
+				  top = 1.0f,
+				  bottom = -1.0f;
+			
+			float texelLeft = 0.0f,
+				  texelRight = 1.0f,
+				  texelBottom = 1.0f,
+				  texelTop = 0.0f;
+			
+			float depth = 1.0f;
+
+			// Set up vertices
+			vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
+			vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+			vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
+			vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
+
+			vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
+			vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
+
+			vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
+			vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+			vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
+			vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
+
+			vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
+			vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
+			
+			// Lock the vertex buffer.
+			xQuadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+
+			// Copy data using SSE2 accelerated method
+			QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
 
 			// Unlock the vertex buffer.
 			xQuadData->aVertexBuffer->Unmap();

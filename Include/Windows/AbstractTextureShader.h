@@ -57,7 +57,7 @@ namespace A2D {
 
     public:
 
-        void                                    setTexture(Texture * xTexture);
+        void                                    setTexture(Bufferable * xTexture);
         static void                             setViewMatrix(float ** xMatrix);
         static void                             setWorldMatrix(float ** xMatrix);
         static void                             setProjectionMatrix(float ** xMatrix);

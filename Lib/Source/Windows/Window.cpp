@@ -594,7 +594,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
 			}
 
             // DEFER REGION //
-
+			
             render();
 
             // DEFER REGION //
@@ -609,7 +609,7 @@ STATUS Window::updateOnMouseMove(HWND xHwnd)
             p.y +=SLONG(deltm_y); 
 
             // DEFER REGION //
-
+			
             updateLocation();
 
             // DEFER REGION //
@@ -1449,8 +1449,8 @@ void Window::updateLocation()
 
     HDWP hdwp = BeginDeferWindowPos(2);
 
-    DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), 0, 0, SWP_NOSIZE);
-    DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY), 0, 0, SWP_NOSIZE);
+	DeferWindowPos(hdwp, aParentHWnd, NULL, SINT(relativeX), SINT(relativeY), 0, 0, SWP_NOSIZE | SWP_NOREDRAW);
+	DeferWindowPos(hdwp, aChildHWnd, aParentHWnd, SINT(realX), SINT(realY), 0, 0, SWP_NOSIZE | SWP_NOREDRAW);
 
     EndDeferWindowPos(hdwp);
 }

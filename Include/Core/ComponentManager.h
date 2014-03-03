@@ -48,6 +48,7 @@ namespace A2D {
 	private:
 
 		const Dims								   *   aBackBufferDims;
+		Pipeline*									   m_pipeline;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
 		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
 

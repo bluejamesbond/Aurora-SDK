@@ -118,8 +118,9 @@ namespace A2D {
 		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
 		
+		void							stretchBlt(Pipeline ** xPipeline, Rect& xRect, Bufferable * x_bufferable);
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
-		void							drawString(Pipeline ** xPipeline, Rect& xRect);
+		// void							drawString(Pipeline ** xPipeline, Rect& xRect);
 		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);
 		
@@ -133,9 +134,12 @@ namespace A2D {
 		void setClip(Rect * xClip, float xDepth);
 		void validate();
 	
-		inline Bufferable* createTextureBuffer(Dims& x_dims)
+		inline STATUS createTextureBuffer(Bufferable** x_bufferable, Dims& x_dims)
 		{
-			return new TextureBuffer(aDevice, aBackBuffer->getDepthStencilViewAsPtr(), &x_dims);
+			TextureBuffer * texBuffer =  new TextureBuffer(aDevice, aBackBuffer->getDepthStencilViewAsPtr(), &x_dims);
+			SAFELY(texBuffer->initialize());
+			*x_bufferable = texBuffer;
+			return STATUS_OK;
 		}
 
 	public:

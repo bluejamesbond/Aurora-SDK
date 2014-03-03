@@ -34,7 +34,7 @@ const Dims * Graphics::getDrawableDimensions()
 	return aBackBufferDims;
 }
 
-void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool xRepeat)
+void Graphics::stretchBlt(Pipeline ** xPipeline, Rect& xRect, Bufferable * x_bufferable)
 {
 	Texture * texture;
 	QuadData<TextureVertex, 6> * quadData;
@@ -44,31 +44,26 @@ void Graphics::drawImage(Pipeline ** xPipeline, Rect& aRect, LPCWSTR& xSrc, bool
 	{
 		*xPipeline = new Pipeline();
 
-		texture = new Texture(aDevice, xSrc);
 		quadData = new QuadData<TextureVertex, 6>();
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
 		texture->initialize();
 
-		(*xPipeline)->aPipelineComps[0] = texture;
-		(*xPipeline)->aPipelineComps[1] = quadData;
+		(*xPipeline)->aPipelineComps[0] = quadData;
 
-		(*xPipeline)->aLength = 2;
+		(*xPipeline)->aLength = 1;
 
 		return;
 	}
 
-	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
+	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
 
 	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	if (aQuadFactory->updateVertexBuffer(quadData, &aRect, texture, xRepeat))
-	{
-		aTextureShader->setTexture(texture);
-		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-		aTextureShader->renderShader();
-	}
+	aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+	aTextureShader->setTexture(x_bufferable);
+	aTextureShader->renderShader();
 }
 
 void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
@@ -176,87 +171,6 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 	quadExpansionShader->renderShader();
 }
 
-void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect)
-{
-	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
-	Rect * clip = aClip;
-
-	if (xRect.m_x >= clip->m_width || xRect.m_y >= clip->m_height || clip->m_width <= 0 || clip->m_height <= 0)	return;
-
-	Texture * texture;
-	QuadData<TextureVertex, 6> * quadData;	
-
-	if (*xPipeline == NULL)
-	{
-		// Intialize the pipeline
-
-		*xPipeline = new Pipeline();
-
-		texture = new Texture(aDevice, L"Assets/images/letter.png");
-		quadData = new QuadData<TextureVertex, 6>();
-
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-		texture->initialize();
-
-		(*xPipeline)->aPipelineComps[0] = texture;
-		(*xPipeline)->aPipelineComps[1] = quadData;
-
-		(*xPipeline)->aLength = 2;
-
-		return;
-	}
-
-	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
-
-	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false))
-	{
-		aTextureShader->setTexture(texture);
-		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-		aTextureShader->renderShader();
-	}
-}
-
-//void Graphics::drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat)
-//{
-//	Texture * texture;
-//	QuadData<ColoredTextureVertex, 6> * quadData;
-//
-//	if (*xPipeline == NULL)
-//	{
-//		// Intialize the pipeline
-//
-//		*xPipeline = new Pipeline();
-//
-//		texture = new Texture(aDevice, xSrc);
-//		quadData = new QuadData<ColoredTextureVertex, 6>();
-//
-//		DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-//
-//		texture->initialize();
-//
-//		(*xPipeline)->aPipelineComps[0] = texture;
-//		(*xPipeline)->aPipelineComps[1] = quadData;
-//
-//		(*xPipeline)->aLength = 2;
-//
-//		return;
-//	}
-//
-//	texture = static_cast<Texture*>((*xPipeline)->aPipelineComps[0]);
-//	quadData = static_cast<QuadData<ColoredTextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
-//
-//	// texture->Update(textureArgs); <<<<+++ ADD LATER
-//	if (aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, &xPaint, xRepeat))
-//	{
-//		aColoredTextureShader->setTexture(texture);
-//		aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(ColoredTextureVertex));
-//		aColoredTextureShader->renderShader();
-//	}
-//}
-
 STATUS Graphics::initialize()
 {
 	// Execute this line only once
@@ -299,13 +213,14 @@ STATUS Graphics::initialize()
 
 	// QuadExpansionShader::updatePositionMatrix(&m_position_matrix);
 
-	//TextureShader::setViewMatrix(&aViewMatrix);
+	// TextureShader::setViewMatrix(&aViewMatrix);
+	// TextureShader::setProjectionMatrix(&aProjection2DMatrix);
+	// TextureShader::setWorldMatrix(&aWorldMatrix);
+
 	//ColorShader::setViewMatrix(&aViewMatrix);
 
-	//TextureShader::setProjectionMatrix(&aProjection2DMatrix);
 	//ColorShader::setProjectionMatrix(&aProjection2DMatrix);
 
-	//TextureShader::setWorldMatrix(&aWorldMatrix);
 	//ColorShader::setWorldMatrix(&aWorldMatrix);
 
 	return STATUS_OK;
