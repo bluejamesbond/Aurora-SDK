@@ -82,7 +82,7 @@ void Graphics::bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDE
 
 	x_sandbox->setActive();
 
-	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.1f);
+	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.05f);
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
 
 	aVerticalBlurShader->setTexture(x_cache);
@@ -98,7 +98,7 @@ void Graphics::bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDE
 
 	x_sandbox->setActive();
 
-	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.05f);
+	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.1f);
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
 
 	aVerticalBlurShader->setTexture(x_cache);
