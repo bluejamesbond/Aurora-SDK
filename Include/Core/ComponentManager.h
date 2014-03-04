@@ -48,7 +48,7 @@ namespace A2D {
 	private:
 
 		const Dims								   *   aBackBufferDims;
-		Pipeline*									   m_pipeline;
+		Pipeline*									   m_pipeline = NULL;
 		OrderedList<UnorderedList<Component*>*>        aOpaqueDepthTracker;
 		OrderedList<UnorderedList<Component*>*>        aComponentDepthTracker;
 
@@ -58,6 +58,7 @@ namespace A2D {
 		Graphics								   *   aGraphics;
 		AbstractEventQueue						   *   m_eventQueue;
 		Bufferable*									   m_textureBuffer;
+		Bufferable*									   m_sandbox;
 
 	public:
 

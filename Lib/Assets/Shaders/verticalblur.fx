@@ -10,7 +10,7 @@ matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
-float screenHeight;
+float screenHeight = 150;
 
 
 ///////////////////
@@ -18,9 +18,9 @@ float screenHeight;
 ///////////////////
 SamplerState SampleType
 {
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
+	Filter = ANISOTROPIC;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 
@@ -57,15 +57,16 @@ PixelInputType VerticalBlurVertexShader(VertexInputType input)
     PixelInputType output;
     float texelSize;
 
-    
-    // Change the position vector to be 4 units for proper matrix calculations.
-    input.position.w = 1.0f;
+	// Force w-buffer to be 1.0
+	output.position.w = 1.0f;
 
-    // Calculate the position of the vertex against the world, view, and projection matrices.
-    output.position = mul(input.position, worldMatrix);
-    output.position = mul(output.position, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
-    
+	// Calculate z-buffer manually
+	output.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+	output.position = input.position;
+
     // Store the texture coordinates for the pixel shader.
     output.tex = input.tex;
     
@@ -95,7 +96,6 @@ float4 VerticalBlurPixelShader(PixelInputType input) : SV_Target
     float weight0, weight1, weight2, weight3, weight4;
     float normalization;
     float4 color;
-
 
     // Create the weights that each neighbor pixel will contribute to the blur.
     weight0 = 1.0f;
@@ -130,6 +130,8 @@ float4 VerticalBlurPixelShader(PixelInputType input) : SV_Target
 
     // Set the alpha channel to one.
     color.a = 1.0f;
+
+	color = saturate(color);
 
     return color;
 }

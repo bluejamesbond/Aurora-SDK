@@ -173,7 +173,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		{
 			aX = marginLeft;
 			aY = marginTop;
-
+			
 			// left: auto | right: auto
 			if (positionLeft == Style::AUTO && positionRight == Style::AUTO) {}
 			// left: auto | right: X
@@ -211,8 +211,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 				aY += positionTop;
 				height = compHeight - (positionTop + positionBottom);
 			}
-
-			if (aY >= compHeight || aX >= compWidth)
+			
+			if (aY > compHeight || aX > compWidth)
 			{
 				#ifdef A2D_DE__			
 				SYSOUT_F("[CascadingLayout] [ComponentId: 0x%X] Skipping calculations. Component out of window.", component->m_id);
@@ -276,6 +276,8 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 		{
 			// Update bounds
 			//------------------------------------------------------------------------------
+			
+			if (component->m_id == 0x8550) height = 150;
 			component->m_styleSet.m_visible = true;
 			component->setBounds(SFLOAT(aX), SFLOAT(aY), SFLOAT(width), SFLOAT(height));
 		}

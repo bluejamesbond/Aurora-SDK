@@ -36,6 +36,8 @@
 #include "BackBuffer.h"
 #include "ColoredTextureShader.h"
 #include "QuadExpansionShader.h"
+#include "VerticalBlurShader.h"
+#include "HorizontalBlurShader.h"
 #include "TextureBuffer.h"
 #include "Texture.h"
 #include "QuadFactory.h"
@@ -108,6 +110,9 @@ namespace A2D {
 		AbstractTextureShader*			aColoredTextureShader;
 		AbstractTextureShader*			aTextureShader;
 		QuadExpansionShader  *			aQuadExpansionShader;
+		VerticalBlurShader   *			aVerticalBlurShader;
+		HorizontalBlurShader *			aHorizontalBlurShader;
+
 
 		ID3D10Device		**			aDevice;
 		D3DXMATRIX						m_position_matrix;
@@ -118,8 +123,9 @@ namespace A2D {
 		CameraProperties*				getCameraProperties();
 		BackBuffer*						getBackBuffer();
 		
-		void							stretchBlt(Pipeline ** xPipeline, Rect& xRect, Bufferable * x_bufferable);
+		void							bitBlitFixed(Pipeline ** xPipeline, Rect& xRect, Bufferable * x_bufferable);
 		void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, bool xRepeat);
+		void							bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet, Bufferable * x_cache, Bufferable * x_sandbox);
 		// void							drawString(Pipeline ** xPipeline, Rect& xRect);
 		// void							drawImage(Pipeline ** xPipeline, Rect& xRect, LPCWSTR& xSrc, Paint& xPaint, bool xRepeat); // This function is now inlined for very fast rendering.
 		void							fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint);

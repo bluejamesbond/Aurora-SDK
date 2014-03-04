@@ -438,6 +438,11 @@ STATUS Component::initialize()
 void Component::paintComponent()
 {	
     Graphics& graphics = *m_graphics;
+	
+	if (m_doubleBuffered)
+	{
+		graphics.bitBlitComponentBlurred(&m_pipeline_blurring, m_styleSet, m_primaryCache, m_sandbox);
+	}
 
 	graphics.drawComponent(&m_pipeline, m_styleSet);
 }

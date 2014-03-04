@@ -125,15 +125,23 @@ namespace A2D {
 		Dims						m_previousDimensions;
 		
 		Pipeline*                   m_pipeline;
+		Pipeline*                   m_pipeline_blurring = NULL;
 		Graphics*                   m_graphics;    
+		Bufferable*					m_sandbox;
+		Bufferable*					m_primaryCache;
+		
+		bool						m_doubleBuffered = false;
 
     public:
 
 		void						captureScroll();
 		void						releaseScroll();
 
+		void						setSandbox(Bufferable * x_bufferable) { m_sandbox = x_bufferable; };
+		void						setPrimaryCache(Bufferable * x_bufferable) { m_primaryCache = x_bufferable; };
+
 		void						setId(int x_id);
-        void                        setDoubleBuffered(bool xDoubleBuffer);
+		void                        setDoubleBuffered(bool xDoubleBuffer) { m_doubleBuffered = xDoubleBuffer;  };
 		void                        setBackgroundImage(wchar_t * x_src);
 		void                        setBackgroundPaint(Paint& xOptPaint);
         void                        setPosition(Style::Position xPosition);

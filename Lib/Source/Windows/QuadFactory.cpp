@@ -18,10 +18,114 @@ QuadFactory::~QuadFactory()
 
 STATUS QuadFactory::initialize()
 {
-	SAFELY(DXUtils::CreateDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
+	SAFELY(DXUtils::createDefaultDynamicVertexBuffer<ColoredTextureVertex>(*aDevice, &aVertexBuffer, 6));
 	SAFELY(DXUtils::CreateDefaultIndexBuffer(*aDevice, &aIndexBuffer, 6));
 
 	return STATUS_OK;
+}
+
+void QuadFactory::createDownSampledVertices(QuadData<TextureVertex, 6> * x_quadData, const Rect* x_rect, float x_magnitude)
+{
+	float winWidth = aWindowDims->m_width;
+	float winHeight = aWindowDims->m_height;
+
+	TextureVertex * vertices = x_quadData->aVertices;
+	void * mappedVertices = 0;
+
+	float width = x_rect->m_width * x_magnitude;
+	float height = x_rect->m_height * x_magnitude;
+
+	float left = cvtpx2rp__(winWidth, x_rect->m_x),
+		right = left + cvtpx2rd__(winWidth, width),
+		top = -cvtpx2rp__(winHeight, x_rect->m_y),
+		bottom = top - cvtpx2rd__(winHeight, height);
+
+	float texelLeft = x_rect->m_x / winWidth,
+		  texelRight = (x_rect->m_x + x_rect->m_width) / winWidth,
+		  texelBottom = (x_rect->m_y + x_rect->m_height) / winHeight,
+		  texelTop = x_rect->m_y / winHeight;
+
+	float depth = aDepth;
+
+	// Set up vertices
+	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
+	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+	vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
+	vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
+
+	vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
+	vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
+
+	vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
+	vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+	vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
+	vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
+
+	vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
+	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
+
+	// Lock the vertex buffer.
+	x_quadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+
+	// Copy data using SSE2 accelerated method
+	QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
+
+	// Unlock the vertex buffer.
+	x_quadData->aVertexBuffer->Unmap();
+}
+
+void QuadFactory::createUpSampledVertices(QuadData<TextureVertex, 6> * x_quadData, const Rect* x_rect, float x_magnitude)
+{
+	float winWidth = aWindowDims->m_width;
+	float winHeight = aWindowDims->m_height;
+
+	TextureVertex * vertices = x_quadData->aVertices;
+	void * mappedVertices = 0;
+
+	float width = x_rect->m_width;
+	float height = x_rect->m_height;
+
+	float left = cvtpx2rp__(winWidth, x_rect->m_x),
+		right = left + cvtpx2rd__(winWidth, width),
+		top = -cvtpx2rp__(winHeight, x_rect->m_y),
+		bottom = top - cvtpx2rd__(winHeight, height);
+	
+	float texelLeft = x_rect->m_x / winWidth,
+		texelRight = (x_rect->m_x + x_rect->m_width * x_magnitude) / winWidth,
+		texelBottom = (x_rect->m_y + x_rect->m_height * x_magnitude) / winHeight,
+		texelTop = x_rect->m_y / winHeight;
+
+	float depth = aDepth;
+
+	// Set up vertices
+	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
+	vertices[0].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+	vertices[1].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
+	vertices[1].texture = D3DXVECTOR2(texelRight, texelBottom);
+
+	vertices[2].position = D3DXVECTOR3(left, bottom, depth);  // Bottom left.
+	vertices[2].texture = D3DXVECTOR2(texelLeft, texelBottom);
+
+	vertices[3].position = D3DXVECTOR3(left, top, depth);  // Top left.
+	vertices[3].texture = D3DXVECTOR2(texelLeft, texelTop);
+
+	vertices[4].position = D3DXVECTOR3(right, top, depth);  // Top right.
+	vertices[4].texture = D3DXVECTOR2(texelRight, texelTop);
+
+	vertices[5].position = D3DXVECTOR3(right, bottom, depth);  // Bottom right.
+	vertices[5].texture = D3DXVECTOR2(texelRight, texelBottom);
+
+	// Lock the vertex buffer.
+	x_quadData->aVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, static_cast<void**>(&mappedVertices));
+
+	// Copy data using SSE2 accelerated method
+	QuadFactory::memcpySSE2QuadVertex(static_cast<TextureVertex*>(mappedVertices), vertices);
+
+	// Unlock the vertex buffer.
+	x_quadData->aVertexBuffer->Unmap();
 }
 
 // Temporarily moved to cpp to make the build process faster

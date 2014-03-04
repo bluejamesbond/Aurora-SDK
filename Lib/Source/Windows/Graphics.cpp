@@ -34,36 +34,101 @@ const Dims * Graphics::getDrawableDimensions()
 	return aBackBufferDims;
 }
 
-void Graphics::stretchBlt(Pipeline ** xPipeline, Rect& xRect, Bufferable * x_bufferable)
+void Graphics::bitBlitFixed(Pipeline ** x_pipeline, Rect& x_rect, Bufferable * x_bufferable)
 {
-	Texture * texture;
+	// Variables
+	// --------------
 	QuadData<TextureVertex, 6> * quadData;
 
-	// Pipeline not initalized
-	if (*xPipeline == NULL)
+	if (*x_pipeline == NULL)
 	{
-		*xPipeline = new Pipeline();
+		Pipeline* pipeline = (*x_pipeline = new Pipeline());
+		pipeline->aPipelineComps[0] = quadData = new QuadData<TextureVertex, 6>();
+		pipeline->aLength = 1;
 
-		quadData = new QuadData<TextureVertex, 6>();
-
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-		texture->initialize();
-
-		(*xPipeline)->aPipelineComps[0] = quadData;
-
-		(*xPipeline)->aLength = 1;
-
+		DXUtils::createDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		QuadFactory::createStretchVertex(quadData, &x_rect);
+		
 		return;
 	}
 
-	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[0]);
+	// Cache
+	// --------------
+	quadData = static_cast<QuadData<TextureVertex, 6>*>((*x_pipeline)->aPipelineComps[0]);
 
-	// texture->Update(textureArgs); <<<<+++ ADD LATER
-	aQuadFactory->updateVertexBuffer(quadData, &xRect, texture, false);
+	// Render
+	// --------------
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
 	aTextureShader->setTexture(x_bufferable);
 	aTextureShader->renderShader();
+}
+
+void Graphics::bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet, Bufferable * x_cache, Bufferable * x_sandbox)
+{
+	QuadData<TextureVertex, 6> * quadData;
+
+	if (*x_pipeline == NULL)
+	{
+		Pipeline* pipeline = (*x_pipeline = new Pipeline());
+		pipeline->aPipelineComps[0] = (quadData = new QuadData<TextureVertex, 6>());
+		pipeline->aLength = 1;
+
+		DXUtils::createDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		
+		return;
+	}
+
+	quadData = static_cast<QuadData<TextureVertex, 6>*>((*x_pipeline)->aPipelineComps[0]);
+
+	x_sandbox->setActive();
+
+	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.1f);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+
+	aVerticalBlurShader->setTexture(x_cache);
+	aVerticalBlurShader->renderShader();
+
+	x_cache->setActive();
+
+	aQuadFactory->createUpSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.05f);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+	
+	aHorizontalBlurShader->setTexture(x_sandbox);
+	aHorizontalBlurShader->renderShader();
+
+	x_sandbox->setActive();
+
+	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.05f);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+
+	aVerticalBlurShader->setTexture(x_cache);
+	aVerticalBlurShader->renderShader();
+
+	x_cache->setActive();
+
+	aQuadFactory->createUpSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.1f);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+
+	aHorizontalBlurShader->setTexture(x_sandbox);
+	aHorizontalBlurShader->renderShader();
+
+	x_sandbox->setActive();
+
+	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.2f);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+
+	aVerticalBlurShader->setTexture(x_cache);
+	aVerticalBlurShader->renderShader();
+
+	x_cache->setActive();
+
+	aQuadFactory->createUpSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.2f);
+	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
+
+	aHorizontalBlurShader->setTexture(x_sandbox);
+	aHorizontalBlurShader->renderShader();
+
+
 }
 
 void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
@@ -82,11 +147,11 @@ void Graphics::fillRect(Pipeline ** xPipeline, Rect& xRect, Paint& xPaint)
 
 		quadData = new QuadData<ColorVertex, 6>();
 
-		DXUtils::CreateDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
+		DXUtils::createDefaultDynamicVertexBuffer<ColorVertex>(*aDevice, &quadData->aVertexBuffer, 6);
 
 		(*xPipeline)->aPipelineComps[0] = quadData;
 
-		(*xPipeline)->aLength = 2;
+		(*xPipeline)->aLength = 1;
 
 		return;
 	}
@@ -133,7 +198,7 @@ void Graphics::drawComponent(Pipeline ** xPipeline, A2DCOMPONENTRENDERSTYLESET& 
 		quadData = new QuadData<QuadExpansionVertex, 1>();
 		
 		// Create the default vertex buffer
-		DXUtils::CreateDefaultDynamicVertexBuffer<QuadExpansionVertex>(*aDevice, &quadData->aVertexBuffer, 1);
+		DXUtils::createDefaultDynamicVertexBuffer<QuadExpansionVertex>(*aDevice, &quadData->aVertexBuffer, 1);
 
 		// Since everything has been safely initialized
 		// store into the pipeline
@@ -205,6 +270,12 @@ STATUS Graphics::initialize()
 
 	aQuadExpansionShader = new QuadExpansionShader(device);
 	SAFELY(aQuadExpansionShader->initialize());
+
+	aVerticalBlurShader = new VerticalBlurShader(device);
+	SAFELY(aVerticalBlurShader->initialize());
+
+	aHorizontalBlurShader = new HorizontalBlurShader(device);
+	SAFELY(aHorizontalBlurShader->initialize());
 
 	// Call validate to ensure all the contents
 	// are updated

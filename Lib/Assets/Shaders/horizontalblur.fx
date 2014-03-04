@@ -10,7 +10,7 @@ matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
-float screenWidth;
+float screenWidth = 569;
 
 
 ///////////////////
@@ -18,9 +18,9 @@ float screenWidth;
 ///////////////////
 SamplerState SampleType
 {
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
+	Filter = ANISOTROPIC;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 
@@ -56,15 +56,17 @@ PixelInputType HorizontalBlurVertexShader(VertexInputType input)
 {
     PixelInputType output;
     float texelSize;
-    
-	// Change the position vector to be 4 units for proper matrix calculations.
-    input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-    output.position = mul(input.position, worldMatrix);
-    output.position = mul(output.position, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
-    
+	// Force w-buffer to be 1.0
+	output.position.w = 1.0f;
+
+	// Calculate z-buffer manually
+	output.position.z = (10000000 - input.position.z) / 10000000;
+
+	// Calculate the position of the vertex 
+	// against the world, view, and projection matrices.
+	output.position = input.position;
+
 	// Store the texture coordinates for the pixel shader.
     output.tex = input.tex;
     
@@ -81,7 +83,7 @@ PixelInputType HorizontalBlurVertexShader(VertexInputType input)
 	output.texCoord7 = input.tex + float2(texelSize *  2.0f, 0.0f);
 	output.texCoord8 = input.tex + float2(texelSize *  3.0f, 0.0f);
 	output.texCoord9 = input.tex + float2(texelSize *  4.0f, 0.0f);
-
+	
 	return output;
 }
 
@@ -129,7 +131,7 @@ float4 HorizontalBlurPixelShader(PixelInputType input) : SV_Target
 
 	// Set the alpha channel to one.
 	// color.a = 1.0f;
-
+	
     return color;
 }
 

@@ -47,21 +47,21 @@ namespace A2D {
 
     private:
 
-        static Texture                      *   aTexture;
-        static float                        **  aProjectionMatrix;
-        static ID3D10Effect                 *   aTextureEffect;
-        static ID3D10EffectMatrixVariable   *   aWorldMatrixPtr;
-        static ID3D10EffectMatrixVariable   *   aViewMatrixPtr;
-        static ID3D10EffectMatrixVariable   *   aProjectionMatrixPtr;
-        static ID3D10EffectShaderResourceVariable*   aTexturePtr;
+		Texture                      *   aTexture = NULL;
+		float                        **  aProjectionMatrix = NULL;
+		ID3D10Effect                 *   aTextureEffect = NULL;
+        ID3D10EffectMatrixVariable   *   aWorldMatrixPtr = NULL;
+		ID3D10EffectMatrixVariable   *   aViewMatrixPtr = NULL;
+		ID3D10EffectMatrixVariable   *   aProjectionMatrixPtr = NULL;
+		ID3D10EffectShaderResourceVariable*   aTexturePtr = NULL;
 
     public:
 
-        void                                    setTexture(Bufferable * xTexture);
-        static void                             setViewMatrix(float ** xMatrix);
-        static void                             setWorldMatrix(float ** xMatrix);
-        static void                             setProjectionMatrix(float ** xMatrix);
-        static void                             reloadProjectionMatrix();
+        void                             setTexture(Bufferable * xTexture);
+        void                             setViewMatrix(float ** xMatrix);
+        void                             setWorldMatrix(float ** xMatrix);
+        void                             setProjectionMatrix(float ** xMatrix);
+        void                             reloadProjectionMatrix();
 
     protected:
 
