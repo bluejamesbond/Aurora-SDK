@@ -23,6 +23,8 @@ SamplerState SampleType
 	AddressV = Clamp;
 };
 
+// MK Gaussian kernel creator - Javascript
+//
 //function getGaussianKernel(xRadius)
 //{
 //	if (xRadius < 1)
