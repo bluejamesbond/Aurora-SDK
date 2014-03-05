@@ -66,7 +66,7 @@ void Graphics::bitBlitFixed(Pipeline ** x_pipeline, Rect& x_rect, Bufferable * x
 void Graphics::bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDERSTYLESET& x_renderSet, Bufferable * x_cache, Bufferable * x_sandbox)
 {
 	QuadData<TextureVertex, 6> * quadData;
-
+	
 	if (*x_pipeline == NULL)
 	{
 		Pipeline* pipeline = (*x_pipeline = new Pipeline());

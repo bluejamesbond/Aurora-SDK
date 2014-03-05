@@ -94,7 +94,7 @@ void QuadFactory::createUpSampledVertices(QuadData<TextureVertex, 6> * x_quadDat
 	
 	float texelLeft = x_rect->m_x / winWidth,
 		texelRight = (x_rect->m_x + x_rect->m_width * x_magnitude) / winWidth,
-		texelBottom = (x_rect->m_y + x_rect->m_height * x_magnitude) / winHeight,
+		texelBottom = (x_rect->m_y + x_rect->m_height * x_magnitude) / winHeight - 2.0f / x_rect->m_height,
 		texelTop = x_rect->m_y / winHeight;
 
 	float depth = aDepth;
