@@ -10,7 +10,7 @@ matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
-float screenHeight = 150;
+float screenHeight = 77;
 
 
 ///////////////////
@@ -23,6 +23,8 @@ SamplerState SampleType
 	AddressV = Clamp;
 };
 
+static const float kernel[71] = { -35, -34, -33, -32, -31, -30, -29, -28, -27, -26, -25, -24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
+static const float weights[71] = { 0.0003807622546203966, 0.0004906075713239298, 0.0006275146475665876, 0.0007967512511978494, 0.0010042247151735896, 0.0012564590020428406, 0.0015605403549293344, 0.0019240260617353522, 0.0023548115760058564, 0.0028609524435996955, 0.0034504392107541446, 0.004130925733511176, 0.004909414025601617, 0.005791901878532406, 0.006783002820292805, 0.007885551356100562, 0.009100209623188193, 0.010425094330359048, 0.011855444869280772, 0.013383354515985572, 0.014997586460270714, 0.01668349483977855, 0.018423067929526624, 0.02019510616337774, 0.021975541872002763, 0.023737900759758415, 0.025453897567563877, 0.027094150528650975, 0.028628991630285667, 0.030029342884658923, 0.03126762330730229, 0.03231864756219319, 0.03316047561713765, 0.03377517348083519, 0.034149448220632206, 0.03427512586844698, 0.034149448220632206, 0.03377517348083519, 0.03316047561713765, 0.03231864756219319, 0.03126762330730229, 0.030029342884658923, 0.028628991630285667, 0.027094150528650975, 0.025453897567563877, 0.023737900759758415, 0.021975541872002763, 0.02019510616337774, 0.018423067929526624, 0.01668349483977855, 0.014997586460270714, 0.013383354515985572, 0.011855444869280772, 0.010425094330359048, 0.009100209623188193, 0.007885551356100562, 0.006783002820292805, 0.005791901878532406, 0.004909414025601617, 0.004130925733511176, 0.0034504392107541446, 0.0028609524435996955, 0.0023548115760058564, 0.0019240260617353522, 0.0015605403549293344, 0.0012564590020428406, 0.0010042247151735896, 0.0007967512511978494, 0.0006275146475665876, 0.0004906075713239298, 0.0003807622546203966 }; 
 
 //////////////
 // TYPEDEFS //
@@ -37,15 +39,6 @@ struct PixelInputType
 {
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
-    float2 texCoord1 : TEXCOORD1;
-    float2 texCoord2 : TEXCOORD2;
-    float2 texCoord3 : TEXCOORD3;
-    float2 texCoord4 : TEXCOORD4;
-    float2 texCoord5 : TEXCOORD5;
-    float2 texCoord6 : TEXCOORD6;
-    float2 texCoord7 : TEXCOORD7;
-    float2 texCoord8 : TEXCOORD8;
-    float2 texCoord9 : TEXCOORD9;
 };
 
 
@@ -55,7 +48,6 @@ struct PixelInputType
 PixelInputType VerticalBlurVertexShader(VertexInputType input)
 {
     PixelInputType output;
-    float texelSize;
 
 	// Force w-buffer to be 1.0
 	output.position.w = 1.0f;
@@ -69,20 +61,6 @@ PixelInputType VerticalBlurVertexShader(VertexInputType input)
 
     // Store the texture coordinates for the pixel shader.
     output.tex = input.tex;
-    
-    // Determine the floating point size of a texel for a screen with this specific height.
-    texelSize = 1.0f / screenHeight;
-
-    // Create UV coordinates for the pixel and its four vertical neighbors on either side.
-    output.texCoord1 = input.tex + float2(0.0f, texelSize * -4.0f);
-    output.texCoord2 = input.tex + float2(0.0f, texelSize * -3.0f);
-    output.texCoord3 = input.tex + float2(0.0f, texelSize * -2.0f);
-    output.texCoord4 = input.tex + float2(0.0f, texelSize * -1.0f);
-    output.texCoord5 = input.tex + float2(0.0f, texelSize *  0.0f);
-    output.texCoord6 = input.tex + float2(0.0f, texelSize *  1.0f);
-    output.texCoord7 = input.tex + float2(0.0f, texelSize *  2.0f);
-    output.texCoord8 = input.tex + float2(0.0f, texelSize *  3.0f);
-    output.texCoord9 = input.tex + float2(0.0f, texelSize *  4.0f);
 
     return output;
 }
@@ -93,47 +71,19 @@ PixelInputType VerticalBlurVertexShader(VertexInputType input)
 ////////////////////////////////////////////////////////////////////////////////
 float4 VerticalBlurPixelShader(PixelInputType input) : SV_Target
 {
-    float weight0, weight1, weight2, weight3, weight4;
-    float normalization;
-    float4 color;
+   
+	// Determine the floating point size of a texel for a screen with this specific width.
+	float texelSize = 1.0f / screenHeight;
+	float4 color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-    // Create the weights that each neighbor pixel will contribute to the blur.
-    weight0 = 1.0f;
-    weight1 = 0.9f;
-    weight2 = 0.55f;
-    weight3 = 0.18f;
-    weight4 = 0.1f;
+	for (int i = 0; i < 71; i++)
+	{
+		color += shaderTexture.Sample(SampleType, input.tex + float2(0.0f, texelSize * kernel[i])) * weights[i];
+	}
 
-    // Create a normalized value to average the weights out a bit.
-    normalization = (weight0 + 2.0f * (weight1 + weight2 + weight3 + weight4));
+	color.a = 1;
 
-    // Normalize the weights.
-    weight0 = weight0 / normalization;
-    weight1 = weight1 / normalization;
-    weight2 = weight2 / normalization;
-    weight3 = weight3 / normalization;
-    weight4 = weight4 / normalization;
-
-    // Initialize the color to black.
-    color = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Add the nine vertical pixels to the color by the specific weight of each.
-    color += shaderTexture.Sample(SampleType, input.texCoord1) * weight4;
-    color += shaderTexture.Sample(SampleType, input.texCoord2) * weight3;
-    color += shaderTexture.Sample(SampleType, input.texCoord3) * weight2;
-    color += shaderTexture.Sample(SampleType, input.texCoord4) * weight1;
-    color += shaderTexture.Sample(SampleType, input.texCoord5) * weight0;
-    color += shaderTexture.Sample(SampleType, input.texCoord6) * weight1;
-    color += shaderTexture.Sample(SampleType, input.texCoord7) * weight2;
-    color += shaderTexture.Sample(SampleType, input.texCoord8) * weight3;
-    color += shaderTexture.Sample(SampleType, input.texCoord9) * weight4;
-
-    // Set the alpha channel to one.
-    color.a = 1.0f;
-
-	color = saturate(color);
-
-    return color;
+	return color;
 }
 
 

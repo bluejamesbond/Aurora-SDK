@@ -82,38 +82,6 @@ void Graphics::bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDE
 
 	x_sandbox->setActive();
 
-	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.05f);
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-
-	aVerticalBlurShader->setTexture(x_cache);
-	aVerticalBlurShader->renderShader();
-
-	x_cache->setActive();
-
-	aQuadFactory->createUpSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.05f);
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-	
-	aHorizontalBlurShader->setTexture(x_sandbox);
-	aHorizontalBlurShader->renderShader();
-
-	x_sandbox->setActive();
-
-	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.1f);
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-
-	aVerticalBlurShader->setTexture(x_cache);
-	aVerticalBlurShader->renderShader();
-
-	x_cache->setActive();
-
-	aQuadFactory->createUpSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.1f);
-	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-
-	aHorizontalBlurShader->setTexture(x_sandbox);
-	aHorizontalBlurShader->renderShader();
-
-	x_sandbox->setActive();
-
 	aQuadFactory->createDownSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.2f);
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
 
@@ -124,10 +92,9 @@ void Graphics::bitBlitComponentBlurred(Pipeline ** x_pipeline, A2DCOMPONENTRENDE
 
 	aQuadFactory->createUpSampledVertices(quadData, x_renderSet.m_visibleRegion, 0.2f);
 	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-
+	
 	aHorizontalBlurShader->setTexture(x_sandbox);
 	aHorizontalBlurShader->renderShader();
-
 
 }
 
