@@ -277,7 +277,7 @@ void _fastcall CascadingLayout::doLayout(Component& x_component)
 			// Update bounds
 			//------------------------------------------------------------------------------
 			
-			if (component->m_id == 0x8550) height = 70;
+			if (component->m_id == 0x8550) height = 150;
 			component->m_styleSet.m_visible = true;
 			component->setBounds(SFLOAT(aX), SFLOAT(aY), SFLOAT(width), SFLOAT(height));
 		}

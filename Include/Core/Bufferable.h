@@ -28,7 +28,7 @@ namespace A2D {
 	{
 
 	public:
-
+		virtual ~Bufferable() {};
 		virtual void setActive() IMPLEMENT;
 		virtual void resizeBuffer(Dims& x_dims) IMPLEMENT;
 		virtual void clear() IMPLEMENT;

@@ -11,8 +11,6 @@ ComponentManager::ComponentManager(void * xGraphics, Component * xRoot, Abstract
 {
 	aGraphics = static_cast<Graphics*>(xGraphics);
 	aBackBuffer = static_cast<Graphics*>(aGraphics)->getBackBuffer();
-	aGraphics->createTextureBuffer(&m_textureBuffer, Dims(569, 569));
-	aGraphics->createTextureBuffer(&m_sandbox, Dims(569, 569));
 	aBackBufferDims = aBackBuffer->getSizeAsPtr();
 	aRoot = xRoot;
 	aWindow = xWindow;
@@ -31,8 +29,8 @@ STATUS ComponentManager::initialize()
 	root.setComponentManager(*this);
 	root.setDepth(0);
 	root.setEventQueue(*m_eventQueue);
-	root.setSandbox(m_sandbox);
-	root.setPrimaryCache(m_textureBuffer);
+	root.setSandbox(&m_sandbox);
+	root.setPrimaryCache(&m_textureBuffer);
 
 	addToDepthTracker(root);
 
@@ -61,8 +59,8 @@ STATUS ComponentManager::add(Component& xParent, Component& xChild) const
 	xChild.setComponentManager(*unconst__(ComponentManager*));
 	xChild.setEventQueue(*m_eventQueue);
 	xChild.initialize();
-	xChild.setSandbox(m_sandbox);
-	xChild.setPrimaryCache(m_textureBuffer);
+	xChild.setSandbox(sunconst__(Bufferable **, &m_sandbox));
+	xChild.setPrimaryCache(sunconst__(Bufferable **, &m_textureBuffer));
 
 	if (unconst__(ComponentManager*)->addToDepthTracker(xChild))
 	{

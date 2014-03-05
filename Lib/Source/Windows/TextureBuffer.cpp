@@ -94,6 +94,5 @@ TextureBuffer::~TextureBuffer()
 {
 	D3DDESTROY(aDXRenderTargetTexture);
 	D3DDESTROY(aDXRenderTargetView);
-	D3DDESTROY(aDXDepthStencilState);
 	D3DDESTROY(aResource);
 }

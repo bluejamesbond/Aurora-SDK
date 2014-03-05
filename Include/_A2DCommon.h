@@ -204,6 +204,7 @@ inline double platform_dependent_kernel_time_high_precision()
 // Use with caution.
 //------------------------------------------------------------------------------
 #define	unconst__(x)									(const_cast<x>(this))
+#define	sunconst__(y, x)									(const_cast<y>(x))
 
 #include <time.h>
 

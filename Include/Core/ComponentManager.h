@@ -57,8 +57,8 @@ namespace A2D {
 		AbstractWindow	  						   *   aWindow;
 		Graphics								   *   aGraphics;
 		AbstractEventQueue						   *   m_eventQueue;
-		Bufferable*									   m_textureBuffer;
-		Bufferable*									   m_sandbox;
+		Bufferable*									   m_textureBuffer = NULL;
+		Bufferable*									   m_sandbox = NULL;
 
 	public:
 
@@ -97,6 +97,12 @@ namespace A2D {
 
 			aRoot->setBounds(0,0, aBackBufferDims->m_width, aBackBufferDims->m_height);
 			aRoot->m_componentTreeValidationRequest = true;
+
+			DESTROY(m_textureBuffer);
+			DESTROY(m_sandbox);
+
+			aGraphics->createTextureBuffer(&m_textureBuffer, Dims(aBackBufferDims->m_width, aBackBufferDims->m_height));
+			aGraphics->createTextureBuffer(&m_sandbox, Dims(aBackBufferDims->m_width, aBackBufferDims->m_height));
 		}
 
 	};

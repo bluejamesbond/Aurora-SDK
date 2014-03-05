@@ -127,8 +127,8 @@ namespace A2D {
 		Pipeline*                   m_pipeline;
 		Pipeline*                   m_pipeline_blurring = NULL;
 		Graphics*                   m_graphics;    
-		Bufferable*					m_sandbox;
-		Bufferable*					m_primaryCache;
+		Bufferable**				m_sandbox;
+		Bufferable**				m_primaryCache;
 		
 		bool						m_doubleBuffered = false;
 
@@ -137,8 +137,8 @@ namespace A2D {
 		void						captureScroll();
 		void						releaseScroll();
 
-		void						setSandbox(Bufferable * x_bufferable) { m_sandbox = x_bufferable; };
-		void						setPrimaryCache(Bufferable * x_bufferable) { m_primaryCache = x_bufferable; };
+		void						setSandbox(Bufferable ** x_bufferable) { m_sandbox = x_bufferable; };
+		void						setPrimaryCache(Bufferable ** x_bufferable) { m_primaryCache = x_bufferable; };
 
 		void						setId(int x_id);
 		void                        setDoubleBuffered(bool xDoubleBuffer) { m_doubleBuffered = xDoubleBuffer;  };
