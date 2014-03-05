@@ -10,7 +10,7 @@ matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
-float screenHeight = 77;
+float screenHeight = 70;
 
 
 ///////////////////
