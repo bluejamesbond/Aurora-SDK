@@ -323,7 +323,7 @@ void Component::forceBounds(bool xForce)
     m_forcedBounds = xForce;
 }
 
-void Component::setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight)
+void Component::setSize(float xWidth, Style::Units xWidthUnits, float xHeight, Style::Units xHeightUnits)
 {
 	A2DDISTANCESET2& size = m_styleSet.m_size;
 
@@ -370,7 +370,7 @@ void Component::setDisplay(Style::Display xDisplay)
 	m_validatedContents = false;
 }
 
-void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
+void Component::setMargins(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits)
 {
 	A2DDISTANCESET4& margins = m_styleSet.m_margins;
 
@@ -387,7 +387,7 @@ void Component::setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xT
 	m_validatedContents = false;
 }
 
-void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
+void Component::setPositioning(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits)
 {
 	A2DDISTANCESET4& positioning = m_styleSet.m_positioning;
 
@@ -404,7 +404,7 @@ void Component::setPositioning(Style::Units xLeftUnits, float xLeft, Style::Unit
 	m_validatedContents = false;
 }
 
-void Component::setPadding(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
+void Component::setPadding(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits)
 {
 	A2DDISTANCESET4& padding = m_styleSet.m_padding;
 
@@ -614,7 +614,7 @@ void Component::setBackgroundPaint(Paint& xOptPaint)
 	m_styleSet.markBackgroundAsDirty();
 };
 
-void Component::setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
+void Component::setBorderWidths(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits)
 {
 	A2DDISTANCESET4& bordersWidths = m_styleSet.m_borders.m_borderWidths;
 
@@ -638,7 +638,7 @@ void Component::setOpacity(float x_opacity)
 	m_styleSet.markOpacityAsDirty();
 }
 
-void Component::setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom)
+void Component::setBorderRadii(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits)
 {
 	A2DDISTANCESET4& borderRadii = m_styleSet.m_borderRadii;
 

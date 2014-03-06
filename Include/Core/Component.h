@@ -147,12 +147,12 @@ namespace A2D {
         void                        setPosition(Style::Position xPosition);
         void                        setDisplay(Style::Display xDisplay);
         void                        setFloat(Style::Float xFloat);
-        void                        setSize(Style::Units xWidthUnits, float xWidth, Style::Units xHeightUnits, float xHeight);
-        void                        setMargins(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-        void                        setPositioning(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-		void                        setPadding(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-		void                        setBorderWidths(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
-		void                        setBorderRadii(Style::Units xLeftUnits, float xLeft, Style::Units xTopUnits, float xTop, Style::Units xRightUnits, float xRight, Style::Units xBottomUnits, float xBottom);
+		void                        setSize(float xWidth, Style::Units xWidthUnits, float xHeight, Style::Units xHeightUnits);
+		void                        setMargins(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits);
+        void                        setPositioning(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits);
+		void                        setPadding(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits);
+		void                        setBorderWidths(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits);
+		void                        setBorderRadii(float xLeft, Style::Units xLeftUnits, float xTop, Style::Units xTopUnits, float xRight, Style::Units xRightUnits, float xBottom, Style::Units xBottomUnits);
 		void						setBorderColor(unsigned int xLeft, unsigned int xTop, unsigned int xRight, unsigned int xBottom);
         void                        setFocusable(bool xFocusable);
 

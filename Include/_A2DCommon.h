@@ -226,4 +226,20 @@ inline double platform_dependent_kernel_time_high_precision()
 #define timeblock__(data)								for (long blockTime = NULL; (blockTime == NULL ? (blockTime = clock()) != NULL : false); SYSOUT_F(data "%.9fs", (double) (clock() - blockTime) / CLOCKS_PER_SEC))
 #endif
 
+#define css_size(a, b)											setSize(a, b)
+#define css_positioning(a, b, c, d)								setPositioning(a, b, c, d)
+#define css_position(a)											setPosition(a)
+#define css_display(a)											setDisplay(a)
+#define css_id(a)												setId(a)
+#define css_background_image(x)									setBackgroundImage(x)
+#define css_background_blur(x)									setDoubleBuffered(x)
+#define pct														,Style::PERCENTAGE
+#define px														,Style::PIXEL
+#define block													Style::INLINE_BLOCK
+#define relative												Style::RELATIVE_
+#define absolute												Style::ABSOLUTE_
+#define enable													true
+#define disable													false
+#define automatic												Style::AUTO, Style::PIXEL
+
 #endif

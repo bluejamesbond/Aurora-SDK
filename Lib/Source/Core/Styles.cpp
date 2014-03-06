@@ -5,4 +5,4 @@
 
 using namespace A2D;
 
-float Style::AUTO = FLT_MIN;
+float Style::AUTO = INT_MIN;
