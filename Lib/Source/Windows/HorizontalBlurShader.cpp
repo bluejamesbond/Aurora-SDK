@@ -19,6 +19,21 @@ unsigned int HorizontalBlurShader::getPolygonLayoutElementCount()
 	return 2;
 }
 
+
+STATUS HorizontalBlurShader::getUsableVariablePointers(ID3D10Effect * xEffect)
+{
+	// Get pointers to the three matrices inside the 
+	// shader so we can update them from this class.
+	AbstractTextureShader::getUsableVariablePointers(xEffect);
+
+	if (!m_texelSize)
+	{
+		m_texelSize = xEffect->GetVariableByName("texelSize")->AsScalar();
+	}
+
+	return STATUS_OK;
+}
+
 LPCSTR HorizontalBlurShader::getTechniqueName()
 {
 	return "MainTechnique";
@@ -27,4 +42,9 @@ LPCSTR HorizontalBlurShader::getTechniqueName()
 LPCWSTR HorizontalBlurShader::getEffectName()
 {
 	return L"../../../Aurora-SDK/Lib/Assets/Shaders/horizontalblur.fx";
+}
+
+void HorizontalBlurShader::setTexelSize(float x_size)
+{
+	m_texelSize->SetFloat(x_size);
 }

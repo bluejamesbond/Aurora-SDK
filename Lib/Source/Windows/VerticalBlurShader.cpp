@@ -28,3 +28,22 @@ LPCWSTR VerticalBlurShader::getEffectName()
 {
 	return L"../../../Aurora-SDK/Lib/Assets/Shaders/verticalblur.fx";
 }
+
+STATUS VerticalBlurShader::getUsableVariablePointers(ID3D10Effect * xEffect)
+{
+	// Get pointers to the three matrices inside the 
+	// shader so we can update them from this class.
+	AbstractTextureShader::getUsableVariablePointers(xEffect);
+
+	if (!m_texelSize)
+	{
+		m_texelSize = xEffect->GetVariableByName("texelSize")->AsScalar();
+	}
+
+	return STATUS_OK;
+}
+
+void VerticalBlurShader::setTexelSize(float x_size)
+{
+	m_texelSize->SetFloat(x_size);
+}

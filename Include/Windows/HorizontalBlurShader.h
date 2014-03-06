@@ -41,9 +41,14 @@ namespace A2D {
 
 		HorizontalBlurShader(ID3D10Device ** xDevice);
 
+		void							setTexelSize(float x_size);
+
 	protected:
 
-		virtual LPCWSTR                         getEffectName();
+		ID3D10EffectScalarVariable   *  m_texelSize = NULL;
+		
+		virtual STATUS                  getUsableVariablePointers(ID3D10Effect * xEffect);
+		virtual LPCWSTR                 getEffectName();
 		virtual STATUS					createPolygonLayout(D3D10_INPUT_ELEMENT_DESC ** xPolygonLayout);
 		virtual unsigned int			getPolygonLayoutElementCount();
 		virtual	LPCSTR					getTechniqueName();
