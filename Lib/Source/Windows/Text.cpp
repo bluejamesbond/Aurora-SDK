@@ -20,5 +20,5 @@ void Text::setText(string * xText)
 {
 	aText = *xText;
 	aNumVertices = xText->length() * FONT_VERTEX_MULTIPLIER;
-	aNumIndices = xText->length() * FONT_VERTEX_MULTIPLIER;
+	aNumIndices = xText->length() * FONT_INDEX_MULTIPLIER;
 }
