@@ -241,5 +241,11 @@ inline double platform_dependent_kernel_time_high_precision()
 #define enable													true
 #define disable													false
 #define automatic												Style::AUTO, Style::PIXEL
+#define left(x)													x
+#define right(x)												x
+#define top(x)													x
+#define bottom(x)												x
+#define width(x)												x	
+#define height(x)												x
 
 #endif
