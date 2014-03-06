@@ -87,6 +87,11 @@ void QuadFactory::createUpSampledVertices(QuadData<TextureVertex, 6> * x_quadDat
 	float width = x_rect->m_width;
 	float height = x_rect->m_height;
 
+	float visiblePortionRatio = x_magnitude;
+	float DARK_AREA = 2.0f;
+
+	float performance_y = x_rect->m_y + x_rect->m_height* x_magnitude - x_rect->m_height* x_magnitude * visiblePortionRatio - DARK_AREA;
+
 	float left = cvtpx2rp__(winWidth, x_rect->m_x),
 		right = left + cvtpx2rd__(winWidth, width),
 		top = -cvtpx2rp__(winHeight, x_rect->m_y),
@@ -94,10 +99,12 @@ void QuadFactory::createUpSampledVertices(QuadData<TextureVertex, 6> * x_quadDat
 	
 	float texelLeft = x_rect->m_x / winWidth,
 		texelRight = (x_rect->m_x + x_rect->m_width * x_magnitude) / winWidth,
-		texelBottom = (x_rect->m_y + x_rect->m_height * x_magnitude) / winHeight - 2.0f / x_rect->m_height,
-		texelTop = x_rect->m_y / winHeight;
+		texelBottom = (x_rect->m_y + x_rect->m_height * x_magnitude - DARK_AREA) / winHeight,
+		texelTop = performance_y / winHeight;
 
 	float depth = aDepth;
+	
+	// SYSOUT_F("%f ---- %f", texelTop, texelBottom);
 
 	// Set up vertices
 	vertices[0].position = D3DXVECTOR3(left, top, depth);  // Top left.
