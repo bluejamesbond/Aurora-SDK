@@ -190,15 +190,7 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 	// FIXME: MOVE THIS REGION TO INLINE FUNCTION
 	Rect * clip = aClip;
 
-	// ~~~~~~~ Supposed inputs ~~~~~~~~~
-
-	//string input = "adawarv wa";
-	//Fonts * fontInput = &Fonts::MUSEO;
-	QuadData<TextureVertex, 6> * quadData;
-
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0 || !xPixelSize)	return;
+	if (xRect.aX >= clip->aWidth || xRect.aY >= clip->aHeight || clip->aWidth <= 0 || clip->aHeight <= 0)	return;
 
 	Text * text;
 
@@ -209,34 +201,23 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 	if (*xPipeline == NULL)
 	{
 		// Intialize the pipeline
-
 		*xPipeline = new Pipeline();
 		
 		text = new Text(*xInput);
-		quadData = new QuadData<TextureVertex, 6>();
-		DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &quadData->aVertexBuffer, 6);
-
-
 		text->initialize(); // NEED TO CHECK IF IT FAILS HERE
 
 		DXUtils::CreateDefaultDynamicVertexBuffer<FontVertex>(*aDevice, &text->aVertexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_VERTEX_MULTIPLIER);
 		DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, TEXT_MAX_DEFAULT_CHARS * FONT_INDEX_MULTIPLIER);
 
-		//DXUtils::CreateDefaultDynamicVertexBuffer<TextureVertex>(*aDevice, &text->aVertexBuffer, 6);
-		//DXUtils::CreateEmptyDynamicIndexBuffer(*aDevice, &text->aIndexBuffer, 6);
-		//DXUtils::CreateDefaultIndexBuffer(*aDevice, &text->aIndexBuffer, 6);
-
 		aTextFactory->setFont(xFontInput);
 
 		(*xPipeline)->aPipelineComps[0] = text;
-		(*xPipeline)->aPipelineComps[1] = quadData;
 		(*xPipeline)->aLength = 1;
 
 		return;
 	}
 
 	text = static_cast<Text*>((*xPipeline)->aPipelineComps[0]);
-	quadData = static_cast<QuadData<TextureVertex, 6>*>((*xPipeline)->aPipelineComps[1]);
 
 	if (aTextFactory->getCurrentFont() != xFontInput)
 	{
@@ -248,30 +229,18 @@ void Graphics::drawString(Pipeline ** xPipeline, Rect& xRect, string * xInput, F
 		text->setText(xInput);
 	}
 
-	//xRect.aY = 10;
-
-
 
 	if (aTextFactory->updateVertexBuffer(text, &xRect, xPixelSize))
 	{
-		//aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 		aFontShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
 
-		// Custom settings - may be called only once
+		// Custom settings - may be called only once (set it to this later)
 		aFontShader->setTextColor(xTextColor->aRed, xTextColor->aGreen, xTextColor->aBlue, xTextColor->aAlpha); // FORCED FOR NOW
 		aFontShader->setShadowColor(xShadowColor->aRed, xShadowColor->aGreen, xShadowColor->aBlue, xShadowColor->aAlpha);
 
 		aTextFactory->renderText(text, sizeof(FontVertex));
-		//aTextureShader->renderShader(text->aNumIndices);
 		aFontShader->renderShader(text->aNumIndices);
 	}
-
-	//if (aQuadFactory->updateVertexBuffer(quadData, &xRect, aTextFactory->aCurrentFont->aFontTexture, false))
-	//{
-	//	aTextureShader->setTexture(aTextFactory->aCurrentFont->aFontTexture);
-	//	aQuadFactory->renderQuad(quadData->aVertexBuffer, sizeof(TextureVertex));
-	//	aTextureShader->renderShader();
-	//}
 }
 
 

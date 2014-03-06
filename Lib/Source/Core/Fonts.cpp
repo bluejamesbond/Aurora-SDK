@@ -5,6 +5,8 @@
 using namespace A2D;
 
 Fonts Fonts::MUSEO("museo");
+Fonts Fonts::ARUAL("arual");
+Fonts Fonts::OPTIMUS_PRINCEPS("optimusprinceps");
 
 Fonts::Fonts(string xFontName) : 
 aFontName(xFontName)

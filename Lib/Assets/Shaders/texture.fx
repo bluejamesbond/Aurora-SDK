@@ -252,7 +252,7 @@ float4 TextureShadowedPixelShader(FontPixel input) : SV_TARGET
 	// Process distance field  texture for shadow.
 	float4 shadow, shadowTexel;
 	//float4 shadowColor;
-	float SHADOW_OFFSET = 0.004;
+	float SHADOW_OFFSET = 0.005;
 	float alphaShadowMaskDistance;
 	float2 s_f = input.tex.xy;
 	s_f.x -= SHADOW_OFFSET;
@@ -263,7 +263,7 @@ float4 TextureShadowedPixelShader(FontPixel input) : SV_TARGET
 	alphaShadowMaskDistance = shadow.a;
 	//shadowColor = float4(0.0, 0.0, 0.0, 1.0); // black shadow color
 
-	shadow = shadowColor * smoothstep(0.1, 0.9, shadowTexel.a); // shadow spread hur
+	shadow = shadowColor * smoothstep(0.1, 0.6, shadowTexel.a); // shadow spread hur
 	//shadow = smoothstep(0.5, 0.6, alphaShadowMaskDistance);
 
 	//shadow.x = shadowColor.x;

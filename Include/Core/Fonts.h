@@ -47,6 +47,8 @@ namespace A2D{
 	public:
 
 		static Fonts					    MUSEO;
+		static Fonts						ARUAL;
+		static Fonts						OPTIMUS_PRINCEPS;
 
 		Fonts(string xFontName);
 
