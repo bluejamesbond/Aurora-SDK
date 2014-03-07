@@ -88,18 +88,19 @@ void QuadFactory::createUpSampledVertices(QuadData<TextureVertex, 6> * x_quadDat
 	float height = x_rect->m_height;
 
 	float visiblePortionRatio = x_magnitude;
-	float DARK_AREA = 2.0f;
+	float DARK_AREA = 1.0f;
 
-	float performance_y = x_rect->m_y + x_rect->m_height* x_magnitude - x_rect->m_height* x_magnitude * visiblePortionRatio - DARK_AREA;
+	// float performance_y = x_rect->m_y + x_rect->m_height* x_magnitude - x_rect->m_height* x_magnitude * visiblePortionRatio - DARK_AREA;
+	float performance_y = x_rect->m_y + DARK_AREA;
 
 	float left = cvtpx2rp__(winWidth, x_rect->m_x),
 		right = left + cvtpx2rd__(winWidth, width),
 		top = -cvtpx2rp__(winHeight, x_rect->m_y),
 		bottom = top - cvtpx2rd__(winHeight, height);
 	
-	float texelLeft = x_rect->m_x / winWidth,
-		texelRight = (x_rect->m_x + x_rect->m_width * x_magnitude) / winWidth,
-		texelBottom = (x_rect->m_y + x_rect->m_height * x_magnitude - DARK_AREA) / winHeight,
+	float texelLeft = (x_rect->m_x + DARK_AREA) / winWidth,
+		texelRight = (x_rect->m_x + (x_rect->m_width) * x_magnitude - DARK_AREA) / winWidth,
+		texelBottom = (x_rect->m_y + (x_rect->m_height) * x_magnitude - DARK_AREA) / winHeight,
 		texelTop = performance_y / winHeight;
 
 	float depth = aDepth;
