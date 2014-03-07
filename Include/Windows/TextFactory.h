@@ -91,6 +91,9 @@ namespace A2D {
 				font = new Font(xFont, aDevice);
 				font->initialize();
 				aFontList.push_back(font, NULL); // NULL, because we will never remove it.
+				
+				// Set as used, so we don't have to process it again.
+				xFont->isUsed = true;
 			}
 			aCurrentFont = font; // If null, error.
 		}
